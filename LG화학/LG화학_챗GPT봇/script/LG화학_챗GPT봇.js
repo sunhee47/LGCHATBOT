@@ -732,10 +732,11 @@ chatui.onLoad = function(){
     +'</div>'
     +'</div>'
     //+'<span class="edu-close" id="eduClose">종료하기</span>'
-// 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...)    
-    +'<div class="recover" id="chatbot-recover">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/gpt_resize3.png"/>'
-    +'</div>'
+// 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...)  
+/*  기본사이즈 버튼 나중에 오픈 */
+//    +'<div class="recover" id="chatbot-recover">'
+//    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/gpt_resize3.png"/>'
+//    +'</div>'
     +'<div class="winopen" id="chatbot-winopen">'
     +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/gpt_winopen3.png"/>'
     +'</div>'
@@ -1159,16 +1160,17 @@ chatui.onLoad = function(){
   });
 
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
-    var chatbotRecover = document.getElementById("chatbot-recover");
+    /*  기본사이즈 버튼 나중에 오픈 */ 
+    //var chatbotRecover = document.getElementById("chatbot-recover");
     var chatbotWinopen = document.getElementById("chatbot-winopen");
-    chatbotRecover.style.display = "none";
+    //chatbotRecover.style.display = "none";
     chatbotWinopen.style.display = "none";
     //chatbotCollapse.style.display = "none";
 
-    chatbotRecover.addEventListener('click', function(e) {
+    //chatbotRecover.addEventListener('click', function(e) {
         
-       window.parent.parent.postMessage('gpt_Recover', '*');
-    }); 
+    //   window.parent.parent.postMessage('gpt_Recover', '*');
+    //}); 
     
     chatbotWinopen.addEventListener('click', function(e) {
     
@@ -1183,7 +1185,7 @@ chatui.onLoad = function(){
         
         // gpt모드=iframe, 케미=iframe 이면.
         if(paramTargetParent == "F") {
-            chatbotRecover.style.display = "block";
+            //chatbotRecover.style.display = "block";
             chatbotWinopen.style.display = "block";
         }
     }
@@ -1451,16 +1453,33 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
 
     if(customPayload.type == 'gptPush') {
         // resizeTA(resizeObj);
-        var viewLimit = 200;
+        var viewLimit = viewTextLimit();
         var checkContentsText = resp.text;
         var checkContents;
         var messages = $('<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color">GPT의 답변입니다.</div>');
         
-        if(checkContentsText.length>viewLimit){
-            checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
+        //console.log('window.width : '+$(window).width());
+        //console.log('viewLimit : '+viewLimit);
+        //console.log('checkContentsText : '+checkContentsText);
+        
+        var isCopyBtn = false;
+        if(checkContentsText.length<200) {
+            //console.log("1111");
+            isCopyBtn = true;
+            checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
+            +checkContentsText+'</span></div>');
+        }
+        else if(checkContentsText.length-textLimit > viewLimit){
+            //console.log("2222");
+            isCopyBtn = false;
+            checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color">'
+            +'<div class="full-message" style="display:none">'+checkContentsText+'</div>'
+            +'<span class="check-text hidden-text">'
             +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
         }else{
-            checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
+            //console.log("3333");
+            isCopyBtn = true;
+            checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
             +checkContentsText+'</span></div>');
         }
         var statusMessageCopy = $('<div class="copy-question"></div>');
@@ -1496,7 +1515,9 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
         //   $(this).remove();
         });
 
-        checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
+        //checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
+
+        !isCopyBtn? checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
 
         // requestCheck.append(checkContents);
         // customMessage.append(requestCheck);
@@ -1817,6 +1838,172 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
   }
 
 }
+
+////// GPT고도화 1차 2-2 Start
+let delay = 100;
+let timer = null;
+let textLimit = 100;
+
+var leftChatSessionList = '.test-panel .panel-wrapper .chat-panel .chat-body .list-menu';       // 좌측 대화세션목록 
+var topChatSessionList = '.test-panel .panel-wrapper .chat-panel .info-area .list-menu';        // 상단 대화세션목록 
+
+$(window).resize(function(){
+  clearTimeout(timer);
+  
+  var fullText = null;
+  var fullTextLength = 0;
+  var viewTextLength = 0;
+  var answerWidth = 0;
+  var newContentText = null;
+  timer = setTimeout(function(){
+      //console.log('window width : '+$(window).width());
+      //console.log('window height : '+$(window).height());
+    
+    /*
+    // 브라우저 크기 변경마다 left 메뉴 높이 세팅.   
+    setLeftMenuHeight('.test-panel .panel-wrapper .chat-panel .chat-body .list-menu');
+    $('.test-panel .panel-wrapper .chat-panel .form-group').css('width', '100%');
+    
+    if(isOpenChatSession()) {                                // 좌측 대화세션목록이 열려 있으면.    
+        if($(leftChatSessionList).hasClass("left-menu") ){   
+            $('.test-panel .panel-wrapper .chat-panel .form-group').css('width', $(window).width()-220+'px'); 
+        }
+    }
+      // 2023.11.30 대화세션관리 Start
+      if($(window).width() > 560) {
+        if(isOpenChatSession()) {                                   // 창이 커질때                
+            if($(topChatSessionList).hasClass("top-menu") ){        // 상단 대화세션목록이 열려 있으면.
+                //console.log('top');
+                $(topChatSessionList).removeClass('top-menu');      // 1.상단 대화세션목록을 닫고, 
+                $(topChatSessionList).css('display', 'none');                
+
+                showListMenu('left', 'open');                       // 2.좌측 대화세션목록을 연다.
+            }
+        }
+        
+      }
+      else{
+        if(isOpenChatSession()) {                                   // 창이 작아질때   
+            if($(leftChatSessionList).hasClass("left-menu") ){      // 좌측 대화세션목록이 열려 있으면.
+                //console.log('left');
+                showListMenu('left', 'close');                      // 1.좌측 대화상단목록을 닫는다. 
+            }
+        } 
+      }
+      // 2023.11.30 대화세션관리 End
+      */
+      
+     customMessageResize();
+     
+  }, delay);
+});    
+
+/*
+* 커스텀메시지를 
+* 브라우저 창 크기에 따라서 보여주는 함수. 
+*/
+function viewTextLimit(viewWidth) {
+    var menuVal = ($(leftChatSessionList).hasClass("left-menu"))? 220:0;            // 좌측 대화세션이 열려 있으면 그 부분만큼 제외함. 
+    objWidth = (viewWidth == null)? (($(window).width()-menuVal)*0.85)-36:viewWidth;
+    
+    console.log('objWith : '+objWidth);
+    var viewLimit = (objWidth>400)? (parseInt(objWidth/10)-20)*10:200;
+    return viewLimit;
+}
+
+/*
+ * 커스텀 대화내용을 리사이징하는 함수. 
+ */
+function customMessageResize() {
+
+      $('.answer-message').each(function() {
+          //console.log('full message length : '+$(this).find('.full-message').length);
+          //if($(this).find('.full-message').length > 0) {
+              
+              fullText = ($(this).find('.full-message').length > 0)? $(this).find('.full-message').html():$(this).find('.hidden-text').html();
+              fullTextLength = fullText.length;
+              viewTextLength = fullTextLength - textLimit;
+              //console.log('fullText >>>> '+fullText.length);
+              answerWidth = $(this).width();
+
+              var viewLimit = viewTextLimit(answerWidth);
+              
+              //console.log('answer-message width : '+$(this).width());
+              //console.log('viewLimit...'+viewLimit);
+
+              $(this).find('.full-message').remove();
+              $(this).find('.copy-question').remove();
+              $(this).find('.see-more').remove();
+              
+              if(viewLimit < viewTextLength) {
+                  newContentText = fullText.substr(0,viewLimit)+"...";
+                  $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>');
+                  
+                  $(this).append(appendAnswerButton('more', fullText));
+              }
+              else{
+                  newContentText = fullText;
+                  $(this).append(appendAnswerButton('copy'));
+              }
+              $(this).find(".hidden-text").html(newContentText);
+              
+          //}
+      });
+    
+}
+
+/*
+* 커스텀메시지에 따라오는 버튼을 
+* 브라우저 창 클기에 따라서 보여주는 함수. 
+*/
+function appendAnswerButton(gubun, fullText) {
+    var answerButton = null;  
+        if(gubun == 'copy') {
+            var statusMessageCopy = $('<div class="copy-question"></div>');
+            var messageCopyTooltip = $('<div class="f-tooltip">GPT 답변 전체 복사하기.</div>');
+            statusMessageCopy.append(messageCopyTooltip);
+            var copyButton = $('<button type="button" class="btn-text btn-emphasis">'
+            +'<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M6.83325 1C5.72868 1 4.83325 1.89543 4.83325 3C3.72868 3 2.83325 3.89543 2.83325 5V13C2.83325 14.1046 3.72868 15 4.83325 15H10.1666C11.2712 15 12.1666 14.1046 12.1666 13C13.2712 13 14.1666 12.1046 14.1666 11V3C14.1666 1.89543 13.2712 1 12.1666 1H6.83325ZM12.1666 12.2C12.8293 12.2 13.3666 11.6627 13.3666 11V3C13.3666 2.33726 12.8293 1.8 12.1666 1.8H6.83325C6.17051 1.8 5.63325 2.33726 5.63325 3H10.1666C11.2712 3 12.1666 3.89543 12.1666 5L12.1666 12.2ZM3.63325 5C3.63325 4.33726 4.17051 3.8 4.83325 3.8H10.1666C10.8293 3.8 11.3666 4.33726 11.3666 5V13C11.3666 13.6627 10.8293 14.2 10.1666 14.2H4.83325C4.17051 14.2 3.63325 13.6627 3.63325 13V5Z" fill="#E0205C"/>'
+            +'</svg>'
+            + '답변 복사하기</button>'
+            +'</div>');
+            
+            copyButton.on('click', function() {
+                var temp = $('<textarea type="text" class="hidden-textbox" />');
+                $("body").append(temp);
+                temp.val($(this).parents('.answer-message').find(".hidden-text").text()).select();
+                document.execCommand('copy');
+                showConfirmDialog(temp);
+                temp.remove();
+        
+                showConfirmDialog('GPT 답변을 복사했어요!<br />원하는 창에 붙여넣기 해주세요.');
+            });
+            
+            answerButton = statusMessageCopy.append(copyButton);
+        }
+        else if(gubun == 'more') {
+            var seeMore =  $('<div class="see-more">'
+            +'전체보기 <svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#2C2C2C"/>'
+            +'</svg>'
+            +'</div>');
+    
+            seeMore.on('click', function() {
+              $(this).parents('.request-status').find('.list-box').removeClass('disp-none');
+              resGptAllText(fullText);
+            //   $(this).remove();
+            });
+            
+            answerButton = seeMore;
+            
+        }
+
+    return answerButton;
+}
+
+////// GPT고도화 1차 2-2 End
+
 /********************************************************** element *************************************************************************************/
 var loadEl = {
   'gpt_bot_close': function(popTitle, msg) {

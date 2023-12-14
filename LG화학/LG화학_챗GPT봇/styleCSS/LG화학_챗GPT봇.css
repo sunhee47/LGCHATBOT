@@ -1209,10 +1209,26 @@
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .profile + .custom-message .custom-quick-reply {
   margin-left: 0;
 }
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message {
+/* GPT고도화 1차 2-2 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left {
+  float: none;
+}
+/* GPT고도화 1차 2-2 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message {
   /*width: 280px;*/
   max-width: 50px;
   max-width: 280px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #2C2C2C;
+  border-radius: 16px;
+  padding: 12px;
+  background-color: #F2F2F2 !important;
+}
+/* GPT고도화 1차 2-2 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message {
+  max-width: 85%;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -1442,8 +1458,8 @@
   margin-left: 40px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message .answer-message {
-  width: 280px;
-  max-width: 280px;
+  width: 100%;                  /* GPT고도화 1차 2-2 */
+  max-width: 100%;              /* GPT고도화 1차 2-2 */
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
