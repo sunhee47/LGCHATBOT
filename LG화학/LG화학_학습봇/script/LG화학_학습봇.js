@@ -293,10 +293,11 @@ chatui.onLoad = function(){
     +'</div>'
     +'</div>'
     //+'<span class="edu-close" id="eduClose">종료하기</span>'
-    // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...)    
-    +'<div class="recover" id="chatbot-recover">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/gpt_resize3.png"/>'
-    +'</div>'
+    // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...)   
+/*  기본사이즈 버튼 나중에 오픈 */    
+//    +'<div class="recover" id="chatbot-recover">'
+//    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/gpt_resize3.png"/>'
+//    +'</div>'
     +'<div class="winopen" id="chatbot-winopen">'
     +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/gpt_winopen3.png"/>'
     +'</div>'
@@ -700,16 +701,17 @@ chatui.onLoad = function(){
   });
 
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
-    var chatbotRecover = document.getElementById("chatbot-recover");
+    /*  기본사이즈 버튼 나중에 오픈 */    
+    //var chatbotRecover = document.getElementById("chatbot-recover");
     var chatbotWinopen = document.getElementById("chatbot-winopen");
-    chatbotRecover.style.display = "none";
+    //chatbotRecover.style.display = "none";
     chatbotWinopen.style.display = "none";
    //chatbotCollapse.style.display = "none"; 
     
-    chatbotRecover.addEventListener('click', function(e) {
+    //chatbotRecover.addEventListener('click', function(e) {
         
-       window.parent.parent.postMessage('edu_Recover', '*');
-    }); 
+    //   window.parent.parent.postMessage('edu_Recover', '*');
+    //}); 
     
     chatbotWinopen.addEventListener('click', function(e) {
     
@@ -724,7 +726,7 @@ chatui.onLoad = function(){
         
         // 학습봇모드=iframe, 케미=iframe 이면.
         if(paramTargetParent == "F") {
-            chatbotRecover.style.display = "block";
+            //chatbotRecover.style.display = "block";
             chatbotWinopen.style.display = "block";
         }        
     }

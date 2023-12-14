@@ -2682,9 +2682,10 @@ jQuery(document).ready(function(e){
   +   '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/hello_03.gif" />'
   +'</div>'
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
-+'<div class="recover" id="chatbot-recover">'
-+    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png" title="기본사이즈로 돌아가기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png\';"/>'
-+'</div>'
+/*  기본사이즈 버튼 나중에 오픈 */   
+//+'<div class="recover" id="chatbot-recover">'
+//+    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png" title="기본사이즈로 돌아가기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png\';"/>'
+//+'</div>'
 +'<div class="winopen" id="chatbot-winopen">'
 +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png" title="팝업으로 보여주기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png\';"/>'
 +'</div>'
@@ -3374,16 +3375,17 @@ jQuery(document).ready(function(e){
   });
   
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
-    var chatbotRecover = document.getElementById("chatbot-recover");
+    /*  기본사이즈 버튼 나중에 오픈 */ 
+    //var chatbotRecover = document.getElementById("chatbot-recover");
     var chatbotWinopen = document.getElementById("chatbot-winopen");
-    chatbotRecover.style.display = "none";
+    //chatbotRecover.style.display = "none";
     chatbotWinopen.style.display = "none";
     chatbotCollapse.style.display = "none";
 
-    chatbotRecover.addEventListener('click', function(e) {
+    //chatbotRecover.addEventListener('click', function(e) {
         
-       window.parent.postMessage('bot_Recover', '*');
-    }); 
+    //   window.parent.postMessage('bot_Recover', '*');
+    //}); 
     
     chatbotWinopen.addEventListener('click', function(e) {
     
@@ -3395,7 +3397,7 @@ jQuery(document).ready(function(e){
         
         targetParent = "F";
         
-        chatbotRecover.style.display = "block";
+        //chatbotRecover.style.display = "block";
         chatbotWinopen.style.display = "block";
         chatbotCollapse.style.display = "block";
     }
@@ -3509,6 +3511,7 @@ function dictDeatilOpen(btn, termId) {
 
 chatui.onReceiveResponse = function(resp, isHistory) {
    console.log("chatui.onReceiveResponse", resp, isHistory);
+   
    setTimeout(function() {
 
     // if(resp.response.query.text =="GPT 모드"){
@@ -3658,6 +3661,7 @@ chatui.onReceiveResponse = function(resp, isHistory) {
     });
 
   }, 100)
+  
 }
 
 /**
