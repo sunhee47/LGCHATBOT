@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />    
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Expires" content="-1" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Cache-Control" content="No-Cache" />
+  <meta http-equiv="p3p" content='CP="CAO DSP AND SO" policyref="/w3c/p3p.xml"' />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />    
+  
+  <!-- // jquery slim 버전은 jquery ui를 사용할 수 없어서 변경함. -->
+  <!--<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>-->
+
+  <!-- 마우스로 사이즈 변경을 위한 수정 Start -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>  
+  <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <!-- 마우스로 사이즈 변경을 위한 수정 End -->
+  <link rel="stylesheet" href="./assets/floating.css">
+  <script src="./assets/floating.js"></script>
+
+  <title>CNS</title>
+  <!-- 마우스로 사이즈 변경을 위한 수정 -->
+  <style>
+   .ui-resizable-helper { border: 1px dotted gray; }   
+  </style>  
+</head>
+<body>
+   
+   <div class="mainContainerArea" style="height: 938px; ">
+				
+      <iframe id="mainFrame" src="https://p.lgcns.com/front/" name="mainFrame" class="ui-layout-center" height="100%" style="min-width:900px; width: 100%;" frameborder="0" scrolling="auto" ></iframe>
+   </div>
+
+   <div class="chatbot-box">
+      <p class="text-width" id="text-width">
+         사용자 Context에 따라 푸시가 제공되며<br />
+         클릭시 해당내용으로 대화가 바로 진행됩니다
+      </p>
+      <div class="notification" id="notification">
+         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.5999 2.6C12.5999 2.26863 12.3313 2 11.9999 2C11.6685 2 11.3999 2.26863 11.3999 2.6V4.02536C7.8148 4.32971 4.99993 7.33613 4.99993 11V13.2526C4.99993 14.4017 4.73238 15.5351 4.21847 16.5629L4.08534 16.8292C3.58667 17.8265 4.31191 19 5.42698 19H9C9.00005 20.6568 10.3432 21.9999 12 21.9999C13.6568 21.9999 14.9999 20.6568 15 19H18.5729C19.688 19 20.4132 17.8265 19.9145 16.8292L19.7814 16.5629C19.2675 15.5351 18.9999 14.4017 18.9999 13.2526V11C18.9999 7.33611 16.185 4.32968 12.5999 4.02535V2.6ZM17.7999 13.2526V11C17.7999 7.79675 15.2032 5.2 11.9999 5.2C8.79668 5.2 6.19993 7.79675 6.19993 11V13.2526C6.19993 14.588 5.88901 15.9051 5.29179 17.0996L5.15866 17.3658C5.05892 17.5653 5.20397 17.8 5.42698 17.8H18.5729C18.7959 17.8 18.9409 17.5653 18.8412 17.3658L18.7081 17.0996C18.1109 15.9051 17.7999 14.588 17.7999 13.2526ZM12 20.7999C11.0059 20.7999 10.2001 19.9941 10.2 19H13.8C13.7999 19.9941 12.9941 20.7999 12 20.7999Z" fill="#2C2C2C"/>
+         </svg>
+         <span>미확인 메시지가 2건 있습니다.</span>
+         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="closer">
+            <path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"/>
+         </svg>   
+      </div>
+
+      <a class="chatbot-floating" id="chatbot-floating">
+         <div class="floating-icon" id="chatbot-icon">
+            <p class="text" id="text">새롭게 태어난 여러분의 비서봇 캠봇입니다<br />업무상 궁금하신건 저를 찾아주세요</p>
+            <div class="c-ani">
+               <img src="./assets/blink.gif" />
+            </div>
+            <div class="c-ani2">
+               <img src="./assets/hello.gif" />
+            </div>
+         </div>
+         <span class="badge">2</span>
+      </a>
+      <div class="chatbot-pop-box-back" id="popBoxBack" style="z-index: 9998;"></div>
+      <div class="chatbot-pop-box" id="popBox" style="z-index: 9999;">
+        <iframe id="float-chatbot-chat-iframe" name="float-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe>
+      </div>
+   </div>  
+</body>
+</html>
