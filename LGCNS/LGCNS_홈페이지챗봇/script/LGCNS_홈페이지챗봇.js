@@ -8,7 +8,6 @@ $(document).ready(function() {
  
    $('body').append(skeleton);
  
- 
    var left01 = document.getElementById('left-01');
    var chat02 = document.getElementById('chat-02');
    var right01 = document.getElementById('right-01');
