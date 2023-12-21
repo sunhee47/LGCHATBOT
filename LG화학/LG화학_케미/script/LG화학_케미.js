@@ -2665,6 +2665,15 @@ jQuery(document).ready(function(e){
     
     // 2023.11.21 GPT 팝업시 처리. 
 
+  var is_mobile = Mobile();
+  var recoverBtn =  '<div class="recover" id="chatbot-recover">'
+    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png" title="기본사이즈로 돌아가기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png\';"/>'
+    +'</div>';
+  var winopenBtn =  '<div class="winopen" id="chatbot-winopen">'
+    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png" title="팝업으로 보여주기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png\';"/>'
+    +'</div>';
+
+  
   $(".test-panel .panel-wrapper .chat-panel .info-area").empty().append('<div class="header-back"></div>'
   +'<div class="open-menu">'
   + '<svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -2682,13 +2691,10 @@ jQuery(document).ready(function(e){
   +   '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/hello_03.gif" />'
   +'</div>'
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
-/*  기본사이즈 버튼 나중에 오픈 */   
-//+'<div class="recover" id="chatbot-recover">'
-//+    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png" title="기본사이즈로 돌아가기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png\';"/>'
-//+'</div>'
-+'<div class="winopen" id="chatbot-winopen">'
-+    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png" title="팝업으로 보여주기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png\';"/>'
-+'</div>'
+
+   + (!is_mobile? winopenBtn:'')
+   
+
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) End
   +'<div class="collapse backbutton" id="chatbot-collapse">'
   +  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -3375,35 +3381,40 @@ jQuery(document).ready(function(e){
   });
   
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
-    /*  기본사이즈 버튼 나중에 오픈 */ 
-    //var chatbotRecover = document.getElementById("chatbot-recover");
-    var chatbotWinopen = document.getElementById("chatbot-winopen");
-    //chatbotRecover.style.display = "none";
-    chatbotWinopen.style.display = "none";
-    chatbotCollapse.style.display = "none";
-
-    //chatbotRecover.addEventListener('click', function(e) {
-        
-    //   window.parent.postMessage('bot_Recover', '*');
-    //}); 
     
-    chatbotWinopen.addEventListener('click', function(e) {
-    
-       window.parent.postMessage('bot_Winopen', '*');
-    });   
-    
-    if(!window.opener) {
-        console.log('팝업 아님.');
+    if(!is_mobile) {
+        /*  기본사이즈 버튼 나중에 오픈 */ 
+        //var chatbotRecover = document.getElementById("chatbot-recover");
+        var chatbotWinopen = document.getElementById("chatbot-winopen");
+        //console.log(chatbotWinopen);
         
-        targetParent = "F";
+        //chatbotRecover.style.display = "none";
+        chatbotWinopen.style.display = "none"; 
+        chatbotCollapse.style.display = "none";
+    
+        //chatbotRecover.addEventListener('click', function(e) {
+            
+        //   window.parent.postMessage('bot_Recover', '*');
+        //}); 
         
-        //chatbotRecover.style.display = "block";
-        chatbotWinopen.style.display = "block";
-        chatbotCollapse.style.display = "block";
-    }
-    else {
-        targetParent = "P";
-        console.log('팝업.');
+        chatbotWinopen.addEventListener('click', function(e) {
+        
+           window.parent.postMessage('bot_Winopen', '*');
+        });   
+        
+        if(!window.opener) {
+            console.log('팝업 아님.');
+            
+            targetParent = "F";
+            
+            //chatbotRecover.style.display = "block";
+            chatbotWinopen.style.display = "block";
+            chatbotCollapse.style.display = "block";
+        }
+        else {
+            targetParent = "P";
+            console.log('팝업.');
+        }
     }
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) End
   

@@ -725,6 +725,15 @@ chatui.onLoad = function(){
     
     //console.log('gpt targetParent : '+chatui.getParameter('targetParent'));
     
+  var is_mobile = Mobile();
+  var recoverBtn =  '<div class="recover" id="chatbot-recover">'
+    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/gpt_resize3.png"/>'
+    +'</div>';
+  
+  var winopenBtn = '<div class="winopen" id="chatbot-winopen">'
+    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/gpt_winopen3.png"/>'
+    +'</div>';
+
   $(".test-panel .panel-wrapper .chat-panel .info-area").html(
     '<div class="edu-header">'
     +'<h1>GPT 모드</h1>'
@@ -733,13 +742,9 @@ chatui.onLoad = function(){
     +'</div>'
     //+'<span class="edu-close" id="eduClose">종료하기</span>'
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...)  
-/*  기본사이즈 버튼 나중에 오픈 */
-//    +'<div class="recover" id="chatbot-recover">'
-//    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/gpt_resize3.png"/>'
-//    +'</div>'
-    +'<div class="winopen" id="chatbot-winopen">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/gpt_winopen3.png"/>'
-    +'</div>'
+
+   + (!is_mobile? winopenBtn:'')
+   
     +'<div class="collapse" id="eduClose">'
     +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/img_close.png" />'
     +'</div>'
@@ -1160,36 +1165,41 @@ chatui.onLoad = function(){
   });
 
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
-    /*  기본사이즈 버튼 나중에 오픈 */ 
-    //var chatbotRecover = document.getElementById("chatbot-recover");
-    var chatbotWinopen = document.getElementById("chatbot-winopen");
-    //chatbotRecover.style.display = "none";
-    chatbotWinopen.style.display = "none";
-    //chatbotCollapse.style.display = "none";
-
-    //chatbotRecover.addEventListener('click', function(e) {
-        
-    //   window.parent.parent.postMessage('gpt_Recover', '*');
-    //}); 
     
-    chatbotWinopen.addEventListener('click', function(e) {
+    if(!is_mobile) {
     
-       window.parent.parent.postMessage('gpt_Winopen', '*');
-    });   
-
-    var paramTargetParent = chatui.getParameter('targetParent');
-    if(!window.opener) {        // 케미로 부터 호출 > close 버튼이 필요함. 
-        //console.log('gpt 팝업 아님.');
+        /*  기본사이즈 버튼 나중에 오픈 */ 
+        //var chatbotRecover = document.getElementById("chatbot-recover");
+        var chatbotWinopen = document.getElementById("chatbot-winopen");
+        //chatbotRecover.style.display = "none";
+        chatbotWinopen.style.display = "none";
+        //chatbotCollapse.style.display = "none";
+    
+        //chatbotRecover.addEventListener('click', function(e) {
+            
+        //   window.parent.parent.postMessage('gpt_Recover', '*');
+        //}); 
         
-        //chatbotCollapse.style.display = "block"; 
+        chatbotWinopen.addEventListener('click', function(e) {
         
-        // gpt모드=iframe, 케미=iframe 이면.
-        if(paramTargetParent == "F") {
-            //chatbotRecover.style.display = "block";
-            chatbotWinopen.style.display = "block";
+           window.parent.parent.postMessage('gpt_Winopen', '*');
+        });   
+    
+        var paramTargetParent = chatui.getParameter('targetParent');
+        if(!window.opener) {        // 케미로 부터 호출 > close 버튼이 필요함. 
+            //console.log('gpt 팝업 아님.');
+            
+            //chatbotCollapse.style.display = "block"; 
+            
+            // gpt모드=iframe, 케미=iframe 이면.
+            if(paramTargetParent == "F") {
+                //chatbotRecover.style.display = "block";
+                chatbotWinopen.style.display = "block";
+            }
         }
+        else {  console.log('gpt 팝업.');     }
+        
     }
-    else {  console.log('gpt 팝업.');     }
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) End
 };
 
@@ -2023,3 +2033,8 @@ var loadEl = {
       return html;
   }
 }
+
+ // 모바일 감지 이벤트
+ function Mobile() {
+     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+ }
