@@ -89,6 +89,7 @@ const generate = async () => {
             
             // Update the UI with the new content
             if (content) {
+              //console.log(content);
                 arrResult.push(content);
                 $("#hide_result").append(content);
               }
@@ -145,6 +146,12 @@ let object = {};
 //var textVal = "";
 const cursorHtml = '<span class="blinking-cursor">●</span>';
 var row = 0;
+
+var languageArr = ["python", "java", "javascript"];     // highlight language 배열
+var codeStart = false;                                  // code start
+var codeIndex = 0, chasu = 1;                           // code Index, code chasu
+var codeLang = "";                                      // code language 
+var codeId = "";                                        // code ID
 async function printResponse(arrResult) {
 
   return new Promise(resolve => {
@@ -153,6 +160,7 @@ async function printResponse(arrResult) {
     var val = arrResult; 
     var len = val.length;
     var textVal = "";
+    var bfCode = "";                                    // 코드 시작을 알리는 ``` 이 잘려서 오는 경우 앞부분.
 
     const interval = setInterval ( () => {
 
@@ -160,8 +168,56 @@ async function printResponse(arrResult) {
 
       //textVal = textVal + val[col];
       //$("#resultText").html(textVal+cursorHtml);    /// 1.
-      $("#resultText").append(val[col]+cursorHtml);               /// 2.
       //  $("#resultText").empty().append(textVal);
+      if(val[col] == "```" || val[col] == "``" || $.trim(val[col]) == "`") {  // 코드 시작 또는 끝 부분인 경우.
+
+        //console.log('code ... '+val[col]+', bfCode .. '+bfCode);
+        if(bfCode == "``" || $.trim(bfCode) == "`") {     // ``` 표시가 잘려서 오는 경우. 뒷부분 처리. 
+          //console.log('bfCode = '+bfCode);
+          bfCode = "";
+        }
+        else{
+          if(codeStart==false) {          // 코드 시작일 경우.
+            codeId = "code-result"+chasu;
+            $("#resultText").append('<pre><code id="'+codeId+'"></code></pre>');
+            hljs.highlightAll();
+            $("#"+codeId).removeClass("language-undefined");
+            codeStart = true;
+          }
+          else if(codeStart==true) {      // 코드 끝일 경우.
+            codeStart = false;
+            codeIndex = 0;
+          }
+          //console.log('highlight : '+codeStart);
+          bfCode = val[col];
+          chasu++;
+        }
+  
+      }
+      else if(codeStart==true) {        // 코드 내용 처리.
+        if(codeIndex == 0) {            // 언어를 체크하기 위하여. 
+          let lang = String(val[col]).toLowerCase();
+          if(languageArr.includes(lang)) {        // 선언된 언어에 포함이 된다면 해당 값으로 세팅.
+            codeLang = val[col];
+            $("#"+codeId).addClass("language-"+codeLang);       // highlight language 세팅
+          }
+          else{                                   // 기본값으로 자바스크립트로 세팅.
+            codeLang = "javascript";        // 기본적으로 자바스크립트 언어.
+            let highValue = hljs.highlight(val[col],  { language: codeLang }).value;
+            $("#"+codeId).addClass("language-"+codeLang);
+            $("#"+codeId).append(highValue+cursorHtml); 
+          }
+          //console.log('language : '+codeLang);
+        }
+        else{
+          let highValue = hljs.highlight(val[col],  { language: codeLang }).value;
+          $("#"+codeId).append(highValue+cursorHtml); 
+        }
+        codeIndex++;
+      }
+      else{                 // 코드가 아닌 경우. 
+        $("#resultText").append(val[col]+cursorHtml);               /// 최종
+      }
 
       descendScroll();
 
