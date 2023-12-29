@@ -165,13 +165,25 @@ let languageMap = new Map([
   ["파이썬", "python"],
   ["파이선", "python"],
   ["javascript", "javascript"], 
-  ["js", "javascript"], 
   ["자바스크립트", "javascript"], 
+  ["JavaScript", "javascript"], 
+  ["js", "javascript"], 
   ["java", "java"], 
   ["자바", "java"], 
+  ["json", "json"], 
+  ["css", "css"],  
+  ["CSS", "css"],  
   ["html", "html"], 
-  ["HTML", "html"], 
-  ["css", "css"] 
+  ["HTML", "html"],
+  ["xml", "xml"], 
+  ["SQL", "sql"], 
+  ["sql", "sql"], 
+  ["C++", "c++"],  
+  ["c++", "c++"],  
+  ["C언어", "c"],  
+  ["c언어", "c"]  
+  //,["C", "c"],  
+  //,["c", "c"] 
 ]);
 
 var codeStart = false;                                  // code start
@@ -182,21 +194,24 @@ var codeId = "";                                        // code ID
 
 function isIncludeLanguage(cont) {
   for (let [key, value] of languageMap) {
-    //console.log(key, value);            //"Lokesh" 37 "Raj" 35 "John" 40
-    if(cont.indexOf(key) > -1)  {
+    if(cont.lastIndexOf(key) > -1)  {
       return value;
     }    
   }
-  /*
-  for(var i=0; i<languageArr.length; i++) {
-    if(cont.indexOf(languageArr[i]) > -1)  {
-      return languageArr[i];
-    }
-  }*/
+  
+  // for(var i=0; i<languageArr.length; i++) {
+  //   if(cont.indexOf(languageArr[i]) > -1)  {
+  //     return languageArr[i];
+  //   }
+  // }
 }
 
 //console.log(isIncludeLanguage('자바로 구구단 코드 출력해 줘'));
-
+/*
+* 1. ``` 로 시작하지 않는 코드성은 어떻게 처리할지 고민을 해야 함. 
+* 2. 언어로 정의해야 함. 
+* 3. 상단에 언어표기, copy 버튼 ...
+*/
 async function printResponse(arrResult, no) {
 
   return new Promise(resolve => {
@@ -219,7 +234,7 @@ async function printResponse(arrResult, no) {
           codeIndex = 0;
           codeLang = "";
   
-          if(val[col] == 'for' || val[col] == '//') {   // 바로 코드 시작인 경우. 
+          if(val[col] == 'for' || val[col] == '//' || val[col] == 'package' || val[col] == 'public' || val[col] == 'import' || val[col] == '#include') {   // 바로 코드 시작인 경우. package. public, import, #include
             if(codeStart==false) {          // 코드 시작일 경우.
               codeId = "code-result"+chasu;
               $("#resultText").append('<pre><code id="'+codeId+'"></code></pre>');
@@ -228,6 +243,10 @@ async function printResponse(arrResult, no) {
               $("#"+codeId).removeClass("language-undefined");
               codeStart = true;
 
+              if(val[col] == '#include') {   
+                codeLang = 'c';
+              }
+        
               chasu++;
             }
           }
@@ -266,26 +285,24 @@ async function printResponse(arrResult, no) {
       else if(codeStart==true) {        // 코드 내용 처리.
         if(codeIndex == 0) {            // 언어를 체크하기 위하여. 
           let lang = String(val[col]).toLowerCase();
-          if(languageArr.includes(lang)) {        // 선언된 언어에 포함이 된다면 해당 값으로 세팅.
+          let chgLang = (lang == 'c')? 'c언어':lang;
+          if(languageMap.has(chgLang)) {      // 선언된 언어에 포함이 된다면 해당 값으로 세팅.
+          //if(languageArr.includes(lang)) {        
             codeLang = val[col];
             $("#"+codeId).addClass("language-"+codeLang);       // highlight language 세팅
 
             //hljs.registerLanguage('javascript', e);
           }
           else{                                   // 기본값으로 자바스크립트로 세팅.
-            //console.log($("#hide_result").text());
-            //var inputLang = isIncludeLanguage(promptInput.value);
-            //var inputLang = isIncludeLanguage($("#hide_result").text());
-            //if(codeLang == "") {
-              var inputLang = isIncludeLanguage(promptInput.value);
-              console.log('language >>> '+inputLang);
-              if(!inputLang) {
-                inputLang = isIncludeLanguage($("#hide_result").text());
-                console.log('language >>> '+inputLang);
-              }
-              
-              codeLang = (inputLang)? inputLang:"javascript";        // 기본적으로 자바스크립트 언어.
-            //}
+            var inputLang = isIncludeLanguage($("#hide_result").text());      // 1. 마지막 문자열부터 찾기.
+            console.log('답변 중 language >>> '+inputLang);
+            if(!inputLang) {
+              inputLang = isIncludeLanguage(promptInput.value);       // 2. 
+              console.log('질문 중 language >>> '+inputLang);
+            }
+            codeLang = (inputLang)? inputLang:codeLang;        
+            codeLang = (codeLang!="")? codeLang:"javascript";   // 기본적으로 자바스크립트 언어.
+
             textVal = textVal + val[col];
             let highValue = hljs.highlight(textVal,  { language: codeLang }).value;
             $("#"+codeId).addClass("language-"+codeLang);
@@ -296,6 +313,7 @@ async function printResponse(arrResult, no) {
           //console.log('language : '+codeLang);
         }
         else{
+
           textVal = textVal + val[col];
           let highValue = hljs.highlight(textVal,  { language: codeLang }).value;
           //$("#"+codeId).append(highValue+cursorHtml); 
