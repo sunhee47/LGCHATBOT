@@ -5847,6 +5847,8 @@ function connectMessenger(userId, targetId){
 
 	
 	var userId = data.empMail.split("@");
+    //console.log('data.userId : '+data.userId+', data.targetId : '+data.targetId+', userId : '+userId[0]);	
+    
 		if ( data.isMobile != 'Y') {  
 		// dpContact
    
@@ -5879,7 +5881,7 @@ function connectMessenger(userId, targetId){
     }
 
       if(data.group != 'Y' ) {
-        dpContactHtml +='<button type="button" class="icon-btn" onClick="intentEvent(null, \'schedule\', \''+data.userId+'\');">'
+        dpContactHtml +='<button type="button" class="icon-btn" onClick="intentEvent(null, \'schedule\', \''+data.targetId+'\');">'
         +'<span class="b-icon">'
           +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
           +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#6B6B6B"/>'
