@@ -934,26 +934,20 @@ chatui.onLoad = function(){
 
         if(val.length > 0 && (e.code == 'Enter' || e.keyCode == 13)) {
 
-            if(!e.shiftKey){
-                var ogrVal = val;               // by sunny 2023.10.30
-                val = val.replace(/\n/g, "");
-                $('.sendText').val(val);
-                $('.sendText').val('');
-                $('.btn-send').removeClass('active');
-
-
-                var searchVal = (searchType==null)? "":"/"+searchType+" ";
-                setTimeout(function() {
-                    var keyWord = chkSecureText(val);
-                    secBtnDisable();
-                    appendQueryText(searchVal+ogrVal);           // by sunny 2023.10.30
-                    chatui.sendEventMessage("callGPT",{"reqText":val,"keyWord":keyWord});
-                    //checkMessageContents(searchVal+val, keyWord);
-                }, 100);
-            }
-
-        }
-        resizeTA(this);
+          if(!e.shiftKey){
+              val = val.replace(/\n/g, "");
+              $('.sendText').val(val);
+              $('.sendText').val('');
+              $('.btn-send').removeClass('active');
+              setTimeout(function() {
+                  var keyWord = chkSecureText(val);
+                  secBtnDisable();
+                  appendQueryText(val);
+                  chatui.sendEventMessage("callGPT",{"reqText":val,"keyWord":keyWord});
+              }, 100);
+          }
+      }
+      resizeTA(this);
 
         // 라인이 달라질때만 적용되게 함. by sunny   2023.10.26
         var lineCount = parseInt($('.sendText').height()/18);
@@ -966,28 +960,25 @@ chatui.onLoad = function(){
     });
 
     $('.btn-send').on('click', function(e) {
-        var val = $('.sendText').val();
-        if(checkByteSize(val,1024)){
-            $('.sendText').focus();
-            return;
-        } else {
-            if(val.length > 0) {
-                $('.sendText').val('');
-                $('.btn-send').removeClass('active');
-                setTimeout(function() {
-                    var keyWord = chkSecureText(val);
-                    secBtnDisable();
-                    appendQueryText(val);
-                    chatui.sendEventMessage("callGPT",{"reqText":val,"keyWord":keyWord});
-                    //checkMessageContents(val, keyWord);
-                }, 100);
-            }
-
-            resizeTA($('.sendText')[0]);
-            resizeFixedMenu(initTextH, orgPadding);         // by sunny   2023.10.26
-        }
+      var val = $('.sendText').val();
+      if(checkByteSize(val,1024)){
+          $('.sendText').focus();
+          return;
+      } else {
+          if(val.length > 0) {
+              $('.sendText').val('');
+              $('.btn-send').removeClass('active');
+              setTimeout(function() {
+                  var keyWord = chkSecureText(val);
+                  secBtnDisable();
+                  appendQueryText(val);
+                  chatui.sendEventMessage("callGPT",{"reqText":val,"keyWord":keyWord});
+              }, 100);
+          }
+          
+          resizeTA($('.sendText')[0]);
+      }
     });
-
 
 //   var pulginDim = $('<div class="plugin-dim"></div>');
 //   var pluginSelectDim = $('<div class="plugin-select-dim"></div>');
