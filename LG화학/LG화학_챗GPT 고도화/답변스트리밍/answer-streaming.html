@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">-->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!--<script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script> -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script> -->
+    <script type="module">
+      //import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/es/highlight.min.js';
+      //  and it's easy to individually load additional languages
+      //import go from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/es/languages/go.min.js';
+
+      //hljs.highlightAll();
+      //hljs.registerLanguage('go', go);
+      </script>
+      <script></script> <!-- 코드 구문 강조 호출 -->    
+    <style>
+        @import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css");
+    </style>
+    <title>Streaming OpenAI API Completions in JavaScript</title>
+  </head>
+  <body
+    class="bg-white text-black min-h-screen flex items-center justify-center"
+  >
+    <div class="lg:w-1/2 2xl:w-1/3 p-8 rounded-md bg-gray-100" style="height:700px;">
+      <h1 class="text-3xl font-bold mb-6">
+        Streaming in JavaScript 
+      </h1>
+      <div id="resultContainer" class="mt-4 h-48 overflow-y-auto overflow-x-auto" style="height:480px;">
+        <p class="text-gray-500 text-sm mb-2">Generated Text</p>
+        <p id="resultText" class="whitespace-pre-line"></p>
+      </div>
+      <input
+        type="text"
+        id="promptInput"
+        class="w-full px-4 py-2 rounded-md bg-gray-200 placeholder-gray-500 focus:outline-none mt-4"
+        placeholder="Enter prompt..."
+      />
+      <div class="flex justify-center mt-4">
+        <button
+          id="generateBtn"
+          class="w-1/2 px-4 py-2 rounded-md bg-black text-white hover:bg-gray-900 focus:outline-none mr-2 disabled:opacity-75 disabled:cursor-not-allowed"
+        >
+          Generate
+        </button>
+        <button
+          id="stopBtn"
+          disabled
+          class="w-1/2 px-4 py-2 rounded-md border border-gray-500 text-gray-500 hover:text-gray-700 hover:border-gray-700 focus:outline-none ml-2 disabled:opacity-75 disabled:cursor-not-allowed"
+        >
+          Stop
+        </button>
+      </div>
+    </div>
+    </p>
+    <div id="hideContainer" style="width:300px;height: 480px;overflow: auto;">
+      <p id="hide_result" class="whitespace-pre-line"></p>
+    </div>
+    <script src="./answer-streaming.js"></script>
+
+  </body>
+</html>
