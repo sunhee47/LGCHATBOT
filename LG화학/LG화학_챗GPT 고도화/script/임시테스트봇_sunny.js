@@ -804,8 +804,8 @@ chatui.onLoad = function(){
         if(!e.shiftKey){
           var sessionId = chatui.getSessionId();
           appendQueryText(val);
-          //chatui.sendEventMessage("requestChatGPT",{"reqText":val});
-          chatui.sendEventMessage("requestWeb",{"reqText":val});
+          chatui.sendEventMessage("requestChatGPT",{"reqText":val});
+          //chatui.sendEventMessage("requestWeb",{"reqText":val});
 
           $('.sendText').val('');
           $('.btn-send').removeClass('active');
@@ -1221,18 +1221,25 @@ chatui.onLoad = function(){
     }
     else {  console.log('gpt 팝업.');     }
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) End
+
+    var paramInfo = {
+        userId: chatui.getSetting("userId")                    // Front UI에서 사용하는 User ID (암호화)
+    };
+
+    //console.log('userId : '+chatui.getSetting("userId"));
+    chatui.sendEventMessage("callSessionList",paramInfo);
     
 // 2023.11.30 대화세션 관리 Start    
   $('.open-menu').on('click', function() {
       var currentWidth = $(window).width();
       
         var paramInfo = {
-            userId: chatui.getSetting("userId"),                    // Front UI에서 사용하는 User ID (암호화)
+            userId: chatui.getSetting("userId")                    // Front UI에서 사용하는 User ID (암호화)
         };
 
       if(currentWidth > 560) {
         if($(this).hasClass("on")) {        // 창이 560px 보다 크면 대화세션 열기를 하면 좌측 대화세션 목록을 연다.
-            chatui.sendEventMessage("callSessionList",paramInfo);
+            chatui.sendEventMessage("callSessionListByUserId",paramInfo);
             showListMenu('left', 'open');
         } else{
             showListMenu('left', 'close');
@@ -1241,7 +1248,7 @@ chatui.onLoad = function(){
       }
       else{
         if($(this).hasClass("on")) {
-            chatui.sendEventMessage("callSessionList",paramInfo);
+            chatui.sendEventMessage("callSessionListByUserId",paramInfo);
             showListMenu('top', 'open');
         } else {
             showListMenu('top', 'close');
@@ -1249,32 +1256,66 @@ chatui.onLoad = function(){
       }
 
   });
+  
+  //var script = document.createElement('script');
+  //script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+  //document.head.appendChild(script);
+
+    var hlscriptSrc = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+    loadScript(hlscriptSrc, function() {
+        // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+        //hljs.highlightAll();  // 이제 함수 호출이 제대로 동작합니다.
+    });
+  
 // 2023.11.30 대화세션 관리 End
 };
 
+function loadScript(src, callback) {
+    let script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+    
+    // 추가할 스크립트 태그의 load 이벤트 설정
+    // https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event
+    script.onload = () => callback(script);
+    
+    document.head.appendChild(script);
+}
 
-function chatSessionList(listMessage) {
+var nowSessionId = null;            // 대화이력이 보여지는지 여부를 확인. 
+/*
+ * 대화세션목록을 출력한다. 
+ */
+function chatSessionList(listEvent, listMessage) {
+    
     $('.chat-message.left').last().remove();    
+    
     var customPayload = JSON.parse(listMessage[0].response);
     
+    //console.log('customPayload > ', customPayload.data);
     var menuTopList = '<li style="text-align: center;font-weight: 700;">대화 세션'
                 +'</li>'
-                +'<li style="text-align: center;">+ New Chat'
+                +'<li style="text-align: center;"><span class="new">+ New Chat</span>'
                 +'</li>';
 
     var menuLeftList = '<div class="list-menu-header">'
                  +'<span class="menu-title">대화세션</span>'
-                 +'<span class="menu-title">+ New Chat</span>'
+                 +'<span class="menu-title new" style="cursor: pointer;">+ New Chat</span>'
                 +'</div>'
                 +'<ul class="list-menu-body">'
-                
+    
+    let firstSessionId = "";            
     for(var i=0; i<customPayload.data.length; i++) {
+        if(i==0) {
+            firstSessionId = customPayload.data[i].id;
+        }
         menuTopList += '<li class="list-detail" data-message="'+customPayload.data[i].id+'">'
-                    +'<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-list.png"/> '+customPayload.data[i].name+'</span>'
+                    +'<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png"/>'
+                    +customPayload.data[i].name+'</span>'
                     +'<span class="list-delete"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-delete.png"/></span></li>'
 
         menuLeftList += '<li class="list-detail" data-message="'+customPayload.data[i].id+'">'
-                    + '<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-list.png"/> '+customPayload.data[i].name+'</span>'
+                    + '<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png"/>'
+                    +customPayload.data[i].name+'</span>'
                     +'<span class="list-delete"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-delete.png"/></span></li>'
 
     }
@@ -1284,14 +1325,24 @@ function chatSessionList(listMessage) {
     $(".test-panel .panel-wrapper .chat-panel .info-area .list-menu-body" ).empty().append(menuTopList);
     $(".test-panel .panel-wrapper .chat-panel .chat-body .list-menu").empty().append(menuLeftList);
 
+    if(listEvent == "callSessionListByUserId" && nowSessionId == null) {    // 1. 화면 로딩시에 대화세션 목록만,  2. 다른 history를 보고 있을때 대화세션목록을 펼치면 다시 로딩하지 않음.
+        chatSessionView(listMessage);
+    }
+    
+    selectSession(((nowSessionId == null)?firstSessionId:nowSessionId));
+    
   // 대화세션 상세보기 
   $('.view').on('click', function(e) {
       var data = $(this).closest('li').attr('data-message'); 
       
+      //console.log('session id : '+data);
       var paramInfo = {
-            session_id: data                    // 
+            session_id: data                    
+            , user_id : chatui.getSetting("userId") 
         };
-      chatui.sendEventMessage("callSessionView",paramInfo);
+      chatui.sendEventMessage("callhistoryView",paramInfo);
+      
+      selectSession(data);
       
       if($(topChatSessionList).hasClass('top-menu')) {
           showListMenu('top', 'close');
@@ -1314,8 +1365,40 @@ function chatSessionList(listMessage) {
       }
   });
 
+  $('.new').on('click', function(e) {
+    nowSessionId = null;
+    $('.chat-message.left').each(function() {
+        $(this).remove();
+    });
+
+    $('.chat-message.right').each(function() {
+        $(this).remove();
+    });
+    
+    if($(topChatSessionList).hasClass('top-menu')) {
+        showListMenu('top', 'close');
+    }
+    
+    selectSession();
+  });
 }
 
+/*
+ * 세션목록에서 현재 보여지는 대화세션을 활성화 시키는 함수.
+ */
+function selectSession(selectId) {
+      $('.list-detail').each(function() {
+          $(this).children('.view').children('img').attr('src', 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png');
+          
+          if(selectId == $(this).attr('data-message')) {
+              $(this).children('.view').children('img').attr('src', 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row-select.png');
+          }
+      });
+}
+
+/*
+ * 선택한 대화세션의 대화내역을 보여주는 함수. 
+ */
 function chatSessionView(listMessage) {
     increaseScroll();    
     
@@ -1323,38 +1406,134 @@ function chatSessionView(listMessage) {
     $('.chat-message.left').remove();
     
     var customPayload = JSON.parse(listMessage[0].response);
+
+    if(customPayload.historyList.length > 0) {
+        nowSessionId = customPayload.historyList[0].session_id;
+    }
     
-    for(var i=0; i<customPayload.data.length; i++) {
-        var mDate = customPayload.data[i].created_at;
+    //console.log('nowSessionId : '+nowSessionId);
+    for(var i=0; i<customPayload.historyList.length; i++) {
+        var mDate = customPayload.historyList[i].created_at;
+        //console.log('session_id : '+customPayload.historyList[i].session_id);
+        
         var arrDate = mDate.split('T');
         var arrTime = arrDate[1].split(':');
         var ampm = (arrTime[0] >= 12)? "오후":"오전";
         
         var viewDate = arrDate[0]+' '+ampm+' '+arrTime[0]+':'+arrTime[1];
         
-        if(customPayload.data[i].role == "user") {
+        if(customPayload.historyList[i].role == "user") {
             var statusMessage = $('<div class="chat-message right"></div>');
-            var statusDescBox = $('<div class="message">' + customPayload.data[i].content + '</div>');
+            var statusDescBox = $('<div class="message">' + customPayload.historyList[i].content + '</div>');
             var statusDate = $('<span class="message-date">'+viewDate+'</span>');
             
             statusMessage.append(statusDescBox);
             statusMessage.append(statusDate);
+            
+            $('#divScroll').append(statusMessage);
         }
         else{
+            
             var statusMessage = $('<div class="chat-message left"></div>');
             var profileCircle = $('<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/chem-profile.png"></div>');
         
             statusMessage.append(profileCircle);
         
-            var statusDescBox = $('<div class="message">' + customPayload.data[i].content + '</div>');
-            statusMessage.append(statusDescBox);
+            var customMessage = $('<div class="custom-message"></div>');
+        
+            var statusDescBox = $('<div id="answer-message" class="answer-message history-message caas-chat-response-message-back-color caas-chat-response-message-font-color" style="margin-top:0px;">'
+            //+'<div class="full-message" style="display:none">'+customPayload.historyList[i].content+'</div>'
             
+            +'<span class="check-text hidden-text" id="answer-result'+i+'">'
+            //+customPayload.historyList[i].content
+            +'</span></div>');
+            //+'<div>');
+            //$('<div class="answer-message">' + customPayload.historyList[i].content + '</div>');
+            
+            //printContentWithHighlight(customPayload.historyList[i].content);
+            //statusDescBox.append(printContentWithHighlight(customPayload.historyList[i].content, i));
+            
+            customMessage.append(statusDescBox);
+            statusMessage.append(customMessage);
+
             var statusDate = $('<span class="message-date">'+viewDate+'</span>');
             statusMessage.append(statusDate);
+            
+            $('#divScroll').append(statusMessage);
+            
+            printContentWithHighlight(customPayload.historyList[i].content, i);
         }
-        $('#divScroll').append(statusMessage);
+        //$('#divScroll').append(chatHistoryMessage);
     }
-     
+
+    //console.log('1111');    
+    hljs.highlightAll();
+    
+}
+
+const languageMap = new Map([
+  ["python", "python"],
+  ["파이썬", "python"],
+  ["파이선", "python"],
+  ["javascript", "javascript"], 
+  ["자바스크립트", "javascript"], 
+  ["JavaScript", "javascript"], 
+  ["js", "javascript"], 
+  ["java", "java"], 
+  ["자바", "java"], 
+  ["json", "json"], 
+  ["css", "css"],  
+  ["CSS", "css"],  
+  ["html", "html"], 
+  ["HTML", "html"],
+  ["xml", "xml"], 
+  ["SQL", "sql"], 
+  ["sql", "sql"], 
+  ["C++", "c++"],  
+  ["c++", "c++"],  
+  ["C언어", "c"],  
+  ["c언어", "c"]  
+  //,["C", "c"],  
+  //,["c", "c"] 
+]);
+
+function isIncludeLanguage(cont) {
+  for (let [key, value] of languageMap) {
+    if(cont.lastIndexOf(key) > -1)  {
+      return value;
+    }    
+  }
+}
+
+
+function printContentWithHighlight(content, idx) {
+    let str = content;
+    let target = "```";	
+    var answerId = "answer-result"+idx;
+
+    var rtnCont = "";
+    let strArr = str.split(target);
+    
+    for(var i=0; i<strArr.length; i++) {
+        //console.log(i+' : '+strArr[i]); 
+        
+        if(i%2 == 0) {
+            rtnCont += strArr[i];
+        }
+        else {
+            
+            let codeLang = isIncludeLanguage(strArr[i]);
+            let codeId = "code-result"+idx+"_"+i;
+            
+            //console.log('codeLang : '+codeLang);
+            let hightValue = strArr[i].replace(codeLang, '').replace('\n', '');           // 코드 language 지우기.
+            //let highValue = strArr[i];
+            
+            rtnCont += '<pre><small class="code-language-text"><span class="sr-only">Language:</span>'+codeLang+'</small><code>'+hightValue+'</code></pre>';
+        }
+    }
+    
+    $('#'+answerId).html(rtnCont);
 }
 
 /**
@@ -1385,11 +1564,17 @@ chatui.onReceiveResponse = function(resp) {
       
     if(resp.response.query.event == "callSessionList") {
         console.log('event : '+resp.response.query.event);
-        chatSessionList(resp.response.queryResult.messages);
+        chatSessionList(resp.response.query.event, resp.response.queryResult.messages);
         return;
     }
     
-    if(resp.response.query.event == "callSessionView") {
+    if(resp.response.query.event == "callSessionListByUserId") {
+        console.log('event : '+resp.response.query.event);
+        chatSessionList(resp.response.query.event, resp.response.queryResult.messages);
+        return;
+    }
+    
+    if(resp.response.query.event == "callhistoryView") {
         chatSessionView(resp.response.queryResult.messages);
         return;
     }
@@ -1742,10 +1927,13 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
         }
         else if(checkContentsText.length-textLimit > viewLimit){
             //console.log("2222");
+            
+            //answerStreaming(checkContentsText.substr(0,viewLimit));
             isCopyBtn = false;
             checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color">'
             +'<div class="full-message" style="display:none">'+checkContentsText+'</div>'
-            +'<span class="check-text hidden-text">'
+            +'<span class="check-text hidden-text" id="code-result">'
+            //+'</span></div>');
             +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
         }else{
             //console.log("3333");
@@ -2096,6 +2284,48 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
 
 }
 
+function answerStreaming(gptAnswer) {
+        const stream = new ReadableStream({
+          start(controller) {
+          console.log("start");
+          var msg = gptAnswer; //document.querySelector('.message').innerHTML;
+          let num = 0;
+          let len = msg.length;
+            const interval = setInterval(() => {
+                //controller.enqueue(num+' : '+msg.substr(num, 1));
+                controller.enqueue(msg.substr(num, 1));
+                num++;
+                if (num == len) {
+                    controller.close();
+                    clearInterval(interval);
+                }
+            }, 100);
+        },
+    });
+    
+    var textVal = "";
+    const reader = stream.getReader();
+    reader.read().then(function print({ done, value }) {
+        if (done)  {
+            $(".blinking-cursor").remove();
+            return console.log("done");
+        }
+        //console.log({ value });
+        //document.getElementById("result").append(value);
+        //hljs.highlightAll();
+        //$("#hide-message").append(value);
+    
+        
+        textVal = textVal + value;
+        //var highValue = hljs.highlight(textVal,  { language: "javascript" }).value;
+        var cursorHtml = '<span class="blinking-cursor">●</span>';
+    
+        $("#code-result").html(textVal+cursorHtml); //+'<span class="blinking-cursor">|</span>'
+        
+        reader.read().then(print);
+    });            
+}
+
 // 2023.11.27 반응형 UI Start
 let delay = 100;
 let timer = null;
@@ -2183,21 +2413,28 @@ function customMessageResize() {
               var viewLimit = viewTextLimit(answerWidth);
               
               console.log('answer-message width : '+$(this).width());
-              console.log('viewLimit...'+viewLimit);
+              console.log('viewLimit...'+viewLimit+', viewTextLength : '+viewTextLength);
 
               $(this).find('.full-message').remove();
               $(this).find('.copy-question').remove();
               $(this).find('.see-more').remove();
               
-              if(viewLimit < viewTextLength) {
-                  newContentText = fullText.substr(0,viewLimit)+"...";
-                  $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>');
-                  
-                  $(this).append(appendAnswerButton('more', fullText));
+              if($('.history-message').length > 0) {            // 세션이력 메시지의 경우는 일단. 전체보기/답변복사 버튼 없이. 
+                  console.log('history...');
+                  newContentText = fullText;
               }
               else{
-                  newContentText = fullText;
-                  $(this).append(appendAnswerButton('copy'));
+                  console.log('not history...');
+                  if(viewLimit < viewTextLength) {
+                      newContentText = fullText.substr(0,viewLimit)+"...";
+                      $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>');
+                      
+                      $(this).append(appendAnswerButton('more', fullText));
+                  }
+                  else{
+                      newContentText = fullText;
+                      $(this).append(appendAnswerButton('copy'));
+                  }
               }
               $(this).find(".hidden-text").html(newContentText);
               
