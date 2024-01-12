@@ -149,8 +149,8 @@ $('document').ready(function() {
             $("#popBox").css("height", chatPannelHeight);
          }
 
-         if (!document.getElementById("float-chatbot-chat-iframe").isLoaded) {
-            document.getElementById("float-chatbot-chat-iframe").isLoaded = true;
+         //if (!document.getElementById("float-chatbot-chat-iframe").isLoaded) {                // 2024.1.10 수정:if문 주석처리
+            //document.getElementById("float-chatbot-chat-iframe").isLoaded = true;             // 2024.1.10 수정: 주석처리
 
             var params = {
                languageCode: "ko",                             // Front UI Default 파라미터
@@ -160,10 +160,11 @@ $('document').ready(function() {
       
             var url = Chatbot.Server_Domain+"/"+Chatbot.Chembot_ChatbotID+"/chat";
 
+            console.log('loading...');
             openChatFrame(url, "float-chatbot-chat-iframe", params);
 
             
-         }
+         //}                                                                                    // 2024.1.10 수정: 주석처리
       
       }
    }, false);
