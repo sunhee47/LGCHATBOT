@@ -784,6 +784,8 @@ chatui.onLoad = function(){
   
   setLeftMenuHeight('.test-panel .panel-wrapper .chat-panel .chat-body .list-menu');
   
+  $('#divScroll').append('<div class="chat-body-back hide"></div>');
+  
 // 2023.11.30 대화세션 관리 End
 
   $('.sendText').on('keyup', function(e) {
@@ -1239,6 +1241,7 @@ chatui.onLoad = function(){
 
       if(currentWidth > 560) {
         if($(this).hasClass("on")) {        // 창이 560px 보다 크면 대화세션 열기를 하면 좌측 대화세션 목록을 연다.
+            //$('.chat-body-back').removeClass('hide');
             chatui.sendEventMessage("callSessionListByUserId",paramInfo);
             showListMenu('left', 'open');
         } else{
@@ -1257,10 +1260,6 @@ chatui.onLoad = function(){
 
   });
   
-  //var script = document.createElement('script');
-  //script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
-  //document.head.appendChild(script);
-
     var hlscriptSrc = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
     loadScript(hlscriptSrc, function() {
         // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
@@ -1286,7 +1285,6 @@ var nowSessionId = null;            // 대화이력이 보여지는지 여부를
  * 대화세션목록을 출력한다. 
  */
 function chatSessionList(listEvent, listMessage) {
-    
     $('.chat-message.left').last().remove();    
     
     var customPayload = JSON.parse(listMessage[0].response);
@@ -1309,14 +1307,16 @@ function chatSessionList(listEvent, listMessage) {
             firstSessionId = customPayload.data[i].id;
         }
         menuTopList += '<li class="list-detail" data-message="'+customPayload.data[i].id+'">'
-                    +'<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png"/>'
+                    +'<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png" style="width:20px;height:20px;"/>'
                     +customPayload.data[i].name+'</span>'
-                    +'<span class="list-delete"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-delete.png"/></span></li>'
+                    + '&nbsp;&nbsp;<span class="plugin-tag">'+customPayload.data[i].pluginType+'</span>'
+                    +'<span class="list-delete"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-delete.png" style="width:20px;height:20px;"/></span></li>'
 
         menuLeftList += '<li class="list-detail" data-message="'+customPayload.data[i].id+'">'
-                    + '<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png"/>'
+                    + '<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png" style="width:20px;height:20px;"/>'
                     +customPayload.data[i].name+'</span>'
-                    +'<span class="list-delete"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-delete.png"/></span></li>'
+                    + '&nbsp;&nbsp;<span class="plugin-tag">'+customPayload.data[i].pluginType+'</span>'
+                    +'<span class="list-delete"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-delete.png" style="width:20px;height:20px;"/></span></li>'
 
     }
 
@@ -1328,6 +1328,9 @@ function chatSessionList(listEvent, listMessage) {
     if(listEvent == "callSessionListByUserId" && nowSessionId == null) {    // 1. 화면 로딩시에 대화세션 목록만,  2. 다른 history를 보고 있을때 대화세션목록을 펼치면 다시 로딩하지 않음.
         chatSessionView(listMessage);
     }
+    else{
+        $('.chat-body-back').addClass('hide');
+    }
     
     selectSession(((nowSessionId == null)?firstSessionId:nowSessionId));
     
@@ -1335,6 +1338,7 @@ function chatSessionList(listEvent, listMessage) {
   $('.view').on('click', function(e) {
       var data = $(this).closest('li').attr('data-message'); 
       
+      //$('.chat-body-back').removeClass('hide');
       //console.log('session id : '+data);
       var paramInfo = {
             session_id: data                    
@@ -1400,16 +1404,18 @@ function selectSession(selectId) {
  * 선택한 대화세션의 대화내역을 보여주는 함수. 
  */
 function chatSessionView(listMessage) {
-    increaseScroll();    
+    //increaseScroll();    
     
     $('.chat-message.right').remove();
     $('.chat-message.left').remove();
-    
+
     var customPayload = JSON.parse(listMessage[0].response);
 
     if(customPayload.historyList.length > 0) {
         nowSessionId = customPayload.historyList[0].session_id;
     }
+    
+    $('.chat-body-back').addClass('hide');
     
     //console.log('nowSessionId : '+nowSessionId);
     for(var i=0; i<customPayload.historyList.length; i++) {
