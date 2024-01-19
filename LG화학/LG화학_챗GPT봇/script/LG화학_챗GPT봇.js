@@ -369,7 +369,7 @@ function resizeTA(obj) {
 function checkByteSize(obj) {
     let overYn = false;
     let stringSize = 0;
-    let maxByte = 4096;
+    let maxByte = 5120;
     let stringVal = obj;
     let stringLen = obj.length;
 /*
@@ -427,7 +427,7 @@ function checkByteSize(obj) {
      }
     console.log("rbyte : "+rbyte +" Bytes");
     if(rbyte > maxByte){
-        viewAlertPop("입력 사이즈는 4096 byte를 초과할 수 없습니다.");
+        viewAlertPop("입력 사이즈는 5120 byte를 초과할 수 없습니다.");
         overYn = true;
         str2 = stringVal.substr(0,rlen);
         $('.sendText').val(str2);
