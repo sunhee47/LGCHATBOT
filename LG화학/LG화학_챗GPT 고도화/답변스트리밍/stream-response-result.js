@@ -108,12 +108,12 @@ const generate = async () => {
               
           //console.log('arrResult length : '+arrResult.length);
           
-          console.log('before tiem : '+ new Date());
+          console.log('before time : '+ new Date());
 
           const wait = await printResponse(arrResult, no);
           console.log('wait > '+wait);
 
-          console.log('after tiem : '+ new Date());
+          console.log('after time : '+ new Date());
           no++;
   
       } // end while.
