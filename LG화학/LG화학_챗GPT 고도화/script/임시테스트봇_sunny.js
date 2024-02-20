@@ -23,7 +23,7 @@ function dictDetailClose() {
   $('#dictDetail').removeClass('show');
   $('.plugin-dim').removeClass('show');
   setTimeout(function() {
-    $('.plugin-dim').remove();
+    $('.plugin-dim').remove(); 
     $('#dictDetail').remove();
   }, 300);
 } 
@@ -718,7 +718,10 @@ const popup = function() {
           }
       });
  });
- 
+
+// 메시지 전송 후 로딩 답변 표시하지 않음
+chatui.setSetting("showLoadingMessage", false);
+
 chatui.onLoad = function(){
     console.log("gpt봇 onLoad");
     console.log("param : "+window.location.search);
@@ -765,6 +768,7 @@ chatui.onLoad = function(){
 
   );
   
+/*
   $(".test-panel .panel-wrapper .chat-panel .form-group").empty();
 //   $(".test-panel .panel-wrapper .chat-panel .form-group").append('<input type="text" class="sendText form-control test-sentence-input caas-chat-input-back-color caas-chat-input-font-color ui-autocomplete-input" placeholder="질문을 입력해주세요" autocomplete="off">');
   $(".test-panel .panel-wrapper .chat-panel .form-group").append('<textarea type="text" style="resize:none" class="sendText form-control test-sentence-input caas-chat-input-back-color caas-chat-input-font-color ui-autocomplete-input" placeholder="메시지를 입력해 주세요."></textarea>');
@@ -774,6 +778,43 @@ chatui.onLoad = function(){
      alert("이전 대화 보기 api 호출!!"); 
   });
 //   $('#divScroll').append(beforeConv);
+*/
+
+  $(".test-panel .panel-wrapper .chat-panel .form-group").empty();
+
+  $(".test-panel .panel-wrapper .chat-panel .form-group").append('<div class="send-more">'
+  + '<div class="set1">'
+  +  '<svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +    '<path d="M8.75 14.9999C8.75 14.5028 9.15294 14.0999 9.65 14.0999H14.5999V9.15C14.5999 8.65294 15.0028 8.25 15.4999 8.25C15.9969 8.25 16.3999 8.65294 16.3999 9.15V14.0999H21.35C21.8471 14.0999 22.25 14.5028 22.25 14.9999C22.25 15.4969 21.8471 15.8999 21.35 15.8999H16.3999V20.85C16.3999 21.3471 15.9969 21.75 15.4999 21.75C15.0028 21.75 14.5999 21.3471 14.5999 20.85V15.8999H9.65C9.15294 15.8999 8.75 15.4969 8.75 14.9999Z" />'
+  +    '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.5 0C7.21573 0 0.5 6.71573 0.5 15C0.5 23.2843 7.21573 30 15.5 30C23.7843 30 30.5 23.2843 30.5 15V4.5C30.5 2.01472 28.4853 0 26 0H15.5ZM26 1.8H15.5C8.20984 1.8 2.3 7.70984 2.3 15C2.3 22.2902 8.20984 28.2 15.5 28.2C22.7902 28.2 28.7 22.2902 28.7 15V4.5C28.7 3.00883 27.4912 1.8 26 1.8Z"/>'
+  +  '</svg>'
+  +'</div>'
+  +'<div class="set2">'
+  +  '<svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +    '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.5 0C7.21573 0 0.5 6.71573 0.5 15C0.5 23.2843 7.21573 30 15.5 30C23.7843 30 30.5 23.2843 30.5 15V4.5C30.5 2.01472 28.4853 0 26 0H15.5ZM11.6363 9.86346C11.2848 9.51199 10.7149 9.51199 10.3635 9.86346C10.012 10.2149 10.012 10.7848 10.3635 11.1363L14.2271 14.9999L10.3635 18.8635C10.012 19.2149 10.012 19.7848 10.3635 20.1362C10.7149 20.4877 11.2848 20.4877 11.6363 20.1362L15.4999 16.2726L19.3635 20.1363C19.7149 20.4877 20.2848 20.4877 20.6362 20.1363C20.9877 19.7848 20.9877 19.2149 20.6362 18.8635L16.7726 14.9999L20.6362 11.1363C20.9877 10.7848 20.9877 10.2149 20.6362 9.86346C20.2848 9.51199 19.7149 9.51199 19.3635 9.86346L15.4999 13.7271L11.6363 9.86346Z" fill="#2C2C2C"/>'
+  +  '</svg>            '
+  +'</div>'
+  +'</div>');
+
+  var formGroup = $('<div data-mode="message" class="chat-footer-form">'
+  //+'<input type="text" class="sendText form-control test-sentence-input caas-input-placeholder-font-color caas-input-font-color chat-input-msg ui-autocomplete-input" placeholder="메시지를 입력해 주세요." autocomplete="off"/>'
+  //+'<div class="autocomplete-wrap"></div>'
+  //+'<button type="button" class="btn btn-trans btn-send"><svg width="29" height="28" viewBox="0 0 29 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  //+'<path d="M26.0676 4.79338C26.554 3.3341 25.1657 1.94578 23.7064 2.43221L4.10954 8.96451C2.53186 9.4904 2.37758 11.6613 3.86504 12.405L10.2305 15.5877C10.9042 15.9246 11.7179 15.7925 12.2505 15.2599L20.206 7.30442C20.4794 7.03106 20.9226 7.03106 21.1959 7.30442C21.4693 7.57779 21.4693 8.02101 21.1959 8.29437L13.2403 16.25C12.7077 16.7826 12.5756 17.5964 12.9125 18.2701L16.0948 24.6348C16.8386 26.1222 19.0094 25.968 19.5353 24.3903L26.0676 4.79338Z"/>'
+  //+'</svg></button>'
+  +'<textarea type="text" style="resize:none" class="sendText form-control test-sentence-input caas-chat-input-back-color caas-chat-input-font-color ui-autocomplete-input" placeholder="메시지를 입력해 주세요."></textarea>'
+  +'<button class="btn btn-trans btn-send caas-chat-send-icon-color"><svg width="29" height="28" viewBox="0 0 29 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26.0676 4.79338C26.554 3.3341 25.1657 1.94578 23.7064 2.43221L4.10954 8.96451C2.53186 9.4904 2.37758 11.6613 3.86504 12.405L10.2305 15.5877C10.9042 15.9246 11.7179 15.7925 12.2505 15.2599L20.206 7.30442C20.4794 7.03106 20.9226 7.03106 21.1959 7.30442C21.4693 7.57779 21.4693 8.02101 21.1959 8.29437L13.2403 16.25C12.7077 16.7826 12.5756 17.5964 12.9125 18.2701L16.0948 24.6348C16.8386 26.1222 19.0094 25.968 19.5353 24.3903L26.0676 4.79338Z"></path></svg></button>'  
+  +'</div>');
+
+  $('.test-panel .panel-wrapper .chat-panel .form-group').append(formGroup);
+
+
+  $('.test-panel .panel-wrapper .chat-panel .form-group').append('<span class="search-close">'
+  +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  + '<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"/>'
+  +'</svg>'
+  +'</span>');
+
 
 // 2023.11.30 대화세션 관리 Start
     $(".test-panel .panel-wrapper .chat-panel .chat-discussion").before('<div class="chat-body"><div class="list-menu">'
@@ -782,11 +823,113 @@ chatui.onLoad = function(){
   +'</div>'
     );
   
-  setLeftMenuHeight('.test-panel .panel-wrapper .chat-panel .chat-body .list-menu');
+  //setLeftMenuHeight('.test-panel .panel-wrapper .chat-panel .chat-body .list-menu');
   
   $('#divScroll').append('<div class="chat-body-back hide"></div>');
-  
 // 2023.11.30 대화세션 관리 End
+
+  $('.test-panel .panel-wrapper .chat-panel').append(
+	'<div class="popup chat-addPrompt" data-popup="chat-addPrompt">'
+    +    '<div class="pop-info" style="top: 362.224px;">'
+    +        '<div class="clear-float">'
+    +            '<h4 class="pull-left">내 프롬프트 만들기</h4>'
+    +            '<button class="pull-right btn btn-xs btn-trans btn-close smooth" data-popup-close="chat-addPrompt" aria-label="Close">'
+    +                '<span class="icon icon-lg-close" aria-hidden="true"></span>'
+    +            '</button>'
+    +        '</div>'
+    +        '<div class="pop-content">'
+    +            '<span data-lang-html-id="addPrompt.chatbot_info_text"></span>'
+    +            '<div class="title">'
+    +            '<h5 class="pull-left">프롬프트 제목을 입력해 주세요.<span class="require">*</span></h5>'
+    +            '</div>'
+    +            '<div class="text">'
+    +                '<input type="text" class="form-control"/>'
+    +            '</div></br>'
+    +            '<div class="title">'
+    +            '<h5 class="pull-left">사용자 정보(질문 배경/지식 수준등)를 입력해 주세요.<span class="require">*</span></h5>'
+    +            '</div>'
+    +            '<div class="textarea">'
+    +                '<textarea rows="5" class="form-control"></textarea>'
+    +            '</div></br>'
+    +            '<div class="title">'
+    +            '<h5 class="pull-left">원하는 답변 형식 또는 말투를 입력해 주세요.<span class="require">*</span></h5>'
+    +            '</div>'
+    +            '<div class="textarea">'
+    +                '<textarea rows="5" class="form-control"></textarea>'
+    +            '</div>'
+    +        '</div>'
+    +        '<div class="pop-btn pull-right">'
+    //+            '<button class="btn outline-btn-white large-style" data-popup-close="chat-feedback" data-lang-text-id="cancel">취소</button>'
+    +            '<button class="btn btn-send fill-btn-dark large-style" data-lang-text-id="ok">확인</button>'
+    +        '</div>'
+    +    '</div>'
+    +'</div>');
+
+
+  $('.test-panel .panel-wrapper .chat-panel').append(
+  '<div class="select-panel model-prompt">'
+  +'<div class="select-list">'
+  +   '<div class="select-header">'
+  +     '<h1></h1>'
+  +     '<div class="input-collapse">'
+  +       '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +         '<path d="M1.74478 0.75483C1.47141 0.481463 1.0282 0.481463 0.75483 0.75483C0.481463 1.0282 0.481463 1.47141 0.75483 1.74478L9.00997 9.99992L0.755059 18.2548C0.481691 18.5282 0.481691 18.9714 0.755059 19.2448C1.02843 19.5181 1.47164 19.5181 1.74501 19.2448L9.99992 10.9899L18.2548 19.2448C18.5282 19.5181 18.9714 19.5181 19.2448 19.2448C19.5181 18.9714 19.5181 18.5282 19.2448 18.2548L10.9899 9.99992L19.245 1.74478C19.5184 1.47141 19.5184 1.0282 19.245 0.75483C18.9716 0.481463 18.5284 0.481463 18.2551 0.75483L9.99992 9.00997L1.74478 0.75483Z" fill="#2C2C2C"/>'
+  +       '</svg>'
+  +     '</div>'
+  +   '</div>'
+  +   '<div class="select-body">'
+  +     '<h1>AI Model 선택</h1>'
+  +     '<div class="btns">'
+  +         '<button type="button" class="btn-s btn-text btn-sendModel">GPT 3.5 Turbo</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendModel">DALL-E</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendModel btn-highlight">CLOVA X</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendModel">Bard</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendModel">엑사원</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendModel">Claude2</button>'
+  +     '</div>'
+  +     '<h1></h1>'
+  +     '<div class="btns">'
+  +     '</div>'
+  +     '<h1>대화 스타일 선택</h1>'
+  +     '<div class="btns">'
+  +     '<button type="button" class="btn-s btn-text btn-sendPrompt btn-highlight">선택 안함</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendPrompt">챗봇프롬프트1</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendPrompt">챗봇프롬프트2</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendPrompt">프롬프트3</button>'
+  +     '<button type="button" class="btn-s btn-text btn-makePrompt">+프롬프트 만들기</button>'
+  +     '</div>'
+  +   '</div>'
+  +'</div>'
+  +'</div>');
+
+  $('.send-more').on('click', function() {
+    if($(this).hasClass('active')) {
+      $(this).removeClass('active');
+      $('.model-prompt').removeClass('show');
+    } else {
+        //console.log('show...');
+      $(this).addClass('active');
+      $('.model-prompt').addClass('show');
+    }
+  });
+
+  $("#divScroll, .input-collapse").on('click', function(){
+        if($('.model-prompt').hasClass('show')) {
+          $('.model-prompt').removeClass('show');
+          $('.send-more').removeClass('active');  
+        }
+  });
+
+  // 프롬프트 만들기 버튼 클릭시.
+  $('.btn-makePrompt').on('click', function() {
+      $('.chat-addPrompt').fadeIn(300);
+    
+      setTimeout(function() {
+        var popInH = $('.chat-addPrompt .pop-info').height()
+        $('.chat-addPrompt .pop-info').css('top', window.innerHeight - popInH + 'px');
+      }, 300);
+      
+  });
 
   $('.sendText').on('keyup', function(e) {
     var val = $(this).val();
@@ -806,8 +949,9 @@ chatui.onLoad = function(){
         if(!e.shiftKey){
           var sessionId = chatui.getSessionId();
           appendQueryText(val);
-          chatui.sendEventMessage("requestChatGPT",{"reqText":val});
+          //chatui.sendEventMessage("requestChatGPT",{"reqText":val});
           //chatui.sendEventMessage("requestWeb",{"reqText":val});
+          customui.sendEventMessage("requestWeb",{"reqText":val});
 
           $('.sendText').val('');
           $('.btn-send').removeClass('active');
@@ -1226,6 +1370,7 @@ chatui.onLoad = function(){
 
     var paramInfo = {
         userId: chatui.getSetting("userId")                    // Front UI에서 사용하는 User ID (암호화)
+        //, eventFrom: "welcome"
     };
 
     //console.log('userId : '+chatui.getSetting("userId"));
@@ -1237,27 +1382,21 @@ chatui.onLoad = function(){
       
         var paramInfo = {
             userId: chatui.getSetting("userId")                    // Front UI에서 사용하는 User ID (암호화)
+            // , eventFrom: "list"
         };
 
-      if(currentWidth > 560) {
         if($(this).hasClass("on")) {        // 창이 560px 보다 크면 대화세션 열기를 하면 좌측 대화세션 목록을 연다.
             //$('.chat-body-back').removeClass('hide');
-            chatui.sendEventMessage("callSessionListByUserId",paramInfo);
+            
+            chatui.sendEventMessage("callSessionListByUserId",paramInfo);       // param에 따라서 history 같이 조회 / 아니면 목록만, 인턴트 수정하기. 
+            //sendEventMessage("callSessionListByUserId",paramInfo);
+            
             showListMenu('left', 'open');
+            //$('#divScroll').children('.t-date').focus();
+            //increaseScroll();
         } else{
             showListMenu('left', 'close');
         }
-         customMessageResize();             // 좌측대화세션 목록을 열고 닫을때 커스텀대화창의  resize를 체크해야 한다. 
-      }
-      else{
-        if($(this).hasClass("on")) {
-            chatui.sendEventMessage("callSessionListByUserId",paramInfo);
-            showListMenu('top', 'open');
-        } else {
-            showListMenu('top', 'close');
-        }      
-      }
-
   });
   
     var hlscriptSrc = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
@@ -1271,7 +1410,7 @@ chatui.onLoad = function(){
 
 function loadScript(src, callback) {
     let script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+    script.src = src;
     
     // 추가할 스크립트 태그의 load 이벤트 설정
     // https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event
@@ -1280,21 +1419,28 @@ function loadScript(src, callback) {
     document.head.appendChild(script);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 var nowSessionId = null;            // 대화이력이 보여지는지 여부를 확인. 
 /*
  * 대화세션목록을 출력한다. 
  */
 function chatSessionList(listEvent, listMessage) {
-    $('.chat-message.left').last().remove();    
+    //$('.chat-message.left').last().remove();    
+    
+    if(listEvent == 'callSessionList') {                // 화면 로딩시 한번 대화세션목록 가져올때 welcome이벤트와 같이 실행이 되니, 확인하고 메시지 삭제.
+        $('.chat-message.left').each(function() {
+            if($(this).children('.custom-message').length == 1) {
+    //            $(this).remove();
+            }
+        });
+    }
+    else{
+//        $('.chat-message.left').last().remove();    
+    }
     
     var customPayload = JSON.parse(listMessage[0].response);
     
-    //console.log('customPayload > ', customPayload.data);
-    var menuTopList = '<li style="text-align: center;font-weight: 700;">대화 세션'
-                +'</li>'
-                +'<li style="text-align: center;"><span class="new">+ New Chat</span>'
-                +'</li>';
-
     var menuLeftList = '<div class="list-menu-header">'
                  +'<span class="menu-title">대화세션</span>'
                  +'<span class="menu-title new" style="cursor: pointer;">+ New Chat</span>'
@@ -1306,11 +1452,6 @@ function chatSessionList(listEvent, listMessage) {
         if(i==0) {
             firstSessionId = customPayload.data[i].id;
         }
-        menuTopList += '<li class="list-detail" data-message="'+customPayload.data[i].id+'">'
-                    +'<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png" style="width:20px;height:20px;"/>'
-                    +customPayload.data[i].name+'</span>'
-                    + '&nbsp;&nbsp;<span class="plugin-tag">'+customPayload.data[i].pluginType+'</span>'
-                    +'<span class="list-delete"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-delete.png" style="width:20px;height:20px;"/></span></li>'
 
         menuLeftList += '<li class="list-detail" data-message="'+customPayload.data[i].id+'">'
                     + '<span class="view"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-row.png" style="width:20px;height:20px;"/>'
@@ -1322,17 +1463,13 @@ function chatSessionList(listEvent, listMessage) {
 
     menuLeftList += '</ul>';
     
-    $(".test-panel .panel-wrapper .chat-panel .info-area .list-menu-body" ).empty().append(menuTopList);
     $(".test-panel .panel-wrapper .chat-panel .chat-body .list-menu").empty().append(menuLeftList);
 
     if(listEvent == "callSessionListByUserId" && nowSessionId == null) {    // 1. 화면 로딩시에 대화세션 목록만,  2. 다른 history를 보고 있을때 대화세션목록을 펼치면 다시 로딩하지 않음.
-        chatSessionView(listMessage);
+    //    chatSessionView(listMessage);
     }
-    else{
-        $('.chat-body-back').addClass('hide');
-    }
-    
-    selectSession(((nowSessionId == null)?firstSessionId:nowSessionId));
+
+    selectSession(nowSessionId);
     
   // 대화세션 상세보기 
   $('.view').on('click', function(e) {
@@ -1344,13 +1481,12 @@ function chatSessionList(listEvent, listMessage) {
             session_id: data                    
             , user_id : chatui.getSetting("userId") 
         };
-      chatui.sendEventMessage("callhistoryView",paramInfo);
+      //chatui.sendEventMessage("callhistoryView",paramInfo);
+      customui.sendEventMessage("callhistoryView",paramInfo);
       
       selectSession(data);
       
-      if($(topChatSessionList).hasClass('top-menu')) {
-          showListMenu('top', 'close');
-      }
+      showListMenu('left', 'close');
   });
   // 대화세션 삭제
   $('.list-delete').on('click', function(e) {
@@ -1378,10 +1514,6 @@ function chatSessionList(listEvent, listMessage) {
     $('.chat-message.right').each(function() {
         $(this).remove();
     });
-    
-    if($(topChatSessionList).hasClass('top-menu')) {
-        showListMenu('top', 'close');
-    }
     
     selectSession();
   });
@@ -1415,7 +1547,7 @@ function chatSessionView(listMessage) {
         nowSessionId = customPayload.historyList[0].session_id;
     }
     
-    $('.chat-body-back').addClass('hide');
+    //$('.chat-body-back').addClass('hide');
     
     //console.log('nowSessionId : '+nowSessionId);
     for(var i=0; i<customPayload.historyList.length; i++) {
@@ -1475,6 +1607,7 @@ function chatSessionView(listMessage) {
     //console.log('1111');    
     hljs.highlightAll();
     
+    descendScroll();
 }
 
 const languageMap = new Map([
@@ -1566,6 +1699,11 @@ chatui.onReceiveResponse = function(resp) {
   loading = false;
   $('#btn-answer').removeClass('btn-disabled');
 
+  customui.removeLoadingChatMessage(customui.getLoadinId());
+  if(resp.response.query.event == "callSessionListByUserId" || resp.response.query.event == "callSessionList") {      
+    resp.isHandled = true;
+  }
+  
   setTimeout(function() {
       
     if(resp.response.query.event == "callSessionList") {
@@ -1586,6 +1724,7 @@ chatui.onReceiveResponse = function(resp) {
     }
 
     if(resp.response.query.event == "Welcome") {
+        console.log('event : '+resp.response.query.event);
       if(chatui.getParameter("queryText")) {
           var sessionId = chatui.getSessionId();
           appendQueryText(chatui.getParameter("queryText"));
@@ -2351,7 +2490,7 @@ $(window).resize(function(){
   timer = setTimeout(function(){
       console.log('window width : '+$(window).width());
       console.log('window height : '+$(window).height());
-    
+/*    
     // 브라우저 크기 변경마다 left 메뉴 높이 세팅.   
     setLeftMenuHeight('.test-panel .panel-wrapper .chat-panel .chat-body .list-menu');
     $('.test-panel .panel-wrapper .chat-panel .form-group').css('width', '100%');
@@ -2383,7 +2522,7 @@ $(window).resize(function(){
         } 
       }
       // 2023.11.30 대화세션관리 End
-      
+*/      
      customMessageResize();
      
   }, delay);
@@ -2458,19 +2597,24 @@ function showListMenu(menuPosition, menuSwitch) {
             $('.open-menu').addClass("off").removeClass("on");
             $('.open-menu').children('img').attr('src', 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-left-close1.png');
             $(leftChatSessionList).addClass('left-menu');
+            $(leftChatSessionList).css({"display":"block"});
             $(leftChatSessionList).fadeIn();
-            $('.test-panel .panel-wrapper .chat-panel .chat-discussion').css('margin-left', '220px');
-            $('.test-panel .panel-wrapper .chat-panel .form-group').css('margin-left', '220px');
-            $('.test-panel .panel-wrapper .chat-panel .form-group').css('width', $(window).width()-220+'px');
+            //$(leftChatSessionList).slideToggle("slow");
+            //$('.test-panel .panel-wrapper .chat-panel .chat-discussion').css('margin-left', '220px');
+            //$('.test-panel .panel-wrapper .chat-panel .form-group').css('margin-left', '220px');
+            //$('.test-panel .panel-wrapper .chat-panel .form-group').css('width', $(window).width()-220+'px');
         }
         else{                                               // 좌측 대화세션이 닫힐때 
             $('.open-menu').addClass("on").removeClass("off");
             $('.open-menu').children('img').attr('src', 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/4f374d81-ddfd-435e-a223-67be00ebe4e3/images/icon-menu.png');
-            $('.test-panel .panel-wrapper .chat-panel .form-group').css('width', '100%');
-            $('.test-panel .panel-wrapper .chat-panel .chat-discussion').css('margin-left', '0px');
-            $('.test-panel .panel-wrapper .chat-panel .form-group').css('margin-left', '0px');
+            //$('.test-panel .panel-wrapper .chat-panel .form-group').css('width', '100%');
+            //$('.test-panel .panel-wrapper .chat-panel .chat-discussion').css('margin-left', '0px');
+            //$('.test-panel .panel-wrapper .chat-panel .form-group').css('margin-left', '0px');
             $(leftChatSessionList).removeClass('left-menu');
             $(leftChatSessionList).fadeOut();
+            $(leftChatSessionList).css({"display":"none"});
+            //$(leftChatSessionList).css({"z-index":"9"});
+            //$(leftChatSessionList).slideToggle("slow");
         }
         
     }
@@ -2495,7 +2639,9 @@ function showListMenu(menuPosition, menuSwitch) {
 * 브라우저 창 크기에 따라서 보여주는 함수. 2023.11.27
 */
 function viewTextLimit(viewWidth) {
-    var menuVal = ($(leftChatSessionList).hasClass("left-menu"))? 220:0;            // 좌측 대화세션이 열려 있으면 그 부분만큼 제외함. 
+    //console.log('...'+$(leftChatSessionList).hasClass("left-menu"));
+    //var menuVal = ($(leftChatSessionList).hasClass("left-menu"))? 220:0;            // 좌측 대화세션이 열려 있으면 그 부분만큼 제외함. 
+    var menuVal = 0;
     objWidth = (viewWidth == null)? (($(window).width()-menuVal)*0.85)-36:viewWidth;
     
     console.log('objWith : '+objWidth);
@@ -2553,6 +2699,171 @@ function appendAnswerButton(gubun, fullText) {
     return answerButton;
 }
 // 2023.11.27 반응형 UI End
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// chatui 를 oerriding 한 함수.
+// 기본적으로 loading을 false 로 하고 답변 표시 되지 않음. 
+// 이 함수를 사용하면 loading : true, 답변 표시 됨. 
+const customui = (function() {
+    
+    let _loadingId = null;
+    
+    function setLoadingId(id) {
+        _loadingId = id;
+    }
+    
+    function getLoadinId() {
+        return _loadingId;
+    }
+    
+    function sendEventMessage(event, payload) { 
+        console.log('sendEventMessage :', event);
+        
+      _loadingId = uuid();
+      //setLoadingId(uuid());
+      appendLoadingChatMessage(_loadingId);
+    
+      chatui.sendEventMessage(event, payload);
+    }
+
+    
+    /**
+     * 로딩중 응답 Element 생성 및 대화 목록에 추가
+     */
+	function appendLoadingChatMessage(id, loadingText) {
+		//if (getSetting("showLoadingMessage") == false) {
+		//	return;
+		//}
+
+		if (id) {
+			var $chatMessage = null;
+
+			if (loadingText) {
+	    	//	var html = escapeHtml(loadingText) + " " + translate("wait"); // " 잠시만 기다려주세요."
+	        //	var $message = createDefaultMessage(html);
+	        //	$message.addClass("info-message loading-text");
+
+	        //	$chatMessage = createChatMessage($message);
+			} else {
+				var $message = $("<div class='message loading'/>");
+
+				if (chatui.getSetting("style") && chatui.getSetting("style")["responseMessageBackColor"]) {
+					$message.css("background-color", chatui.getSetting("style")["responseMessageBackColor"]);
+				}
+
+	        	$chatMessage = createChatMessage($message);
+			}
+
+        	$chatMessage.attr("id", "ID-" + id);
+        	appendChatMessage($chatMessage);
+		}
+	}
+
+	/**
+	 * 로딩중 응답 Element 삭제
+	 */
+	function removeLoadingChatMessage(id) {
+	    console.log('removeLoadingChatMessage.. '+id);
+		if (id) {
+			$("#ID-" + id).remove();
+			
+			_loadingId = null;
+
+		}
+	}
+
+    /**
+     * 응답 Element 생성
+     *
+     * @$messages 응답 메시지 또는 응답 메시지 배열
+     * @option 응답 옵션
+     * 		option.requestId 대화 요청 ID
+     * 		option.chatDate 대화 시간
+     * 		option.feedback 응답 피드백 표시 여부
+     */
+    function createChatMessage($messages, option) {
+        var $chatMessage = $("<div class='chat-message left'/>");
+
+        if (option && option.requestId) {
+        	$chatMessage.data("id", option.requestId);
+        }
+
+    	// 챗봇 아이콘
+        var iconUrl = "https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/chem-profile.png";//getStyleSetting("responseIcon", "/assets/img/icon-chtbot-message.png");
+        $chatMessage.append($("<div class='profile'/>").append($("<img class='img-circle'/>").attr("src", iconUrl)));
+
+        // 응답 메시지 리스트
+        if (Array.isArray($messages)) {
+            $messages.forEach(function($message) {
+            	$chatMessage.append($message);
+    	    });
+        } else {
+        	var $message = $messages;
+        	$chatMessage.append($message);
+        }
+
+        // 응답 피드백 아이콘
+        if (option && option.feedback) {
+		    var $feedback = createSingleFeedback(option.requestId);
+		    $chatMessage.append($feedback);
+        }
+
+	    // 응답 시간
+        var chatDate = (option && option.chatDate ? option.chatDate : null);
+        var time = getChatTime(chatDate);
+        $chatMessage.append($("<span class='message-date'>").text(time));
+
+    	return $chatMessage;
+    }
+
+    /**
+     * 대화 목록에 대화 내용 추가
+     */
+    function appendChatMessage($chatMessage) {
+        $("#divScroll").append($chatMessage);
+        //adjustCarousel();
+
+        // 마지막 대화 위치로 스크롤 이동
+        setTimeout(function () {
+            var divScroll = document.getElementById("divScroll");
+            divScroll.scrollTop = divScroll.scrollHeight;
+        }, 50);
+    }
+
+    /**
+     * UUID 생성
+     */
+    function uuid() {
+ 	   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+ 	      var r = Math.random() * 16 | 0, v = c == "x" ? r : (r & 0x3 | 0x8);
+ 	      return v.toString(16);
+ 	   });
+    }
+    
+    /**
+     * 대화 시간 문자열을 리턴한다.
+     */
+    function getChatTime(date) {
+        var ts = null;
+
+    	if (date) {
+    		ts = moment(date).format("a h:mm")
+    	} else {
+    		ts = moment().format("a h:mm");
+    	}
+
+    	return ts;
+    }
+    
+    return {
+        getLoadinId: getLoadinId,
+        removeLoadingChatMessage: function(id) { removeLoadingChatMessage(id); },
+        sendEventMessage: function(event, payload) { sendEventMessage(event, payload); }
+    }
+})();    
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /********************************************************** element *************************************************************************************/
 var loadEl = {
