@@ -1201,6 +1201,18 @@ chatui.onLoad = function(){
         
     }
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) End
+    
+    // Front UI Push 메시지 모니터링
+    setTimeout(() => {
+
+        $.getScript("https://storage.googleapis.com/singlex-chatbot-front/_common/chatclient-monitor/chatclient-monitor.min.js?t=" + Date.now(), function(data, textStatus,jqxhr) {
+
+            // 5분 주기로 모니터링 실행
+            chatuiMonitor.start(300);
+        });
+
+    }, 1000);  
+    
 };
 
 var saveQuestion = false;

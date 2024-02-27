@@ -1228,7 +1228,8 @@
 }
 /* GPT고도화 1차 2-2 */
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message {
-  max-width: 85%;
+  /*max-width: 85%; */  /* GPT고도화 1차 2-2 */
+  max-width: 280px;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -1458,8 +1459,10 @@
   margin-left: 40px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message .answer-message {
-  width: 100%;                  /* GPT고도화 1차 2-2 */
-  max-width: 100%;              /* GPT고도화 1차 2-2 */
+  /*width: 100%;*/                  /* GPT고도화 1차 2-2 */
+  /*max-width: 100%;*/              /* GPT고도화 1차 2-2 */
+  width: 280px;
+  max-width: 280px;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
