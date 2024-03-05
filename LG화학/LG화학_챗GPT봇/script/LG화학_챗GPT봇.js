@@ -1202,6 +1202,13 @@ chatui.onLoad = function(){
     }
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) End
     
+    
+    var hlscriptSrc = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+    loadScript(hlscriptSrc, function() {
+        // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+        //hljs.highlightAll();  // 이제 함수 호출이 제대로 동작합니다.
+    });
+    
     // Front UI Push 메시지 모니터링
     setTimeout(() => {
 
@@ -1214,6 +1221,17 @@ chatui.onLoad = function(){
     }, 1000);  
     
 };
+
+function loadScript(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    
+    // 추가할 스크립트 태그의 load 이벤트 설정
+    // https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event
+    script.onload = () => callback(script);
+    
+    document.head.appendChild(script);
+}
 
 var saveQuestion = false;
 
@@ -1486,20 +1504,20 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
         
         var isCopyBtn = false;
         if(checkContentsText.length<200) {
-            //console.log("1111");
+            console.log("1111");
             isCopyBtn = true;
             checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
             +checkContentsText+'</span></div>');
         }
         else if(checkContentsText.length-textLimit > viewLimit){
-            //console.log("2222");
+            console.log("2222");
             isCopyBtn = false;
             checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color">'
             +'<div class="full-message" style="display:none">'+checkContentsText+'</div>'
             +'<span class="check-text hidden-text">'
             +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
         }else{
-            //console.log("3333");
+            console.log("3333");
             isCopyBtn = true;
             checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
             +checkContentsText+'</span></div>');
@@ -1546,6 +1564,11 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
         
         customMessage.append(messages);
         customMessage.append(checkContents);
+        
+        /////////////////////////////////////// highlight 적용....
+        highlightCodeBlock(customMessage);
+        ///////////////////////////////////////
+        
         
     }else if(customPayload.type == 'requestEnd') {
       
@@ -2025,6 +2048,61 @@ function appendAnswerButton(gubun, fullText) {
 }
 
 ////// GPT고도화 1차 2-2 End
+
+const languageMap = new Map([
+  ["python", "python"],
+  ["파이썬", "python"],
+  ["파이선", "python"],
+  ["javascript", "javascript"], 
+  ["자바스크립트", "javascript"], 
+  ["JavaScript", "javascript"], 
+  ["js", "javascript"], 
+  ["java", "java"], 
+  ["자바", "java"], 
+  ["json", "json"], 
+  ["css", "css"],  
+  ["CSS", "css"],  
+  ["html", "html"], 
+  ["HTML", "html"],
+  ["xml", "xml"], 
+  ["SQL", "sql"], 
+  ["sql", "sql"], 
+  ["C++", "c++"],  
+  ["c++", "c++"],  
+  ["C언어", "c"],  
+  ["c언어", "c"]  
+  //,["C", "c"],  
+  //,["c", "c"] 
+]);
+
+function isIncludeLanguage(cont) {
+  for (let [key, value] of languageMap) {
+    if(cont.lastIndexOf(key) > -1)  {
+      return value;
+    }    
+  }
+}
+
+/*
+ * 코드 블럭이 있는 경우 
+ * 코드 블럭에 highlight 적용
+ */
+function highlightCodeBlock($customMessage) {
+    
+    console.log('....'+$customMessage.find('pre').find('code').length);
+
+    $customMessage.find('pre').find('code').each(function() {
+        var codehtml = $(this).html();
+        let codeLang = $(this).attr('class');
+        let realLang = isIncludeLanguage(codeLang);
+    
+        $(this).empty();
+        $(this).attr('data-highlighted', 'yes').addClass('hljs');
+            
+        $(this).before('<div class="code-language"><small class="code-language-text"><span class="sr-only">Language:</span>'+realLang+'</small></div>');
+        $(this).append(hljs.highlight(codehtml, { language: realLang }).value);
+    });
+}
 
 /********************************************************** element *************************************************************************************/
 var loadEl = {
