@@ -338,6 +338,18 @@ function appendQueryText(message) {
   $('#divScroll').append(chatMessage);
 }
 
+function appendWelcomeText(message) {
+    var chatMessage = '<div class="chat-message left">'
+    +'<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
+    +'<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"><div class="basic"><div class="message-content" style="white-space: pre-line">'
+    +message
+    +'</div></div></div>'
+    +'<span class="message-date">' + moment().format("a h:mm") + '</span>'
+    +'</div>';
+    $('#divScroll').append(chatMessage);
+    descendScroll();
+}
+
 function appendChatbotText(message) {
   var chatMessage = '<div class="chat-message left">'
   +'<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
@@ -1097,7 +1109,7 @@ const setAutocomplete = function() {
 
   // Set Autocomplete
   var keyword = [];
- 
+
   $(".test-sentence-input").on('keyup', function(e) {
     
       var $frmWrap = $(".chat-footer-form");
@@ -2303,6 +2315,9 @@ var welcomeClick = false;
 function welcomeAppend(welcomeMessage) {
 // if(welcomeMessage[0].response !== null) $('.chat-message.left').last().remove();
   $('.chat-message.left').last().remove();
+  if(welcomeMessage[0].panelType === "error"){
+    appendWelcomeText("안녕하세요, 스마트 업무비서 케미입니다. 오늘도 좋은 하루 보내세요!");
+  }else{
   if(JSON.parse(welcomeMessage[0].response)) {
     var todaySchedule = JSON.parse(welcomeMessage[0].response).template.outputs[0];
   var ecmUpdateCount = JSON.parse(welcomeMessage[3].response).template.outputs[0];
@@ -2446,7 +2461,7 @@ function welcomeAppend(welcomeMessage) {
 
   descendScroll();
   }
-  
+  }
 }
 
 var smsNames = '';
@@ -3418,6 +3433,16 @@ jQuery(document).ready(function(e){
     }
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) End
   
+    // Front UI Push 메시지 모니터링
+    setTimeout(() => {
+
+        $.getScript("https://storage.googleapis.com/singlex-chatbot-front/_common/chatclient-monitor/chatclient-monitor.min.js?t=" + Date.now(), function(data, textStatus,jqxhr) {
+
+            // 5분 주기로 모니터링 실행
+            chatuiMonitor.start(300);
+        });
+
+    }, 1000);  
 });
 //ready end
 
@@ -6326,7 +6351,7 @@ return messageWeather;
   })
 
   smsBtns.append(smsBtn);
-  smsCard.append(smsBtns);
+  smsCard.append(smsBtns); 
 
   return smsCard;
 }
