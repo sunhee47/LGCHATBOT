@@ -75,6 +75,10 @@ function resGptAllText(text) {
     dictDetail.append(dictDetail1);
     dictDetail.append(dictDetail2);
 
+    /////////////////////////////////////// highlight 적용....
+    highlightCodeBlock(dictDetail);
+    ///////////////////////////////////////
+
     $('.test-panel').append(pulginDim);
     $('.test-panel').append(dictDetail);
 
@@ -1583,15 +1587,15 @@ function chatSessionView(listMessage) {
             //+'<div class="full-message" style="display:none">'+customPayload.historyList[i].content+'</div>'
             
             +'<span class="check-text hidden-text" id="answer-result'+i+'">'
-            //+customPayload.historyList[i].content
+            + makeContentWithCode(customPayload.historyList[i].content)
             +'</span></div>');
-            //+'<div>');
-            //$('<div class="answer-message">' + customPayload.historyList[i].content + '</div>');
-            
-            //printContentWithHighlight(customPayload.historyList[i].content);
-            //statusDescBox.append(printContentWithHighlight(customPayload.historyList[i].content, i));
-            
+
             customMessage.append(statusDescBox);
+            
+            /////////////////////////////////////// highlight 적용....
+            highlightCodeBlock(customMessage);
+            ///////////////////////////////////////
+            
             statusMessage.append(customMessage);
 
             var statusDate = $('<span class="message-date">'+viewDate+'</span>');
@@ -1599,13 +1603,12 @@ function chatSessionView(listMessage) {
             
             $('#divScroll').append(statusMessage);
             
-            printContentWithHighlight(customPayload.historyList[i].content, i);
+            //printContentWithHighlight(customPayload.historyList[i].content, i);
         }
         //$('#divScroll').append(chatHistoryMessage);
     }
 
-    //console.log('1111');    
-    hljs.highlightAll();
+    //hljs.highlightAll();
     
     descendScroll();
 }
@@ -1637,6 +1640,12 @@ const languageMap = new Map([
 ]);
 
 function isIncludeLanguage(cont) {
+  var retVal = "";
+  
+  if(cont == "undefined" || cont == null) {
+      return retVal;
+  }
+  
   for (let [key, value] of languageMap) {
     if(cont.lastIndexOf(key) > -1)  {
       return value;
@@ -1644,6 +1653,66 @@ function isIncludeLanguage(cont) {
   }
 }
 
+/*
+ * 코드 블럭이 있는 경우 
+ * 코드 블럭에 highlight 적용
+ */
+function highlightCodeBlock($customMessage) {
+    
+    //console.log('....'+$customMessage.find('pre > code').length);
+    //var $answerText = $customMessage.find('#answer-message').find('.check-text');
+    var $answerText = $customMessage.find('.hidden-text');
+
+    $answerText.find('pre > code').each(function() {
+        var codehtml = $(this).text();
+        console.log('codeHtml : '+codehtml);
+        
+        let codeLang = $(this).attr('class');
+        
+        if(codeLang == "undefined" || codeLang == null) {
+            codeLang = "language-xml";
+            $(this).addClass(codeLang);
+        }
+        
+        let realLang = isIncludeLanguage(codeLang);
+        
+        $(this).empty();
+        $(this).attr('data-highlighted', 'yes').addClass('hljs');
+            
+        $(this).before('<div class="code-language"><small class="code-language-text"><span class="sr-only">Language:</span>'+realLang+'</small></div>');
+        $(this).append(hljs.highlight(codehtml, { language: realLang }).value);
+    });
+}
+
+/*
+ * 세션이력 중에 응답 부분의 코드로 된 내역을 확인하고 
+ * highlight 적용하기 위해 태그(<pre><code></code></pre>)) 추가함. 
+ */
+function makeContentWithCode(content) {
+    let str = content;
+    let target = "```";	
+    
+    var rtnCont = "";
+    let strArr = str.split(target);
+    
+    for(var i=0; i<strArr.length; i++) {
+        //console.log(i+' : '+strArr[i]); 
+        
+        if(i%2 == 0) {
+            rtnCont += strArr[i];
+        }
+        else {
+            let codeLang = isIncludeLanguage(strArr[i]);
+
+            //console.log('codeLang : '+codeLang);
+            let hightValue = strArr[i].replace(codeLang, '').replace('\n', '');           // 코드 language 지우기.
+            
+            rtnCont += '<pre><code class="language-'+codeLang+'">'+hightValue+'</code></pre>';
+        }        
+    }
+    
+    return rtnCont;
+}
 
 function printContentWithHighlight(content, idx) {
     let str = content;
@@ -1654,7 +1723,7 @@ function printContentWithHighlight(content, idx) {
     let strArr = str.split(target);
     
     for(var i=0; i<strArr.length; i++) {
-        //console.log(i+' : '+strArr[i]); 
+        console.log(i+' : '+strArr[i]); 
         
         if(i%2 == 0) {
             rtnCont += strArr[i];
@@ -1666,12 +1735,14 @@ function printContentWithHighlight(content, idx) {
             
             //console.log('codeLang : '+codeLang);
             let hightValue = strArr[i].replace(codeLang, '').replace('\n', '');           // 코드 language 지우기.
-            //let highValue = strArr[i];
+            //let hightValue = strArr[i];
             
             rtnCont += '<pre><small class="code-language-text"><span class="sr-only">Language:</span>'+codeLang+'</small><code>'+hightValue+'</code></pre>';
+            //rtnCont += '<pre><code>'+hightValue+'</code></pre>';
         }
     }
     
+    //console.log(rtnCont);
     $('#'+answerId).html(rtnCont);
 }
 
@@ -2064,6 +2135,7 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
         //console.log('checkContentsText : '+checkContentsText);
         
         var isCopyBtn = false;
+        var fullContents = $('<div class="full-message" style="display:none">'+checkContentsText+'</div>');
         if(checkContentsText.length<200) {
             //console.log("1111");
             isCopyBtn = true;
@@ -2076,14 +2148,23 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
             //answerStreaming(checkContentsText.substr(0,viewLimit));
             isCopyBtn = false;
             checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color">'
-            +'<div class="full-message" style="display:none">'+checkContentsText+'</div>'
-            +'<span class="check-text hidden-text" id="code-result">'
-            //+'</span></div>');
-            +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
+            //+'<div class="full-message" style="display:none">'+checkContentsText+'</div>'
+            +'<span class="check-text hidden-text">'
+            +checkContentsText+'</span></div>');
+            //+checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
+            
+            // 코드 데이터가 있을 경우 태그가 잘리는 문제가 있어서 수정함. 
+            var htmlContents = checkContents.find('.check-text').html();
+            //console.log('htmlContents : '+htmlContents);
+            var subContentsText = htmlContents.substr(0,viewLimit)+"...";
+            //console.log('subContentsText > '+subContentsText);
+            
+            checkContents.find('.check-text').html(subContentsText);
+            
         }else{
             //console.log("3333");
             isCopyBtn = true;
-            checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
+            checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text" id="msg-result">'
             +checkContentsText+'</span></div>');
         }
         var statusMessageCopy = $('<div class="copy-question"></div>');
@@ -2121,6 +2202,7 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
 
         //checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
         
+        checkContents.prepend(fullContents);            // 응답내용을 일부를 보여주든, 전체를 보여주든 full-message 포함(feat.창 사이즈 변경시 필요)
         !isCopyBtn? checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
 
         // requestCheck.append(checkContents);
@@ -2129,7 +2211,9 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
         customMessage.append(messages);
         customMessage.append(checkContents);
         
-    
+        /////////////////////////////////////// highlight 적용....
+        highlightCodeBlock(customMessage);
+        ///////////////////////////////////////
     }
     // 2023.11.27 반응형 UI end 
     else if(customPayload.type == 'chatSessionList' || customPayload.type == 'chatSessionView') {
@@ -2552,7 +2636,7 @@ function customMessageResize() {
               fullText = ($(this).find('.full-message').length > 0)? $(this).find('.full-message').html():$(this).find('.hidden-text').html();
               fullTextLength = fullText.length;
               viewTextLength = fullTextLength - textLimit;
-              console.log('fullText >>>> '+fullText.length);
+              console.log('fullText >>>> '+fullText);
               answerWidth = $(this).width();
 
               var viewLimit = viewTextLimit(answerWidth);
@@ -2567,21 +2651,24 @@ function customMessageResize() {
               if($('.history-message').length > 0) {            // 세션이력 메시지의 경우는 일단. 전체보기/답변복사 버튼 없이. 
                   console.log('history...');
                   newContentText = fullText;
+                  $(this).find(".hidden-text").html(newContentText);
               }
               else{
                   console.log('not history...');
                   if(viewLimit < viewTextLength) {
                       newContentText = fullText.substr(0,viewLimit)+"...";
-                      $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>');
+                      $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>'); // 응답내용을 일부를 보여주든, 전체를 보여주든 full-message 포함(feat.창 사이즈 변경시 필요)
                       
                       $(this).append(appendAnswerButton('more', fullText));
                   }
                   else{
                       newContentText = fullText;
+                      $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>'); // 응답내용을 일부를 보여주든, 전체를 보여주든 full-message 포함(feat.창 사이즈 변경시 필요)
                       $(this).append(appendAnswerButton('copy'));
                   }
+                  $(this).find(".hidden-text").html(newContentText);
+                  highlightCodeBlock($(this));
               }
-              $(this).find(".hidden-text").html(newContentText);
               
           //}
       });
@@ -2718,7 +2805,7 @@ const customui = (function() {
     }
     
     function sendEventMessage(event, payload) { 
-        console.log('sendEventMessage :', event);
+        //console.log('sendEventMessage :', event);
         
       _loadingId = uuid();
       //setLoadingId(uuid());
