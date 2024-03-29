@@ -338,6 +338,18 @@ function appendQueryText(message) {
   $('#divScroll').append(chatMessage);
 }
 
+function appendWelcomeText(message) {
+    var chatMessage = '<div class="chat-message left">'
+    +'<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
+    +'<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"><div class="basic"><div class="message-content" style="white-space: pre-line">'
+    +message
+    +'</div></div></div>'
+    +'<span class="message-date">' + moment().format("a h:mm") + '</span>'
+    +'</div>';
+    $('#divScroll').append(chatMessage);
+    descendScroll();
+}
+
 function appendChatbotText(message) {
   var chatMessage = '<div class="chat-message left">'
   +'<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
@@ -2301,8 +2313,12 @@ function showNotiSettings() {
 
 var welcomeClick = false;
 function welcomeAppend(welcomeMessage) {
+
 // if(welcomeMessage[0].response !== null) $('.chat-message.left').last().remove();
   $('.chat-message.left').last().remove();
+  if(welcomeMessage[0].panelType === "error"){
+    appendWelcomeText("안녕하세요, 스마트 업무비서 케미입니다. 오늘도 좋은 하루 보내세요!");
+  }else{
   if(JSON.parse(welcomeMessage[0].response)) {
     var todaySchedule = JSON.parse(welcomeMessage[0].response).template.outputs[0];
   var ecmUpdateCount = JSON.parse(welcomeMessage[3].response).template.outputs[0];
@@ -2446,7 +2462,7 @@ function welcomeAppend(welcomeMessage) {
 
   descendScroll();
   }
-  
+  }
 }
 
 var smsNames = '';
@@ -2930,6 +2946,7 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">업무지원</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">회사일반</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">도움말</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">홍보자료</button>'
   +     '</div>'
   +     '<h2>IT 관련 문의가 있으신가요?</h2>'
   +     '<div class="btns">'
@@ -3509,6 +3526,11 @@ chatui.onReceiveResponse = function(resp, isHistory) {
     //     activeGptBot("");
     // }
     if(resp.response.query.event == 'Welcome' || resp.response.queryResult.intent.name == 'Default Welcome Intent') {
+      welcomeAppend(resp.response.queryResult.messages); 
+      return;
+    }
+    
+    if(resp.response.queryResult.intent.name == 'test welcome') {
       welcomeAppend(resp.response.queryResult.messages); 
       return;
     }
