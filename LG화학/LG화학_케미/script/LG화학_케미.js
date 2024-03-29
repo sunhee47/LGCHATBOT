@@ -2953,6 +2953,7 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">업무지원</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">회사일반</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">도움말</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">홍보자료</button>'
   +     '</div>'
   +     '<h2>IT 관련 문의가 있으신가요?</h2>'
   +     '<div class="btns">'
