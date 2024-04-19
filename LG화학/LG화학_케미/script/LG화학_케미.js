@@ -1175,7 +1175,6 @@ const autoSearchEmployees = function(inputVal) {
   // Set Autocomplete
   var keyword = [];
  
-
       var $frmWrap = $(".chat-footer-form");
       //var inputVal = $(this).val();
       var searchVal = "'" + inputVal + "'";
@@ -3088,6 +3087,7 @@ jQuery(document).ready(function(e){
     };
   });
 
+  const ignoreKeyArr = ['Enter','ShiftLeft','ShiftRight','ControlLeft','ControlRight','AltLeft','AltRight','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
   formGroup.find("input").on('keyup', function (e) {
     var val = $(this).val();
   if(searchActive) {
@@ -3167,7 +3167,9 @@ jQuery(document).ready(function(e){
     if(val.length > 0) {
 
         // 입력된 메시지에 대한 자동완성 기능. 
-        autoSearchEmployees(val);
+        if(!ignoreKeyArr.includes(e.code)) {
+            autoSearchEmployees(val);
+        }
         
       if(val == '/') {
         $('.search-guides').css('display', 'block');
