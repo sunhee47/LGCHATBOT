@@ -2926,6 +2926,14 @@ function makeWeatherCard(data, isHistory){
 	var wtTemp = $('<div class="w-t-temp"></div>');
 	messageWeather.append(wtTemp);
 	
+	//console.log('날씨 온도 수정 전 : '+parseInt(data.t1h));
+	if(data.t1h != '-') {
+	    if(parseInt(data.t1h) >= 50 || parseInt(data.t1h) <= -50) {
+	        data.t1h = '-';
+	    }
+	}
+	//console.log('날씨 온도 수정 후 : '+data.t1h);
+
 	var wTempHtml = '<div class="w-temp">';
 		wTempHtml +=	'<div class="w-img">'
 		wTempHtml +=		'<img src="'+ weatherIcon(data.todaySky,"main")+'" alt="흐림">'
