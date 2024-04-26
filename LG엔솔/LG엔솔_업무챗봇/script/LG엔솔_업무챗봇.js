@@ -1270,6 +1270,17 @@ jQuery(document).ready(function(e){
 
     sendWelcomeEvent();
 
+    // Front UI Push 메시지 모니터링
+    setTimeout(() => {
+
+        $.getScript("https://storage.googleapis.com/singlex-chatbot-front/_common/chatclient-monitor/chatclient-monitor.min.js?t=" + Date.now(), function(data, textStatus,jqxhr) {
+
+            // 5분 주기로 모니터링 실행
+            chatuiMonitor.start(300);
+        });
+
+    }, 1000);  
+
 });
 
 function deleteChatHistory(){
@@ -3054,10 +3065,10 @@ function activeGptBot(text) {
 
 function openGptBotFrame(queryText) {
   var languageCode = "ko";
-  var token = "test";
+  var token = chatui.getSetting("apiToken");
   var userId = chatui.getSetting('userId');
 
-  var url = "https://chatclient-stg.ai.lgstation.com/bf2202b9-e942-4d82-9fb3-9c809d0e8973/chat";
+  var url = "https://chatclient.ai.lgstation.com/446a994f-47bd-403f-aad0-e9d2583202d7/chat";
 
   var form = document.createElement("form");
   form.setAttribute("target", "caas-chatbot-chat-iframe");
@@ -3327,6 +3338,7 @@ function saveNotification(){
 }
 
 chatui.createCustomResponseMessage = function(response, isHistory) {
+    console.log('createCustomResponseMessage : ', response);
     
     try {
         
