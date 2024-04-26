@@ -3456,16 +3456,6 @@ jQuery(document).ready(function(e){
     }
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) End
   
-    // Front UI Push 메시지 모니터링
-    setTimeout(() => {
-
-        $.getScript("https://storage.googleapis.com/singlex-chatbot-front/_common/chatclient-monitor/chatclient-monitor.min.js?t=" + Date.now(), function(data, textStatus,jqxhr) {
-
-            // 5분 주기로 모니터링 실행
-            chatuiMonitor.start(300);
-        });
-
-    }, 1000);  
 });
 //ready end
 
@@ -7421,6 +7411,12 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
           console.log('잔여예산조회...');
           messageCard = makeBudgetInputCard(message.data); // [퍼블 수정 및 추가]
     	}
+        else if(message.type == 'searchBudgetResult') {                    // 예산조회 결과
+          messageCard = budgetResult(message.data); // [퍼블 수정 및 추가]
+    	}
+        else if(message.type == 'budgetResultError') {                    // 예산조회 실패
+          messageCard = budgetResultError(message.data); 
+    	}
         else {
           console.log(message.type);
         }
@@ -7932,7 +7928,23 @@ function makeBudgetInputCard(data) {
 }
 
 // 잔여예산 popup
+var gAccountList = null;
 function addBudgetPopupOpen(data) {
+    
+    if(data.account != null) {
+        gAccountList = data.account;
+    }
+    var accountList = gAccountList;                 // expense type에 맞는 계정목록.
+    console.log('accountList length : '+accountList.length);
+
+    let accTypeList = [];                                   // expense type에 맞는 계정유형목록
+    accountList.filter((origin, index) => {
+        if(!accTypeList.find((_retData, _retIndex) => origin.group === _retData.group && index !== _retIndex)) accTypeList.push(origin);
+    }); 
+            
+    console.log('typeList length : '+accTypeList.length);
+    
+    var accountTypeText = '예산 유형을 선택해 주세요.';
     
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
@@ -7967,7 +7979,7 @@ function addBudgetPopupOpen(data) {
     /* #########[ popup_content ]######### */
     /* ###[ 예산 유형 ]###  */
     var budgetDropdownBox = $('<div class="dropdown-box dropdown-budget"><label>예산 유형<b>*</b></label></div>');
-    var budgetDropdown = $('<button type="button" class="btn btn-dropdown default"><span>예산 유형을 선택해 주세요.</span></button>');
+    var budgetDropdown = $('<button type="button" class="accountType btn btn-dropdown default"><span>'+accountTypeText+'</span></button>');
     var budgetDropdownArrow = $('<i class="icons">'
         + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
         + '<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
@@ -7983,19 +7995,22 @@ function addBudgetPopupOpen(data) {
 
     // 예산 유형 드롭다운메뉴 & 리스트
             
-    var budgetDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
-    let budgetDropdownList = $(
-        '<li class="dropdown-item"><a href="javascript:void(0)">item01</a></li>'
-        + '<li class="dropdown-item"><a href="javascript:void(0)">item02</a></li>'
-        + '<li class="dropdown-item"><a href="javascript:void(0)">item03</a></li>'
-        + '<li class="dropdown-item"><a href="javascript:void(0)">item04</a></li>'
-    );
+    var budgetDropdownListWrap = $('<ul class="dropdown-menu" id="list-type"></ul>');
+    
+    let budgetDropdownList = '';
+    for(var i=0; i<accTypeList.length; i++) {
+        var accType = accTypeList[i];
+        
+        budgetDropdownList += '<li class="dropdown-item"><a href="javascript:void(0)">'+accType.group+'</a></li>';
+        //console.log('type > ', accType);
+    }
+
     budgetDropdownListWrap.append(budgetDropdownList);
     budgetDropdownBox.append(budgetDropdownListWrap);
 
     /*  ###[ 계정 정보 ]###  */
     var userInfoDropdownBox = $('<div class="dropdown-box dropdown-userInfo"><label>계정 정보<b>*</b></label></div>');
-    var userInfoDropdown = $('<button type="button" class="btn btn-dropdown default"><span>계정 정보를 선택해 주세요.</span></button>');
+    var userInfoDropdown = $('<button type="button" class="btn btn-dropdown default" id="btn-account"><span>계정 정보를 선택해 주세요.</span></button>');
     var userInfoDropdownArrow = $('<i class="icons">'
         + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
         + '<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
@@ -8006,19 +8021,26 @@ function addBudgetPopupOpen(data) {
     userInfoDropdown.append(userInfoDropdownArrow);
 
     // 계정 정보 드롭다운메뉴 & 리스트
-    var userInfoDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+    var userInfoDropdownListWrap = $('<ul class="dropdown-menu" id="list-account"></ul>');
     let userInfoDropdownList = $(
         '<li class="dropdown-item"><a href="javascript:void(0)">userInfo01</a></li>'
         + '<li class="dropdown-item"><a href="javascript:void(0)">userInfo02</a></li>'
         + '<li class="dropdown-item"><a href="javascript:void(0)">userInfo03</a></li>'
         + '<li class="dropdown-item"><a href="javascript:void(0)">userInfo04</a></li>'
     );
-    userInfoDropdownListWrap.append(userInfoDropdownList);
+    //userInfoDropdownListWrap.append(userInfoDropdownList);
     userInfoDropdownBox.append(userInfoDropdownListWrap);
 
     /*  ###[ etc ]###  */
     // 코멘트
     var addBudgetComent = $('<p class="small coment-b">※ 현재 시간 기준으로 조회합니다.</p>');
+    
+    var formAddHiddenText = $(
+        '<input type="hidden" id="accountType" value=""/>'    
+        +'<input type="hidden" id="accountCode" value=""/>'    
+        +'<input type="hidden" id="accountName" value=""/>'    
+    );
+    addBudgetForm.append(formAddHiddenText);
     addBudgetForm.append(addBudgetComent);
 
     // 조회버튼
@@ -8026,97 +8048,29 @@ function addBudgetPopupOpen(data) {
     addBudgetForm.append(addBudgetSubmit);
     addBudgetSubmit.on('click', function() {
         addBudgetPopupClose();
-        budgetResult();
-        budgetResultError();
+        
+        var accountCd = $('#accountCode').val();
+        var accountNm = $('#accountName').val();
+        var accountType = $('#accountType').val();
+        console.log('data.userId >>> '+data.userId);
+        
+        var param = {
+            "deptId": data.deptId, 
+            "userId": data.userId, 
+            "expenseType": data.expenseType,  
+            "accountType": accountType, 
+            "accountCode": accountCd, 
+            "accountName": accountNm 
+        }
+        
+        chatui.sendEventMessage("searchBudgetResult", param);
     });
 
-    // 예산 조회 결과 메세지
-    function budgetResult() {
-        var budgetResultMessage = $('<div class="custom-message"></div>');
-        var budgetMessageComent = $(
-            '<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color">'
-            + '<div class="basic"><div class="message-content" style="white-space: pre-line"><b>잔여 예산</b>을 확인해 보세요.</div></div>'
-            + '</div>'
-        );
-        var budgetMessageResult = $('<div class="message"></div>');
-        var budgetMessageResultWarp = $('<div class="budget-wrap"></div>');
-        var budgetMessageResultHeader = $(
-            '<div class="budget-header">'
-            + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-            + '<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" fill="#898989"></path>'
-            + '</svg>'
-            + '<h2>잔여 예산 현황</h2>'
-            + '</div>'
-        );
-        budgetMessageResultWarp.append(budgetMessageResultHeader);
-        var budgetMessageResultContent = $(
-            '<div class="budget-content">'
-            + '<div class="budget-content-header">'
-            + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-            + '<path fill="#898989" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>'
-            + '<path fill="#898989" d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"></path>'
-            + '</svg>'
-            + '<h3>Enterprise AI 팀</h3>'
-            + '</div>'
-            + '<ul class="budget-list-wrap">'
-            + '<li>'
-            + '<h4>예산 유형</h4>'
-            + '<div class="budget-type"><span>경시비</span></div>'
-            + '</li>'
-            + '<li>'
-            + '<h4>계정 정보</h4>'
-            + '<div class="budget-user"><span>재료비(S/W)</span></div>'
-            + '</li>'
-            + '<li>'
-            + '<h4>기준 일시</h4>'
-            + '<div class="budget-date"><span>2024-04-08</span><span>11:08:00</span></div>'
-            + '</li>'
-            + '<li>'
-            + '<h4>예산 잔액</h4>'
-            + '<div class="budget-remain"><span>240,820</span>원</div>'
-            + '</li>'
-            + '</ul>'
-            + '<div class="btn">'
-            + '<button type="button" class="btn btn-default move_n-erp">N-ERP Portal'
-            + '<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
-            + '<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
-            + '</svg>'
-            + '</button>'
-            + '</div>'
-            + '</div>'
-        );
-        budgetMessageResultWarp.append(budgetMessageResultContent);
-        budgetMessageResult.append(budgetMessageResultWarp);
-        budgetResultMessage.append(budgetMessageComent);
-        budgetResultMessage.append(budgetMessageResult);        
-        appendChatbotText2(budgetResultMessage);
-        
-        $('.move_n-erp').on('click', function() {
-            window.open('#none', '_blank');
-        });
-    }
-
-    // 예산 조회 결과 에러 메세지
-    function budgetResultError() {
-        var budgetResultErrorMessage = $(
-            '<div class="message simple-text">'
-            + '<p>시스템 오류로 인해 조회되지 않았어요. 아래 버튼을 눌러 잔여 예산을 다시 조회해 보세요.</p>'
-            + '<div class="btn">'
-            + '<button type="button" class="btn btn-default reload-budget">다시 조회하기</button>'
-            + '</div>'
-            + '</div>'
-        );
-        appendChatbotText2(budgetResultErrorMessage);
-        
-        $('.reload-budget').on('click', function() {
-            addBudgetPopupOpen(data)
-        });
-    }
 
     /* #########[ popup_content_wrap_end ]######### */
     addBudgetContents.append(addBudgetForm);
     addBudget.append(addBudgetContents);
-
+    
     /* #########[ popup_wrap_end ]######### */
     $('.test-panel').append(pulginDim);
     $('.test-panel').append(addBudget);
@@ -8129,6 +8083,14 @@ function addBudgetPopupOpen(data) {
     }, 100);
 
     /*  #########[ dropdown ]#########  */
+    
+    function reloadPopup() {
+        $('.budget-tooltip').fadeOut(1);
+        $('.dropdown-budget .btn-dropdown').removeClass('accent');
+        
+        dropdownBtnEvent($('.btn-dropdown'));
+    }    
+    
     $('.btn-dropdown').on('click', function() {
         if ($(this).parents('.dropdown-box').hasClass('dropdown-userInfo')) {
             if ($('.dropdown-budget .btn-dropdown').hasClass('select')) {
@@ -8144,7 +8106,8 @@ function addBudgetPopupOpen(data) {
         }
     });
 
-    $('.dropdown-menu a').on('click', function() {
+    $('#list-type a').on('click', function() {
+        console.log('menu....');
         dropdownMenuEvent(this);
         if ($('.dropdown-budget .btn-dropdown').hasClass('select') && $('.dropdown-userInfo .btn-dropdown').hasClass('select')) {
             $('#btn-budget').removeClass('btn-disabled');
@@ -8155,6 +8118,37 @@ function addBudgetPopupOpen(data) {
         const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
         const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
         let targetText = $(target).text();
+        
+        //console.log('select : '+targetText);
+        //console.log('seelct code : '+$(target).parents('.dropdown-item').find('span').text());
+        
+        if(dropBtn.hasClass('accountType')) {
+            $('#list-account').empty();
+            $('#accountType').val(targetText);
+            $('#btn-account').html('<span>계정 정보를 선택해 주세요.</span>');
+            
+            for(var i=0; i<accountList.length; i++) {
+                var account = accountList[i];
+                if(account.group == targetText) {
+                    $('#list-account').append('<li class="dropdown-item"><span style="display:none;">'+account.code+'</span><a href="javascript:void(0)">'+account.name+'</a></li>');
+                }
+            }
+            
+            $('#list-account a').on('click', function() {
+                console.log('account menu....');
+                dropdownMenuEvent(this);
+                if ($('.dropdown-budget .btn-dropdown').hasClass('select') && $('.dropdown-userInfo .btn-dropdown').hasClass('select')) {
+                    $('#btn-budget').removeClass('btn-disabled');
+                }
+            });   
+            
+        }
+        else{
+            var targetCode = $(target).parents('.dropdown-item').find('span').text();
+            $('#accountCode').val(targetCode);
+            $('#accountName').val(targetText);
+        }
+        
         dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
         dropmenu.stop().slideUp().removeClass('show');
     }
@@ -8168,4 +8162,137 @@ function addBudgetPopupOpen(data) {
             $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
         }
     }
+}
+
+// 예산 조회 결과 메세지
+function budgetResult(data) {
+    var budgetResultMessage = $('<div class="custom-message"></div>');
+    var budgetMessageResult = $('<div class="message"></div>');
+    var budgetMessageResultWarp = $('<div class="budget-wrap"></div>');
+    var budgetMessageResultHeader = $(
+        '<div class="budget-header">'
+        + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" fill="#898989"></path>'
+        + '</svg>'
+        + '<h2>잔여 예산 현황</h2>'
+        + '</div>'
+    );
+    budgetMessageResultWarp.append(budgetMessageResultHeader);
+    var budgetMessageResultContent = $(
+        '<div class="budget-content">'
+        + '<div class="budget-content-header">'
+        + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<path fill="#898989" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>'
+        + '<path fill="#898989" d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"></path>'
+        + '</svg>'
+        + '<h3>'+data.deptName+'</h3>'
+        + '</div>'
+        + '<ul class="budget-list-wrap">'
+        + '<li>'
+        + '<h4>예산 유형</h4>'
+        + '<div class="budget-type"><span>'+data.accountType+'</span></div>'
+        + '</li>'
+        + '<li>'
+        + '<h4>계정 정보</h4>'
+        + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
+        + '</li>'
+        + '<li>'
+        + '<h4>기준 일시</h4>'
+        + '<div class="budget-date"><span>'+data.budgetDate+'</span><span>'+data.budgetTime+'</span></div>'
+        + '</li>'
+        + '<li>'
+        + '<h4>예산 잔액</h4>'
+        + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].BALANCE)+'</span>원</div>'
+        + '</li>'
+        + '</ul>'
+        + '<div class="btn">'
+        + '<button type="button" class="btn btn-default move_n-erp">N-ERP Portal'
+        + '<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
+        + '</svg>'
+        + '</button>'
+        + '</div>'
+        + '</div>'
+    );
+    budgetMessageResultWarp.append(budgetMessageResultContent);
+    budgetMessageResult.append(budgetMessageResultWarp);
+    budgetResultMessage.append(budgetMessageResult);
+    
+    $('.move_n-erp').on('click', function() {
+        window.open('#none', '_blank');
+    });
+    
+    return budgetResultMessage;
+}
+
+// 예산 조회 결과 에러 메세지
+function budgetResultError(data) {
+    
+    var budgetResultMessage = $('<div class="custom-message"></div>');
+    var budgetMessageResult = $('<div class="message"></div>');
+    var budgetResultErrorWrap = $('<div class="message simple-text"></div>');
+    
+    var budgetResultErrorMessage = $(
+         '<p>시스템 오류로 인해 조회되지 않았어요. 아래 버튼을 눌러 잔여 예산을 다시 조회해 보세요.</p>'
+    );
+    
+    var budgetResultReloadBtn = $(
+        '<div class="btn">'
+        + '<button type="button" class="btn btn-default reload-budget">다시 조회하기</button>'
+        + '</div>'
+    );
+    //appendChatbotText2(budgetResultErrorMessage);
+    
+    budgetResultReloadBtn.on('click', function() {
+        console.log('aaaaa');
+        addBudgetPopupOpen(data);
+
+        ////////////     
+        reloadSearchBudget(data);
+        ////////////            
+        
+    });
+    
+    budgetResultErrorWrap.append(budgetResultErrorMessage);
+    budgetResultErrorWrap.append(budgetResultReloadBtn);
+    
+    budgetMessageResult.append(budgetResultErrorWrap);
+    budgetResultMessage.append(budgetMessageResult);
+            
+    return budgetResultMessage;
+}
+
+function reloadSearchBudget(data) {
+    $('.budget-tooltip').fadeOut(1);
+    $('.dropdown-budget .btn-dropdown').removeClass('accent');
+    
+    //console.log('list-type : '+$('#list-type > li').length);
+    
+    var listType = $('#list-type > li');
+    for(var i=0; i<listType.length; i++) {
+        
+        var atag = $(listType[i]).find('a');
+        
+        if(atag.text() == data.accountType) {
+            
+            atag.trigger('click');
+        }
+    }
+    
+    //console.log('list-account : '+$('#list-account > li').length);
+    
+    var listAccount = $('#list-account > li');
+    for(var i=0; i<listAccount.length; i++) {
+        
+        var nameTag = $(listAccount[i]).find('a');
+        var codeTag = $(listAccount[i]).find('span');
+        
+        if(codeTag.text() == data.accountItem[0].ACCOUNT_CODE) {
+            nameTag.trigger('click');
+        }
+    }
+}
+
+function getAmountComma(price) {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
