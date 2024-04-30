@@ -10,7 +10,9 @@
   border: 1px solid #6B6B6B;
   color: #6B6B6B;
   border-radius: 27px;
-  margin-right: 5px;
+  
+  /* [퍼블 수정 및 추가] - margin-right 값 수정 (5px -> 2px) */
+  margin-right: 2px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message span.tag.primary {
   border: 1px solid #E0205C;
@@ -708,6 +710,10 @@
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1.system, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1.system {
   padding: 0 0 4px 0;
+  
+  /* [퍼블 수정 및 추가] - display: flex;, align-items: center; 추가 */
+  display: flex;
+  align-items: center;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1 .tag, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1 .position, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1 .tag, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1 .position {
   margin-left: 4px;
@@ -736,6 +742,9 @@
   font-size: 12px;
   line-height: 18px;
   color: #2C2C2C;
+  
+  /* [퍼블 수정 및 추가] - align-items: center; 추가 */
+  align-items: center;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info li .profile-icon, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info li .profile-icon {
   width: 16px;
@@ -1009,8 +1018,10 @@
   right: 8px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list {
-  border-radius: 0 0 16px 16px;
   overflow: hidden;
+  
+  /* [퍼블 수정 및 추가] - border-radius 값 수정 (0 0 16px 16px -> 0) */
+  border-radius: 0;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li {
   display: flex;
@@ -1067,7 +1078,9 @@
   border-bottom: 0 !important;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .time {
-  width: 55px;
+  /* [퍼블 수정 및 추가] - width 값 수정 (55px -> auto), min-width: 46px; 추가 */
+  width: auto;
+  min-width: 46px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .time h3 {
   font-weight: 700;
@@ -1088,7 +1101,9 @@
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail {
   position: relative;
-  width: 225px;
+  
+  /* [퍼블 수정 및 추가] - width 값 수정 (225px -> 100%) */
+  width: 100%;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 {
   font-weight: 700;
@@ -1096,7 +1111,10 @@
   line-height: 24px;
   color: #2C2C2C;
   margin-bottom: 2px;
-  padding-right: 12px;
+  
+  /* [퍼블 수정 및 추가] - padding-right 값 수정 (12px -> 20px), word-break: break-all; 추가 */
+  padding-right: 20px;
+  word-break: break-all;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 .private {
   background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/lock.png");
@@ -1106,20 +1124,28 @@
   padding-left: 20px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 svg {
-  margin-right: 5px;
+  /* [퍼블 수정 및 추가] - margin-right 값 수정 (5px -> 2px), margin-bottom: -2px; 추가 */
+  margin-right: 2px;
+  margin-bottom: -2px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail p {
   padding: 2px 0;
   font-size: 12px;
   line-height: 18px;
   display: flex;
-  align-items: center;
   color: #2C2C2C;
+  
+  /* [퍼블 수정 및 추가] - align-items 값 수정 (center -> flex-start) */
+  align-items: flex-start;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail p svg {
   margin-right: 4px;
   width: 16px;
   height: 16px;
+  
+  /* [퍼블 수정 및 추가] - min-width: 16px;, margin-top: 1px; 추가 */
+  min-width: 16px;
+  margin-top: 1px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail .edit-btn {
   margin: 12px 12px 10px 0;
@@ -1139,9 +1165,20 @@
   display: none;
   text-align: right;
   padding: 10px 4px 2px 0;
+
+  /* [퍼블 수정 및 추가] - display 값 수정 (none -> block) */
+  display: block;
+
+  /* [퍼블 수정 및 추가] - position: absolute;, visibility: hidden; 추가 */
+  position: absolute;
+  visibility: hidden;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail .attend-check.show {
   display: block;
+  
+  /* [퍼블 수정 및 추가] - position: relative;, visibility: visible; */
+  position: relative;
+  visibility: visible;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail .attend-button {
   padding: 2px 4px 2px 5px;
@@ -2304,7 +2341,7 @@
   width: calc(100% - 40px);
 }
 .plugins .btn-plugin#btn-sms, .plugins .btn-plugin#go-gportal, .plugins .btn-plugin#btn-attend, .plugins .btn-plugin#btn-dict, .plugins .btn-plugin#btn-setting, .plugins .btn-plugin#btn-schedule, .plugins .btn-plugin#btn-budget {
-    /* [퍼블 수정 및 추가] - .plugins .btn-plugin#btn-budget 추가 */
+/* [퍼블 수정 및 추가] - .plugins .btn-plugin#btn-budget 추가 */
   margin-bottom: 16px;
 }
 .plugins .btn-plugin#go-gportal, .plugins .btn-plugin#btn-dict, .plugins .btn-plugin#btn-setting {
@@ -2510,6 +2547,13 @@
   background-repeat: no-repeat;
   background-size: 24px 24px;
   background-position: 11px 12px;
+  
+    /* [퍼블 수정 및 추가] - display 값 변경 (block -> flex) */
+  display: flex;
+  
+  /* [퍼블 수정 및 추가] - flex-wrap: wrap; , padding-left: 44px; 추가 */
+  flex-wrap: wrap;
+  padding-left: 44px;
 }
 .plugins .add-schedule-place .place-select:hover > .place-tooltip {
   opacity: 1;
@@ -2564,6 +2608,9 @@
   z-index: 100;
   display: none;
   overflow-y: auto;
+  
+  /* [퍼블 수정 및 추가] - left: 0; 추가 */
+  left: 0;
 }
 .plugins .add-schedule-place .place-list.show {
   display: block;
@@ -2616,8 +2663,10 @@
   max-height: 120px;
   margin: 0;
   padding: 0;
-  overflow-y: scroll;
   overflow-x: hidden;
+  
+  /* [퍼블 수정 및 추가] - overflow-y 값 변경 (scroll -> auto) */
+  overflow-y: auto;
 }
 .plugins .add-schedule-place .place-list ul li {
   padding: 10px 8px;
@@ -2636,7 +2685,11 @@
   color: #6B6B6B;
 }
 .plugins .add-schedule-place .selected-place {
-  margin-left: 44px;
+  /* [퍼블 수정 및 추가] - margin-left 값 변경 (44px -> 0) */
+  margin-left: 0;
+
+  /* [퍼블 수정 및 추가] - display: inline-block; 추가 */
+  display: inline-block;
 }
 .plugins .add-schedule-place .selected-place .place-info {
   padding: 5px 8px;
@@ -2757,6 +2810,9 @@
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   z-index: 200;
+  
+  /* [퍼블 수정 및 추가] - width: max-content; 추가 */
+  width: max-content;
 }
 .small-dialog.show {
   opacity: 1;
@@ -4796,12 +4852,16 @@ body {
 }
 .schedule-join-member .selected-members {
   margin-left: 44px;
-  margin-right: 44px;
   position: relative;
+
+  /* [퍼블 수정 및 추가] - margin-right: 44px; 제거 */
+  /*margin-right: 44px;*/
 }
 .schedule-join-member .selected-members.long {
   max-height: 110px;
-  overflow: hidden;
+  
+  /* [퍼블 수정 및 추가] - overflow 값 수정 (hidden -> auto) */
+  overflow: auto;
 }
 .schedule-join-member .selected-members .member-info, .schedule-join-member .selected-members .dept-info {
   padding: 5px 8px;
@@ -4945,6 +5005,12 @@ body {
 /* LGE) 엘지니 / 트랜잭션봇 설정 */
 /* ============================================================ */
 
+/* 취소선 */
+.cancel-line {
+  text-decoration: line-through !important;
+}
+
+/* 드롭다운 */
 .dropdown-box {
     padding-bottom: 10px;
     position: relative;
@@ -5053,15 +5119,15 @@ body {
     margin-left: 2px;
     vertical-align: text-top;
 }
+
+/* 예산조회_팝업 */
 .plugins .plugin-contents .form-budget .coment-b {
     margin-top: 130px;
     margin-bottom: 20px;
     text-decoration: underline;
 }
 
-
-
-
+/* 예산조회_메세지 */
 .message .budget-wrap {
     width: 280px;
 }
@@ -5114,17 +5180,135 @@ body {
 .message .budget-wrap .budget-content .budget-list-wrap .budget-date span:last-child:after {
     display: none;
 }
-.move_n-erp {
+.move_n-erp, .move_link {
     display: flex !important;
     align-items: center;
     justify-content: center;
 }
 
-        
-        
-        
-        
-        
-        
-        
-        
+/* 일정등록_팝업 */
+.plugins .add-schedule-place.input-box input[type=text]#schedule-place {
+  width: 100%;
+  padding-left: 0;
+}
+.plugins .input-box .autocomplete-member .ui-widget.ui-widget-content.ui-autocomplete {
+  max-height: 200px;
+}
+
+/* 일정등록_메세지 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 * + span {
+  margin-left: -4px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .attend-button:disabled {
+  cursor: default;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .attend-button:disabled span {
+  color: #BEBEBE;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .attend-button:disabled svg path {
+  fill: #BEBEBE;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li.cancel-line:hover {
+  cursor: default;
+  background-color: transparent;
+}
+
+/* 일정알람_메세지 */
+.message .schedule-alarm-wrap {
+  width: 280px;
+  padding: 12px;
+}
+.message .schedule-alarm-wrap .schedule-alarm-header {
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #DADADA;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .schedule-alarm-wrap .schedule-alarm-header h2 {
+  margin-bottom: 0;
+  color: #2C2C2C;
+  font-size: 14px;
+}
+.message .schedule-alarm-wrap .schedule-alarm-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.message .schedule-alarm-wrap .schedule-alarm-content .schedule-alarm-content-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.message .schedule-alarm-wrap .schedule-alarm-content .schedule-alarm-content-header h3 {
+  color: #2C2C2C;
+  font-size: 14px;
+}
+.message .schedule-alarm-wrap .schedule-alarm-content .schedule-alarm-list-wrap {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.message .schedule-alarm-wrap .schedule-alarm-content .schedule-alarm-list-wrap li {
+  display: flex;
+  align-items: flex-start;
+  color: #2C2C2C;
+}
+.message .schedule-alarm-wrap .schedule-alarm-content .schedule-alarm-list-wrap li span {
+  font-size: 14px;
+  line-height: 1.4;
+}
+.test-panel .chat-message.left .message .schedule-alarm-wrap .schedule-alarm-content .schedule-alarm-list-wrap h4 {
+  min-width: 40px;
+  margin-top: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.message .schedule-alarm-wrap .schedule-alarm-content .schedule-alarm-list-wrap .time-box span::after {
+  content: '~';
+  margin: 0 6px;
+}
+.message .schedule-alarm-wrap .schedule-alarm-content .schedule-alarm-list-wrap .time-box span:last-child:after {
+  display: none;
+}
+
+/* 신규일정등록_메세지 */
+p.date-box span::after {
+  content: '~';
+  margin: 0 4px;
+}
+p.date-box span:last-child::after {
+  display: none;
+}
+p.people-box {
+  flex-wrap: wrap;
+  position: relative;
+  padding-left: 18px !important;
+  gap: 4px;
+}
+p.people-box > svg {
+  position: absolute;
+  left: 0;
+  top: 2px;
+}
+p.people-box .people-list {
+  font-weight: 400;
+}
+p.people-box .people-list span::after {
+  content: ',';
+}
+p.people-box .people-list span:last-of-type::after {
+  display: none;
+}
+p.people-box .people-list b {
+  color: inherit !important;
+  font-weight: 400 !important;
+}
+
+
+
+
+

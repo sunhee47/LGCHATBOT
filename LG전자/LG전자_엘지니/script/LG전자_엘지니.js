@@ -378,6 +378,9 @@ function appendChatbotText2(message, customQuick) {
   
       appendQueryText(systemSelect);
       var item = systemItems.find((o) => { return o["sysName"] === systemSelect })      
+      
+      var systemCardTop = makeSystemCardMoveCard(item); // [퍼블 수정 및 추가] - 시스템 접속 card 추가
+      
       var systemCard = makeSystemCard(item);
       var customQuick = $('<div class="custom-quick-reply"></div>');
       systemItems.map(sysItem => {
@@ -389,7 +392,8 @@ function appendChatbotText2(message, customQuick) {
 
       $(this).parent().remove();
 
-      appendChatbotText2(systemCard, customQuick);
+    //   appendChatbotText2(systemCard, customQuick);
+    appendChatbotText2(systemCardTop, systemCard, customQuick); // [퍼블 수정 및 추가] - 시스템 접속 card 포함하여 생성
     });
   
   }, 100);
@@ -3694,7 +3698,10 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       var systemSelect = $(this).data('system');
 
       appendQueryText(systemSelect);
-      var item = systemItems.find((o) => { return o["sysName"] === systemSelect })      
+      var item = systemItems.find((o) => { return o["sysName"] === systemSelect })    
+      
+      var systemCardTop = makeSystemCardMoveCard(item); // [퍼블 수정 및 추가] - 시스템 접속 card 추가
+      
       var systemCard = makeSystemCard(item);
       var customQuick = $('<div class="custom-quick-reply"></div>');
       systemItems.map(sysItem => {
@@ -3706,7 +3713,8 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 
       $(this).parent().remove();
       
-      appendChatbotText2(systemCard, customQuick);
+    //   appendChatbotText2(systemCard, customQuick);
+    appendChatbotText2(systemCardTop, systemCard, customQuick); // [퍼블 수정 및 추가] - 시스템 접속 card 포함하여 생성
     });
 
   }, 100)
@@ -4215,12 +4223,12 @@ function addSchedulePopupOpen(data) {
     addSchedulePopupClose();
   })
   addScheduleHeader.append(addShceduleClose);
-
   addScheduleBox.append(addScheduleHeader);
 
   var addScheduleContents = $('<div class="plugin-contents"></div>');
   var addScheduleForm = $('<form data-sessionId="'+ data.chatSessionId.split("sessions/")[1] +'"' + 'data-userId="'+data.userId+'" class="form-schedule"></form>');
   
+  /* ###[ 제목 ]### */
   var titleInputBox = $('<div class="input-box"><label>제목<b>*</b></label></div>');   
   var titleInput = $('<input type="text" placeholder="제목을 입력해주세요." name="sch_title" id="sch_title" max-length="50" />');
   titleInput.on('keyup', function(e) {
@@ -4230,6 +4238,7 @@ function addSchedulePopupOpen(data) {
   titleInputBox.append(titleInput);    
   addScheduleForm.append(titleInputBox);
   
+  /* ###[ 일시 ]### */
   var placeholderToday = moment().format('YYYY.MM.DD');
   var placeholderNowTime = '';
   if(moment().minute()<30) {
@@ -4294,34 +4303,12 @@ function addSchedulePopupOpen(data) {
   timeInputBox.append(dateTimeWrap);
   addScheduleForm.append(timeInputBox);
 
-  var memberInputBox = $('<div class="input-box"><label>참석자</label></div></div>');
-  var memberList = $('<div class="schedule-join-member"></div>');
-  var selectedMembersFold = $('<span class="member-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#6B6B6B"/>'
-  +'</svg></span>');
 
-  selectedMembersFold.on('click',function() {
-    if($(this).parent().find('.selected-members').hasClass('long')) {
-      $(this).parent().find('.selected-members').removeClass('long');
-      $(this).addClass('unfold');
-    } else {
-      $(this).parent().find('.selected-members').addClass('long');
-      $(this).removeClass('unfold');
-    }
-  });
-  memberList.append(selectedMembersFold);
-  var selectedMembers = $('<div class="selected-members fold"></div>');
-  memberList.append(selectedMembers);
-  var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-2" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
-  memberList.append(autocompleteMember);
-  var memberInput = $('<input type="text" placeholder="직원명을 입력해 주세요" id="attendees" class="search-input" />');
-  setAutocompleteJoinMember(memberInput);
-  memberList.append(memberInput);
-  memberInputBox.append(memberList);
-  addScheduleForm.append(memberInputBox);
 
+
+  // [퍼블 수정 및 추가] - 참석자 영역과 장소 위치 변경
+  /* ###[ 장소 ]### */
   var placeInputBox = $('<div class="input-box add-schedule-place"><label>장소</label></div>');
-  
   var placeSelectBox = $('<div class="place-select"></div>');
   var placedSelected = $('<div class="selected-place"></div>');
   placeSelectBox.append(placedSelected);
@@ -4339,13 +4326,16 @@ function addSchedulePopupOpen(data) {
   }
   var userId = data.userId;
   
-  var placeInput = $('<input type="text" placeholder="장소를 입력해 주세요." id="schedule-place" />');
+  var placeInput = $('<input type="text" placeholder="회의실 선택 또는 장소를 입력해 주세요." id="schedule-place" />'); // [퍼블 수정 및 추가] - placeholder 텍스트 수정
   var placeList = $('<div class="place-list"></div>');
   var placeByText = $('<div class="place-text"><p class="texted"></p><p class="small">입력한 이 위치 사용하기</p></div>');
   var placeValue = '';
   placeList.append(placeByText);
   
   var isMobile = Mobile();
+
+  // [퍼블 수정 및 추가] - 미사용으로 인한 제거
+  /*
   if(!isMobile) {
     var addPlace = $('<div class="add-place"><a href="http://gportal.lgchem.com/lightpack/facility/mettingRoomSelect.do?mandatorId=&userIds=&facilityIds=" target="_blank">+ 지포탈에서 새로운 회의실 예약하기</a></div>');
     addPlace.on('click', function() {
@@ -4353,7 +4343,7 @@ function addSchedulePopupOpen(data) {
     });
     placeList.append(addPlace);
   }
-  
+  */
 
   placeInput.on('keyup', function() {
     placeValue = $(this).val();
@@ -4383,17 +4373,21 @@ function addSchedulePopupOpen(data) {
       $('.place-text .texted').text(''); 
       placedSelected.append(placeInfo);
       $('.place-list').removeClass('show');
-      $('.place-list').css('top', '125px');
+      $('.place-list').css('top', '82px'); // [퍼블 수정 및 추가] - 125px -> 82px 수정
       $('#schedule-place').attr('placeholder', '');
   });
  
   var plcaeListTitle = $('<span>예약된 회의실 목록</span>');
-  placeList.append(plcaeListTitle); 
-  var placeUl = $('<ul></ul>');
+  placeList.append(plcaeListTitle);
   
+  var placeUl = $('<ul></ul>');
   placeInput.on('focus', function() {
     $('.place-list').addClass('show');
     placeUl.empty();
+
+
+    // [퍼블 수정 및 추가] - 확인 불가로 인하여 임시로 주석처리(바로 밑에 샘플 작업)
+    /*
     startDate =  moment(dateStartInput.val()).format('YYYYMMDD') + ($('#start-time').val() ? $('#start-time').val().split(':').join('') : '0000');
     endDate = moment(dateEndInput.val()).format('YYYYMMDD') + ($('#end-time').val() ? $('#end-time').val().split(':').join('') : '2400');
     if(startDate && endDate) {
@@ -4445,11 +4439,41 @@ function addSchedulePopupOpen(data) {
           });
           placeList.append(placeUl);
         }
-  
-        
-  
       });
     }
+    */
+
+    // [퍼블 수정 및 추가] - 확인 불가로 인하여 임시 샘플 작업
+    var placeLi = $(
+        '<li>'
+            +'<p>'+ '회의실 호수'+'(회의실 이름)' +'</p>'
+            +'<p class="small">'
+            + '시작시간' +'~'+ '종료시간' +' · ' + '회의실 상세위치'
+            +'</p>'
+        +'</li>'
+    );
+    placeLi.on('click', function() {
+        var placeInfo = $(
+            '<div class="place-info">'
+                + '회의실 호수' + '(회의실 위치)'
+                + '<button type="button" class="btn btn-delete">' 
+                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+                    + '</svg>'
+                + '</button>'
+            +'</div>'
+        );
+        placedSelected.empty();
+        placedSelected.append(placeInfo);
+        $('.place-list').removeClass('show');
+        $('.place-list').css('top', '82px');
+        $('#schedule-place').attr('placeholder', '');
+        schedulePlaceWidth();
+    });
+    placeUl.append(placeLi);
+    placeList.append(placeUl);
+
+
   });
 
   placeSelectBox.append(placeInput);
@@ -4459,14 +4483,79 @@ function addSchedulePopupOpen(data) {
 
   $(document).on('click', '.place-info .btn-delete', function(){
     $(this).closest(".place-info").remove();
-
     $('#schedule-place').attr('placeholder', '장소를 입력해 주세요.');
     $('.place-list').css('top', '82px');
-})
+
+    schedulePlaceWidth(); // [퍼블 수정 및 추가] - 추가
+  });
+
+  // [퍼블 수정 및 추가] - place-select외 클릭 시, place-list 닫힘
+  $(document).on('click', function(e) {
+    if ($('.place-select').has(e.target).length === 0) {
+        $('.place-list').removeClass('show');
+    }
+  });
+
+  // [퍼블 수정 및 추가] - 브라우저 창 리사이즈 반응 input 가로 사이즈 변경
+  $(window).resize(function() {
+      schedulePlaceWidth();
+  });
+
+  // [퍼블 수정 및 추가] - 장소 입력 input width 반응
+  function schedulePlaceWidth() {
+      let placeSelectWidth = $('.place-select').width();
+      let selectedPlaceWidth = $('.selected-place').width();
+      let schedulePlaceWidth = placeSelectWidth - selectedPlaceWidth;
+      $('#schedule-place').css('width', schedulePlaceWidth + "px");
+      if ($('#schedule-place').width() === 0) {
+          $('#schedule-place').attr('style', '');
+      };
+  };
+
+
+  // [퍼블 수정 및 추가] - 참석자 영역과 장소 위치 변경
+  /* ###[ 참석자 ]### */
+  var memberInputBox = $('<div class="input-box"><label>참석자</label></div></div>');
+  var memberList = $('<div class="schedule-join-member"></div>');
+
+
+  // [퍼블 수정 및 추가] - 미사용으로 인한 삭제
+  /*
+  var selectedMembersFold = $('<span class="member-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#6B6B6B"/>'
+    +'</svg></span>');
+  selectedMembersFold.on('click',function() {
+    if($(this).parent().find('.selected-members').hasClass('long')) {
+      $(this).parent().find('.selected-members').removeClass('long');
+      $(this).addClass('unfold');
+    } else {
+      $(this).parent().find('.selected-members').addClass('long');
+      $(this).removeClass('unfold');
+    }
+  });
+  memberList.append(selectedMembersFold);
+  */
+
+
+  var selectedMembers = $('<div class="selected-members fold"></div>');
+  memberList.append(selectedMembers);
+  var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-2" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
+  memberList.append(autocompleteMember);
+  var memberInput = $('<input type="text" placeholder="직원명을 입력해 주세요" id="attendees" class="search-input" />');
+  setAutocompleteJoinMember(memberInput);
+  memberList.append(memberInput);
+  memberInputBox.append(memberList);
+  addScheduleForm.append(memberInputBox);
   
+
+/* ###[ 기타 옵션 ]### */
   var otherOptionsBox = $('<div class="input-box"><p>기타 옵션</p></div>');
   var otherOptions = $('<div class="on-off-box"></div>');
   var otherOptionsUl = $('<ul></ul>');
+
+
+  // [퍼블 수정 및 추가] - 미사용으로 인한 삭제
+  /*
   var videoMeetingLi = $('<li><span class="a-text">화상 회의</span></li>');
   if(webxYnErrorMessage) {
     videoMeetingLi = $('<li><span class="a-text">화상 회의</span><p class="small primary">※'+ webxYnErrorMessage +'</p></li>');
@@ -4490,6 +4579,8 @@ function addSchedulePopupOpen(data) {
   });
   videoMeetingLi.append(videoMeetingSwitch);
   otherOptionsUl.append(videoMeetingLi);
+  */
+  
   var privateLi = $('<li><span class="a-text">비공개 일정</span></li>');
   var privateSwitch = $('<label class="switch">'
     +'<input type="checkbox" id="privateSchedule" value="Y" name="private" />'
@@ -4504,6 +4595,8 @@ function addSchedulePopupOpen(data) {
   });
   privateLi.append(privateSwitch);
   otherOptionsUl.append(privateLi);
+
+
   var checkAttendanceLi = $('<li><span class="a-text">참여 여부 확인</span></li>');
   var checkAttendanceSwitch = $('<label class="switch">'
     +'<input type="checkbox" id="checkAttendance"/>'
@@ -4522,8 +4615,10 @@ function addSchedulePopupOpen(data) {
   otherOptionsBox.append(otherOptions);
   addScheduleForm.append(otherOptionsBox);
 
+  /* ###[ etc ]### */
   var detailSubmitLink = $('<p class="detail-submit"><a href="http://gportal.lgchem.com/lightpack/planner/calendar/init.do#">반복일정 등의 상세 일정 등록은 여기를 클릭해 주세요.</a></p>');
   addScheduleForm.append(detailSubmitLink);
+
   var addScheduleSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-schedule">저장</button>');
   addScheduleForm.append(addScheduleSubmit);
   addScheduleSubmit.on('click', function() {
@@ -4654,10 +4749,19 @@ function addSchedulePopupOpen(data) {
           +'</div>'
           +'<div class="s-detail">'
             + '<h2>' + (schedule.privateSchedule == 'Y' ? iconPrivate : '') + (schedule.videoMeeting == 'Y' ? iconVideoMeeting : '') + schedule.title +'</h2>'
-            + '<p>' + iconCalendar + schedule.startDate +' - ' + schedule.endDate + '</p>'
-            + (schedule.location ? '<p>' + iconPlaceSmall + schedule.location + '</p>' : '')
-            + (schedule.placeName ? '<p>' + iconPlaceSmall + schedule.placeName + '</p>' : '')
-            + (schedule.attnedsName ? '<p>' + iconPeople + schedule.attnedsName + '<p>' : '')
+            
+            // [퍼블 수정 및 추가] - 내용 변경으로 인한 삭제
+            // + '<p>' + iconCalendar + schedule.startDate +' - ' + schedule.endDate + '</p>'
+            // + (schedule.location ? '<p>' + iconPlaceSmall + schedule.location + '</p>' : '')
+            // + (schedule.placeName ? '<p>' + iconPlaceSmall + schedule.placeName + '</p>' : '')
+            // + (schedule.attnedsName ? '<p>' + iconPeople + schedule.attnedsName + '<p>' : '')
+            
+            // [퍼블 수정 및 추가] - 내용 변경으로 인한 추가
+            + '<p class="date-box">' + iconCalendar + schedule.startDate +' - ' + schedule.endDate + '</p>'
+            + (schedule.location ? '<p class="place-box">' + iconPlaceSmall + schedule.location + '</p>' : '')
+            + (schedule.placeName ? '<p class="place-box">' + iconPlaceSmall + schedule.placeName + '</p>' : '')
+            + (schedule.attnedsName ? '<p class="people-box">' + iconPeople + '<strong class="people-list">' + schedule.attnedsName + '</strong></p>' : '')
+                            
           + '</div>'
         +'</div>'
           + (savedInfo.meetingNo ? '<div class="webx-info">'
@@ -4671,13 +4775,51 @@ function addSchedulePopupOpen(data) {
         +'</div>'
         
         appendChatbotText(scheduleResult);
+
+        // [퍼블 수정 및 추가] - 사원 split
+        function peopleSplit() {
+          let peopleItemData;
+          let peopleList = schedule.attnedsName;
+              console.log(peopleList);
+          peopleList = peopleList.split(",");
+              console.log(peopleList);
+          $('strong.people-list').empty();
+          for (let i = 0; i < peopleList.length; i++ ) {
+              peopleItemData = $('<span>' + peopleList[i] + '</span>');
+              console.log(peopleItemData);
+              $('strong.people-list').append(peopleItemData);
+          }
+          let peoplesNum;
+          let peoplesCount;
+          $('.people-list > span').each(function(index, item) {
+              peoplesNum = index - 1;
+              if (index > 1) {
+                  if ($(this).parents('.people-list').find('b').length) {
+                      $(this).parents('.people-list').find('b span').text(peoplesNum)
+                  } else {
+                      peoplesCount = $('<b>외 <span>' + peoplesNum + '</span>명</b>');
+                      $('.people-list').append(peoplesCount);
+                  };
+                  $(this).remove();
+              };
+          });
+        }; peopleSplit()
+
+        // [퍼블 수정 및 추가] - 같은날짜 제거
+        function dateCompare() {
+            if (schedule.startDate == schedule.endDate) {
+                $('.date-box').empty();
+                $('.date-box').append(iconCalendar + schedule.startDate);
+            };
+        }; dateCompare();
+
+
       });
     }
   });
 
   addScheduleContents.append(addScheduleForm);
   addScheduleBox.append(addScheduleContents);
-
 
   $('.test-panel').append(pulginDim);
   $('.test-panel').append(addScheduleBox);
@@ -4693,6 +4835,8 @@ function addSchedulePopupOpen(data) {
   var datepicker = $('<div class="datepicker-chem"></div>');
   $('.schedule-input-wrap').append(datepicker);        
 }
+
+
 
 $(document).on('click', function(e) {
   var container = $('.time-selector');
@@ -4714,46 +4858,51 @@ function attendChangeClose() {
   }, 300);
 }
 
+
 function attendChangeOpen(target, attendText, scheduleId, sessionId, userId) {
   var attendStatus = '';
-  
   var notAttendReason = '';
   
   var pulginDim = $('<div class="plugin-dim show"></div>');
   var attendChange = $('<div class="plugins plugin-select" id="attendChange"></div>');
-  var attendChangeHeader = $('<div class="plugin-header">'
-  +'<h1>참석여부 결정</h1>'
-    +'<span class="close-plugin" onclick="attendChangeClose()">'
-      +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
-        +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
-      +'</svg>'
-    +'</span>'
-  +'</div>');
+  var attendChangeHeader = $(
+    '<div class="plugin-header">'
+        +'<h1>참석여부 설정</h1>' // [퍼블 수정 및 추가] - 텍스트 수정
+        +'<span class="close-plugin" onclick="attendChangeClose()">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    +'</div>'
+  );
   attendChange.append(attendChangeHeader);
-  var attendChangeBody = $('<div class="plugin-contents"><p>일정에 참석여부를 설정해주세요<b>*</b></p></div>')
+  var attendChangeBody = $('<div class="plugin-contents"><p>일정 참석여부를 설정해 주세요.<b>*</b></p></div>'); // [퍼블 수정 및 추가] - 텍스트 수정
   var selectList = $('<ul class="select-list"></ul>');
-  var selectLiFirst = $('<li></li>');
-  var selectFirstSwitch = $('<label class="input-radio">'
-      +'미정'
-      +'<input type="radio" name="attend-select" id="attend-undi" value="0"/>'
-      +'<span class="radiomark"></span>'
-    +'</label>');
 
-    selectFirstSwitch.on('click', function() {
-      if($(this).find('#attend-undi').prop('checked')) {
-        attendStatus = 0;  
-      }
-    });
+  var selectLiFirst = $('<li></li>');
+  var selectFirstSwitch = $(
+    '<label class="input-radio">'
+        +'미정'
+        +'<input type="radio" name="attend-select" id="attend-undi" value="0"/>'
+        +'<span class="radiomark"></span>'
+    +'</label>'
+  );
+  selectFirstSwitch.on('click', function() {
+    if($(this).find('#attend-undi').prop('checked')) {
+      attendStatus = 0;  
+    }
+  });
   selectLiFirst.append(selectFirstSwitch);
   selectList.append(selectLiFirst);
 
   var selectLiSecond = $('<li></li>');
-  var selectSecondSwitch =$('<label class="input-radio">'
-    +'참석'
-    +'<input type="radio" name="attend-select" id="attend" value="1"/>'
-    +'<span class="radiomark"></span>'
-  +'</label>');
-
+  var selectSecondSwitch = $(
+      '<label class="input-radio">'
+          +'참석'
+          +'<input type="radio" name="attend-select" id="attend" value="1"/>'
+          +'<span class="radiomark"></span>'
+      +'</label>'
+  );
   selectSecondSwitch.on('click', function() {
     if($(this).find('#attend').prop('checked')) {
       attendStatus = 1;  
@@ -4763,34 +4912,51 @@ function attendChangeOpen(target, attendText, scheduleId, sessionId, userId) {
   selectList.append(selectLiSecond);
 
   var selectLiThird = $('<li></li>');
-  var selectThirdSwitch = $('<label class="input-radio">'
-    +'불참'
-    +'<input type="radio" name="attend-select" id="not-attend" value="2" />'
-    +'<span class="radiomark"></span>'
-  +'</label>');
+  var selectThirdSwitch = $(
+    '<label class="input-radio">'
+        +'불참'
+        +'<input type="radio" name="attend-select" id="not-attend" value="2" />'
+        +'<span class="radiomark"></span>'
+    +'</label>'
+  );
   var notAttendReasonBox = $('<div class="input-box not-attend hide"></div>');
-  var notAttendReasonInput = $('<input type="text" placeholder="불참 사유를 입력해 주세요. (선택사항)" />');
+  var notAttendReasonInput = $('<input type="text" placeholder="불참 사유를 입력해 주세요.(선택 사항)" />'); // [퍼블 수정 및 추가] - 텍스트 수정
   
   notAttendReasonInput.on('keyup',function() {
     notAttendReason = $(this).val();
-  })
+  });
   notAttendReasonBox.append(notAttendReasonInput);
 
   selectLiThird.append(selectThirdSwitch);
   selectLiThird.append(notAttendReasonBox);
 
-  selectThirdSwitch.on('click', function() {
-    if($(this).find('#not-attend').prop('checked')) {
+    // [퍼블 수정 및 추가] - 불참 radio 스크립트 재작업으로 인한 삭제
+    // selectThirdSwitch.on('click', function() {
+    //   if($(this).find('#not-attend').prop('checked')) {
+    //     attendStatus = 2;  
+    //     $('.not-attend').removeClass('hide');
+    //   } else {
+    //     $('.not-attend').removeClass('hide');
+    //   }
+    // });
+
+  
+  selectList.append(selectLiThird);
+  attendChangeBody.append(selectList);
+
+
+  // [퍼블 수정 및 추가] - 불참 radio 스크립트 재작업으로 인한 추가
+  selectList.find('.input-radio').on('click', function() {
+    if ($(this).find('#not-attend').is(':checked')) {
       attendStatus = 2;  
       $('.not-attend').removeClass('hide');
     } else {
-      $('.not-attend').removeClass('hide');
+      $('.not-attend').addClass('hide');
     }
   });
-  selectList.append(selectLiThird);
-  attendChangeBody.append(selectList);
-  var attendChangeButton = $('<button type="button" class="btn btn-plugin btn-apply" id="btn-attend">저장</button>');
+  
 
+  var attendChangeButton = $('<button type="button" class="btn btn-plugin btn-apply" id="btn-attend">저장</button>');
   if(attendText == '미정') {
     attendStatus = 0;
     $('#attend-undi').prop('checked', true);
@@ -4804,10 +4970,7 @@ function attendChangeOpen(target, attendText, scheduleId, sessionId, userId) {
     attendStatus = 0;
     $('#attend-undi').prop('checked', true);
   };
- 
-
   attendChangeButton.on('click', function() {
-
     var selectedText = '';
     if(attendStatus == 0) {
       selectedText = '미정';
@@ -4817,9 +4980,8 @@ function attendChangeOpen(target, attendText, scheduleId, sessionId, userId) {
       selectedText = '불참';
     }
     $(target).find('.attend-text').text(selectedText);
-
-    if(attendStatus == 2 && notAttendReason.length > 0) {
-        var requestParam = {
+    if (attendStatus == 2 && notAttendReason.length > 0) {
+      var requestParam = {
           query: {
           "event": scheduleAttendEvent
         },
@@ -4830,32 +4992,34 @@ function attendChangeOpen(target, attendText, scheduleId, sessionId, userId) {
           "userId" : userId
         }
       };
-
       sendChatApi(requestParam, sessionId, function(payload){
         console.log("schedule Attend :: " + JSON.stringify(payload));
         attendChangeClose();
       });
     } else {      
       var requestParam = {
-        query: {
-        "event": scheduleAttendEvent
-      },
-      payload: {
-        "scheduleId": scheduleId,
-        "isAccept": attendStatus,
-        "userId" : userId
-      }
+          query: {
+          "event": scheduleAttendEvent
+        },
+        payload: {
+          "scheduleId": scheduleId,
+          "isAccept": attendStatus,
+          "userId" : userId
+        }
       };
-
       sendChatApi(requestParam, sessionId, function(payload){
         console.log(payload);
         attendChangeClose();
       });
     }
     
+    // [퍼블 수정 및 추가] - dialog 추가
+    setTimeout(function() {
+      showSmallDialog("참석여부가 " + "'" + selectedText + "'" + "으로 변경되었습니다.");
+    }, 100);
+    
   });
   attendChangeBody.append(attendChangeButton);
-        
   attendChange.append(attendChangeBody);
     
   $('.test-panel').append(pulginDim);
@@ -5181,30 +5345,35 @@ function makeRpaPopup(data) {
 
 //시스템담당자 Card 생성 함수
 function makeSystemCardFirst(items) {
-  systemItems = items;
-  var systemContetns = $('<div class="system-contents"></div>');
-  var listCon = $('<div class="message simple-text"></div>');
-  var text = '';
-  if (items instanceof Array && items.length > 0) {
-    text = $('<p>아래에서 상세 분야 담당자를 선택해주시면 안내해 드릴게요.</p>');
-  } else {
-    text  = $('<p>담당자에 대한 검색 결과가 없습니다. 검색어가 정확한지 다시 한 번 확인해 주세요.</p>');
-  }
+    systemItems = items;
+    var systemContetns = $('<div class="system-contents"></div>');
+    var listCon = $('<div class="message simple-text"></div>');
+    var text = '';
+    if (items instanceof Array && items.length > 0) {
+        text = $('<p>아래에서 상세 분야를 선택해 주세요.</p>'); // [퍼블 수정 및 추가] - 텍스트 수정
+        //   text = $('<p>아래에서 상세 분야 담당자를 선택해주시면 안내해 드릴게요.</p>');
+    } else {
+        // [퍼블 수정 및 추가] - 내용 수정
+        text  = $(
+            '<p>'
+                +'<b>' + item.sysName + '</b>에 대한 검색 결과가 없습니다.<br>'
+                + '검색어가 정확한지 다시 한 번 확인해 주세요.'
+            +'</p>'
+        );
+        // text  = $('<p>담당자에 대한 검색 결과가 없습니다. 검색어가 정확한지 다시 한 번 확인해 주세요.</p>');
+    }
+    listCon.append(text);
+    systemContetns.append(listCon);
 
-  listCon.append(text);
-  systemContetns.append(listCon);
-
-  if (items instanceof Array && items.length > 0) {
-    var quickReplies = $('<div class="custom-quick-reply"></div>');
-    items.map(item => {
-      var systemBtn = $('<span class="btn-custom-reply btn-system" data-system="' + item.sysName + '">' + item.sysName +'</span>');
-      quickReplies.append(systemBtn);
-    });
-
-    systemContetns.append(quickReplies);
-  }
-
-  return systemContetns;
+    if (items instanceof Array && items.length > 0) {
+        var quickReplies = $('<div class="custom-quick-reply"></div>');
+        items.map(item => {
+            var systemBtn = $('<span class="btn-custom-reply btn-system" data-system="' + item.sysName + '">' + item.sysName +'</span>');
+            quickReplies.append(systemBtn);
+        });
+        systemContetns.append(quickReplies);
+    }
+    return systemContetns;
 }
 /**
  * '시스템 업무 담당자 리스트 카드 생성' 함수
@@ -5212,37 +5381,69 @@ function makeSystemCardFirst(items) {
  */
  function makeSystemCard(item, isHistory){
 	var listCon = $('<div class="message profile-list system"></div>');
-	
 	var listWrap = $('<div class="p-box"></div>');
 	listCon.append(listWrap);
 
-  var title = $('<div class="list-header-title">' + listHeaderIcon +'<span>' + item.sysName + '</span></div>');
-  listWrap.append(title);
+    var title = $('<div class="list-header-title">' + listHeaderIcon +'<b>' + item.sysName + '</b> 담당자</div>'); // [퍼블 수정 및 추가] - 내용 수정
+    // var title = $('<div class="list-header-title">' + listHeaderIcon +'<span>' + item.sysName + '</span></div>');
+    listWrap.append(title);
 	
-	var listUl = $('<ul></ul>');
+    // var listUl = $('<ul></ul>');
+	var listUl = $('<ul class="profile-list-wrap"></ul>'); // [퍼블 수정 및 추가] - 클래스(profile-list-wrap) 추가
 	listWrap.append(listUl);
 
-  if (item.userList instanceof Array && item.userList.length > 0) {
-    item.userList.forEach(function(user,index) {
-      var listLi = $('<li class="list-box"></li>');
-      listUl.append(listLi);
-      
-      var userId = user.empMail.split("@");
-      var userInfo = $('<div class="text-box"></div>');
-      listLi.append(userInfo);
-
-      userInfo.append('<div class="name">'
-        + '<h1 class="system">' + user.userName + ' ' + user.jobTitle + '<span class="tag">' + user.contactType + '</span></h1>'
-      +'</div">');
-
-      var userInfoList = $('<ul class="profile-info system"></ul>');
-
-      userInfoList.append($('<li><span class="profile-icon icon-mail">' + iconMail + '</span>' + (user.empMail ? user.empMail : '-' )+ '</li>'));
-      userInfoList.append($('<li><span class="profile-icon icon-phone">' + iconPhone + '</span>' + (user.empTelNo ? user.empTelNo : '-') + '</li>'));
-      
-      userInfo.append(userInfoList);
-    });
-  }
+    if (item.userList instanceof Array && item.userList.length > 0) {
+        let userListCount = 0; // [퍼블 수정 및 추가] - 더보기 관련 코드 추가
+        
+        item.userList.forEach(function(user,index) {
+            userListCount++; // [퍼블 수정 및 추가] - 더보기 관련 코드 추가
+            
+            var listLi = $('<li class="list-box"></li>');
+            listUl.append(listLi);
+          
+            var userId = user.empMail.split("@");
+            var userInfo = $('<div class="text-box"></div>');
+            listLi.append(userInfo);
+    
+            userInfo.append(
+                '<div class="name">'
+                    +'<h1 class="system">'
+                        + user.userName + ' ' + user.jobTitle
+                        +'<span class="tag">' + user.contactType + '</span>'
+                    +'</h1>'
+                +'</div">'
+            );
+    
+            var userInfoList = $('<ul class="profile-info system"></ul>');
+            userInfoList.append($('<li><span class="profile-icon icon-mail">' + iconMail + '</span>' + (user.empMail ? user.empMail : '-' )+ '</li>'));
+            userInfoList.append($('<li><span class="profile-icon icon-phone">' + iconPhone + '</span>' + (user.empTelNo ? user.empTelNo : '-') + '</li>'));
+          
+            userInfo.append(userInfoList);
+            
+            // [퍼블 수정 및 추가] - 더보기 관련 코드 추가
+            if (userListCount > 3){
+                listLi.addClass('hide');
+            }
+            
+        });
+        
+        // [퍼블 수정 및 추가] - 더보기 관련 코드 추가
+        if (userListCount > 3){
+            var seeMoreBtn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            seeMoreBtn.click(function() {
+                $(this).parents('.profile-list').find(".list-box").removeClass('hide');
+                $(this).remove();
+            });
+            listWrap.append(seeMoreBtn);
+        }
+    }
 	return listCon;
 }
 /**
@@ -5332,121 +5533,132 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
       scheduleDetail.append(schedulePlace);
     }
 
-    // if(item.members) {
-    //   var scheduleMembers = $('<p>' + iconMember + '<span>' + item.members + '</span></p>');
-    //   scheduleDetail.append(scheduleMembers);
-    // }
 
+    // [퍼블 수정 및 추가] - 주석처리 해제
+    if(item.members) {
+      var scheduleMembers = $('<p>' + iconMember + '<span>' + item.members + '</span></p>');
+      scheduleDetail.append(scheduleMembers);
+    }
     scheduleItem.append(scheduleDetail);
+    
     
     // registFg ( 1:내가 등록한 일정일 경우, 2:참여자로 등록된 경우이지만 참여여부 미정일 경우, 3:참여일정인 경우, 4:불참일정인 경우 )
     // registFg가 Empty인 경우 '참여요청' 없이 일정을 등록했기 때문에 렌더링 X
-    // regEnv == 'chatbot' 인 경우에만 삭제버튼 렌더링 
+    // regEnv == 'chatbot' 인 경우에만 삭제버튼 렌더링
     if(item.registFg == '1' && item.regEnv == 'chatbot'){
               
-      // 본인이 등록한  일정일 경우 무조건 일정 삭제 이벤트 (scheduleDeleteEvent)
-      var deleteBtn = $('<button type="button" class="s-delete" onclick="event.cancelBubble=true;">' + iconDelete + '</button>');
-      deleteBtn.on('click', function(){
-                  
-        if( item.repeatYn == "Y" ){
-          pop.open('create', $(this), 'Pop_Alert', 'loadEl.pop_alert("반복일정은 케미에서 삭제하실 수 없습니다.")');
-        } else {
-
-          pop.open('create', $(this), 'Pop_Delete_Schedule', 'loadEl.pop_del_confirm("일정 삭제", "삭제된 일정은 복구할 수 없습니다.<br />계속 삭제하시겠습니까?")');
-          
-          $("#btnDelete").click(function(){
-          
-          // 본인이 등록한 일정에 한해서만 일정 삭제 이벤트로 설정
-            var sessionId = deleteBtn.closest(".schedule-wrap").attr("data-sessionId");
-            var userId = deleteBtn.closest(".schedule-wrap").attr("data-userId");
-            var requestParam = {
-              query: {
-                "event": scheduleDeleteEvent
-              },
-              payload: {
-                "scheduleId": item.scheduleId ,
-                "deleteTarget" : 0, // ( 일정 삭제 : 0 / 회의실 삭제 : 1)
-                "isAccept" : 3,     // ( 일정 참여 : 1/ 일정 불참 : 2 )
-                "userId" : userId
-              }
-            };
-
-            if(item.webexMeetingNumber) {
-              requestParam.payload["webexMeetingKey"] = item.webexMeetingNumber;
+        // 본인이 등록한  일정일 경우 무조건 일정 삭제 이벤트 (scheduleDeleteEvent)
+        var deleteBtn = $('<button type="button" class="s-delete" onclick="event.cancelBubble=true;">' + iconDelete + '</button>');
+        deleteBtn.on('click', function(){  
+            if( item.repeatYn == "Y" ){
+                pop.open('create', $(this), 'Pop_Alert', 'loadEl.pop_alert("반복일정은 케미에서 삭제하실 수 없습니다.")');
+            } else {
+                pop.open(
+                    'create',
+                    $(this),
+                    'Pop_Delete_Schedule',
+                    'loadEl.pop_del_confirm("일정 삭제", "삭제된 일정은 복구할 수 없어요.<br />일정을 삭제할까요?")' // [퍼블 수정 및 추가] - 텍스트 수정
+                );
+                $("#btnDelete").click(function(){
+                    // 본인이 등록한 일정에 한해서만 일정 삭제 이벤트로 설정
+                    var sessionId = deleteBtn.closest(".schedule-wrap").attr("data-sessionId");
+                    var userId = deleteBtn.closest(".schedule-wrap").attr("data-userId");
+                    var requestParam = {
+                        query: {
+                            "event": scheduleDeleteEvent
+                        },
+                        payload: {
+                            "scheduleId": item.scheduleId ,
+                            "deleteTarget" : 0, // ( 일정 삭제 : 0 / 회의실 삭제 : 1)
+                            "isAccept" : 3,     // ( 일정 참여 : 1/ 일정 불참 : 2 )
+                            "userId" : userId
+                        }
+                    };
+                    if (item.webexMeetingNumber) {
+                        requestParam.payload["webexMeetingKey"] = item.webexMeetingNumber;
+                    }
+                    sendChatApi(requestParam, sessionId, function(payload){
+                        console.log("schedule Delete :: " + JSON.stringify(payload));
+        
+                        // scheduleItem.remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
+                        scheduleItem.addClass('cancel-line'); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                        scheduleItem.find('.attend-check').attr('disabled', true); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                        scheduleItem.find('.s-delete').remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+        
+                        pop.close($("#btnDelete"));
+        
+                        // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
+                        // if( scheduleList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
+                        //     $listWrap.html('<div class="schedule-noData">등록된 일정이 없습니다.</div>');
+                        // }
+        
+                        setTimeout(function() {
+                            showSmallDialog('일정이 삭제되었습니다.');
+                        }, 500);
+                    });
+                }); 
             }
-
-            sendChatApi(requestParam, sessionId, function(payload){
-
-            console.log("schedule Delete :: " + JSON.stringify(payload));
-            scheduleItem.remove();
-
-            pop.close($("#btnDelete"));                  
-            if( scheduleList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
-              $listWrap.html('<div class="schedule-noData">등록된 일정이 없습니다.</div>');
-              }
-
-              setTimeout(function() {
-                showSmallDialog('일정이 삭제되었습니다.');
-              }, 500);
-            });
-          }); 
-        }  
-      });
-      scheduleItem.append(deleteBtn);
+        });
+        scheduleItem.append(deleteBtn);
 
     } else {
 
       if(item.registFg && item.regEnv == 'chatbot') {
-         // 본인이 등록한  일정일 경우 무조건 일정 삭제 이벤트 (scheduleDeleteEvent)
-      var deleteBtn = $('<button type="button" class="s-delete" onclick="event.cancelBubble=true;">' + iconDelete + '</button>');
-      deleteBtn.on('click', function(){
-                  
-        if( item.repeatYn == "Y" ){
-          pop.open('create', $(this), 'Pop_Alert', 'loadEl.pop_alert("반복일정은 케미에서 삭제하실 수 없습니다.")');
-        } else {
-
-          pop.open('create', $(this), 'Pop_Delete_Schedule', 'loadEl.pop_del_confirm("참여자 지정 삭제", "참여자 지정이 삭제된 일정은 복구할 수 없습니다. <br />계속 삭제하시겠습니까?")');
           
-          $("#btnDelete").click(function(){
-          // 본인이 등록한 일정에 한해서만 일정 삭제 이벤트로 설정
-            var sessionId = deleteBtn.closest(".schedule-wrap").attr("data-sessionId");
-            var userId = deleteBtn.closest(".schedule-wrap").attr("data-userId");
-            var requestParam = {
-              query: {
-                "event": scheduleDeleteEvent
-              },
-              payload: {
-                "scheduleId": item.scheduleId ,
-                "deleteTarget" : 0, // ( 일정 삭제 : 0 / 회의실 삭제 : 1)
-                "isAccept" : 2,     // ( 일정 참여 : 1/ 일정 불참 : 2 )
-                "userId" : userId
-              }
-            };
-
-            if(item.webexMeetingNumber) {
-              requestParam.payload["webexMeetingKey"] = item.webexMeetingNumber;
+         // 본인이 등록한  일정일 경우 무조건 일정 삭제 이벤트 (scheduleDeleteEvent)
+        var deleteBtn = $('<button type="button" class="s-delete" onclick="event.cancelBubble=true;">' + iconDelete + '</button>');
+        deleteBtn.on('click', function(){
+            if( item.repeatYn == "Y" ){
+                pop.open('create', $(this), 'Pop_Alert', 'loadEl.pop_alert("반복일정은 케미에서 삭제하실 수 없습니다.")');
+            } else {
+                pop.open(
+                    'create',
+                    $(this),
+                    'Pop_Delete_Schedule',
+                    'loadEl.pop_del_confirm("참석자로 초대된 일정 삭제", "삭제된 일정은 복구할 수 없어요.<br />참석자로 초대된 일정을 삭제할까요?")' // [퍼블 수정 및 추가] - 텍스트 수정
+                );
+                $("#btnDelete").click(function(){
+                    // 본인이 등록한 일정에 한해서만 일정 삭제 이벤트로 설정
+                    var sessionId = deleteBtn.closest(".schedule-wrap").attr("data-sessionId");
+                    var userId = deleteBtn.closest(".schedule-wrap").attr("data-userId");
+                    var requestParam = {
+                        query: {
+                            "event": scheduleDeleteEvent
+                        },
+                        payload: {
+                            "scheduleId": item.scheduleId ,
+                            "deleteTarget" : 0, // ( 일정 삭제 : 0 / 회의실 삭제 : 1)
+                            "isAccept" : 2,     // ( 일정 참여 : 1/ 일정 불참 : 2 )
+                            "userId" : userId
+                        }
+                    };
+                    if(item.webexMeetingNumber) {
+                        requestParam.payload["webexMeetingKey"] = item.webexMeetingNumber;
+                    }
+                    sendChatApi(requestParam, sessionId, function(payload){
+                        console.log("schedule Delete :: " + JSON.stringify(payload));
+        
+                        // scheduleItem.remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
+                        scheduleItem.addClass('cancel-line'); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                        meetingRoomItem.find('.attend-check').attr('disabled', true); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                        scheduleItem.find('.s-delete').remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+        
+                        pop.close($("#btnDelete"));
+        
+                        // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
+                        // if( scheduleList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
+                        //     $listWrap.html('<div class="schedule-noData">등록된 일정이 없습니다.</div>');
+                        // }
+        
+                        setTimeout(function() {
+                            showSmallDialog('참석자로 초대된 일정이 삭제되었습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        }, 500);
+                    });
+                }); 
             }
-
-
-            sendChatApi(requestParam, sessionId, function(payload){
-
-            console.log("schedule Delete :: " + JSON.stringify(payload));
-            scheduleItem.remove();
-
-            pop.close($("#btnDelete"));                  
-            if( scheduleList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
-              $listWrap.html('<div class="schedule-noData">등록된 일정이 없습니다.</div>');
-              }
-
-              setTimeout(function() {
-                showSmallDialog('일정의 참여자 지정이 삭제되었습니다.');
-              }, 500);
-            });
-          }); 
-        }  
-      });
-      scheduleItem.append(deleteBtn);
-      }
+        });
+        scheduleItem.append(deleteBtn);
+    }
       
       // attendanceRequest = 1 (타인등록 일정인데 참여확인 O)
       // attendanceRequest = 0 (타인등록 일정인데 참여확인 X) 
@@ -5491,6 +5703,8 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
 
       scheduleItem.append(deleteBtn);
     } 
+
+    
     // '종일' 인 경우 스케쥴 맨 상단에 위치하도록 함
       $(this).closest(".schedule-wholeTime").prependTo(".schedule-list");
   });
@@ -5559,36 +5773,37 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
 	scheduleListWrap.append(scheduleList);
 		
 	makeScheduleItem(scheduleCard, scheduleList, false, scheduleCard.date);
-
-  // schedule-list-header
-	if( scheduleCard.mySelfYn == 'Y' ){
-		var attednCheck = $('<div class="schedule-list-header attend"></div>');
-		scheduleBody.append(attednCheck);
-		
-		var scheduleListHeaderLabel = $('<span class="a-text">참석여부 보기</span>');
-		attednCheck.append(scheduleListHeaderLabel);
-		
-		var scheduleListHeaderSwitch = $('<label class="switch"></label>');
-		attednCheck.append(scheduleListHeaderSwitch);
-		
+// 	makeScheduleItemSample(scheduleList, scheduleBody); // [퍼블 수정 및 추가] - 퍼블 확인용
+	
+    // schedule-list-header
+    if( scheduleCard.mySelfYn == 'Y' ){
+        var attednCheck = $('<div class="schedule-list-header attend"></div>');
+        scheduleBody.append(attednCheck);
+        
+        var scheduleListHeaderLabel = $('<span class="a-text">참석여부 보기</span>');
+        attednCheck.append(scheduleListHeaderLabel);
+        
+        var scheduleListHeaderSwitch = $('<label class="switch"></label>');
+        attednCheck.append(scheduleListHeaderSwitch);
+        
     
-		var switchCheckbox = $('<input type="checkbox" cname="attendView" class="check-attendView" />');
-		scheduleListHeaderSwitch.append(switchCheckbox);
-		scheduleListHeaderSwitch.append($('<span class="slider round"></span>'));
-		
-		scheduleListHeaderSwitch.on('click', function() {
-      var $scheduleWrap = $(this).closest(".schedule-wrap");
-      
-      $(this).find(".check-attendView").prop("checked", !$(this).find(".check-attendView").prop("checked"));
-      if ($(this).find(".check-attendView").prop("checked") == true) {
-          $scheduleWrap.find(".attend-check").addClass("show");
-      } else {
-          $scheduleWrap.find(".attend-check").removeClass("show");
-      }
-    });
-	} 
+        var switchCheckbox = $('<input type="checkbox" cname="attendView" class="check-attendView" />');
+        scheduleListHeaderSwitch.append(switchCheckbox);
+        scheduleListHeaderSwitch.append($('<span class="slider round"></span>'));
+        
+        scheduleListHeaderSwitch.on('click', function() {
+            var $scheduleWrap = $(this).closest(".schedule-wrap");
+            
+            $(this).find(".check-attendView").prop("checked", !$(this).find(".check-attendView").prop("checked"));
+            if ($(this).find(".check-attendView").prop("checked") == true) {
+                $scheduleWrap.find(".attend-check").addClass("show");
+            } else {
+                $scheduleWrap.find(".attend-check").removeClass("show");
+            }
+        });
+    }
 
-  customMessage.append(scheduleCon);
+    customMessage.append(scheduleCon);
 	return customMessage;
 }
 
@@ -5693,48 +5908,61 @@ function makeMeetingRoomItem(data, meetingRoomList){
         meetingRoomItemBody.append(meetingRoomPlace);
       }
 
-      // if(item.members) {
-      //   var meetingRoomMembers = $('<p>' + iconMember + '<span>' + item.members + '</span></p>');
-      //   meetingRoomItemBody.append(meetingRoomMembers);
-      // }
 
-      meetingRoomItem.append(meetingRoomItemBody);
+        // [퍼블 수정 및 추가] - 주석처리 해제
+        if(item.members) {
+            var meetingRoomMembers = $('<p>' + iconMember + '<span>' + item.members + '</span></p>');
+            meetingRoomItemBody.append(meetingRoomMembers);
+        }
+        meetingRoomItem.append(meetingRoomItemBody);
+        
 			
 			var meetingRoomBtn = $('<dd class="schedule-btn show"></dd>');
 			meetingRoomItem.append(meetingRoomBtn);
 						
-			var deleteBtn = $('<button type="button" class="s-delete">' + iconDelete +'</button>');
-			deleteBtn.on('click', function(){
-            	pop.open('create', $(this), 'Pop_Delete_Schedule', 'loadEl.pop_del_confirm("회의실 삭제", "회의실을 삭제하시겠습니까?")');
-            	
-            	$("#btnDelete").click(function(){            	    
-                  var sessionId = deleteBtn.closest(".schedule-wrap").attr("data-sessionId");
-                  var userId = deleteBtn.closest(".schedule-wrap").attr("data-userId");
-                  
-                	var requestParam = {
-                		    query: {
-                				"event": "meetingRoomDeleteEvent"
-                			},
-                			payload: {
-                				"userId" : userId,
-                				"scheduleId": item.scheduleId,
-                				"deleteTarget" : 1 // ( 일정 삭제 : 0 / 회의실 삭제 : 1)
-                				
-                				
-                			}
-                	    };
-
-                sendChatApi(requestParam, sessionId, function(payload){
-                console.log("meetingRoomDeleteEvent :: "+ JSON.stringify(payload));
-        				meetingRoomItem.remove();
-            	    	pop.close($("#btnDelete"));
-        				
-        				if( meetingRoomList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
-        					$listWrap.html('<div class="schedule-noData">취소가능한 회의실이 없습니다.</div>');
-        				}
-              });
-    		    });
-		    });
+            var deleteBtn = $('<button type="button" class="s-delete" onclick="event.cancelBubble=true;">' + iconDelete + '</button>'); // [퍼블 수정 및 추가] - onclick="event.cancelBubble=true; 추가
+            deleteBtn.on('click', function(){
+                pop.open(
+                    'create',
+                    $(this),
+                    'Pop_Delete_Schedule',
+                    'loadEl.pop_del_confirm("일정 및 회의실 삭제", "삭제된 일정 및 회의실은 복구할 수 없어요.<br />일정 및 회의실을 삭제할까요?")' // [퍼블 수정 및 추가] - 텍스트 수정
+                );
+                $("#btnDelete").click(function(){            	    
+                    var sessionId = deleteBtn.closest(".schedule-wrap").attr("data-sessionId");
+                    var userId = deleteBtn.closest(".schedule-wrap").attr("data-userId");
+                    var requestParam = {
+                        query: {
+                            "event": "meetingRoomDeleteEvent"
+                        },
+                        payload: {
+                            "userId" : userId,
+                            "scheduleId": item.scheduleId,
+                            "deleteTarget" : 1 // ( 일정 삭제 : 0 / 회의실 삭제 : 1)
+                        }
+                    };
+                    sendChatApi(requestParam, sessionId, function(payload){
+                        console.log("meetingRoomDeleteEvent :: "+ JSON.stringify(payload));
+                        
+                        // meetingRoomItem.remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
+                        meetingRoomItem.addClass('cancel-line'); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                        meetingRoomItem.find('.attend-check').attr('disabled', true); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                        meetingRoomItem.find('.s-delete').remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+            
+                        pop.close($("#btnDelete"));
+                        
+                        // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
+                        // if ( meetingRoomList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
+                        //     $listWrap.html('<div class="schedule-noData">취소가능한 회의실이 없습니다.</div>');
+                        // }
+                        
+                        // [퍼블 수정 및 추가] - showSmallDialog() 미 설정으로 인한 추가
+                        setTimeout(function() {
+                            showSmallDialog('일정 및 회의실이 삭제되었습니다.');
+                        }, 500);
+                    });
+                });
+            });
 			meetingRoomBtn.append(deleteBtn);
 		});
     } else {
@@ -6183,13 +6411,15 @@ function makeScheduleRegCard(data) {
   var regBtnWrap = $('<div class="btn"></div>');
   var regBtn = $('<button type="button" class="btn btn-emphasis add-schedule">일정 등록</button>');
   regBtn.on('click', function() {
-    addSchedulePopupOpen(data);
+    // addSchedulePopupOpen(data); // [퍼블 수정 및 추가] - 원본(데이터 없음으로 확인이 어려워 addSchedulePopupOpenRenew로 샘플작업)
+    addSchedulePopupOpenRenew(data) // [퍼블 수정 및 추가] - 퍼블 작업용 샘플
   });
   regBtnWrap.append(regBtn);
   scheduleRegCard.append(regBtnWrap);
 
   if(checkChatHistory == false) {
-    addSchedulePopupOpen(data);
+    // addSchedulePopupOpen(data); // [퍼블 수정 및 추가] - 원본(데이터 없음으로 확인이 어려워 addSchedulePopupOpenRenew로 샘플작업)
+    addSchedulePopupOpenRenew(data) // [퍼블 수정 및 추가] - 퍼블 작업용 샘플
   }
   
   return scheduleRegCard;
@@ -7334,6 +7564,7 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         } else if (message.type == 'schedule') { // 메시지타입_일정조회_공통
           if (message.data.hasOwnProperty('items')) {
             messageCard = makeScheduleCard(message.data);
+            // messageCard = makeScheduleAlarmCard(message.data); //        [퍼블 수정 및 추가] - 일정 알람
           }
           if(message.data.btnName) {
             var scheduleBtns = $('<div class="custom-quick-reply"></div>');
@@ -7349,7 +7580,7 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
           
         } else if (message.type == 'meetingRoom') { // 메시지타입_회의실취소
           messageCard = makeMeetingRoomCard(message.data);							
-        } else if(message.type == 'scheduleReg') { // 메시지타입_일정등록
+        } else if(message.type == 'scheduleReg') { // 메시지타입_일정등록 : LG전자
           messageCard = makeScheduleRegCard(message.data);
         } else if(message.type == 'weather') { // 메시지타입_날짜조회
           if (message.data.hasOwnProperty('weatherList')) {
@@ -8296,3 +8527,695 @@ function reloadSearchBudget(data) {
 function getAmountComma(price) {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
+
+// 일정알람 메세지
+function makeScheduleAlarmCard(data) {
+    var scheduleAlarmCard = $('<div class="message"></div>');
+    var scheduleAlarmWrap = $('<div class="schedule-alarm-wrap"></div>');
+    scheduleAlarmCard.append(scheduleAlarmWrap);
+
+    var scheduleAlarmHeader = $('<div class="schedule-alarm-header"></div>');
+    var alarmIcon = $(
+        '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            +'<path fill="#2C2C2C" d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"></path>'
+        +'</svg>'
+    );
+    var scheduleAlarmTitle = $('<h2>일정 15분 전입니다</h2>');
+    scheduleAlarmHeader.append(alarmIcon);
+    scheduleAlarmHeader.append(scheduleAlarmTitle);
+    scheduleAlarmWrap.append(scheduleAlarmHeader);
+    var scheduleAlarmContent = $('<div class="schedule-alarm-content"></div>');
+    var scheduleAlarmContentText = $(
+        '<div class="schedule-alarm-content-header">'
+            +'<h3>일정 제목이 두 줄 이상일 경우 줄바꿈 처리하여 표기합니다.</h3>'
+        +'</div>'
+    );
+
+    scheduleAlarmContent.append(scheduleAlarmContentText);
+    var scheduleAlarmList = $('<ul class="schedule-alarm-list-wrap"></ul>');
+    var scheduleAlarmTimeBox = $('<li class="time-box"><h4>시간 :</h4></li>');
+    var scheduleAlarmTimeStartTime = $('<span>14:00</span>');
+    var scheduleAlarmTimeEndTime = $('<span>15:00</span>');
+    scheduleAlarmTimeBox.append(scheduleAlarmTimeStartTime);
+    scheduleAlarmTimeBox.append(scheduleAlarmTimeEndTime);
+    scheduleAlarmList.append(scheduleAlarmTimeBox);
+    var scheduleAlarmPlace = $(
+        '<li class="place-box">'
+            +'<h4>장소 :</h4>'
+            +'<span>'
+                +'장소명이 들어갑니다.'
+            +'</span>'
+        +'</li>'
+    );
+    scheduleAlarmList.append(scheduleAlarmPlace);
+    scheduleAlarmContent.append(scheduleAlarmList);
+    scheduleAlarmWrap.append(scheduleAlarmContent);
+
+    return scheduleAlarmCard;
+};
+
+
+
+// 일정등록 팝업 - 퍼블 작업용 샘플
+function addSchedulePopupOpenRenew(data) {
+    var videoMeeting = 'N';
+    var privateSchedule = 'N';
+    var checkAttendance = 'N';
+
+    /* #########[ popup_wrap_start ]######### */
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addScheduleBox = $('<div class="plugins" id="addSchedule"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addScheduleHeader = $('<div class="plugin-header"><h1>일정 등록</h1><p class="small">※ 지포탈에서 예약된 회의실만 사용 가능합니다</p></div>');
+    var addShceduleClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    addShceduleClose.on('click', function() {
+        addSchedulePopupClose();
+    });
+    addScheduleHeader.append(addShceduleClose);
+    addScheduleBox.append(addScheduleHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addScheduleContents = $('<div class="plugin-contents"></div>');
+    var addScheduleForm = $('<form data-sessionId="'+ data.chatSessionId.split("sessions/")[1] +'"' + 'data-userId="'+data.userId+'" class="form-schedule"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ 제목 ]### */
+    var titleInputBox = $('<div class="input-box"><label>제목<b>*</b></label></div>');   
+    var titleInput = $('<input type="text" placeholder="제목을 입력해주세요." name="sch_title" id="sch_title" max-length="50" />');
+    titleInput.on('keyup', function(e) {
+        scheduleTitle = e.target.value;
+        checkScheduleRequire();
+    });
+    titleInputBox.append(titleInput);    
+    addScheduleForm.append(titleInputBox);
+    
+    /* ###[ 일시 ]### */
+    var placeholderToday = moment().format('YYYY.MM.DD');
+    var placeholderNowTime = '';
+    if(moment().minute()<30) {
+        placeholderNowTime = moment().minute(30).second(0);
+    } else {
+        placeholderNowTime= moment().add(1, 'hours').minute(0).second(0);
+    }
+   
+    var placeholderNowTimeHourMinutes = moment(placeholderNowTime).format('HH:mm');
+    var placeholderNowPlus30 = moment(placeholderNowTime).add(30, 'minutes').format('HH:mm');
+  
+    var timeInputBox = $('<div class="input-box"><label>일시<b>*</b></label></div>');
+    var allDayBox = $('<div class="on-off-box"></div>');
+    var allDayUl = $('<ul></ul>');
+    var allDayLi = $('<li></li>');
+    var allDayText = $('<span class="a-text">종일일정</span>');
+    allDayLi.append(allDayText);
+    var allDaySwitch = $(
+        '<label class="switch">'
+            +'<input type="checkbox" id="allDay" />'
+            +'<span class="slider round"></span>'
+        +'</label>'
+    );
+    allDaySwitch.on('click', function() {
+        if($(this).find('#allDay').is(':checked')) {
+            allDayCheck = 'Y';
+            $('.schedule-input-wrap').find('.time-selector').css('display', 'none');
+            $('.schedule-input-wrap').find('.input-schedule-date').addClass('all-day');
+            $('.time-input').val('');
+        } else {
+            allDayCheck = 'N';
+            $('.schedule-input-wrap').find('.time-selector').css('display', 'unset');
+            $('.schedule-input-wrap').find('.input-schedule-date').removeClass('all-day');
+            $('#start-time').val(placeholderNowTimeHourMinutes);
+            $('#end-time').val(placeholderNowPlus30);
+        }
+    });
+    allDayLi.append(allDaySwitch);
+    allDayUl.append(allDayLi);
+    allDayBox.append(allDayUl);
+    timeInputBox.append(allDayBox);
+  
+    var dateTimeWrap = $('<div class="schedule-wrap"></div>');
+    var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap" id="start-date-box"></div>');
+    var dateStartInput = $('<input type="text" placeholder="'+placeholderToday+'" value="'+placeholderToday+'" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" />');
+    dateTimeStartBox.append(dateStartInput);
+    var timeStartSelect = $(
+        '<div class="time-selector">'
+            +'<input type="text" placeholder="'+placeholderNowTimeHourMinutes+'" value="'+placeholderNowTimeHourMinutes+'" id="start-time" class="time-input start-time" onclick="setTimePicker(this)"/>'
+            +'<div class="time-options"></div>'
+        +'</div>'
+    );
+   
+    dateTimeStartBox.append(timeStartSelect);
+    dateTimeWrap.append(dateTimeStartBox);
+    var dateTimeEndBox = $('<div class="schedule-input-wrap schedule-date-wrap" id="end-date-box"></div>');
+    var dateEndInput = $('<input type="text" placeholder="'+placeholderToday+'"  value="'+placeholderToday+'" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" />');
+    dateTimeEndBox.append(dateEndInput);
+    var timeEndBox = $(
+        '<div class="time-selector">'
+            +'<input type="text" placeholder="'+placeholderNowPlus30+'" value="'+placeholderNowPlus30+'" id="end-time" class="time-input end-time" onclick="setTimePicker(this)"/>'
+            +'<div class="time-options"></div>'
+        +'</div>'
+    );
+    
+    dateTimeEndBox.append(timeEndBox);
+    dateTimeWrap.append(dateTimeEndBox);
+    timeInputBox.append(dateTimeWrap);
+    addScheduleForm.append(timeInputBox);
+  
+    /* ###[ 장소 ]### */
+    var placeInputBox = $('<div class="input-box add-schedule-place"><label>장소</label></div>');
+    var placeSelectBox = $('<div class="place-select"></div>');
+    var placedSelected = $('<div class="selected-place"></div>');
+    placeSelectBox.append(placedSelected);
+    var placeTooltip = $('<div class="place-tooltip">설정된 일시에 예약된 회의실만 불러올 수 있어요.<br />먼저 지포탈에서 회의실을 예약해 주세요!</div>');
+    placeSelectBox.append(placeTooltip);
+  
+    var startDate = moment(dateStartInput.val()).format('YYYYMMDD') + (placeholderNowTimeHourMinutes ? placeholderNowTimeHourMinutes.split(':').join('') : '0000');
+    if (!startDate || startDate == 'Invalid date') {
+        startDate = moment().format('YYYYMMDD') + '0000';
+    };
+    var endDate = moment(dateEndInput.val()).format('YYYYMMDD') + (placeholderNowPlus30 ? placeholderNowPlus30.split(':').join('') : '2400');
+    if (!endDate || endDate == 'Invalid date') {
+        endDate = moment().format('YYYYMMDD') + '2400';
+    };
+    var userId = data.userId;
+    
+    var placeInput = $('<input type="text" placeholder="회의실 선택 또는 장소를 입력해 주세요." id="schedule-place" />');
+    var placeList = $('<div class="place-list"></div>');
+    var placeByText = $('<div class="place-text"><p class="texted"></p><p class="small">입력한 이 위치 사용하기</p></div>');
+    var placeValue = '';
+    placeList.append(placeByText);
+
+    placeInput.on('keyup', function() {
+        placeValue = $(this).val();
+        if (placeValue.length > 0) {
+            $('.place-text').addClass('show');
+            $('.place-text .texted').text(placeValue); 
+        } else {
+            $('.place-text').removeClass('show');
+            $('.place-text .texted').text(''); 
+        }
+    });
+  
+    // [입력한 이 위치에 사용하기] 클릭
+    placeByText.on('click', function() {
+        var placeInfo = $(
+            '<div class="place-info">'
+                + placeValue
+                + '<button type="button" class="btn btn-delete">' 
+                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+                    + '</svg>'
+                + '</button>'
+                + '<input type="hidden" value="'+ placeValue +'" class="place-name"/>'
+            +'</div>'
+        );
+  
+        placedSelected.empty();
+        placeInput.val('');
+        $('.place-text').removeClass('show');
+        $('.place-text .texted').text(''); 
+        placedSelected.append(placeInfo);
+        $('.place-list').removeClass('show');
+        $('.place-list').css('top', '82px');
+        $('#schedule-place').attr('placeholder', '');
+        schedulePlaceWidth();
+    });
+   
+    var plcaeListTitle = $('<span>예약 가능한 회의실 목록</span>');
+    placeList.append(plcaeListTitle);
+    
+    var placeUl = $('<ul></ul>');
+    placeInput.on('focus', function() {
+        $('.place-list').addClass('show');
+        placeUl.empty();
+
+        var placeLi = $(
+            '<li>'
+                +'<p>'+ '회의실 호수'+'(회의실 이름)' +'</p>'
+                +'<p class="small">'
+                + '시작시간' +'~'+ '종료시간' +' · ' + '회의실 상세위치'
+                +'</p>'
+            +'</li>'
+        );
+
+        // 예약 가능한 회의실 목록 리스트 클릭
+        placeLi.on('click', function() {
+            var placeInfo = $(
+                '<div class="place-info">'
+                    + '회의실 호수' + '(회의실 위치)'
+                    + '<button type="button" class="btn btn-delete">' 
+                        + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                            + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+                        + '</svg>'
+                    + '</button>'
+                +'</div>'
+            );
+
+            placedSelected.empty();
+            placedSelected.append(placeInfo);
+            $('.place-list').removeClass('show');
+            $('.place-list').css('top', '82px');
+            $('#schedule-place').attr('placeholder', '');
+            schedulePlaceWidth();
+        });
+        
+        placeUl.append(placeLi);
+        placeList.append(placeUl);
+    });
+  
+    placeSelectBox.append(placeInput);
+    placeSelectBox.append(placeList);
+    placeInputBox.append(placeSelectBox);
+    addScheduleForm.append(placeInputBox);
+  
+    // 지정된 장소 삭제 버튼 클릭
+    $(document).on('click', '.place-info .btn-delete', function(){
+        $(this).closest(".place-info").remove();
+        $('#schedule-place').attr('placeholder', '장소를 입력해 주세요.');
+        $('.place-list').css('top', '82px');
+        schedulePlaceWidth();
+    });
+
+    // place-select 제외 클릭
+    $(document).on('click', function(e) {
+        if ($('.place-select').has(e.target).length === 0) {
+            $('.place-list').removeClass('show');
+        }
+    });
+
+    $(window).resize(function() {
+        schedulePlaceWidth();
+    });
+
+    // 장소 입력 input width 변경
+    function schedulePlaceWidth() {
+        let placeSelectWidth = $('.place-select').width();
+        let selectedPlaceWidth = $('.selected-place').width();
+        let schedulePlaceWidth = placeSelectWidth - selectedPlaceWidth;
+        $('#schedule-place').css('width', schedulePlaceWidth + "px");
+        if ($('#schedule-place').width() === 0) {
+            $('#schedule-place').attr('style', '');
+        };
+    };
+
+    /* ###[ 참석자 ]### */
+    var memberInputBox = $('<div class="input-box"><label>참석자</label></div></div>');
+    var memberList = $('<div class="schedule-join-member"></div>');
+    
+    var selectedMembers = $('<div class="selected-members fold"></div>');
+    memberList.append(selectedMembers);
+    var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-2" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
+    memberList.append(autocompleteMember);
+    var memberInput = $('<input type="text" placeholder="직원명을 입력해 주세요" id="attendees" class="search-input" />');
+    setAutocompleteJoinMember(memberInput);
+    memberList.append(memberInput);
+    memberInputBox.append(memberList);
+    addScheduleForm.append(memberInputBox);
+    
+    /* ###[ 기타 옵션 ]### */
+    var otherOptionsBox = $('<div class="input-box"><p>기타 옵션</p></div>');
+    var otherOptions = $('<div class="on-off-box"></div>');
+    var otherOptionsUl = $('<ul></ul>');
+
+    // 비공개 일정
+    var privateLi = $('<li><span class="a-text">비공개 일정</span></li>');
+    var privateSwitch = $(
+        '<label class="switch">'
+            +'<input type="checkbox" id="privateSchedule" value="Y" name="private" />'
+            +'<span class="slider round"></span>'
+        +'</label>'
+    );
+    privateSwitch.on('click', function() {
+        if($(this).find('#privateSchedule').is(':checked')) {
+            privateSchedule = 'Y';
+        } else {
+            privateSchedule = 'N';
+        }   
+    });
+    privateLi.append(privateSwitch);
+    otherOptionsUl.append(privateLi);
+
+    // 참여 여부 확인
+    var checkAttendanceLi = $('<li><span class="a-text">참여 여부 확인</span></li>');
+    var checkAttendanceSwitch = $(
+        '<label class="switch">'
+            +'<input type="checkbox" id="checkAttendance"/>'
+            +'<span class="slider round"></span>'
+        +'</label>'
+    );
+    checkAttendanceSwitch.on('click', function() {
+        if($(this).find('#checkAttendance').is(':checked')) {
+            checkAttendance = 'Y';
+        } else {
+            checkAttendance = 'N';
+        } 
+    });
+    checkAttendanceLi.append(checkAttendanceSwitch);
+    otherOptionsUl.append(checkAttendanceLi);
+    otherOptions.append(otherOptionsUl);
+    otherOptionsBox.append(otherOptions);
+    addScheduleForm.append(otherOptionsBox);
+  
+
+    /* ###[ etc ]### */
+    // 반복일정 등 상세 일정 등록_gportal
+    var detailSubmitLink = $(
+        '<p class="detail-submit">'
+            +'<a href="http://gportal.lgchem.com/lightpack/planner/calendar/init.do#">반복일정 등의 상세 일정 등록은 여기를 클릭해 주세요.</a>'
+        +'</p>'
+    );
+    addScheduleForm.append(detailSubmitLink);
+
+    // 저장 버튼
+    var addScheduleSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-schedule">저장</button>');
+    addScheduleForm.append(addScheduleSubmit);
+    addScheduleSubmit.on('click', function() {
+        if(scheduleSaveLoading) return;
+        scheduleSaveLoading = true;
+        $(this).addClass('btn-loading');
+        var attends = '';
+        var idInputs = $(this).parents(".form-schedule").find('.person-userId');
+        for(var k=0; k < idInputs.length; k++) {
+            if(k == idInputs.length-1) {
+                attends += $(idInputs[k]).val()
+            } else {
+                attends += $(idInputs[k]).val() + ','
+            }
+        };
+  
+        var attnedsName = '';
+        var nameInputs = $(this).parents(".form-schedule").find('.person-name');
+        for(var k=0; k < nameInputs.length; k++) {
+            if(k == nameInputs.length-1) {
+                attnedsName += $(nameInputs[k]).val()
+            } else {
+                attnedsName += $(nameInputs[k]).val() + ','
+            }
+        };
+  
+        var webxIds = '';
+        var emailInputs = $(this).parents(".form-schedule").find('.person-email');
+        for(var k=0; k < emailInputs.length; k++) {
+            if(k == emailInputs.length-1) {
+                webxIds += $(emailInputs[k]).val()
+            } else {
+                webxIds += $(emailInputs[k]).val() + ','
+            }
+        };
+    
+        var schedule = {
+            title : scheduleTitle,
+            allDayCheck : allDayCheck,
+            startDate : $('#start-date').val(),
+            startTime : $('#start-time').val(),
+            endDate: $('#end-date').val(),
+            endTime: $('#end-time').val(),
+            attend: attends,
+            location: $('.facility-name').val(),
+            placeName: placeValue,
+            videoMeeting: videoMeeting,
+            privateSchedule : privateSchedule,
+            checkAttendance : checkAttendance,
+            attnedsName: attnedsName
+        }
+    
+        var startDate = $('#start-date').val().split('.').join('');
+        if ($('#start-time').val()) {
+            startDate += $('#start-time').val().split(':').join('')
+        }
+        var endDate = $('#end-date').val().split('.').join('');
+        if ($('#end-time').val()) {
+            endDate +=  $('#end-time').val().split(':').join('');
+        }
+    
+        var requestParam = {
+            query: {
+                "event": scheduleRegEvent
+            },
+            payload: {
+                userId:userId,
+                title : scheduleTitle,
+                wholeDay : allDayCheck,
+                startDate :startDate,
+                endDate:endDate,
+                place: $('.place-name').val(),
+                meetingRoomId: $('.facility-id').val(),
+                videoMeeting: videoMeeting,
+                publicYn : privateSchedule,
+                webexYn : data.webexYn,
+                shareList: attends,
+                webexShareList: webxIds,
+                isAttendance: checkAttendance
+            }
+        };
+      
+        if ($('#btn-schedule').hasClass('btn-disabled')) {
+            return;
+        } else {
+            sendChatApi(requestParam, userId, function(payload) {
+                scheduleSaveLoading = false;
+                $('#btn-schedule').removeClass('btn-loading');
+  
+                var savedInfo = '';
+                if (payload && payload.queryResult && payload.queryResult.messages.length > 1 && payload.queryResult.messages[1].response) {
+                    var saveResponse = JSON.parse(payload.queryResult.messages[1].response);
+                    if (saveResponse["successYn"] == 'N') {
+                        showSmallDialog(payload.queryResult.messages[0].message);
+                        return;
+                    } else {
+                        if (savedResponse.template && savedResponse.template.outputs.length > 0 && savedResponse.template.outputs[0] && savedResponse.template.outputs[0].data && savedResponse.template.outputs[0].data.elements) {
+                            savedInfo = savedResponse.template.outputs[0].data.elements;
+                        };
+                    };
+                };
+        
+                addSchedulePopupClose();
+                
+                var isMobile = Mobile();
+                var scheduleResult = 
+                '<div class="message schedule-wrap">'
+                    +'<div class="s-header"><span class="s-date">'+ iconCalendar +'<h1><b>새로운 일정</b>이 등록되었어요</h1></span></div>'
+                    +'<ul class="schedule-list s-list">'
+                        +'<li class="added-schedule">'
+                            +'<div class="detail-box">'
+                                +'<div class="time">'
+                                    +'<h3>'+ (schedule.allDayCheck == 'Y' ? "종일" : schedule.startTime) + '</h3>'
+                                    +'<h5>'+ (schedule.allDayCheck == 'Y' ? "" : schedule.endTime) + '</h5>'
+                                +'</div>'
+                                +'<div class="s-detail">'
+                                    + '<h2>' + (schedule.privateSchedule == 'Y' ? iconPrivate : '') + (schedule.videoMeeting == 'Y' ? iconVideoMeeting : '') + schedule.title +'</h2>'
+                                    
+                                    + '<p class="date-box">' + iconCalendar + schedule.startDate +' - ' + schedule.endDate + '</p>'
+                                    + (schedule.location ? '<p class="place-box">' + iconPlaceSmall + schedule.location + '</p>' : '')
+                                    + (schedule.placeName ? '<p class="place-box">' + iconPlaceSmall + schedule.placeName + '</p>' : '')
+                                    + (schedule.attnedsName ? '<p class="people-box">' + iconPeople + '<strong class="people-list">' + schedule.attnedsName + '</strong></p>' : '')
+                            
+                                + '</div>'
+                            +'</div>'
+                            + (savedInfo.meetingNo ? '<div class="webx-info">'
+                                + '<p><span class="webx-label">미팅번호</span><span class="webx-desc">'+ savedInfo.meetingNo +'</span></p>'
+                                + '<p><span class="webx-label">비밀번호</span><span class="webx-desc">'+ savedInfo.meetingPw +'</span></p>'
+                                + '<p><span class="webx-label">호스트키</span><span class="webx-desc">'+ savedInfo.meetingHost +'</span></p>'
+                                + (!isMobile ? '<a class="btn-default" href="'+ savedInfo.meetingUrl +'" target="_blank"><span class="btns-desc">웹엑스 바로가기</span>'+ iconNewWindow +'</a>':'')
+                            + '</div>' : '')
+                        +'</li>'
+                    +'</ul">'
+                +'</div>'
+                appendChatbotText(scheduleResult);
+
+                // [퍼블 수정 및 추가] - 사원 split
+                function peopleSplit() {
+                    let peopleItemData;
+                    let peopleList = schedule.attnedsName;
+                        console.log(peopleList);
+                    peopleList = peopleList.split(",");
+                        console.log(peopleList);
+                    $('strong.people-list').empty();
+                    for (let i = 0; i < peopleList.length; i++ ) {
+                        peopleItemData = $('<span>' + peopleList[i] + '</span>');
+                        console.log(peopleItemData);
+                        $('strong.people-list').append(peopleItemData);
+                    }
+                
+                    let peoplesNum;
+                    let peoplesCount;
+                    $('.people-list > span').each(function(index, item) {
+                        peoplesNum = index - 1;
+                        if (index > 1) {
+                            if ($(this).parents('.people-list').find('b').length) {
+                                $(this).parents('.people-list').find('b span').text(peoplesNum)
+                            } else {
+                                peoplesCount = $('<b>외 <span>' + peoplesNum + '</span>명</b>');
+                                $('.people-list').append(peoplesCount);
+                            };
+                            $(this).remove();
+                        };
+                    });
+                }; peopleSplit()
+
+                // [퍼블 수정 및 추가] - 같은날짜 제거
+                function dateCompare() {
+                    if (schedule.startDate == schedule.endDate) {
+                        $('.date-box').empty();
+                        $('.date-box').append(iconCalendar + schedule.startDate);
+                    };
+                }; dateCompare();
+
+            });
+        };
+    });
+  
+    /* #########[ popup_content_wrap_end ]######### */
+    addScheduleContents.append(addScheduleForm);
+    addScheduleBox.append(addScheduleContents);
+  
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addScheduleBox);
+    $('.plugin-dim').css('display', 'block');
+    $('#addSchedule').css('display', 'block');
+  
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addSchedule').addClass('show');
+    }, 100);
+  
+
+    /*  #########[ datepicker ]#########  */
+    var datepicker = $('<div class="datepicker-chem"></div>');
+    $('.schedule-input-wrap').append(datepicker);
+};
+
+// 스케줄 셋팅 테스트
+function makeScheduleItemSample(scheduleList, scheduleBody){
+    var scheduleItem = $('<li class="schedule-item schedule-notwholeTime"></li>');
+    scheduleList.append(scheduleItem);
+    var scheduleItemTime = $('<div class="time"><h3>17:00</h3><h5>17:30</h5></div>');
+    scheduleItem.append(scheduleItemTime);
+    var scheduleItemDetail = $('<div class="s-detail"></div>');
+    scheduleItem.append(scheduleItemDetail);
+    var scheduleItemTitle = $('<h2 class="schedule-todo"><span>테스트01(일정제목)</span></h2>');
+    scheduleItemDetail.append(scheduleItemTitle);
+    var scheduleItemPlaceWrap = $(
+        '<p>'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10.3334 6.66683C10.3334 7.95549 9.28875 9.00016 8.00008 9.00016C6.71142 9.00016 5.66675 7.95549 5.66675 6.66683C5.66675 5.37817 6.71142 4.3335 8.00008 4.3335C9.28875 4.3335 10.3334 5.37817 10.3334 6.66683ZM9.53341 6.66683C9.53341 7.51367 8.84692 8.20016 8.00008 8.20016C7.15324 8.20016 6.46675 7.51367 6.46675 6.66683C6.46675 5.81999 7.15324 5.1335 8.00008 5.1335C8.84692 5.1335 9.53341 5.81999 9.53341 6.66683Z" fill="#898989"></path>'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M11.7713 10.6668C11.1659 11.5683 9.65522 13.3353 8.74013 14.3853C8.34745 14.8359 7.65271 14.8359 7.26003 14.3853C6.34495 13.3353 4.83426 11.5683 4.22885 10.6668C3.33341 9.3335 2.66675 8.03175 2.66675 6.66684C2.66675 5.30192 3.18744 3.93699 4.22885 2.89559C6.31164 0.812797 9.68852 0.812797 11.7713 2.89559C12.8127 3.93699 13.3334 5.30192 13.3334 6.66684C13.3334 8.03175 12.6667 9.3335 11.7713 10.6668ZM4.79453 3.46128C6.56491 1.6909 9.43526 1.6909 11.2056 3.46128C12.091 4.34663 12.5334 5.50541 12.5334 6.66684C12.5334 7.77819 11.9882 8.90901 11.1072 10.2208C10.5361 11.0712 9.06426 12.7957 8.13702 13.8597C8.06318 13.9445 7.93698 13.9445 7.86314 13.8597C6.9359 12.7957 5.46407 11.0712 4.89298 10.2208C4.012 8.90901 3.46675 7.77819 3.46675 6.66684C3.46675 5.50541 3.90918 4.34663 4.79453 3.46128Z" fill="#898989"></path>'
+            +'</svg>'
+        +'</p>'
+    );
+    scheduleItemDetail.append(scheduleItemPlaceWrap);
+    var scheduleItemPlaceItem = $('<span>테스트01(일정장소)</span>');
+    scheduleItemPlaceWrap.append(scheduleItemPlaceItem);
+
+    // 참여 확인 버튼
+    var attendGroup = $('<div class="attend-check"></div>');
+    scheduleItemDetail.append(attendGroup);
+    var attendBtn = $(
+        '<button class="attend-button">'
+            +'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="check"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9121 3.18797C11.0293 3.30512 11.0293 3.49507 10.9121 3.61223L5.56814 8.95622C5.15814 9.36622 4.49342 9.36628 4.08335 8.95635L1.08791 5.96196C0.970727 5.84482 0.970694 5.65487 1.08783 5.53769C1.20497 5.42052 1.39492 5.42048 1.51209 5.53762L4.50754 8.53201C4.68328 8.70769 4.96816 8.70767 5.14388 8.53196L10.4879 3.18797C10.605 3.07081 10.795 3.07081 10.9121 3.18797Z" fill="#6B6B6B"/></svg>'
+            +'<span class="attend-text">' + '미정' +'</span>'
+            +'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="down-arrow"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.70133 7.78633C5.87183 7.93789 6.12876 7.93789 6.29925 7.78633L10.301 4.22924C10.4248 4.11917 10.6144 4.13032 10.7245 4.25416C10.8346 4.37799 10.8234 4.56761 10.6996 4.67769L6.69787 8.23478C6.30004 8.58841 5.70054 8.58841 5.30271 8.23478L1.30098 4.67769C1.17715 4.56761 1.16599 4.37799 1.27607 4.25416C1.38614 4.13032 1.57576 4.11917 1.6996 4.22924L5.70133 7.78633Z" fill="#6B6B6B"/></svg>'
+        +'</button>'
+    );
+    attendBtn.on('click', function(event) {
+        event.stopPropagation();
+        attendChangeOpen();
+    });
+    attendGroup.append(attendBtn);
+    
+    // 일정 삭제 버튼
+    var scheduleItemDelet = $(
+        '<button type="button" class="s-delete" onclick="event.cancelBubble=true;">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M6.66668 5.93343C6.8876 5.93343 7.06668 6.11252 7.06668 6.33343V11.3334C7.06668 11.5543 6.8876 11.7334 6.66668 11.7334C6.44577 11.7334 6.26668 11.5543 6.26668 11.3334L6.26668 6.33343C6.26668 6.11252 6.44577 5.93343 6.66668 5.93343Z" fill="#A5A5A5"></path>'
+                +'<path d="M9.73335 6.33343C9.73335 6.11252 9.55426 5.93343 9.33335 5.93343C9.11244 5.93343 8.93335 6.11252 8.93335 6.33343V11.3334C8.93335 11.5543 9.11244 11.7334 9.33335 11.7334C9.55426 11.7334 9.73335 11.5543 9.73335 11.3334L9.73335 6.33343Z" fill="#A5A5A5"></path>'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66675 2.3335C5.66675 1.78121 6.11446 1.3335 6.66675 1.3335H9.33341C9.8857 1.3335 10.3334 1.78121 10.3334 2.3335V3.2002L12.9334 3.20019C13.1543 3.20019 13.3334 3.37928 13.3334 3.60019C13.3334 3.82111 13.1543 4.00019 12.9334 4.00019H12.6667V12.5335C12.6667 13.6381 11.7713 14.5335 10.6667 14.5335H5.33341C4.22885 14.5335 3.33341 13.6381 3.33341 12.5335V4.0002H3.06675C2.84583 4.0002 2.66675 3.82111 2.66675 3.6002C2.66675 3.37928 2.84583 3.2002 3.06675 3.2002H5.66675V2.3335ZM6.66675 2.1335H9.33341C9.44387 2.1335 9.53341 2.22304 9.53341 2.3335V3.20016H6.46675V2.3335C6.46675 2.22304 6.55629 2.1335 6.66675 2.1335ZM4.13341 4.0002H11.8667V12.5335C11.8667 13.1963 11.3295 13.7335 10.6667 13.7335H5.33341C4.67067 13.7335 4.13341 13.1963 4.13341 12.5335V4.0002Z" fill="#A5A5A5"></path>'
+            +'</svg>'
+        +'</button>'
+    );
+    scheduleItem.append(scheduleItemDelet);
+    
+    scheduleItemDelet.click(function(){
+        $(this).parents('li').addClass('cancel-line');
+        $(this).parents('li').find('.attend-button').attr('disabled', true);
+        $(this).remove();
+        setTimeout(function() {
+            showSmallDialog('일정 및 회의실이 삭제되었습니다.');
+        }, 500);
+    });
+
+    // 참석여부 보기(테스트용)
+    var attednCheck = $('<div class="schedule-list-header attend"></div>');
+    scheduleBody.append(attednCheck);
+    var scheduleListHeaderLabel = $('<span class="a-text">참석여부 보기</span>');
+    attednCheck.append(scheduleListHeaderLabel);
+    var scheduleListHeaderSwitch = $('<label class="switch"></label>');
+    attednCheck.append(scheduleListHeaderSwitch);
+    var switchCheckbox = $('<input type="checkbox" cname="attendView" class="check-attendView" />');
+    scheduleListHeaderSwitch.append(switchCheckbox);
+    scheduleListHeaderSwitch.append($('<span class="slider round"></span>'));
+    scheduleListHeaderSwitch.on('click', function() {
+        var $scheduleWrap = $(this).closest(".schedule-wrap");
+        $(this).find(".check-attendView").prop("checked", !$(this).find(".check-attendView").prop("checked"));
+        if ($(this).find(".check-attendView").prop("checked") == true) {
+            $scheduleWrap.find(".attend-check").addClass("show");
+        } else {
+            $scheduleWrap.find(".attend-check").removeClass("show");
+        }
+    });
+    
+}
+
+
+// 일정 등록 실패
+function scheduleResultError() {
+    var scheduleResultMessage = $('<div class="custom-message"></div>');
+    var scheduleMessageResult = $('<div class="message"></div>');
+    var scheduleResultErrorWrap = $('<div class="message simple-text"></div>');
+    
+    var scheduleResultErrorMessage = $(
+         '<p>일정 등록에 실패했습니다. 다시 시도해 주세요.</p>'
+    );
+    var scheduleResultReloadBtn = $(
+        '<div class="btn">'
+        + '<button type="button" class="btn btn-default reload-schedule">일정 재등록</button>'
+        + '</div>'
+    );
+    scheduleResultReloadBtn.on('click', function() {
+        addSchedulePopupOpen(data);
+        // addSchedulePopupOpenRenew(data);
+    });
+    
+    scheduleResultErrorWrap.append(scheduleResultErrorMessage);
+    scheduleResultErrorWrap.append(scheduleResultReloadBtn);
+    
+    scheduleMessageResult.append(scheduleResultErrorWrap);
+    scheduleResultMessage.append(scheduleMessageResult);
+            
+    return scheduleResultMessage;
+}
+
+
+// 시스템 업무 접속 카드 생성
+function makeSystemCardMoveCard(item) {
+    var systemCardMove = $('<div class="message simple-text"></div>');
+    var SystemCardMoveText = $('<p>시스템에 접속하시려면 아래 버튼을 클릭해 주세요.</p>');
+    systemCardMove.append(SystemCardMoveText);
+    var moveBtnWrap = $('<div class="btn"></div>');
+    var moveBtn = $(
+        '<button type="button" class="btn btn-default move_link">'
+            + item.sysName + iconNewWindow
+        +'</button>'
+    );
+    moveBtnWrap.append(moveBtn);
+    systemCardMove.append(moveBtnWrap);
+    return systemCardMove;
+}
+
