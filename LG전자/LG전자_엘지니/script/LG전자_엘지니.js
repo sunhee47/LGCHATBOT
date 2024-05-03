@@ -1469,6 +1469,7 @@ const setAutocompleteJoinMember = function(input) {
           + '<input type="hidden" value="'+ui.item.email+'" class="person-email"/>'
           + '<input type="hidden" value="'+ui.item.userKorName+'" class="person-name"/>'
           + '<input type="hidden" value="'+ui.item.emailId+'" class="person-userId"/>'
+          + '<input type="hidden" value="'+ui.item.empNo+'" class="person-empNo"/>'
           +'</div>';
           
           $memList.append(htmlStr);
@@ -3865,6 +3866,7 @@ var loadEl = {
   var sessionId = $(btn).closest(".schedule-wrap").attr("data-sessionId");
   var userId = $(btn).closest(".schedule-wrap").attr("data-userId");
   var loginUserId = $(btn).closest(".schedule-wrap").attr("data-loginUserId");
+  var empNo = $(btn).closest(".schedule-wrap").attr("data-empNo");
 
   $listWrap.html('<ul class="schedule-list"></ul>');
   $list = $(btn).closest(".schedule-wrap").find(".schedule-list");
@@ -3879,7 +3881,8 @@ var loadEl = {
   payload: {
     "date": date,
     "targetId" : userId,
-    "loginUserId" : loginUserId
+    "loginUserId" : loginUserId 
+    //, "loginEmpNo" : empNo
   }
   };
   
@@ -5458,6 +5461,7 @@ function makeSystemCardFirst(items) {
  function makeScheduleItem(scheduleCard, scheduleList, checkBtnShow, schedueDate){
   var $listWrap = scheduleList.closest(".schedule-wrap").find(".schedule-list-wrap");
   
+  console.log('scheduleCard : ', scheduleCard);
   var today = new Date();
   var cDate = new Date(scheduleCard.date);
   today = new Date(today.getFullYear(), today.getMonth()+1, today.getDate());
@@ -5534,6 +5538,10 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
 
     scheduleDetail.append(scheduleTitle);
     
+    if(item.facility) {
+      var schedulePlace = $('<p>' + iconMarker + '<span>' + item.facilityFullName + ' ' + item.facility + '</span></p>');
+      scheduleDetail.append(schedulePlace);
+    }
     if(item.place) {
       var schedulePlace = $('<p>' + iconMarker + '<span>' + item.place + '</span></p>');
       scheduleDetail.append(schedulePlace);
@@ -5551,7 +5559,8 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
     // registFg ( 1:내가 등록한 일정일 경우, 2:참여자로 등록된 경우이지만 참여여부 미정일 경우, 3:참여일정인 경우, 4:불참일정인 경우 )
     // registFg가 Empty인 경우 '참여요청' 없이 일정을 등록했기 때문에 렌더링 X
     // regEnv == 'chatbot' 인 경우에만 삭제버튼 렌더링
-    if(item.registFg == '1' && item.regEnv == 'chatbot'){
+    //if(item.registFg == '1' && item.regEnv == 'chatbot'){
+    if(item.registFg == '1') {
               
         // 본인이 등록한  일정일 경우 무조건 일정 삭제 이벤트 (scheduleDeleteEvent)
         var deleteBtn = $('<button type="button" class="s-delete" onclick="event.cancelBubble=true;">' + iconDelete + '</button>');
@@ -5609,7 +5618,8 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
 
     } else {
 
-      if(item.registFg && item.regEnv == 'chatbot') {
+      //if(item.registFg && item.regEnv == 'chatbot') {
+        if(item.registFg) {
           
          // 본인이 등록한  일정일 경우 무조건 일정 삭제 이벤트 (scheduleDeleteEvent)
         var deleteBtn = $('<button type="button" class="s-delete" onclick="event.cancelBubble=true;">' + iconDelete + '</button>');
@@ -5733,6 +5743,7 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
   scheduleWrap.attr("data-userId", scheduleCard.userId);
   scheduleWrap.attr("data-loginUserId", scheduleCard.loginUserId);
   scheduleWrap.attr("data-mySelf", scheduleCard.mySelfYn);
+  scheduleWrap.attr("data-empNo", scheduleCard.empNo);
   scheduleCon.append(scheduleWrap);
 
 	
@@ -6216,6 +6227,7 @@ function makeEmployeeListCard(data,isHistory){
         liHtml +=	'<div class="name">'
                     + '<h1>' + item.userNm + ' ' + item.titleNm +'</h1>'
                     +'</div">';
+
         liHtml += '</div>';
 
         liHtml += '<ul class="profile-info">'
@@ -7567,23 +7579,6 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
           messageCard = makeSystemCardFirst(message.data.items);
         } else if(message.type == 'employee') { // 메시지타입_임직원검색(단일)
           messageCard = makeEmployeeCard(message.data.items[0]);
-        } else if (message.type == 'schedule') { // 메시지타입_일정조회_공통
-          if (message.data.hasOwnProperty('items')) {
-            messageCard = makeScheduleCard(message.data);
-            // messageCard = makeScheduleAlarmCard(message.data); //        [퍼블 수정 및 추가] - 일정 알람
-          }
-          if(message.data.btnName) {
-            var scheduleBtns = $('<div class="custom-quick-reply"></div>');
-            var weekScheduleBtn = $('<span class="btn-custom-reply">' + message.data.btnName + '</span>');
-            weekScheduleBtn.on('click', function() {
-              var url = gPortalWeekScheduleUrl.replace("%query%", message.data.userId);
-              window.open(url, "_blank");
-            });
-
-            scheduleBtns.append(weekScheduleBtn);
-            messageCard.append(scheduleBtns);
-          }
-          
         } else if (message.type == 'meetingRoom') { // 메시지타입_회의실취소
           messageCard = makeMeetingRoomCard(message.data);							
         } else if(message.type == 'weather') { // 메시지타입_날짜조회
@@ -7591,9 +7586,7 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
             messageCard = makeWeatherCard(message.data);
           }
           
-        }else if(message.type == 'employeeList') { // 메시지타입_임직원검색(동명이인)
-          messageCard = makeEmployeeListCard(message.data);
-        }else if(message.type == 'anniversary'){ // 메시지타입_기념일 
+        } else if(message.type == 'anniversary'){ // 메시지타입_기념일 
           messageCard = makeAnniversaryCard(message.data.items);
         } else if(message.type == 'sms') { // sms발송
           messageCard  = makeSmsSendCard(message.data);
@@ -7645,6 +7638,27 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'scheduleReg') { // 메시지타입_일정등록 : LG전자
           messageCard = makeScheduleRegCard(message.data);
         }    	
+        else if (message.type == 'schedule') { // 메시지타입_일정조회_공통
+          if (message.data.hasOwnProperty('items')) {
+            messageCard = makeScheduleCard(message.data);
+            // messageCard = makeScheduleAlarmCard(message.data); //        [퍼블 수정 및 추가] - 일정 알람
+          }
+          if(message.data.btnName) {
+            var scheduleBtns = $('<div class="custom-quick-reply"></div>');
+            var weekScheduleBtn = $('<span class="btn-custom-reply">' + message.data.btnName + '</span>');
+            weekScheduleBtn.on('click', function() {
+              var url = gPortalWeekScheduleUrl.replace("%query%", message.data.userId);
+              window.open(url, "_blank");
+            });
+
+            scheduleBtns.append(weekScheduleBtn);
+            messageCard.append(scheduleBtns);
+          }
+          
+        }
+        else if(message.type == 'employeeList') { // 메시지타입_임직원검색(동명이인)
+          messageCard = makeEmployeeListCard(message.data);
+        }        
         else if(message.type == 'budgetInput') {                    // 예산조회 입력
           console.log('잔여예산조회...');
           messageCard = makeBudgetInputCard(message.data); // [퍼블 수정 및 추가]
@@ -8585,9 +8599,29 @@ function makeScheduleAlarmCard(data) {
 
 // 일정등록 팝업 - 퍼블 작업용 샘플
 function addSchedulePopupOpenRenew(data) {
+    /*
+var data = {
+    "title": "일정 실패 테스트.",
+    "allDayCheck": "Y",
+    "startDate": "2024.05.03",
+    "startTime": "",
+    "endDate": "2024.05.03",
+    "endTime": "",
+    "attend": "",
+    "placeName": "재택근무",
+    "videoMeeting": "N",
+    "privateSchedule": "N",
+    "checkAttendance": "N",
+    "attnedsName": "",
+    "userId": "sangmin2.lee",
+    "empNo": "245030",
+    "chatSessionId": "24da3a88-f123-4eb4-8d2a-991e5ecf7552"
+}*/
+
+    console.log('addSchedulePopupOpenRenew > ', data); 
     var videoMeeting = 'N';
-    var privateSchedule = 'N';
-    var checkAttendance = 'N';
+    var privateSchedule = (data.privateSchedule=='Y')? data.privateSchedule:'N';
+    var checkAttendance = (data.checkAttendance=='Y')? data.checkAttendance:'N';
 
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
@@ -8615,7 +8649,7 @@ function addSchedulePopupOpenRenew(data) {
     /* #########[ popup_content ]######### */
     /* ###[ 제목 ]### */
     var titleInputBox = $('<div class="input-box"><label>제목<b>*</b></label></div>');   
-    var titleInput = $('<input type="text" placeholder="제목을 입력해주세요." name="sch_title" id="sch_title" max-length="50" />');
+    var titleInput = $('<input type="text" placeholder="제목을 입력해주세요." name="sch_title" id="sch_title" max-length="50" value="'+ (data.title? data.title:'') +'"/>');
     titleInput.on('keyup', function(e) {
         scheduleTitle = e.target.value;
         checkScheduleRequire();
@@ -8643,16 +8677,19 @@ function addSchedulePopupOpenRenew(data) {
     allDayLi.append(allDayText);
     var allDaySwitch = $(
         '<label class="switch">'
-            +'<input type="checkbox" id="allDay" />'
+            +'<input type="checkbox" id="allDay" '+(data.allDayCheck=='Y'? 'checked':'')+' />'            // '+(data.allDayCheck=='Y'? 'checked':'')+'
             +'<span class="slider round"></span>'
         +'</label>'
     );
+    allDayCheck = (data.allDayCheck=='Y')? data.allDayCheck:'N'; 
     allDaySwitch.on('click', function() {
         if($(this).find('#allDay').is(':checked')) {
             allDayCheck = 'Y';
             $('.schedule-input-wrap').find('.time-selector').css('display', 'none');
             $('.schedule-input-wrap').find('.input-schedule-date').addClass('all-day');
-            $('.time-input').val('');
+            $('#start-time').val('0000');
+            $('#end-time').val('2400');
+            //$('.time-input').val('');
         } else {
             allDayCheck = 'N';
             $('.schedule-input-wrap').find('.time-selector').css('display', 'unset');
@@ -8661,6 +8698,7 @@ function addSchedulePopupOpenRenew(data) {
             $('#end-time').val(placeholderNowPlus30);
         }
     });
+    
     allDayLi.append(allDaySwitch);
     allDayUl.append(allDayLi);
     allDayBox.append(allDayUl);
@@ -8668,11 +8706,11 @@ function addSchedulePopupOpenRenew(data) {
   
     var dateTimeWrap = $('<div class="schedule-wrap"></div>');
     var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap" id="start-date-box"></div>');
-    var dateStartInput = $('<input type="text" placeholder="'+placeholderToday+'" value="'+placeholderToday+'" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" />');
+    var dateStartInput = $('<input type="text" placeholder="'+placeholderToday+'" value="'+(data.startDate? data.startDate:placeholderToday)+'" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" />');
     dateTimeStartBox.append(dateStartInput);
     var timeStartSelect = $(
         '<div class="time-selector">'
-            +'<input type="text" placeholder="'+placeholderNowTimeHourMinutes+'" value="'+placeholderNowTimeHourMinutes+'" id="start-time" class="time-input start-time" onclick="setTimePicker(this)"/>'
+            +'<input type="text" placeholder="'+placeholderNowTimeHourMinutes+'" value="'+(data.startTime? data.startTime:placeholderNowTimeHourMinutes)+'" id="start-time" class="time-input start-time" onclick="setTimePicker(this)"/>'
             +'<div class="time-options"></div>'
         +'</div>'
     );
@@ -8680,11 +8718,11 @@ function addSchedulePopupOpenRenew(data) {
     dateTimeStartBox.append(timeStartSelect);
     dateTimeWrap.append(dateTimeStartBox);
     var dateTimeEndBox = $('<div class="schedule-input-wrap schedule-date-wrap" id="end-date-box"></div>');
-    var dateEndInput = $('<input type="text" placeholder="'+placeholderToday+'"  value="'+placeholderToday+'" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" />');
+    var dateEndInput = $('<input type="text" placeholder="'+placeholderToday+'"  value="'+(data.endDate? data.endDate:placeholderToday)+'" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" />');
     dateTimeEndBox.append(dateEndInput);
     var timeEndBox = $(
         '<div class="time-selector">'
-            +'<input type="text" placeholder="'+placeholderNowPlus30+'" value="'+placeholderNowPlus30+'" id="end-time" class="time-input end-time" onclick="setTimePicker(this)"/>'
+            +'<input type="text" placeholder="'+placeholderNowPlus30+'" value="'+(data.endTime? data.endTime:placeholderNowPlus30)+'" id="end-time" class="time-input end-time" onclick="setTimePicker(this)"/>'
             +'<div class="time-options"></div>'
         +'</div>'
     );
@@ -8693,7 +8731,7 @@ function addSchedulePopupOpenRenew(data) {
     dateTimeWrap.append(dateTimeEndBox);
     timeInputBox.append(dateTimeWrap);
     addScheduleForm.append(timeInputBox);
-  
+
     /* ###[ 장소 ]### */
     var placeInputBox = $('<div class="input-box add-schedule-place"><label>장소</label></div>');
     var placeSelectBox = $('<div class="place-select"></div>');
@@ -8713,7 +8751,7 @@ function addSchedulePopupOpenRenew(data) {
         endDate = moment().format('YYYYMMDD') + '2400';
     };
     var userId = data.userId;
-    var empNo = "999991"; //data.empNo;
+    var empNo = data.empNo;    // "999991"; //
     
     var placeInput = $('<input type="text" placeholder="회의실 선택 또는 장소를 입력해 주세요." id="schedule-place" />');
     var placeList = $('<div class="place-list"></div>');
@@ -8784,7 +8822,7 @@ function addSchedulePopupOpenRenew(data) {
                 searchStartTime:startTime,
                 searchEndDt:endDate, 
                 searchEndTime:endTime, 
-                loginUserId:empNo
+                loginUserId:"999991"
             }
           };
           
@@ -8904,7 +8942,7 @@ function addSchedulePopupOpenRenew(data) {
     var privateLi = $('<li><span class="a-text">비공개 일정</span></li>');
     var privateSwitch = $(
         '<label class="switch">'
-            +'<input type="checkbox" id="privateSchedule" value="Y" name="private" />'
+            +'<input type="checkbox" id="privateSchedule" value="Y" name="private" '+(data.privateSchedule=='Y'? 'checked':'')+'/>'
             +'<span class="slider round"></span>'
         +'</label>'
     );
@@ -8922,7 +8960,7 @@ function addSchedulePopupOpenRenew(data) {
     var checkAttendanceLi = $('<li><span class="a-text">참여 여부 확인</span></li>');
     var checkAttendanceSwitch = $(
         '<label class="switch">'
-            +'<input type="checkbox" id="checkAttendance"/>'
+            +'<input type="checkbox" id="checkAttendance" '+(data.checkAttendance=='Y'? 'checked':'')+'/>'
             +'<span class="slider round"></span>'
         +'</label>'
     );
@@ -8957,7 +8995,7 @@ function addSchedulePopupOpenRenew(data) {
         scheduleSaveLoading = true;
         $(this).addClass('btn-loading');
         var attends = '';
-        var idInputs = $(this).parents(".form-schedule").find('.person-userId');
+        var idInputs = $(this).parents(".form-schedule").find('.person-empNo');
         for(var k=0; k < idInputs.length; k++) {
             if(k == idInputs.length-1) {
                 attends += $(idInputs[k]).val()
@@ -8986,6 +9024,8 @@ function addSchedulePopupOpenRenew(data) {
             }
         };
     
+        var chatSessionId = chatui.getSessionId();
+        
         var schedule = {
             title : scheduleTitle,
             allDayCheck : allDayCheck,
@@ -8995,11 +9035,15 @@ function addSchedulePopupOpenRenew(data) {
             endTime: $('#end-time').val(),
             attend: attends,
             location: $('.facility-name').val(),
+            facilityId: $('.facility-id').val(),
             placeName: placeValue,
             videoMeeting: videoMeeting,
             privateSchedule : privateSchedule,
             checkAttendance : checkAttendance,
-            attnedsName: attnedsName
+            attnedsName: attnedsName, 
+            userId:userId, 
+            empNo:empNo, 
+            chatSessionId:chatSessionId
         }
     
         var startDate = $('#start-date').val().split('.').join('');
@@ -9013,16 +9057,17 @@ function addSchedulePopupOpenRenew(data) {
     
         var requestParam = {
             query: {
-                "event": scheduleRegEvent
+                "event": "scheduleRegEvent"
             },
             payload: {
                 userId:userId,
+                empNo:empNo, 
                 title : scheduleTitle,
                 wholeDay : allDayCheck,
                 startDate :startDate,
                 endDate:endDate,
-                place: $('.place-name').val(),
-                meetingRoomId: $('.facility-id').val(),
+                place: ($('.place-name').val() == 'undefined' || $('.place-name').val() == null)? '':$('.place-name').val(),
+                facilityId: $('.facility-id').val(),
                 videoMeeting: videoMeeting,
                 publicYn : privateSchedule,
                 webexYn : data.webexYn,
@@ -9044,91 +9089,123 @@ function addSchedulePopupOpenRenew(data) {
                 scheduleSaveLoading = false;
                 $('#btn-schedule').removeClass('btn-loading');
   
+                console.log('일정 등록 : ', payload);
                 var savedInfo = '';
+                var regSuccessYn = '';
                 if (payload && payload.queryResult && payload.queryResult.messages.length > 1 && payload.queryResult.messages[1].response) {
-                    var saveResponse = JSON.parse(payload.queryResult.messages[1].response);
-                    if (saveResponse["successYn"] == 'N') {
-                        showSmallDialog(payload.queryResult.messages[0].message);
-                        return;
+                    var savedResponse = JSON.parse(payload.queryResult.messages[1].response);
+                    console.log(savedResponse["successYn"]);
+                    if (savedResponse["successYn"] == 'N') {
+                        if(savedResponse["errorMessage"] == 'duplicate') {           // 이미 에약된 회의실인 경우. 
+                            showHtmlSmallDialog(payload.queryResult.messages[0].message);
+                            return;
+                        }
+                        else{
+                            console.log('errorMessage : '+savedResponse["errorMessage"]);
+                            regSuccessYn = 'N';
+                        }
                     } else {
-                        if (savedResponse.template && savedResponse.template.outputs.length > 0 && savedResponse.template.outputs[0] && savedResponse.template.outputs[0].data && savedResponse.template.outputs[0].data.elements) {
-                            savedInfo = savedResponse.template.outputs[0].data.elements;
-                        };
-                    };
-                };
+                        regSuccessYn = 'Y';
+                        if (savedResponse.template && savedResponse.template.outputs.length > 0 && savedResponse.template.outputs[0] && savedResponse.template.outputs[0].resultItem) {
+                            savedInfo = savedResponse.template.outputs[0].resultItem;
+                        }
+                    }
+                    
+                }
         
                 addSchedulePopupClose();
-                
-                var isMobile = Mobile();
-                var scheduleResult = 
-                '<div class="message schedule-wrap">'
-                    +'<div class="s-header"><span class="s-date">'+ iconCalendar +'<h1><b>새로운 일정</b>이 등록되었어요</h1></span></div>'
-                    +'<ul class="schedule-list s-list">'
-                        +'<li class="added-schedule">'
-                            +'<div class="detail-box">'
-                                +'<div class="time">'
-                                    +'<h3>'+ (schedule.allDayCheck == 'Y' ? "종일" : schedule.startTime) + '</h3>'
-                                    +'<h5>'+ (schedule.allDayCheck == 'Y' ? "" : schedule.endTime) + '</h5>'
-                                +'</div>'
-                                +'<div class="s-detail">'
-                                    + '<h2>' + (schedule.privateSchedule == 'Y' ? iconPrivate : '') + (schedule.videoMeeting == 'Y' ? iconVideoMeeting : '') + schedule.title +'</h2>'
-                                    
-                                    + '<p class="date-box">' + iconCalendar + schedule.startDate +' - ' + schedule.endDate + '</p>'
-                                    + (schedule.location ? '<p class="place-box">' + iconPlaceSmall + schedule.location + '</p>' : '')
-                                    + (schedule.placeName ? '<p class="place-box">' + iconPlaceSmall + schedule.placeName + '</p>' : '')
-                                    + (schedule.attnedsName ? '<p class="people-box">' + iconPeople + '<strong class="people-list">' + schedule.attnedsName + '</strong></p>' : '')
-                            
+
+                if(regSuccessYn == 'N') {
+                    
+                    var scheduleResult = '<div class="message simple-text">'
+                                + '<p>일정 등록에 실패했습니다. 다시 시도해 주세요.</p>'
+                                + '<div class="btn">'
+                                + '<button type="button" class="btn btn-default reload-schedule">일정 재등록</button>'
                                 + '</div>'
-                            +'</div>'
-                            + (savedInfo.meetingNo ? '<div class="webx-info">'
-                                + '<p><span class="webx-label">미팅번호</span><span class="webx-desc">'+ savedInfo.meetingNo +'</span></p>'
-                                + '<p><span class="webx-label">비밀번호</span><span class="webx-desc">'+ savedInfo.meetingPw +'</span></p>'
-                                + '<p><span class="webx-label">호스트키</span><span class="webx-desc">'+ savedInfo.meetingHost +'</span></p>'
-                                + (!isMobile ? '<a class="btn-default" href="'+ savedInfo.meetingUrl +'" target="_blank"><span class="btns-desc">웹엑스 바로가기</span>'+ iconNewWindow +'</a>':'')
-                            + '</div>' : '')
-                        +'</li>'
-                    +'</ul">'
-                +'</div>'
-                appendChatbotText(scheduleResult);
-
-                // [퍼블 수정 및 추가] - 사원 split
-                function peopleSplit() {
-                    let peopleItemData;
-                    let peopleList = schedule.attnedsName;
-                        console.log(peopleList);
-                    peopleList = peopleList.split(",");
-                        console.log(peopleList);
-                    $('strong.people-list').empty();
-                    for (let i = 0; i < peopleList.length; i++ ) {
-                        peopleItemData = $('<span>' + peopleList[i] + '</span>');
-                        console.log(peopleItemData);
-                        $('strong.people-list').append(peopleItemData);
-                    }
-                
-                    let peoplesNum;
-                    let peoplesCount;
-                    $('.people-list > span').each(function(index, item) {
-                        peoplesNum = index - 1;
-                        if (index > 1) {
-                            if ($(this).parents('.people-list').find('b').length) {
-                                $(this).parents('.people-list').find('b span').text(peoplesNum)
-                            } else {
-                                peoplesCount = $('<b>외 <span>' + peoplesNum + '</span>명</b>');
-                                $('.people-list').append(peoplesCount);
-                            };
-                            $(this).remove();
-                        };
+                        +'</div>';
+                    appendChatbotText(scheduleResult);
+    
+                    $('.reload-schedule').on('click', function() {
+                        //addSchedulePopupOpen(data);
+                        addSchedulePopupOpenRenew(schedule);
                     });
-                }; peopleSplit()
+    
+                }   
+                else{
+                
+                    console.log('일정 등록 완료 : ', savedInfo);
+                    
+                    var isMobile = Mobile();
+                    var scheduleResult = 
+                    '<div class="message schedule-wrap">'
+                        +'<div class="s-header"><span class="s-date">'+ iconCalendar +'<h1><b>새로운 일정</b>이 등록되었어요</h1></span></div>'
+                        +'<ul class="schedule-list s-list">'
+                            +'<li class="added-schedule">'
+                                +'<div class="detail-box">'
+                                    +'<div class="time">'
+                                        +'<h3>'+ (schedule.allDayCheck == 'Y' ? "종일" : schedule.startTime) + '</h3>'
+                                        +'<h5>'+ (schedule.allDayCheck == 'Y' ? "" : schedule.endTime) + '</h5>'
+                                    +'</div>'
+                                    +'<div class="s-detail">'
+                                        + '<h2>' + (schedule.privateSchedule == 'Y' ? iconPrivate : '') + (schedule.videoMeeting == 'Y' ? iconVideoMeeting : '') + schedule.title +'</h2>'
+                                        
+                                        + '<p class="date-box">' + iconCalendar + schedule.startDate +' - ' + schedule.endDate + '</p>'
+                                        + (schedule.location ? '<p class="place-box">' + iconPlaceSmall + schedule.location + '</p>' : '')
+                                        + (schedule.placeName ? '<p class="place-box">' + iconPlaceSmall + schedule.placeName + '</p>' : '')
+                                        + (schedule.attnedsName ? '<p class="people-box">' + iconPeople + '<strong class="people-list">' + schedule.attnedsName + '</strong></p>' : '')
+                                
+                                    + '</div>'
+                                +'</div>'
+                                + (savedInfo.meetingNo ? '<div class="webx-info">'
+                                    + '<p><span class="webx-label">미팅번호</span><span class="webx-desc">'+ savedInfo.meetingNo +'</span></p>'
+                                    + '<p><span class="webx-label">비밀번호</span><span class="webx-desc">'+ savedInfo.meetingPw +'</span></p>'
+                                    + '<p><span class="webx-label">호스트키</span><span class="webx-desc">'+ savedInfo.meetingHost +'</span></p>'
+                                    + (!isMobile ? '<a class="btn-default" href="'+ savedInfo.meetingUrl +'" target="_blank"><span class="btns-desc">웹엑스 바로가기</span>'+ iconNewWindow +'</a>':'')
+                                + '</div>' : '')
+                            +'</li>'
+                        +'</ul">'
+                    +'</div>'
+                    appendChatbotText(scheduleResult);
+    
+                    // [퍼블 수정 및 추가] - 사원 split
+                    function peopleSplit() {
+                        let peopleItemData;
+                        let peopleList = schedule.attnedsName;
+                            console.log(peopleList);
+                        peopleList = peopleList.split(",");
+                            console.log(peopleList);
+                        $('strong.people-list').empty();
+                        for (let i = 0; i < peopleList.length; i++ ) {
+                            peopleItemData = $('<span>' + peopleList[i] + '</span>');
+                            console.log(peopleItemData);
+                            $('strong.people-list').append(peopleItemData);
+                        }
+                    
+                        let peoplesNum;
+                        let peoplesCount;
+                        $('.people-list > span').each(function(index, item) {
+                            peoplesNum = index - 1;
+                            if (index > 1) {
+                                if ($(this).parents('.people-list').find('b').length) {
+                                    $(this).parents('.people-list').find('b span').text(peoplesNum)
+                                } else {
+                                    peoplesCount = $('<b>외 <span>' + peoplesNum + '</span>명</b>');
+                                    $('.people-list').append(peoplesCount);
+                                };
+                                $(this).remove();
+                            };
+                        });
+                    }; peopleSplit()
+    
+                    // [퍼블 수정 및 추가] - 같은날짜 제거
+                    function dateCompare() {
+                        if (schedule.startDate == schedule.endDate) {
+                            $('.date-box').empty();
+                            $('.date-box').append(iconCalendar + schedule.startDate);
+                        };
+                    }; dateCompare();
 
-                // [퍼블 수정 및 추가] - 같은날짜 제거
-                function dateCompare() {
-                    if (schedule.startDate == schedule.endDate) {
-                        $('.date-box').empty();
-                        $('.date-box').append(iconCalendar + schedule.startDate);
-                    };
-                }; dateCompare();
-
+                }
             });
             
             ///// 
@@ -9138,7 +9215,7 @@ function addSchedulePopupOpenRenew(data) {
     /* #########[ popup_content_wrap_end ]######### */
     addScheduleContents.append(addScheduleForm);
     addScheduleBox.append(addScheduleContents);
-  
+
     /* #########[ popup_wrap_end ]######### */
     $('.test-panel').append(pulginDim);
     $('.test-panel').append(addScheduleBox);
@@ -9148,12 +9225,95 @@ function addSchedulePopupOpenRenew(data) {
     setTimeout(function() {
         $('.plugin-dim').addClass('show');
         $('#addSchedule').addClass('show');
+        
     }, 100);
   
-
     /*  #########[ datepicker ]#########  */
     var datepicker = $('<div class="datepicker-chem"></div>');
     $('.schedule-input-wrap').append(datepicker);
+    
+    // 재등록시 이벤트 실행. start
+    if(data.title) {
+        scheduleTitle = $('#sch_title').val();
+        checkScheduleRequire();
+    }
+    if(data.allDayCheck=='Y') {
+        $('.schedule-input-wrap').find('.time-selector').css('display', 'none');
+        $('.schedule-input-wrap').find('.input-schedule-date').addClass('all-day');
+        $('.time-input').val('');
+    }
+    
+    if(data.placeName) {
+        var placeInfo = $(
+            '<div class="place-info">'
+                + data.placeName
+                + '<button type="button" class="btn btn-delete">' 
+                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+                    + '</svg>'
+                + '</button>'
+                + '<input type="hidden" value="'+ data.placeName +'" class="place-name"/>'
+            +'</div>'
+        );
+    
+        $('.selected-place').append(placeInfo);
+        
+        $('#schedule-place').attr('placeholder', '');
+        schedulePlaceWidth();        
+    }    
+    
+    if(data.location) {
+        var placeInfo = $(
+            '<div class="place-info">'
+                + data.location + '&nbsp;&nbsp;'  // + meetingRoom.categoryFullName
+                + '<button type="button" class="btn btn-delete">' 
+                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+                    + '</svg>'
+                + '</button>'
+              + '<input type="hidden" value="'+ data.location +'" class="facility-name"/>'
+              + '<input type="hidden" value="'+ data.facilityId +'" class="facility-id"/>'
+            +'</div>'
+        );
+
+        $('.selected-place').append(placeInfo);
+        $('#schedule-place').attr('placeholder', '');
+        schedulePlaceWidth();
+    }
+    
+    if(data.attnedsName) {
+        //var $memList = $('#attendees').closest(".form-schedule").find(".schedule-join-member").find(".selected-members");
+          var htmlStr;
+
+          var peopleList = data.attnedsName.split(",");
+          var empNoList = data.attend.split(",");
+          //$('#attendees').val('').focus();
+
+            for(var i=0; i<peopleList.length; i++) {
+               htmlStr = '<div class="member-info">'
+                  + peopleList[i]
+                  + '<button type="button" class="btn btn-delete">' 
+                    +  '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +  '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+                    +  '</svg>'
+                  + '</button>'
+                  +'<div class="auto-detail-tooltip"></div>'
+                  + '<input type="hidden" value="" class="person-mobile"/>'
+                  + '<input type="hidden" value="" class="person-email"/>'
+                  + '<input type="hidden" value="'+peopleList[i]+'" class="person-name"/>'
+                  + '<input type="hidden" value="" class="person-userId"/>'
+                  + '<input type="hidden" value="'+empNoList[i]+'" class="person-empNo"/>'
+                  +'</div>';
+                  
+                $('.selected-members').append(htmlStr);    
+            }
+          
+          $('#attendees').attr('placeholder', '');
+        
+    }
+    // 재등록시 이벤트 실행. end
+        
+    
 };
 
 // 스케줄 셋팅 테스트
@@ -9239,7 +9399,8 @@ function makeScheduleItemSample(scheduleList, scheduleBody){
 
 
 // 일정 등록 실패
-function scheduleResultError() {
+function scheduleResultError(data) {
+    console.log('scheduleResultError : ', data);
     var scheduleResultMessage = $('<div class="custom-message"></div>');
     var scheduleMessageResult = $('<div class="message"></div>');
     var scheduleResultErrorWrap = $('<div class="message simple-text"></div>');
@@ -9261,9 +9422,10 @@ function scheduleResultError() {
     scheduleResultErrorWrap.append(scheduleResultReloadBtn);
     
     scheduleMessageResult.append(scheduleResultErrorWrap);
-    scheduleResultMessage.append(scheduleMessageResult);
+    //scheduleResultMessage.append(scheduleMessageResult);
+    
             
-    return scheduleResultMessage;
+    return scheduleMessageResult;
 }
 
 
@@ -9283,3 +9445,15 @@ function makeSystemCardMoveCard(item) {
     return systemCardMove;
 }
 
+function showHtmlSmallDialog(msg) {
+  $('.test-panel').append('<div class="small-dialog"></div>');
+  $('.small-dialog').html(msg);
+  $('.small-dialog').addClass('show');
+  setTimeout(function() {
+    $('.small-dialog').removeClass('show');
+  }, 2000);
+
+  setTimeout(function() {
+    $('.small-dialog').remove();
+  }, 5000);
+}
