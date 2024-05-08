@@ -1456,7 +1456,18 @@ const setAutocompleteJoinMember = function(input) {
 
           $(this).val('').focus();
 
-
+          var members = $memList.find('.member-info');
+          for(var i=0; i<members.length; i++) {
+              
+              var empNo = $(members[i]).find('.person-empNo').val();
+              
+              if(empNo == ui.item.empNo) {
+                  showSmallDialog("이미 선택된 참석자입니다.");
+                  return false;
+              }
+              
+          }
+          
           htmlStr = '<div class="member-info">'
           + ui.item.userKorName
           + '<button type="button" class="btn btn-delete">' 
@@ -4992,7 +5003,7 @@ function attendChangeOpen(target, attendText, scheduleId, sessionId, userId) {
     if (attendStatus == 2 && notAttendReason.length > 0) {
       var requestParam = {
           query: {
-          "event": scheduleAttendEvent
+          "event": "scheduleAttendEvent"
         },
         payload: {
           "scheduleId": scheduleId,
@@ -5008,7 +5019,7 @@ function attendChangeOpen(target, attendText, scheduleId, sessionId, userId) {
     } else {      
       var requestParam = {
           query: {
-          "event": scheduleAttendEvent
+          "event": "scheduleAttendEvent"
         },
         payload: {
           "scheduleId": scheduleId,
@@ -5025,7 +5036,7 @@ function attendChangeOpen(target, attendText, scheduleId, sessionId, userId) {
     // [퍼블 수정 및 추가] - dialog 추가
     setTimeout(function() {
       showSmallDialog("참석여부가 " + "'" + selectedText + "'" + "으로 변경되었습니다.");
-    }, 100);
+    }, 500);
     
   });
   attendChangeBody.append(attendChangeButton);
@@ -5469,6 +5480,7 @@ function makeSystemCardFirst(items) {
   
   var dataDisabled;
 
+//console.log(today+' @ '+cDate);
   if (cDate < today) {
       dataDisabled = ' data-disabled="disabled"';
   } else {
@@ -5512,11 +5524,13 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
       scheduleTitle.append(nowTag);
     }
     
+    var privateTag = "N";                // 비공개 타인 일정.
     if(item.publicYn != 'Y' )  {
       if(scheduleCard.mySelfYn == 'Y') {
         var private = iconLock;
         scheduleTitle.append(private);
       } else {
+        privateTag = 'Y';
         var private = iconLock + '<span>비공개 </span>';
         scheduleTitle.append(private);
       }
@@ -5534,17 +5548,19 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
     };
 
     var title = $('<span>' +item.title+'</span>');
-    scheduleTitle.append(title);
+    
+    if(privateTag == 'N')     scheduleTitle.append(title);
 
     scheduleDetail.append(scheduleTitle);
     
+    
     if(item.facility) {
       var schedulePlace = $('<p>' + iconMarker + '<span>' + item.facilityFullName + ' ' + item.facility + '</span></p>');
-      scheduleDetail.append(schedulePlace);
+      if(privateTag == 'N') scheduleDetail.append(schedulePlace);
     }
     if(item.place) {
       var schedulePlace = $('<p>' + iconMarker + '<span>' + item.place + '</span></p>');
-      scheduleDetail.append(schedulePlace);
+      if(privateTag == 'N') scheduleDetail.append(schedulePlace);
     }
 
 
@@ -5568,11 +5584,16 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
             if( item.repeatYn == "Y" ){
                 pop.open('create', $(this), 'Pop_Alert', 'loadEl.pop_alert("반복일정은 케미에서 삭제하실 수 없습니다.")');
             } else {
+                
+                var popMsg = "일정";
+                if(item.facilityId) {
+                    popMsg = "일정 및 회의실";
+                }
                 pop.open(
                     'create',
                     $(this),
                     'Pop_Delete_Schedule',
-                    'loadEl.pop_del_confirm("일정 삭제", "삭제된 일정은 복구할 수 없어요.<br />일정을 삭제할까요?")' // [퍼블 수정 및 추가] - 텍스트 수정
+                    'loadEl.pop_del_confirm("'+popMsg+' 삭제", "삭제된 '+popMsg+'은 복구할 수 없어요.<br />'+popMsg+'을 삭제할까요?")' // [퍼블 수정 및 추가] - 텍스트 수정
                 );
                 $("#btnDelete").click(function(){
                     // 본인이 등록한 일정에 한해서만 일정 삭제 이벤트로 설정
@@ -5585,7 +5606,7 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
                         payload: {
                             "scheduleId": item.scheduleId ,
                             "deleteTarget" : 0, // ( 일정 삭제 : 0 / 회의실 삭제 : 1)
-                            "isAccept" : 3,     // ( 일정 참여 : 1/ 일정 불참 : 2 )
+                            "isAccept" : 0,     // ( 일정 참여 : 1/ 일정 불참 : 2 )
                             "userId" : userId
                         }
                     };
@@ -5593,23 +5614,36 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
                         requestParam.payload["webexMeetingKey"] = item.webexMeetingNumber;
                     }
                     sendChatApi(requestParam, sessionId, function(payload){
-                        console.log("schedule Delete :: " + JSON.stringify(payload));
+                        console.log("schedule Delete :: ", JSON.stringify(payload));
         
-                        // scheduleItem.remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
-                        scheduleItem.addClass('cancel-line'); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
-                        scheduleItem.find('.attend-check').attr('disabled', true); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
-                        scheduleItem.find('.s-delete').remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
-        
-                        pop.close($("#btnDelete"));
-        
-                        // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
-                        // if( scheduleList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
-                        //     $listWrap.html('<div class="schedule-noData">등록된 일정이 없습니다.</div>');
-                        // }
-        
-                        setTimeout(function() {
-                            showSmallDialog('일정이 삭제되었습니다.');
-                        }, 500);
+                        if (payload && payload.queryResult && payload.queryResult.messages.length > 1 && payload.queryResult.messages[1].response) {
+                            var deleteResponse = JSON.parse(payload.queryResult.messages[1].response);
+                            if (deleteResponse["restSuccessYn"] == 'N') {
+                                
+                                pop.close($("#btnDelete"));
+                
+                                setTimeout(function() {
+                                    showSmallDialog(payload.queryResult.messages[0].message); // [퍼블 수정 및 추가] - 텍스트 수정
+                                }, 500);
+                            }
+                            else{
+                                // scheduleItem.remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
+                                scheduleItem.addClass('cancel-line'); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                                scheduleItem.find('.attend-check').attr('disabled', true); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                                scheduleItem.find('.s-delete').remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                
+                                pop.close($("#btnDelete"));
+                
+                                // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
+                                // if( scheduleList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
+                                //     $listWrap.html('<div class="schedule-noData">등록된 일정이 없습니다.</div>');
+                                // }
+                
+                                setTimeout(function() {
+                                    showSmallDialog('일정이 삭제되었습니다.');
+                                }, 500);
+                            }
+                        }
                     });
                 }); 
             }
@@ -5644,7 +5678,7 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
                         payload: {
                             "scheduleId": item.scheduleId ,
                             "deleteTarget" : 0, // ( 일정 삭제 : 0 / 회의실 삭제 : 1)
-                            "isAccept" : 2,     // ( 일정 참여 : 1/ 일정 불참 : 2 )
+                            "isAccept" : 3,     // ( 일정 참여 : 1/ 일정 불참 : 2 )
                             "userId" : userId
                         }
                     };
@@ -5652,23 +5686,32 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
                         requestParam.payload["webexMeetingKey"] = item.webexMeetingNumber;
                     }
                     sendChatApi(requestParam, sessionId, function(payload){
-                        console.log("schedule Delete :: " + JSON.stringify(payload));
+                        console.log("schedule Delete :: ", payload);
         
+        
+                        if (payload && payload.queryResult && payload.queryResult.messages.length > 1 && payload.queryResult.messages[1].response) {
+                            var deleteResponse = JSON.parse(payload.queryResult.messages[1].response);
+                            if (deleteResponse["restSuccessYn"] == 'N') {
+                                
+                                pop.close($("#btnDelete"));
+                
+                                setTimeout(function() {
+                                    showSmallDialog(payload.queryResult.messages[0].message); // [퍼블 수정 및 추가] - 텍스트 수정
+                                }, 500);
+                            }
+                            else{
+                                scheduleItem.addClass('cancel-line'); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                                scheduleItem.find('.attend-check').attr('disabled', true); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                                scheduleItem.find('.s-delete').remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
+                
+                                pop.close($("#btnDelete"));
+                
+                                setTimeout(function() {
+                                    showSmallDialog('참석자로 초대된 일정이 삭제되었습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                                }, 500);
+                            }
+                        }
                         // scheduleItem.remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
-                        scheduleItem.addClass('cancel-line'); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
-                        meetingRoomItem.find('.attend-check').attr('disabled', true); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
-                        scheduleItem.find('.s-delete').remove(); // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 추가
-        
-                        pop.close($("#btnDelete"));
-        
-                        // [퍼블 수정 및 추가] - 리스트삭제 미사용으로 인한 코드 삭제
-                        // if( scheduleList.closest(".schedule-wrap").find(".schedule-item").length < 1 ){
-                        //     $listWrap.html('<div class="schedule-noData">등록된 일정이 없습니다.</div>');
-                        // }
-        
-                        setTimeout(function() {
-                            showSmallDialog('참석자로 초대된 일정이 삭제되었습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                        }, 500);
                     });
                 }); 
             }
@@ -5711,6 +5754,7 @@ if (scheduleCard.items instanceof Array && scheduleCard.items.length > 0) {
             var userId = $(this).closest(".schedule-wrap").attr("data-userId");
             var scheduleId = $(this).closest(".schedule-item").data("scheduleid");
 
+            console.log('userId : '+userId+', scheduleId : '+scheduleId);
             attendChangeOpen(this, attendText, scheduleId, sessionId, userId);
           });
           
@@ -8687,8 +8731,8 @@ var data = {
             allDayCheck = 'Y';
             $('.schedule-input-wrap').find('.time-selector').css('display', 'none');
             $('.schedule-input-wrap').find('.input-schedule-date').addClass('all-day');
-            $('#start-time').val('0000');
-            $('#end-time').val('2400');
+            //$('#start-time').val('0000');
+            //$('#end-time').val('2400');
             //$('.time-input').val('');
         } else {
             allDayCheck = 'N';
