@@ -514,6 +514,9 @@ function chkSecureText(reqText){
                 if(nameByPayLoad == "발화 내용 보안 체크"){
                     keywordJson = JSON.parse(payload.queryResult.messages[0].response);
                     keywordsList = keywordJson.keywordsList;
+                    console.log("parameters : ",payload.queryResult.parameters);
+                    //console.log("wordsList : ",keywordJson.wordsList);
+                    console.log("keywordsList : ",keywordsList);
                     console.log('keywordsList.length > '+keywordsList.length);
                     for(var k=0; k < keywordsList.length; k++) blockKeyword.push(keywordsList[k]);
                     console.log("blockKeyword : ",blockKeyword);
@@ -955,6 +958,17 @@ chatui.onLoad = function(){
         window.close();
     }
   });
+
+    // Front UI Push 메시지 모니터링
+    setTimeout(() => {
+
+        $.getScript("https://storage.googleapis.com/singlex-chatbot-front/_common/chatclient-monitor/chatclient-monitor.min.js?t=" + Date.now(), function(data, textStatus,jqxhr) {
+
+            // 5분 주기로 모니터링 실행
+            chatuiMonitor.start(300);
+        });
+
+    }, 1000);  
 
 };
 

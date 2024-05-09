@@ -1579,8 +1579,8 @@ button.btn-secondary {
     position: absolute;
     top: 0px;
     left: 0px;
-    width: 33px;            /* updated by sunny 2023.11.01 */
-    height: 33px;           /* updated by sunny 2023.11.01 */ 
+    width: 33px;
+    height: 33px;
     margin: 0px;
     float: none;
     vertical-align: initial;
@@ -1588,7 +1588,7 @@ button.btn-secondary {
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .profile .img-circle {
     display: block;
     max-width: 100%;
-    width: auto;            /* added by sunny 2023.11.01 */
+    width: auto;           
     height: auto;
     border-radius: initial;
 }

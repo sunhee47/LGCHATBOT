@@ -3087,7 +3087,7 @@ jQuery(document).ready(function(e){
     };
   });
 
-  const ignoreKeyArr = ['Enter','ShiftLeft','ShiftRight','ControlLeft','ControlRight','AltLeft','AltRight','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+  const ignoreKeyArr = ['Enter','ShiftLeft','ShiftRight','ControlLeft','ControlRight','AltLeft','AltRight','ArrowLeft','ArrowRight','ArrowUp','ArrowDown', 'Space'];
   formGroup.find("input").on('keyup', function (e) {
     var val = $(this).val();
   if(searchActive) {
@@ -3166,6 +3166,7 @@ jQuery(document).ready(function(e){
     }
     if(val.length > 0) {
 
+        //console.log('e.code : '+e.code);
         // 입력된 메시지에 대한 자동완성 기능. 
         if(!ignoreKeyArr.includes(e.code)) {
             autoSearchEmployees(val);

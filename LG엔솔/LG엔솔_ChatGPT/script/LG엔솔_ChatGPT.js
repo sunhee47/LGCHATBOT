@@ -153,9 +153,9 @@ function showFileLimitOverDialog(fileName) {
 
 function appendQueryText(message) {
     // by sunny 2023.10.30
-    //console.log('message > '+message);
+    console.log('message > '+message);
     message = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
-    //console.log('chgMsg > '+message);
+    console.log('chgMsg > '+message);
     // by sunny 2023.10.30
 
     var chatMessage = '<div class="chat-message right">'
@@ -506,6 +506,7 @@ function chkSecureText(reqText){
         else if(i==cntSize-1) reqLimitText = utterance.substring(i*indexSize,lastSize);
         else reqLimitText = utterance.substr(i*indexSize,limitSize);
         reqParam.query.text = reqLimitText;
+        console.log('reqLimitText : '+chatui.getSetting("chatApiUrl")+' : '+chatui.getSetting("apiToken"));
         console.log("block keyword check text : \n"+reqLimitText);
         $.ajax({
             type: 'POST'
@@ -523,6 +524,7 @@ function chkSecureText(reqText){
                 if(nameByPayLoad == "발화 내용 보안 체크"){
                     keywordJson = JSON.parse(payload.queryResult.messages[0].response);
                     keywordsList = keywordJson.keywordsList;
+                    console.log('keywordsList.length > '+keywordsList.length);
                     for(var k=0; k < keywordsList.length; k++) blockKeyword.push(keywordsList[k]);
                     console.log("blockKeyword : ",blockKeyword);
                 }
@@ -935,6 +937,7 @@ chatui.onLoad = function(){
         if(val.length > 0 && (e.code == 'Enter' || e.keyCode == 13)) {
 
           if(!e.shiftKey){
+              orgVal = val;
               val = val.replace(/\n/g, "");
               $('.sendText').val(val);
               $('.sendText').val('');
@@ -942,8 +945,8 @@ chatui.onLoad = function(){
               setTimeout(function() {
                   var keyWord = chkSecureText(val);
                   secBtnDisable();
-                  appendQueryText(val);
-                  chatui.sendEventMessage("callGPT",{"reqText":val,"keyWord":keyWord});
+                  appendQueryText(orgVal);
+                  chatui.sendEventMessage("callGPT",{"reqText":orgVal,"keyWord":keyWord});
               }, 100);
           }
       }
@@ -1396,6 +1399,17 @@ chatui.onLoad = function(){
 */
     // b-lex 추가.
 
+    // Front UI Push 메시지 모니터링
+    setTimeout(() => {
+
+        $.getScript("https://storage.googleapis.com/singlex-chatbot-front/_common/chatclient-monitor/chatclient-monitor.min.js?t=" + Date.now(), function(data, textStatus,jqxhr) {
+
+            // 5분 주기로 모니터링 실행
+            chatuiMonitor.start(300);
+        });
+
+    }, 1000);  
+
 };
 
 
@@ -1739,6 +1753,7 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
             customMessage.append(checkContents);
 
         }else if(customPayload.type == 'callGpt') {
+            console.log('aaaaa...');
             var reqMsg = customPayload.template.outputs[0].data.message;
             var keyword = customPayload.template.outputs[0].data.keyword;
             // var basicMsg = $('<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"><div class="basic"><div class="message-content" style="white-space: pre-line">'

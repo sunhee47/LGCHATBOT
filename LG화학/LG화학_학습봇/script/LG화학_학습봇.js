@@ -1015,6 +1015,7 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
     if(customPayload["template"] && customPayload.template.outputs[0].data.items) {
       console.log(customPayload.template.outputs[0]);
       if(customPayload.template.outputs[0].type == "reflectionStatus") {
+        console.log("in reflectionStatus");
 
         var items = customPayload.template.outputs[0].data.items;
         requestId += 1;

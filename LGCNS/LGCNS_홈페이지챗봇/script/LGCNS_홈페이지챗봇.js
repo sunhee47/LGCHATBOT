@@ -8,6 +8,7 @@ $(document).ready(function() {
  
    $('body').append(skeleton);
  
+ 
    var left01 = document.getElementById('left-01');
    var chat02 = document.getElementById('chat-02');
    var right01 = document.getElementById('right-01');
@@ -1410,6 +1411,7 @@ $(document).ready(function() {
 
  var indexNum = 0;
  function receiveMessages(chatEvent, received) {   
+     console.log('receiveMessages : ', chatEvent);
    setTimeout(function() {
      indexNum += 1;
     if(chatEvent.response.queryResult.messages && chatEvent.response.queryResult.messages.length > 0) {
@@ -1852,7 +1854,7 @@ $(document).ready(function() {
      +' <h2>이런 질문도 환영이에요!</h2>'
      +' <div class="btns">'
      +'    <button type="button" class="btn-s btn-text send-faq" data-message="오늘 날씨">오늘 날씨</button>'
-     +'    <button type="button" class="btn-s btn-text send-faq" data-message="코로나 확진자수">코로나 확진자수</button>'
+     //+'    <button type="button" class="btn-s btn-text send-faq" data-message="코로나 확진자수">코로나 확진자수</button>'
      +'    <button type="button" class="btn-s btn-text send-faq" data-message="블로그 검색">블로그 검색</button>'
      +'    <button type="button" class="btn-s btn-text send-faq" data-message="뉴스 검색">뉴스 검색</button>'
      +' </div>'
