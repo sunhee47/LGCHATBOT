@@ -1,4 +1,4 @@
-let imgBaseUrl = 'https://storage.googleapis.com/singlex-ai-chatbot-contents/774d1a29-5bb2-421a-a8f1-49b1df17c9d1';
+let imgBaseUrl = 'https://chatclient.ai.lgcns.com/singlex-ai-chatbot-contents/774d1a29-5bb2-421a-a8f1-49b1df17c9d1';
 
 // Event
 let employeeQueryEvent = "employeeQueryEvent";

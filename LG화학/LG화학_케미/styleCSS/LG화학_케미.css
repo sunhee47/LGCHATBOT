@@ -393,7 +393,7 @@
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .mrc-list li.list-box .mrc-rate .rate-please .rate-tooltip::after, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .ecm-list li.list-box .mrc-rate .rate-please .rate-tooltip::after {
   content: "";
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/tooltip-tale.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/tooltip-tale.png");
   background-size: 12px 8px;
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -1099,7 +1099,7 @@
   padding-right: 12px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 .private {
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/lock.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/lock.png");
   background-position: 0 4px;
   background-size: 16px 16px;
   background-repeat: no-repeat;
@@ -2086,25 +2086,25 @@
   padding-left: 44px;
 }
 .plugins .plugin-contents .input-box input[type=text].datepicker, .plugins .plugin-contents .input-box input[type=text].date-period, .plugins .plugin-contents .input-box input[type=email].datepicker, .plugins .plugin-contents .input-box input[type=email].date-period, .plugins .plugin-contents .input-box textarea.datepicker, .plugins .plugin-contents .input-box textarea.date-period {
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/date.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/date.png");
   background-repeat: no-repeat;
   background-size: 17px 18px;
   background-position: 14px 15px;
 }
 .plugins .plugin-contents .input-box input[type=text].input-schedule-date, .plugins .plugin-contents .input-box input[type=email].input-schedule-date, .plugins .plugin-contents .input-box textarea.input-schedule-date {
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/date-input.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/date-input.png");
   background-repeat: no-repeat;
   background-size: 24px 24px;
   background-position: 11px 12px;
 }
 .plugins .plugin-contents .input-box input[type=text].time-input, .plugins .plugin-contents .input-box input[type=email].time-input, .plugins .plugin-contents .input-box textarea.time-input {
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/time-input.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/time-input.png");
   background-repeat: no-repeat;
   background-size: 24px 24px;
   background-position: 11px 12px;
 }
 .plugins .plugin-contents .input-box input[type=text].timepicker, .plugins .plugin-contents .input-box input[type=text].time-period, .plugins .plugin-contents .input-box input[type=email].timepicker, .plugins .plugin-contents .input-box input[type=email].time-period, .plugins .plugin-contents .input-box textarea.timepicker, .plugins .plugin-contents .input-box textarea.time-period {
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/time.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/time.png");
   background-repeat: no-repeat;
   background-size: 18px 18px;
   background-position: 14px 15px;
@@ -2117,7 +2117,7 @@
   border: 2px solid #6B6B6B;
 }
 .plugins .plugin-contents .input-box input[type=text].search-input, .plugins .plugin-contents .input-box input[type=email].search-input, .plugins .plugin-contents .input-box textarea.search-input {
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/search-input.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/search-input.png");
   background-repeat: no-repeat;
   background-size: 17px 18px;
   background-position: 14px 15px;
@@ -2240,7 +2240,7 @@
   line-height: 20px;
   color: #565656;
   margin-right: 4px;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/ic_close.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/ic_close.png");
   background-position: top 8px right 8px;
   background-repeat: no-repeat;
   background-size: 12px 12px;
@@ -2379,7 +2379,7 @@
   content: "";
   position: absolute;
   display: none;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/checked.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/checked.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -2505,7 +2505,7 @@
   display: block;
   border: 1px solid #BEBEBE;
   border-radius: 3px;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/location.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/location.png");
   background-repeat: no-repeat;
   background-size: 24px 24px;
   background-position: 11px 12px;
@@ -2541,7 +2541,7 @@
 }
 .plugins .add-schedule-place .place-tooltip::after {
   content: "";
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents/1e3c14bd-679f-4a93-9ff6-e9a3d45c3c0a/triangle.png");
+  background-image: url("https://chatclient.ai.lgcns.com/singlex-ai-chatbot-contents/1e3c14bd-679f-4a93-9ff6-e9a3d45c3c0a/triangle.png");
   width: 13px;
   background-size: contain;
   height: 7px;
@@ -2986,7 +2986,7 @@ body {
   cursor: pointer;
   margin: 0;
   padding: 3px 3px 3px 21px;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/refresh.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/refresh.png");
   background-repeat: no-repeat;
   background-position: 3px 4px;
   background-size: 16px 16px;
@@ -3088,11 +3088,11 @@ body {
   display: none !important;
 }
 .datepicker-chem .ui-datepicker .ui-datepicker-prev, .datepicker-chem .ui-widget.ui-widget-content .ui-datepicker-prev {
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/prev.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/prev.png");
   left: 16px;
 }
 .datepicker-chem .ui-datepicker .ui-datepicker-next, .datepicker-chem .ui-widget.ui-widget-content .ui-datepicker-next {
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/next.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/next.png");
   right: 16px;
 }
 .datepicker-chem .ui-datepicker .ui-datepicker-calendar, .datepicker-chem .ui-widget.ui-widget-content .ui-datepicker-calendar {
@@ -3144,24 +3144,24 @@ body {
 
 @keyframes loading {
   0% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_01.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_01.png");
   }
   50% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_02.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_02.png");
   }
   100% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_03.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_03.png");
   }
 }
 @-webkit-keyframes loading {
   0% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_01.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_01.png");
   }
   50% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_02.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_02.png");
   }
   100% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_03.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_03.png");
   }
 }
 @keyframes visible-show {
@@ -4455,7 +4455,7 @@ body {
   padding: 16px 56px 16px 16px;
   position: relative;
   display: block;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/next.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/next.png");
   background-repeat: no-repeat;
   background-size: 24px 24px;
   background-position: top 23px right 16px;
@@ -4738,14 +4738,14 @@ body {
   font-size: 14px;
   line-height: 20px;
   background-color: white;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/next.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/next.png");
   background-repeat: no-repeat;
   background-size: 24px 24px;
   background-position: top 17px right 16px;
 }
 .autocomplete-wrap .ui-widget.ui-widget-content.ui-autocomplete .ui-menu-item:hover, .autocomplete-wrap .ui-widget.ui-widget-content.ui-autocomplete .ui-menu-item:active {
   background-color: #F5F5F5 !important;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/next.png") !important;
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/next.png") !important;
   background-repeat: no-repeat !important;
   background-size: 24px 24px !important;
   background-position: top 17px right 16px !important;
@@ -4771,7 +4771,7 @@ body {
 .schedule-join-member {
   border: 1px solid #BEBEBE;
   border-radius: 3px;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/search-input.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/search-input.png");
   background-repeat: no-repeat;
   background-size: 17px 18px;
   background-position: 14px 15px;
@@ -4842,7 +4842,7 @@ body {
 }
 .schedule-join-member .selected-members .member-info .auto-detail-tooltip::before, .schedule-join-member .selected-members .dept-info .auto-detail-tooltip::before {
   content: " ";
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/tooltip-top.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/tooltip-top.png");
   background-repeat: no-repeat;
   background-position: 0 0;
   background-size: 12px 7px;

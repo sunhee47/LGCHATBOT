@@ -95,9 +95,9 @@ $(document).ready(function() {
  }
  
  // 주소 수정 필요 : 이미지 로드 에러시 임시 이미지
- var tempImage = 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/fc683bf7-fc01-4913-af76-eefcefc06c8d/image/assets/tmp.png';
+ var tempImage = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/fc683bf7-fc01-4913-af76-eefcefc06c8d/image/assets/tmp.png';
  // 주소 수정 필요 : 유저 이미지 로드 에러시 임시 이미지
- var pAlternative = 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/fc683bf7-fc01-4913-af76-eefcefc06c8d/image/assets/profile-alternative.png';
+ var pAlternative = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/fc683bf7-fc01-4913-af76-eefcefc06c8d/image/assets/profile-alternative.png';
  var makeButtons = function(data) {
   var buttons = '';
   if(data.buttons && data.buttons.length > 0) {
@@ -330,7 +330,7 @@ $(document).ready(function() {
  +'</div>')};
  
  // 주소 수정 필요 (챗봇 프로필 이미지)
- var profileBox = '<div class="profile"><img class="img-circle"src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/fc683bf7-fc01-4913-af76-eefcefc06c8d/image/assets/chararcter.png"></div>'
+ var profileBox = '<div class="profile"><img class="img-circle"src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/fc683bf7-fc01-4913-af76-eefcefc06c8d/image/assets/chararcter.png"></div>'
  
  var makeStart = function(indexNum) {
    return profileBox + '<div class="re-box ' + 'index-' + indexNum + '">'; 

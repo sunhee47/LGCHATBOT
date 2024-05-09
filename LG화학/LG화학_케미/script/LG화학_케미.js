@@ -1,4 +1,4 @@
-let imgBaseUrl = 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057';
+let imgBaseUrl = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057';
 
 let searchActive = false;
 let searchActive2 = false;
@@ -340,7 +340,7 @@ function appendQueryText(message) {
 
 function appendWelcomeText(message) {
     var chatMessage = '<div class="chat-message left">'
-    +'<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
+    +'<div class="profile"><img class="img-circle" src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
     +'<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"><div class="basic"><div class="message-content" style="white-space: pre-line">'
     +message
     +'</div></div></div>'
@@ -352,7 +352,7 @@ function appendWelcomeText(message) {
 
 function appendChatbotText(message) {
   var chatMessage = '<div class="chat-message left">'
-  +'<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
+  +'<div class="profile"><img class="img-circle" src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
   + message
   +'<span class="message-date">' + moment().format("a h:mm") + '</span>';
 
@@ -362,7 +362,7 @@ function appendChatbotText(message) {
 
 function appendChatbotText2(message, customQuick) {
   var chatMessage = $('<div class="chat-message left"></div>');
-  var profile = $('<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>');
   chatMessage.append(profile);
   chatMessage.append(message);
   chatMessage.append(customQuick);
@@ -397,12 +397,12 @@ function appendChatbotText2(message, customQuick) {
 }
 
 // tempImage
-var pAlternative = 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/tmp-profile.png';
+var pAlternative = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/tmp-profile.png';
 
 function noImage(img) {
   img.onerror = null
 
-  let url = new URL("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/tmp.png");
+  let url = new URL("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/tmp.png");
   url.searchParams.set('reload', 'true')
   img.src = url.toString();
 } 
@@ -1329,7 +1329,7 @@ const autoSearchEmployees = function(inputVal) {
           }
  
           if ($.trim(item.imgUrl) == "") {
-            item.imgUrl = "https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/icon/img_user_none.png";
+            item.imgUrl = "https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/icon/img_user_none.png";
           }
  
           htmlStr = '<dl class="person-info">' +
@@ -2354,12 +2354,12 @@ function welcomeAppend(welcomeMessage) {
   if(birthDayYn == 'Y') {
     userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님<br />생일을 축하 드립니다!</h1>');
     
-    $('.info-area .center').empty().html('<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/m_congratulations.gif" class="birthday" />');
+    $('.info-area .center').empty().html('<img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/m_congratulations.gif" class="birthday" />');
   }
 
-  var characterBox = $('<div class="welcome-img"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/hello_big.gif" /></div>')
+  var characterBox = $('<div class="welcome-img"><img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/hello_big.gif" /></div>')
   if(birthDayYn == 'Y') {
-    characterBox = $('<div class="birthday-img"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/congrate.gif" /></div>')
+    characterBox = $('<div class="birthday-img"><img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/congrate.gif" /></div>')
   };
 
   welcomeContent.append(userName);
@@ -2696,10 +2696,10 @@ jQuery(document).ready(function(e){
 
   var is_mobile = Mobile();
   var recoverBtn =  '<div class="recover" id="chatbot-recover">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png" title="기본사이즈로 돌아가기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png\';"/>'
+    +    '<img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png" title="기본사이즈로 돌아가기" onmouseover="this.src=\'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize_over3.png\';" onmouseout="this.src=\'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png\';"/>'
     +'</div>';
   var winopenBtn =  '<div class="winopen" id="chatbot-winopen">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png" title="팝업으로 보여주기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png\';"/>'
+    +    '<img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png" title="팝업으로 보여주기" onmouseover="this.src=\'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen_over3.png\';" onmouseout="this.src=\'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png\';"/>'
     +'</div>';
 
   
@@ -2717,7 +2717,7 @@ jQuery(document).ready(function(e){
   + '</svg>      '
   +'</div>'
   +'<div class="center">'
-  +   '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/hello_03.gif" />'
+  +   '<img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/hello_03.gif" />'
   +'</div>'
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
 

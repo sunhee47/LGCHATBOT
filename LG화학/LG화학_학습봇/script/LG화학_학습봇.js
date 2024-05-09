@@ -288,11 +288,11 @@ chatui.onLoad = function(){
     
   var is_mobile = Mobile();
   var recoverBtn =  '<div class="recover" id="chatbot-recover">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/gpt_resize3.png"/>'
+    +    '<img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/gpt_resize3.png"/>'
     +'</div>';
 
   var winopenBtn =  '<div class="winopen" id="chatbot-winopen">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/gpt_winopen3.png"/>'
+    +    '<img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/gpt_winopen3.png"/>'
     +'</div>';
 
   $(".test-panel .panel-wrapper .chat-panel .info-area").html(
@@ -307,7 +307,7 @@ chatui.onLoad = function(){
    + (!is_mobile? winopenBtn:'')
    
     +'<div class="collapse" id="eduClose">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/img_close.png" />'
+    +    '<img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/img_close.png" />'
     +'</div>'
     // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...)    
   );
@@ -671,10 +671,10 @@ chatui.onLoad = function(){
 
     // var firstSlide = $('<div class="ex-slide-box">'
     //   + '<div class="first-slide">'
-    //     + '<div class="slide slide-01"><div class="image-box"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/slide01.png" /></div><h1>켐봇이 필요한 질문에<br />응답하지 못하고 있나요?</h1><p>학습봇 모드에서 켐봇에게<br />새로운 대화를 직접 가르쳐 보세요!</p></div>'
-    //     + '<div class="slide slide-02"><div class="image-box"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/slide02.png" /></div><h1>간단한 정보 입력으로<br />새로운 대화를 만들 수 있어요!</h1><p>4단계의 정보를 순서대로 가르쳐 주시면<br />새로운 대화를 배울 수 있습니다!</p></div>'
-    //     + '<div class="slide slide-03"><div class="image-box"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/slide03.png" /></div><h1>새롭게 만든 대화가<br />켐봇에 반영되었는지 확인해 보세요.</h1><p>켐봇에 반영 요청한 내역이 잘 검토 되고 있는지<br />실시간으로 확인할 수 있어요.</p></div>'
-    //     + '<div class="slide slide-04"><div class="image-box"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/slide03.png" /></div><h1>도움을 주셔서 감사합니다.<br />최선을 다해 배워볼게요!</h1><p>‘학습봇 모드 시작’ 버튼을 클릭하여<br />지금 바로 학습봇 모드로 접속해 보세요!</p></div>'
+    //     + '<div class="slide slide-01"><div class="image-box"><img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/slide01.png" /></div><h1>켐봇이 필요한 질문에<br />응답하지 못하고 있나요?</h1><p>학습봇 모드에서 켐봇에게<br />새로운 대화를 직접 가르쳐 보세요!</p></div>'
+    //     + '<div class="slide slide-02"><div class="image-box"><img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/slide02.png" /></div><h1>간단한 정보 입력으로<br />새로운 대화를 만들 수 있어요!</h1><p>4단계의 정보를 순서대로 가르쳐 주시면<br />새로운 대화를 배울 수 있습니다!</p></div>'
+    //     + '<div class="slide slide-03"><div class="image-box"><img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/slide03.png" /></div><h1>새롭게 만든 대화가<br />켐봇에 반영되었는지 확인해 보세요.</h1><p>켐봇에 반영 요청한 내역이 잘 검토 되고 있는지<br />실시간으로 확인할 수 있어요.</p></div>'
+    //     + '<div class="slide slide-04"><div class="image-box"><img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/slide03.png" /></div><h1>도움을 주셔서 감사합니다.<br />최선을 다해 배워볼게요!</h1><p>‘학습봇 모드 시작’ 버튼을 클릭하여<br />지금 바로 학습봇 모드로 접속해 보세요!</p></div>'
     // + '</div>'
     // +'<ul class="dots">'
     // +  '<li></li>'
@@ -890,7 +890,7 @@ chatui.onReceiveResponse = function(resp) {
    
     
     var statusMessage = $('<div class="chat-message left"></div>');
-    var profileCircle = $('<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/chem-profile.png"></div>');
+    var profileCircle = $('<div class="profile"><img class="img-circle" src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/chem-profile.png"></div>');
 
     statusMessage.append(profileCircle);
 

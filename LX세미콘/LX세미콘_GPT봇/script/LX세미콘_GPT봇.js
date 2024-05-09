@@ -853,7 +853,7 @@ chatui.onLoad = function(){
     //+'<span class="edu-close" id="eduClose">종료하기</span>'
 
     +'<div class="collapse" id="eduClose">'
-//    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/img_close.png" />'
+//    +    '<img src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/88a39d64-0e9a-4ea7-ac57-de5783a3e937/images/img_close.png" />'
     +'</div>'
   );
   
@@ -1132,7 +1132,7 @@ chatui.onReceiveResponse = function(resp) {
    
     
     var statusMessage = $('<div class="chat-message left"></div>');
-    var profileCircle = $('<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/chem-profile.png"></div>');
+    var profileCircle = $('<div class="profile"><img class="img-circle" src="https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/chem-profile.png"></div>');
 
     statusMessage.append(profileCircle);
 

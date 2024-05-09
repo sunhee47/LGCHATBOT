@@ -32,7 +32,7 @@
   width: 150px;
   height: 26px;
   transform: translate(-50%, -50%);
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/title.png"); /*주소 변경 필요*/
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/title.png"); /*주소 변경 필요*/
   background-repeat: no-repeat;
   background-size: 150px 26px;
 }
@@ -236,7 +236,7 @@ body {
   width: 132px;
   height: 132px;
   transform: translateX(-50%);
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/header/pink_all.png") !important; /*주소 변경 필요*/
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/header/pink_all.png") !important; /*주소 변경 필요*/
   animation: header_character 2.7s steps(36) forwards;
 }
 .test-panel .panel-wrapper .chat-panel .info-area .center img {
@@ -534,9 +534,9 @@ font-weight:normal!important;
 }
 
 @keyframes loading {/*주소 변경 필요*/
-  0%   {left:0px ; top:0px ; background-image: url(https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/loading_01.png) }
-  50%   {left:0px; top:0px; background-image: url(https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/loading_02.png) }
-  100%  {left:0px; top:0px; background-image: url(https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/loading_03.png) }   
+  0%   {left:0px ; top:0px ; background-image: url(https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/loading_01.png) }
+  50%   {left:0px; top:0px; background-image: url(https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/loading_02.png) }
+  100%  {left:0px; top:0px; background-image: url(https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/loading_03.png) }   
 }
 
 /*loading message*/
@@ -1390,7 +1390,7 @@ text-overflow: ellipsis;
 }
 .test-panel .panel-wrapper .chat-panel .form-group .f-tooltip::after {
   content: "";
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/Bubble%20Tail.png"); /*주소 변경 필요*/
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/67ecff9e-80ad-4be7-a912-59497df8a934/image/assets/Bubble%20Tail.png"); /*주소 변경 필요*/
   width: 12px;
   height: 8px;
   display: block;
