@@ -392,8 +392,7 @@ function appendChatbotText2(message, customQuick) {
 
       $(this).parent().remove();
 
-    //   appendChatbotText2(systemCard, customQuick);
-    appendChatbotText2(systemCardTop, systemCard, customQuick); // [퍼블 수정 및 추가] - 시스템 접속 card 포함하여 생성
+       appendChatbotText2(systemCard, customQuick);
     });
   
   }, 100);
@@ -3110,7 +3109,7 @@ jQuery(document).ready(function(e){
   const ignoreKeyArr = ['Enter','ShiftLeft','ShiftRight','ControlLeft','ControlRight','AltLeft','AltRight','ArrowLeft','ArrowRight','ArrowUp','ArrowDown', 'Space'];
   formGroup.find("input").on('keyup', function (e) {
     var val = $(this).val();
-    /*
+    
   if(searchActive) {
     
     if(searchType == null && val.length > 0) {
@@ -3120,56 +3119,65 @@ jQuery(document).ready(function(e){
         setAutocomplete();
       }
 
-    } else if(searchType == 'where' && (e.code == 'Enter' || e.keyCode == 13)) {
-      var findMessage = '/where ' + val;
-      appendQueryText(findMessage);
-      chatui.sendMessage(findMessage);
-      searchActiveFalse();
-      return;
-    } else if(searchType == 'g-portal' && (e.code == 'Enter' || e.keyCode == 13)) {
-      var url = gportalTotalUrl.replace("%query%", $(e.target).val());
-      window.open(url, "gportalTotalSearch", "width=1024,height=550,resizable=1,scrollbars=1");
-      searchActiveFalse();
-      return;
-    } else if(searchType == 'dict' && (e.code == 'Enter' || e.keyCode == 13)) {
-      var findMessage = '/dict ' + val;
-      appendQueryText(findMessage);
-      dictSearchTerm = val;
-      chatui.sendEventMessage("dictQueryEvent", {"searchTerm":val});
-      searchActiveFalse();
-      return;
-    } else if(searchType == 'ecm' && (e.code == 'Enter' || e.keyCode == 13)) {
-      var url = ecmUrl.replace("%query%", $(e.target).val());
-      window.open(url, "ecmSearch", "width=1024,height=550,resizable=1,scrollbars=1");
-      searchActiveFalse();
-      return;
-    } else if(searchType == 'ai' && (e.code == 'Enter' || e.keyCode == 13)) {
-      var findMessage = '/ai ' + val;
-      var payload = {
-        question: findMessage,
-        userId : chatui.getSetting('userId')
-      }
-      appendQueryText(findMessage);
-      chatui.sendEventMessage("MRC", payload);
-      searchActiveFalse();
-      return;
-    } else if(searchType == 'employee' && (e.code == 'Enter' || e.keyCode == 13)) {
+    } 
+    //else if(searchType == 'where' && (e.code == 'Enter' || e.keyCode == 13)) {
+    //  var findMessage = '/where ' + val;
+    //  appendQueryText(findMessage);
+    //  chatui.sendMessage(findMessage);
+    //  searchActiveFalse();
+    //  return;
+    //} 
+    //else if(searchType == 'g-portal' && (e.code == 'Enter' || e.keyCode == 13)) {
+    //  var url = gportalTotalUrl.replace("%query%", $(e.target).val());
+    //  window.open(url, "gportalTotalSearch", "width=1024,height=550,resizable=1,scrollbars=1");
+    //  searchActiveFalse();
+    //  return;
+    //} 
+    //else if(searchType == 'dict' && (e.code == 'Enter' || e.keyCode == 13)) {
+    //  var findMessage = '/dict ' + val;
+    //  appendQueryText(findMessage);
+    //  dictSearchTerm = val;
+    //  chatui.sendEventMessage("dictQueryEvent", {"searchTerm":val});
+    //  searchActiveFalse();
+    //  return;
+    //} 
+    //else if(searchType == 'ecm' && (e.code == 'Enter' || e.keyCode == 13)) {
+    //  var url = ecmUrl.replace("%query%", $(e.target).val());
+    //  window.open(url, "ecmSearch", "width=1024,height=550,resizable=1,scrollbars=1");
+    //  searchActiveFalse();
+    //  return;
+    //} 
+    //else if(searchType == 'ai' && (e.code == 'Enter' || e.keyCode == 13)) {
+    //  var findMessage = '/ai ' + val;
+    //  var payload = {
+    //    question: findMessage,
+    //    userId : chatui.getSetting('userId')
+    //  }
+    //  appendQueryText(findMessage);
+    //  chatui.sendEventMessage("MRC", payload);
+    //  searchActiveFalse();
+    //  return;
+    //} 
+    else if(searchType == 'employee' && (e.code == 'Enter' || e.keyCode == 13)) {
       var findMessage = val;
       chatui.sendMessage(findMessage);
       searchActiveFalse();
       return;
-    } else if(searchType == 'system' && (e.code == 'Enter' || e.keyCode == 13)) {
+    } 
+    else if(searchType == 'system' && (e.code == 'Enter' || e.keyCode == 13)) {
       var findMessage = val;
       chatui.sendMessage(findMessage);
       searchActiveFalse();
       return;
-    } else if(searchType == 'standard' && (e.code == 'Enter' || e.keyCode == 13)) {
-      var findMessage = val;
-      appendQueryText(findMessage);
-      chatui.sendEventMessage("standardQueryEvent", {"searchData":val});
-      searchActiveFalse();
-      return;
-    }else if(searchType == 'schedule' && (e.code == 'Enter' || e.keyCode == 13)) {
+    } 
+    //else if(searchType == 'standard' && (e.code == 'Enter' || e.keyCode == 13)) {
+    //  var findMessage = val;
+    //  appendQueryText(findMessage);
+    //  chatui.sendEventMessage("standardQueryEvent", {"searchData":val});
+    //  searchActiveFalse();
+    //  return;
+    //}
+    else if(searchType == 'schedule' && (e.code == 'Enter' || e.keyCode == 13)) {
       var findMessage = val;
       chatui.sendMessage(findMessage);
       searchActiveFalse();
@@ -3178,7 +3186,7 @@ jQuery(document).ready(function(e){
     
     
   } else {
-    */
+    
     if(searchType == null && val.length > 0) {
       searchActive = false;
       if($('.search-menu').hasClass('show')) {
@@ -3210,7 +3218,8 @@ jQuery(document).ready(function(e){
         $('.btn-send').removeClass('active');
         $('.search-guides').css('display', 'none');
     }
-  //};   
+  };
+  
   });
 
 
@@ -3731,8 +3740,24 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 
       $(this).parent().remove();
       
-    //   appendChatbotText2(systemCard, customQuick);
-    appendChatbotText2(systemCardTop, systemCard, customQuick); // [퍼블 수정 및 추가] - 시스템 접속 card 포함하여 생성
+      appendChatbotText3(systemCardTop, systemCard, customQuick); // [퍼블 수정 및 추가] - 시스템 접속 card 포함하여 생성
+    });
+
+
+    $('.list-system').on('click', function() {
+      var systemSelect = $(this).data('system');
+
+      console.log('systemSelect > '+systemSelect);
+      appendQueryText(systemSelect);
+      var item = systemItems.find((o) => { return o["sysName"] === systemSelect })    
+      
+      var systemCardTop = makeSystemCardMoveCard(item); // [퍼블 수정 및 추가] - 시스템 접속 card 추가
+      
+      var systemCard = makeSystemCard(item);
+
+      //$(this).parent().remove();
+      
+      appendChatbotText2(systemCardTop, systemCard); // [퍼블 수정 및 추가] - 시스템 접속 card 포함하여 생성
     });
 
   }, 100)
@@ -5366,8 +5391,9 @@ function makeRpaPopup(data) {
 //시스템담당자 Card 생성 함수
 function makeSystemCardFirst(items) {
     systemItems = items;
-    var systemContetns = $('<div class="system-contents"></div>');
-    var listCon = $('<div class="message simple-text"></div>');
+    
+    var systemContetns = $('<div class="system-contents" style="width:400px;"></div>');
+    var msgCon = $('<div class="message simple-text"></div>');
     var text = '';
     if (items instanceof Array && items.length > 0) {
         text = $('<p>아래에서 상세 분야를 선택해 주세요.</p>'); // [퍼블 수정 및 추가] - 텍스트 수정
@@ -5382,17 +5408,89 @@ function makeSystemCardFirst(items) {
         );
         // text  = $('<p>담당자에 대한 검색 결과가 없습니다. 검색어가 정확한지 다시 한 번 확인해 주세요.</p>');
     }
-    listCon.append(text);
-    systemContetns.append(listCon);
+    msgCon.append(text);
+    systemContetns.append(msgCon);
 
     if (items instanceof Array && items.length > 0) {
+        let sysListCount = 0; 
+        //var custCon = $('<div class="custom-message"></div>');    
+    	var listCon = $('<div class="message profile-list system" style="margin-left:0px;"></div>');
+    	
+    	//custCon.append(listCon);
+    	var listWrap = $('<div class="p-box"></div>');
+    	listCon.append(listWrap);
+    
+        var title = $('<div class="list-header-title">' + listHeaderIcon +'<b>'+items[0].operName+'</b> 관련 시스템</div>'); 
+        listWrap.append(title);
+    	
+    	var listUl = $('<ul class="profile-list-wrap"></ul>'); // [퍼블 수정 및 추가] - 클래스(profile-list-wrap) 추가
+    	listWrap.append(listUl);
+        
+        items.map(item => {
+            sysListCount++;
+            var listLi = $('<li class="list-box list-system" data-system="' + item.sysName + '"></li>');
+            listUl.append(listLi);
+          
+            var sysInfo = $('<div class="text-box"></div>');
+            listLi.append(sysInfo);
+    
+            sysInfo.append(
+                '<div class="name">'
+                    +'<h1 class="system">'
+                        + item.sysName 
+                    +'</h1>'
+                +'</div">'
+            );
+            
+            var sysInfoList = $('<ul class="profile-info system"></ul>');
+            sysInfoList.append($('<li><span class="profile-icon icon-mail">' + iconMail + '</span>' + (item.deptName ? item.deptName : '-' )+ '</li>'));
+            sysInfoList.append($('<li><span class="profile-icon icon-phone">' + iconPhone + '</span>' + (item.empName ? item.empName : '-') + '</li>'));
+          
+            sysInfo.append(sysInfoList);
+            
+            if (sysListCount > 3){
+                listLi.addClass('hide');
+            }
+            
+            
+            arrowHtml =	'<span class="arrow">'
+            +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+              +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+            +'</svg>'
+          +'</span>';    
+          
+          listLi.append(arrowHtml);
+            
+        });
+        
+        if (sysListCount > 3){
+            var seeMoreBtn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            seeMoreBtn.click(function() {
+                $(this).parents('.profile-list').find(".list-box").removeClass('hide');
+                $(this).remove();
+            });
+            listWrap.append(seeMoreBtn);
+        }
+        
+        
+        systemContetns.append(listCon);
+    }
+    
+    /*if (items instanceof Array && items.length > 0) {
         var quickReplies = $('<div class="custom-quick-reply"></div>');
         items.map(item => {
             var systemBtn = $('<span class="btn-custom-reply btn-system" data-system="' + item.sysName + '">' + item.sysName +'</span>');
             quickReplies.append(systemBtn);
         });
         systemContetns.append(quickReplies);
-    }
+    }*/
     return systemContetns;
 }
 /**
@@ -5425,11 +5523,27 @@ function makeSystemCardFirst(items) {
             var userInfo = $('<div class="text-box"></div>');
             listLi.append(userInfo);
     
+            var contactTag = ''
+            if(user.contactType == 'I') {
+                contactTag = 'IT';
+            }
+            else if(user.contactType == 'U') {
+                contactTag = '현업';
+            }
+            else if(user.contactType == 'S') {
+                contactTag = 'SM';
+            }
+
+            var empName = user.userName; 
+            var damdangNames = empName.split('외');
+            var damdangName = (damdangNames.length > 0)? damdangNames[0]:'-';
+            //console.log('damdangName: '+damdangName);
+            
             userInfo.append(
                 '<div class="name">'
                     +'<h1 class="system">'
-                        + user.userName + ' ' + user.jobTitle
-                        +'<span class="tag">' + user.contactType + '</span>'
+                        + damdangName + ' ' //+ user.jobTitle
+                        +'<span class="tag">' + contactTag + '</span>'
                     +'</h1>'
                 +'</div">'
             );
@@ -7619,8 +7733,6 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
           messageCard = makeListCard(message.data.items, titleBoldYn);
         } else if (message.type == 'dict') { // 메시지타입_리스트형_용어갬색
           messageCard = makeListDictCard(message.data);
-        } else if (message.type == 'system') { // 메시지타입_시스템 업무 담당자 검색
-          messageCard = makeSystemCardFirst(message.data.items);
         } else if(message.type == 'employee') { // 메시지타입_임직원검색(단일)
           messageCard = makeEmployeeCard(message.data.items[0]);
         } else if (message.type == 'meetingRoom') { // 메시지타입_회의실취소
@@ -7679,6 +7791,7 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
 	    } else if(message.type == 'videoEquip') {
 	        messageCard = makeVideoEquipChngCard(message.data);
     	}
+    	// LG전자 엘지니.... 
         else if(message.type == 'scheduleReg') { // 메시지타입_일정등록 : LG전자
           messageCard = makeScheduleRegCard(message.data);
         }    	
@@ -7702,6 +7815,8 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         }
         else if(message.type == 'employeeList') { // 메시지타입_임직원검색(동명이인)
           messageCard = makeEmployeeListCard(message.data);
+        } else if (message.type == 'system') { // 메시지타입_시스템 업무 담당자 검색
+          messageCard = makeSystemCardFirst(message.data.items);
         }        
         else if(message.type == 'budgetInput') {                    // 예산조회 입력
           console.log('잔여예산조회...');
@@ -9480,10 +9595,15 @@ function makeSystemCardMoveCard(item) {
     systemCardMove.append(SystemCardMoveText);
     var moveBtnWrap = $('<div class="btn"></div>');
     var moveBtn = $(
-        '<button type="button" class="btn btn-default move_link">'
-            + item.sysName + iconNewWindow
+        '<button type="button" class="btn btn-default move_link" data-outlink="'+item.sysUrl+'">'
+            + item.sysName + '&nbsp;' +iconNewWindow
         +'</button>'
     );
+    
+    moveBtn.on('click', function() {
+        var outlink = $(this).data('outlink');
+        window.open(outlink, '_blank');
+    });    
     moveBtnWrap.append(moveBtn);
     systemCardMove.append(moveBtnWrap);
     return systemCardMove;
@@ -9500,4 +9620,45 @@ function showHtmlSmallDialog(msg) {
   setTimeout(function() {
     $('.small-dialog').remove();
   }, 5000);
+}
+
+// 시스템 담당자 조회 : 시스템 클릭시 
+function appendChatbotText3(firstMsg, message, customQuick) {
+  var chatMessage = $('<div class="chat-message left"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>');
+  chatMessage.append(profile);
+  chatMessage.append(firstMsg);
+  chatMessage.append(message);
+  chatMessage.append(customQuick);
+  var date = $('<span class="message-date">' + moment().format("a h:mm") + '</span>');
+  chatMessage.append(date);
+
+  $('#divScroll').append(chatMessage);
+  
+  //descendScroll();
+  setTimeout(function() {
+    $('.btn-system').on('click', function() {
+      var systemSelect = $(this).data('system');
+  
+      appendQueryText(systemSelect);
+      var item = systemItems.find((o) => { return o["sysName"] === systemSelect })      
+      
+      var systemCardTop = makeSystemCardMoveCard(item); // [퍼블 수정 및 추가] - 시스템 접속 card 추가
+      
+      var systemCard = makeSystemCard(item);
+      var customQuick = $('<div class="custom-quick-reply"></div>');
+      systemItems.map(sysItem => {
+        if(systemSelect != sysItem.sysName) {
+          var sysbtn2 = $('<span class="btn-custom-reply btn-system" data-system="' + sysItem.sysName + '">' + sysItem.sysName +'</span>'); 
+          customQuick.append(sysbtn2);
+        }
+      });
+
+      $(this).parent().remove();
+
+    appendChatbotText3(systemCardTop, systemCard, customQuick); // [퍼블 수정 및 추가] - 시스템 접속 card 포함하여 생성
+    });
+  
+  }, 100);
+  
 }
