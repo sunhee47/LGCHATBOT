@@ -1026,9 +1026,16 @@
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li {
   display: flex;
   position: relative;
-  border-bottom: 1px solid #DADADA;
-  padding: 8px;
   cursor: pointer;
+
+  /* [퍼블 수정 및 추가] - border-bottom 값 수정 ( 1px solid #DADADA -> 0 ) */
+  border-bottom: 0;
+
+  /* [퍼블 수정 및 추가] - padding 값 수정 ( 8px -> 8px 12px ) */
+  padding: 8px 12px;
+
+  /* [퍼블 수정 및 추가] - gap: 10px; 추가 */
+  gap: 10px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li.added-schedule {
   display: block;
@@ -1057,6 +1064,9 @@
   border-radius: 50%;
   background-color: transparent;
   border: 0;
+  
+    /* [퍼블 수정 및 추가] - box-sizing: unset; 추가 */
+    box-sizing: unset;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-delete svg {
   position: absolute;
@@ -1080,7 +1090,9 @@
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .time {
   /* [퍼블 수정 및 추가] - width 값 수정 (55px -> auto), min-width: 46px; 추가 */
   width: auto;
-  min-width: 46px;
+
+  /* [퍼블 수정 및 추가] - min-width 값 수정 ( 46px -> 38px ) */
+  min-width: 38px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .time h3 {
   font-weight: 700;
@@ -1088,6 +1100,9 @@
   line-height: 20px;
   color: #565656;
   margin: 1px 0 0 0;
+
+  /* [퍼블 수정 및 추가] - text-align: right; 추가 */
+  text-align: right;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .time h3.now {
   color: #E0205C;
@@ -1112,9 +1127,13 @@
   color: #2C2C2C;
   margin-bottom: 2px;
   
-  /* [퍼블 수정 및 추가] - padding-right 값 수정 (12px -> 20px), word-break: break-all; 추가 */
-  padding-right: 20px;
+  /* [퍼블 수정 및 추가] - padding-right 값 수정 (12px -> 30px), word-break: break-all; 추가 */
+  padding-right: 30px;
   word-break: break-all;
+
+  /* [퍼블 수정 및 추가] - display: flex;, gap: 4px; 추가 */
+  display: flex;
+  gap: 4px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 .private {
   background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/lock.png");
@@ -1125,8 +1144,13 @@
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 svg {
   /* [퍼블 수정 및 추가] - margin-right 값 수정 (5px -> 2px), margin-bottom: -2px; 추가 */
-  margin-right: 2px;
-  margin-bottom: -2px;
+  /* [퍼블 수정 및 추가] - margin-right, margin-bottom 제거 */
+  /* margin-right: 2px;
+  margin-bottom: -2px; */
+
+  /* [퍼블 수정 및 추가] - margin-top: 4px;, min-width: 16px; 추가 */
+  margin-top: 4px;
+  min-width: 16px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail p {
   padding: 2px 0;
@@ -1136,12 +1160,17 @@
   color: #2C2C2C;
   
   /* [퍼블 수정 및 추가] - align-items 값 수정 (center -> flex-start) */
-  align-items: flex-start;
+  /* [퍼블 수정 및 추가] - align-items 제거 */
+  /* align-items: flex-start; */
+
+  /* [퍼블 수정 및 추가] - gap: 4px; 추가 */
+  gap: 4px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail p svg {
-  margin-right: 4px;
+  /* [퍼블 수정 및 추가] - margin-right, width, height 제거 */
+  /* margin-right: 4px;
   width: 16px;
-  height: 16px;
+  height: 16px; */
   
   /* [퍼블 수정 및 추가] - min-width: 16px;, margin-top: 1px; 추가 */
   min-width: 16px;
@@ -2540,7 +2569,6 @@
   position: relative;
 }
 .plugins .add-schedule-place .place-select {
-  display: block;
   border: 1px solid #BEBEBE;
   border-radius: 3px;
   background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/location.png");
@@ -2548,12 +2576,13 @@
   background-size: 24px 24px;
   background-position: 11px 12px;
   
-    /* [퍼블 수정 및 추가] - display 값 변경 (block -> flex) */
+  /* [퍼블 수정 및 추가] - display 값 변경 (block -> flex) */
   display: flex;
   
-  /* [퍼블 수정 및 추가] - flex-wrap: wrap; , padding-left: 44px; 추가 */
+  /* [퍼블 수정 및 추가] - flex-wrap: wrap; , padding-left: 44px;, position: relative; 추가 */
   flex-wrap: wrap;
   padding-left: 44px;
+  position: relative;
 }
 .plugins .add-schedule-place .place-select:hover > .place-tooltip {
   opacity: 1;
@@ -2579,10 +2608,12 @@
   font-size: 12px;
   line-height: 18px;
   filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.11));
-  top: -30px;
   left: 50%;
   transform: translateX(-50%);
   transition: opacity 0.3s ease-in-out;
+
+  /* [퍼블 수정 및 추가] - top 값 수정 ( -30px -> -44px ) */
+  top: -44px;
 }
 .plugins .add-schedule-place .place-tooltip::after {
   content: "";
@@ -2598,19 +2629,21 @@
 }
 .plugins .add-schedule-place .place-list {
   position: absolute;
-  top: 82px;
-  width: 100%;
   background: white;
   border: 1px solid #BEBEBE;
   border-radius: 3px;
   padding: 8px;
-  max-height: 215px;
   z-index: 100;
   display: none;
   overflow-y: auto;
-  
-  /* [퍼블 수정 및 추가] - left: 0; 추가 */
-  left: 0;
+
+  /* [퍼블 수정 및 추가] - width 값 수정 ( 100% -> calc(100% + 2px) ), max-height 값 수정 ( 215px -> 230px ), top 값 수정 ( 82px -> 50px ) */
+  width: calc(100% + 2px);
+  max-height: 230px;
+  top: 50px;
+
+  /* [퍼블 수정 및 추가] - left: -1px; 추가 */
+  left: -1px;
 }
 .plugins .add-schedule-place .place-list.show {
   display: block;
@@ -2639,6 +2672,9 @@
   font-size: 14px;
   line-height: 20px;
   margin: 0;
+  
+  /* [퍼블 수정 및 추가] - word-break: break-all; 추가 */
+  word-break: break-all;
 }
 .plugins .add-schedule-place .place-list p.small {
   font-size: 12px;
@@ -2688,11 +2724,11 @@
   /* [퍼블 수정 및 추가] - margin-left 값 변경 (44px -> 0) */
   margin-left: 0;
 
-  /* [퍼블 수정 및 추가] - display: inline-block; 추가 */
+  /* [퍼블 수정 및 추가] - max-width: calc(100% - 30px);, display: inline-block; 추가 */
+  max-width: calc(100% - 30px);
   display: inline-block;
 }
 .plugins .add-schedule-place .selected-place .place-info {
-  padding: 5px 8px;
   background-color: #E8E8E8;
   border-radius: 15px;
   margin-right: 4px;
@@ -2700,20 +2736,36 @@
   margin-bottom: 8px;
   font-weight: 500;
   font-size: 12px;
-  line-height: 1.5;
   color: #565656;
   margin-top: 8px;
+
+  /* [퍼블 수정 및 추가] - padding 값 수정 ( 5px 8px -> 6px 10px ), line-height 값 수정 ( 1.5 -> 1.4 ) */
+  padding: 6px 10px;
+  line-height: 1.4;
+
+  /* [퍼블 수정 및 추가] - padding-right: 26px; position: relative;, word-break: break-all; 추가 */
+  padding-right: 26px;
+  position: relative;
+  word-break: break-all;
 }
 .plugins .add-schedule-place .selected-place .place-info .btn-delete {
-  margin-left: 4px;
-  position: relative;
+  /* [퍼블 수정 및 추가] - position 값 수정 ( relative -> absolute ), margin-left 값 수정 ( 4px -> 0 ) */
+  position: absolute;
+  margin-left: 0;
+
+  /* [퍼블 수정 및 추가] - padding: 0;, top: 8px;, right: 8px; 추가 */
+  padding: 0;
+  top: 8px;
+  right: 8px;
 }
 .plugins .add-schedule-place .selected-place .place-info .btn-delete svg {
   display: block;
-  position: absolute;
+  
+  /* [퍼블 수정 및 추가] - position, left, top, transform 제거  */
+  /* position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); */
 }
 
 .dialog-back {
@@ -4824,15 +4876,16 @@ body {
 .autocomplete-wrap .ui-widget.ui-widget-content.ui-autocomplete .ui-menu-header + .ui-menu-item::before {
   display: none !important;
 }
-
 .schedule-join-member {
   border: 1px solid #BEBEBE;
   border-radius: 3px;
   background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/search-input.png");
   background-repeat: no-repeat;
-  background-size: 17px 18px;
-  background-position: 14px 15px;
   position: relative;
+
+  /* [퍼블 수정 및 추가] - background-size 값 수정 ( 17px 18px -> 18px ), background-position 값 수정 ( 14px 15px -> 14px 14px ) */
+  background-size: 18px;
+  background-position: 14px 14px;
 }
 .schedule-join-member .member-open {
   display: none;
@@ -4851,11 +4904,14 @@ body {
   transition: transform 0.2s ease-in-out;
 }
 .schedule-join-member .selected-members {
-  margin-left: 44px;
   position: relative;
 
-  /* [퍼블 수정 및 추가] - margin-right: 44px; 제거 */
+  /* [퍼블 수정 및 추가] - margin-left: 44px;, margin-right: 44px; 제거 */
+  /*margin-left: 44px;*/
   /*margin-right: 44px;*/
+  
+  /* [퍼블 수정 및 추가] - padding: 0 10px; 추가 */
+  padding: 0 10px;
 }
 .schedule-join-member .selected-members.long {
   max-height: 110px;
@@ -4916,7 +4972,8 @@ body {
   margin-left: -6px;
 }
 .schedule-join-member .selected-members .member-info:hover .auto-detail-tooltip, .schedule-join-member .selected-members .dept-info:hover .auto-detail-tooltip {
-  display: block;
+  /* [퍼블 수정 및 추가] - display: block; 제거 */
+  /* display: block; */
 }
 .schedule-join-member .selected-members .member-info .btn-delete, .schedule-join-member .selected-members .dept-info .btn-delete {
   right: 7px;
@@ -5119,66 +5176,105 @@ body {
     margin-left: 2px;
     vertical-align: text-top;
 }
+.dropdown-box small.require-alert { /* [퍼블 수정 및 추가] - .dropdown-box small.require-alert 스타일 추가 */
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 19px;
+  color: #F94B50;
+  display: none;
+}
+.dropdown-box small.require-alert.show { /* [퍼블 수정 및 추가] - .dropdown-box small.require-alert.show 스타일 추가 */
+  display: block;
+}
 
 /* 예산조회_팝업 */
 .plugins .plugin-contents .form-budget .coment-b {
-    margin-top: 130px;
     margin-bottom: 20px;
     text-decoration: underline;
+
+    /* [퍼블 수정 및 추가] - margin-top 값 수정 (130px -> 50%) */
+    margin-top: 50%;
 }
 
-/* 예산조회_메세지 */
+/* 예산조회&&수입화물조회_메세지 */
+.message .importCargo-wrap,
 .message .budget-wrap {
     width: 280px;
 }
+.message .importCargo-wrap .importCargo-header,
 .message .budget-wrap .budget-header {
-    padding: 9px 12px;
     border-radius: 16px 16px 0 0;
     background-color: #424242;
     display: flex;
     align-items: center;
     gap: 6px;
+
+    /* [퍼블 수정 및 추가] - padding 값 수정 ( 9px 12px -> 6px 12px ) */
+    padding: 6px 12px;
 }
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .importCargo-wrap .importCargo-header h2,
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .budget-wrap .budget-header h2 {
     margin-bottom: 0;
     color: #fff;
     font-size: 14px;
     font-weight: 400;
 }
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .importCargo-wrap .importCargo-header path,
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .budget-wrap .budget-header path {
     fill: #fff;
 }
-.message .budget-wrap .budget-content .budget-content-header {
-    margin: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+
+/* [퍼블 수정 및 추가] - 추가건 */
+.message .importCargo-wrap .importCargo-content,
+.message .budget-wrap .budget-content {
+  /*margin-bottom: 16px;*/
 }
+.message .importCargo-wrap .importCargo-content .importCargo-content-header svg,
+.message .budget-wrap .budget-content .budget-content-header svg {
+  min-width: 16px;
+  margin-top: 2px;
+}
+
+.message .importCargo-wrap .importCargo-content .importCargo-content-header,
+.message .budget-wrap .budget-content .budget-content-header {
+    display: flex;
+    gap: 6px;
+    /* align-items: center; */ /* [퍼블 수정 및 추가] - 제거 */
+
+    /* [퍼블 수정 및 추가] - margin 값 수정 ( 10px 12px -> 12px ) */
+    margin: 12px;
+}
+.message .importCargo-wrap .importCargo-content .importCargo-content-header h3,
 .message .budget-wrap .budget-content .budget-content-header h3 {
     font-size: 14px;
+
+    /* [퍼블 수정 및 추가] - line-height 추가 */
+    line-height: 1.4;
 }
+.message .importCargo-wrap .importCargo-content .importCargo-list-wrap,
 .message .budget-wrap .budget-content .budget-list-wrap {
     margin: 10px 12px;
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
+.message .importCargo-wrap .importCargo-content .importCargo-list-wrap li,
 .message .budget-wrap .budget-content .budget-list-wrap li {
     display: flex;
     align-items: center;
 }
+.test-panel .chat-message.left .message .importCargo-wrap .importCargo-content .importCargo-list-wrap h4,
 .test-panel .chat-message.left .message .budget-wrap .budget-content .budget-list-wrap h4 {
-    width: 66px;
+    width: 80px;
     color: #898989;
+    font-size: 14px;
     font-weight: 400;
 }
-.message .budget-wrap .budget-content .budget-list-wrap .budget-date span::after {
-    content: '❘';
-    margin: 0 6px;
-    color: #ccc;
-}
-.message .budget-wrap .budget-content .budget-list-wrap .budget-date span:last-child:after {
-    display: none;
+.message .importCargo-wrap .importCargo-content .importCargo-list-wrap .importCargo-date,
+.message .budget-wrap .budget-content .budget-list-wrap .budget-date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .move_n-erp, .move_link {
     display: flex !important;
@@ -5196,9 +5292,10 @@ body {
 }
 
 /* 일정등록_메세지 */
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 * + span {
+/* [퍼블 수정 및 추가] - .s-detail h2 * + span 스타일 제거 */
+/* .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 * + span {
   margin-left: -4px;
-}
+} */
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .attend-button:disabled {
   cursor: default;
 }
@@ -5211,6 +5308,21 @@ body {
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li.cancel-line:hover {
   cursor: default;
   background-color: transparent;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li:first-child::before {
+  display: none;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li::before {
+  content: " ";
+  height: 1px;
+  background-color: #DADADA;
+  width: 256px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  overflow: hidden;
 }
 
 /* 일정알람_메세지 */
@@ -5308,7 +5420,84 @@ p.people-box .people-list b {
   font-weight: 400 !important;
 }
 
+/* 시스템 담당자 통합 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.employee .list-header-title,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system .list-header-title {
+  height: auto;
+  position: relative;
+  padding: 9px 12px;
+  padding-left: 38px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.employee .list-header-title svg,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system .list-header-title svg {
+  min-width: 24px;
+  margin-right: 0;
+  position: absolute;
+  top: 4px;
+  left: 10px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.employee .list-header-title .title-wrap,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system .list-header-title .title-wrap {
+  display: inline-block;
+  word-break: break-word;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info {
+  margin-left: 0;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info li,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info li {
+  align-items: flex-start;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info li .profile-icon,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info li .profile-icon {
+  min-width: 16px;
+  margin-top: 2px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1 {
+  padding: 0;
+  margin-bottom: 4px;
+}
+
+/* 시스템 담당자 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system li.list-box.list-system {
+  cursor: pointer;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system li.list-box.list-system:hover {
+  background-color: #E8E8E8;
+}
+
+/* 일정 등록 메세지 스타일 추가 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li:first-child::before {
+  display: none;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li::before {
+  content: " ";
+  height: 1px;
+  background-color: #DADADA;
+  width: 256px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  overflow: hidden;
+}
 
 
-
+/* 일정등록 팝업 추가내용 */
+.schedule-join-member.focus {
+  border-color: #2C2C2C;
+}
+.plugins .add-schedule-place .place-select.focus {
+  border-color: #2C2C2C;
+}
+.schedule-join-member .selected-members .member-info:first-child,
+.schedule-join-member .selected-members .dept-info:first-child {
+  margin-left: 34px;
+}
+.schedule-join-member .search-input.select {
+  padding-left: 13px !important;
+}
 

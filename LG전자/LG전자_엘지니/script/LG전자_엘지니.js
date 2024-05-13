@@ -241,6 +241,11 @@ var iconOne = '<svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns
 var iconTwo = '<svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
 +'<path fill-rule="evenodd" clip-rule="evenodd" d="M18.8337 10.0013C18.8337 14.6037 15.1027 18.3346 10.5003 18.3346C5.89795 18.3346 2.16699 14.6037 2.16699 10.0013C2.16699 5.39893 5.89795 1.66797 10.5003 1.66797C15.1027 1.66797 18.8337 5.39893 18.8337 10.0013ZM9.33399 7.95104C9.33399 7.34879 9.84178 6.83464 10.5007 6.83464C11.1595 6.83464 11.6673 7.34879 11.6673 7.95104C11.6673 8.34117 11.4575 8.69081 11.1278 8.89258C10.8839 9.04186 10.6128 9.241 10.3981 9.49477C10.1813 9.75099 10.0007 10.0896 10.0007 10.5013C10.0007 10.7774 10.2245 11.0013 10.5007 11.0013C10.7768 11.0013 11.0007 10.7774 11.0007 10.5013C11.0007 10.3973 11.0441 10.2793 11.1615 10.1407C11.2809 9.99957 11.4538 9.86547 11.6498 9.74554C12.2556 9.3748 12.6673 8.71306 12.6673 7.95104C12.6673 6.76786 11.6827 5.83464 10.5007 5.83464C9.31858 5.83464 8.33398 6.76786 8.33398 7.95104C8.33398 8.22718 8.55784 8.45104 8.83398 8.45104C9.11013 8.45104 9.33399 8.22718 9.33399 7.95104ZM10.5007 13.7512C10.9609 13.7512 11.334 13.3781 11.334 12.9179C11.334 12.4577 10.9609 12.0846 10.5007 12.0846C10.0404 12.0846 9.66732 12.4577 9.66732 12.9179C9.66732 13.3781 10.0404 13.7512 10.5007 13.7512Z" fill="#FFAA00"/>'
 +'</svg>';
+
+// [퍼블 수정 및 추가] - iconTeam 추가
+var iconTeam = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
++'</svg>';
  
  function selectWeatherIcon2(sky, pty) { //sky : 하늘상태 pty: 강수형태 //하늘상태(SKY) 코드 : 맑음(1), 구름많음(3), 흐림(4) - 강수형태(PTY) 코드 : (단기) 없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4) 
    if(pty != 0 && pty != null) {
@@ -5392,7 +5397,7 @@ function makeRpaPopup(data) {
 function makeSystemCardFirst(items) {
     systemItems = items;
     
-    var systemContetns = $('<div class="system-contents" style="width:400px;"></div>');
+    var systemContetns = $('<div class="system-contents" style="width:300px;"></div>'); // [퍼블 수정 및 추가] - width 값 수정 ( 400 -> 300 )
     var msgCon = $('<div class="message simple-text"></div>');
     var text = '';
     if (items instanceof Array && items.length > 0) {
@@ -5443,8 +5448,12 @@ function makeSystemCardFirst(items) {
             );
             
             var sysInfoList = $('<ul class="profile-info system"></ul>');
-            sysInfoList.append($('<li><span class="profile-icon icon-mail">' + iconMail + '</span>' + (item.deptName ? item.deptName : '-' )+ '</li>'));
-            sysInfoList.append($('<li><span class="profile-icon icon-phone">' + iconPhone + '</span>' + (item.empName ? item.empName : '-') + '</li>'));
+            
+            // [퍼블 수정 및 추가] - 아이콘 수정
+            // sysInfoList.append($('<li><span class="profile-icon icon-mail">' + iconMail + '</span>' + (item.deptName ? item.deptName : '-' )+ '</li>'));
+            // sysInfoList.append($('<li><span class="profile-icon icon-phone">' + iconPhone + '</span>' + (item.empName ? item.empName : '-') + '</li>'));
+            sysInfoList.append($('<li><span class="profile-icon icon-mail">' + iconTeam + '</span>' + (item.deptName ? item.deptName : '-' )+ '</li>'));
+            sysInfoList.append($('<li><span class="profile-icon icon-phone">' + iconMember + '</span>' + (item.empName ? item.empName : '-') + '</li>'));
           
             sysInfo.append(sysInfoList);
             
@@ -8948,9 +8957,17 @@ var data = {
         $('.place-text').removeClass('show');
         $('.place-text .texted').text(''); 
         placedSelected.append(placeInfo);
+        
+        // [퍼블 수정 및 추가]
+        var targetHeight = $('.selected-place').height();
+        $('.place-select').removeClass('focus');
+        console.log(targetHeight);
+
         $('.place-list').removeClass('show');
-        $('.place-list').css('top', '82px');
+        // $('.place-list').css('top', '82px');
+        $('.place-list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
         $('#schedule-place').attr('placeholder', '');
+
         schedulePlaceWidth();
     });
    
@@ -8959,6 +8976,10 @@ var data = {
     
     var placeUl = $('<ul></ul>');
     placeInput.on('focus', function() {
+        
+        // [퍼블 수정 및 추가] - place-select 스타일 변경
+        $('.place-select').addClass('focus');
+            
         $('.place-list').addClass('show');
         placeUl.empty();
 
@@ -9022,11 +9043,17 @@ var data = {
                           + '<input type="hidden" value="'+ meetingRoom.facilityId +'" class="facility-id"/>'
                         +'</div>'
                     );
-        
                     placedSelected.empty();
                     placedSelected.append(placeInfo);
+                    
+                    // [퍼블 수정 및 추가]
+                    var targetHeight = $('.selected-place').height();
+                    $('.place-select').removeClass('focus');
+                    console.log(targetHeight);
+    
                     $('.place-list').removeClass('show');
-                    $('.place-list').css('top', '82px');
+                    // $('.place-list').css('top', '82px');
+                    $('.place-list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
                     $('#schedule-place').attr('placeholder', '');
                     schedulePlaceWidth();
                 });
@@ -9052,7 +9079,8 @@ var data = {
     $(document).on('click', '.place-info .btn-delete', function(){
         $(this).closest(".place-info").remove();
         $('#schedule-place').attr('placeholder', '장소를 입력해 주세요.');
-        $('.place-list').css('top', '82px');
+        // $('.place-list').css('top', '82px');
+        $('.place-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
         schedulePlaceWidth();
     });
 
@@ -9060,6 +9088,9 @@ var data = {
     $(document).on('click', function(e) {
         if ($('.place-select').has(e.target).length === 0) {
             $('.place-list').removeClass('show');
+            
+            // [퍼블 수정 및 추가] - place-select 스타일 변경
+            $('.place-select').removeClass('focus');
         }
     });
 
@@ -9091,6 +9122,29 @@ var data = {
     memberList.append(memberInput);
     memberInputBox.append(memberList);
     addScheduleForm.append(memberInputBox);
+    
+    // [퍼블 수정 및 추가] - 포커스 이벤트
+    memberList.find('.search-input').focus(function() {
+        memberList.addClass('focus');
+    }).blur(function() {
+        memberList.removeClass('focus');
+    });
+    
+    // [퍼블 수정 및 추가] - 참석인 선택 유무에 따라 input 스타일 변경
+    $(document).on('click', '.schedule-join-member .btn-delete', function() {
+        if ($('.member-info').length > 0) {
+            memberInput.addClass('select');
+        } else {
+            memberInput.removeClass('select');
+        }
+    })
+    $(document).on('click', '.schedule-join-member .ui-menu-item', function() {
+        if ($('.member-info').length > 0) {
+            memberInput.addClass('select');
+        } else {
+            memberInput.removeClass('select');
+        }
+    })
     
     /* ###[ 기타 옵션 ]### */
     var otherOptionsBox = $('<div class="input-box"><p>기타 옵션</p></div>');
