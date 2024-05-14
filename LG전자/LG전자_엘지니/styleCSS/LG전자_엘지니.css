@@ -5501,3 +5501,37 @@ p.people-box .people-list b {
   padding-left: 13px !important;
 }
 
+/* 웰컴 스타일 수정 및 추가 */
+.test-panel .panel-wrapper .chat-panel .welcome-contents .message {
+    max-width: 280px;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 16px;
+    background-color: #F2F2F2 !important;
+    color: #2C2C2C;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px; 
+}
+.test-panel .panel-wrapper .chat-panel .welcome-contents .message h2 {
+    font-size: 14px;
+    font-weight: 500;
+}
+.test-panel .panel-wrapper .chat-panel .welcome-contents .message h2 b {
+    margin-left: 4px;
+    font-weight: inherit;
+}
+.test-panel .panel-wrapper .chat-panel .welcome-contents .message b {
+    color: #E0205C;
+}
+.test-panel .panel-wrapper .chat-panel .welcome-contents .welcome-img {
+    overflow: unset;
+}
+.test-panel .panel-wrapper .chat-panel .welcome-contents .welcome-img svg,
+.test-panel .panel-wrapper .chat-panel .welcome-contents .welcome-img img {
+    left: 50%;
+    position: absolute;
+    top: 0;
+    width: auto;
+    transform: translate(-50%, 0);
+}

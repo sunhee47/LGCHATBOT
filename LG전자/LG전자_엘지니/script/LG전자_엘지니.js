@@ -1,4 +1,4 @@
-let imgBaseUrl = 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057';
+let imgBaseUrl = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/3ace0979-8ff0-49f3-814b-84c500f5fbef';
 
 let searchActive = false;
 let searchActive2 = false;
@@ -28,12 +28,15 @@ let profileUrl = " http://gportal.lgchem.com/support/profile/getProfile.do?docPo
 let smsUrl = "http://gportal.lgchem.com/support/sms/sms.do?gubun=1&receiverId=";
 
 // G-포탈 URL
-let gportalEmployeeUrl = "http://gportal.lgchem.com/portal/main/listUserPopup.do?viewMode=main&searchWord=%search2323Word%&searchColumn=all";
-let gportalTotalUrl = "http://search.lgchem.com:8501/total_2013/search.jsp?query=%query%&Language=ko";
-let gportalScheduleUrl = "http://gportal.lgchem.com/lightpack/planner/calendar/viewSchedule.do?scheduleId=";
-let ecmUrl = "http://ecm.lgchem.com/ecm/fileSystem.do?searchText=%query%";
-let gportalPersonUrl = "http://gportal.lgchem.com/portal/main/listUserMain.do?hideOrgYN=true&rightFrameUrl=/support/profile/getProfile.do?targetUserId="
-let gPortalWeekScheduleUrl = "http://gportal.lgchem.com/lightpack/planner/calendar/popup/init.do?viewMode=agendaWeek&type=init&targetId=%query%&action=onClickTargetUser"
+//let gportalEmployeeUrl = "http://gportal.lgchem.com/portal/main/listUserPopup.do?viewMode=main&searchWord=%search2323Word%&searchColumn=all";
+//let gportalTotalUrl = "http://search.lgchem.com:8501/total_2013/search.jsp?query=%query%&Language=ko";
+//let gportalScheduleUrl = "http://gportal.lgchem.com/lightpack/planner/calendar/viewSchedule.do?scheduleId=";
+//let ecmUrl = "http://ecm.lgchem.com/ecm/fileSystem.do?searchText=%query%";
+//let gportalPersonUrl = "http://gportal.lgchem.com/portal/main/listUserMain.do?hideOrgYN=true&rightFrameUrl=/support/profile/getProfile.do?targetUserId="
+//let gPortalWeekScheduleUrl = "http://gportal.lgchem.com/lightpack/planner/calendar/popup/init.do?viewMode=agendaWeek&type=init&targetId=%query%&action=onClickTargetUser"
+
+// EP 통합검색 
+let epTotalUrl = "https://ep.lgcns.com/support/search/totalSearch.do?totalSearch=%query%";          
 
 // Push 초기화 비활성화(챗봇창 오픈 시 push 시점 제어)
 // chatSettings["initPush"] = "N";
@@ -345,7 +348,7 @@ function appendQueryText(message) {
 
 function appendWelcomeText(message) {
     var chatMessage = '<div class="chat-message left">'
-    +'<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
+    +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>'
     +'<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"><div class="basic"><div class="message-content" style="white-space: pre-line">'
     +message
     +'</div></div></div>'
@@ -357,7 +360,7 @@ function appendWelcomeText(message) {
 
 function appendChatbotText(message) {
   var chatMessage = '<div class="chat-message left">'
-  +'<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>'
+  +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>'
   + message
   +'<span class="message-date">' + moment().format("a h:mm") + '</span>';
 
@@ -367,7 +370,7 @@ function appendChatbotText(message) {
 
 function appendChatbotText2(message, customQuick) {
   var chatMessage = $('<div class="chat-message left"></div>');
-  var profile = $('<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>');
   chatMessage.append(profile);
   chatMessage.append(message);
   chatMessage.append(customQuick);
@@ -405,12 +408,12 @@ function appendChatbotText2(message, customQuick) {
 }
 
 // tempImage
-var pAlternative = 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/tmp-profile.png';
+var pAlternative = imgBaseUrl+'/images/tmp-profile.png';
 
 function noImage(img) {
   img.onerror = null
 
-  let url = new URL("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/tmp.png");
+  let url = new URL(imgBaseUrl+"/images/tmp.png");
   url.searchParams.set('reload', 'true')
   img.src = url.toString();
 } 
@@ -896,18 +899,18 @@ function searchActiveTrue() {
   $('.search-guides').css('display', 'none');
 }
 
-function searchActiveGportal() {
+function searchActiveEpTotal() {
   searchActiveTrue();
-    searchType = 'g-portal';
+    searchType = 'ep-total';
   
     $('.search-desc').find('h1').html('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
     +        '<path fill-rule="evenodd" clip-rule="evenodd" d="M16.0711 16.9199C14.5792 18.2157 12.6312 19 10.5 19C5.80558 19 2 15.1944 2 10.5C2 5.80558 5.80558 2 10.5 2C15.1944 2 19 5.80558 19 10.5C19 12.6313 18.2156 14.5794 16.9197 16.0714L21.824 20.9757C22.0583 21.21 22.0583 21.5899 21.824 21.8242C21.5897 22.0586 21.2098 22.0586 20.9755 21.8242L16.0711 16.9199ZM17.8 10.5C17.8 14.5317 14.5317 17.8 10.5 17.8C6.46832 17.8 3.2 14.5317 3.2 10.5C3.2 6.46832 6.46832 3.2 10.5 3.2C14.5317 3.2 17.8 6.46832 17.8 10.5Z" fill="#2C2C2C"/>'
     +        '</svg>'
-    +         '지포탈 통합검색'
+    +         'EP 통합검색'
     );
 
-    $('.search-desc').find('.desc').html('지포탈에서 통합검색 결과를 검색합니다.<br />'
-    +'지난 게시판 내용, 전자결재 문서, 뉴스 등을 검색할 수 있습니다.<br />'
+    $('.search-desc').find('.desc').html(''
+    +'EP 게시판 내용, 전자결재 문서, 뉴스 등을 검색할 수 있습니다.<br />'
     +'궁금하신 검색 키워드를 입력해 주세요.<br /><br />'
     +'예) G Cloud Mobile, 거점오피스'
     );
@@ -984,7 +987,7 @@ function searchActiveSystem() {
 
  $('.search-desc').find('.desc').html('시스템 담당자를 검색합니다.<br />'
  +'‘시스템명 + 담당자’ 로 검색해 보세요.<br /><br />'
- +'예) 케미 담당자, ecm 담당자');
+ +'예) GERP 담당자, ecm 담당자');
  $('.search-desc').addClass('show');
 };
 
@@ -1043,12 +1046,12 @@ function searchActiveEmployee() {
     + '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.9999 10.3C16.7179 10.3 17.2999 9.71797 17.2999 9C17.2999 8.28203 16.7179 7.7 15.9999 7.7C15.2819 7.7 14.6999 8.28203 14.6999 9C14.6999 9.71797 15.2819 10.3 15.9999 10.3ZM15.9999 11.5C17.3806 11.5 18.4999 10.3807 18.4999 9C18.4999 7.61929 17.3806 6.5 15.9999 6.5C14.6192 6.5 13.4999 7.61929 13.4999 9C13.4999 10.3807 14.6192 11.5 15.9999 11.5Z" fill="#2C2C2C"/>'
     + '<path fill-rule="evenodd" clip-rule="evenodd" d="M14.7998 13.3C14.7998 12.9687 15.0684 12.7 15.3998 12.7H16.3999C19.4927 12.7 21.9999 15.2073 21.9999 18.3V18.9C21.9999 19.2314 21.7313 19.5 21.3999 19.5C21.0685 19.5 20.7999 19.2314 20.7999 18.9V18.3C20.7999 15.87 18.83 13.9 16.3999 13.9H15.3998C15.0684 13.9 14.7998 13.6314 14.7998 13.3Z" fill="#2C2C2C"/>'
     +'</svg>'
-    +'임직원 그룹사 검색'
+    +'전자/그룹사 임직원 검색'
     );
 
-    $('.search-desc').find('.desc').html('‘이름’ 혹은 ‘이름 + 직책’ 키워드로 화학 임직원 정보를 검색해 보세요.<br />'
+    $('.search-desc').find('.desc').html('‘이름’ 혹은 ‘이름 + 직책’ 키워드로 전자 임직원 정보를 검색해 보세요.<br />'
     +'‘계열사명+이름’ 으로 LG 그룹사 임직원 정보를 검색해 보세요.<br /><br />'
-    +'예) 홍길동 선임 (화학 임직원 검색) , CNS 김춘희 (그룹사 검색)<br />'
+    +'예) 홍길동 선임 (전자 임직원 검색) , CNS 김춘희 (그룹사 검색)<br />'
     +'검색 후 정보 확인 및 메신저 대화하기 / 메일 전송 / SMS 전송 / 일정 확인 등을 지원합니다.');
     $('.search-desc').addClass('show');
 }
@@ -1084,7 +1087,7 @@ function activeGptBot(text) {
     } else{
         console.log("activeGptBot : "+text);
         var paramForm = document.createElement("form");
-        var url = "https://chatclient-stg.ai.lgstation.com/88a39d64-0e9a-4ea7-ac57-de5783a3e937/chat";
+        var url = "https://chatclient-stg.ai.lgstation.com/53496e65-19e4-4d34-8469-c7b83263b588/chat";
         window.open("", "chatGptBot", "top=500, left=500, width=500, height=700, toolbar=1, scrollbars=1, resizable=1");
         
         $(paramForm).attr('action', url);
@@ -1337,7 +1340,7 @@ const autoSearchEmployees = function(inputVal) {
           }
  
           if ($.trim(item.imgUrl) == "") {
-            item.imgUrl = "https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/icon/img_user_none.png";
+            item.imgUrl = imgBaseUrl+"/icon/img_user_none.png";
           }
  
           htmlStr = '<dl class="person-info">' +
@@ -1919,15 +1922,15 @@ function closeSettingPopup() {
 
 function showNotiSettings() {
   var todayTodoSetting = 'Y';
-  var ecmUpdateSetting = 'Y';
-  var companyNoticeSetting = 'Y';
-  var teamBirthSetting = 'Y';
-  var myBirthSetting = 'Y';
+  //var ecmUpdateSetting = 'Y';
+  //var companyNoticeSetting = 'Y';
+  //var teamBirthSetting = 'Y';
+  //var myBirthSetting = 'Y';
   var push15BeforeSetting = 'Y';
   var pushEduBotSetting = 'Y';
-  var birthPrivacySetting = 'Y';
-  var ecmPushSetting = 'Y';
-  var noticePushSetting = 'Y';
+  //var birthPrivacySetting = 'Y';
+  //var ecmPushSetting = 'Y';
+  //var noticePushSetting = 'Y';
 
   var pulginDim = $('<div class="plugin-dim"></div>');
   var notiSetting = $('<div class="plugins" id="notiSetting"></div>');
@@ -1948,6 +1951,7 @@ function showNotiSettings() {
 
   var onOffBox = $('<div class="on-off-box"></div>');
   var onOffList = $('<ul></ul>');
+  /*
   var dailyAll = $('<li><span class="a-text">전체</span></li>');
   var dailyAllSwitch = $('<label class="switch">'
                +'<input type="checkbox" id="dailyAll" checked="checked"/ >'
@@ -1981,7 +1985,8 @@ function showNotiSettings() {
   });
   dailyAll.append(dailyAllSwitch);
   onOffList.append(dailyAll);
-
+    */
+    
   var todayTodo = $('<li><span class="a-text">오늘의 일정</span></li>');
   var todayTodoSwitch = $('<label class="switch">'
                +'<input type="checkbox" id="todayTodo" checked="checked" />'
@@ -1997,71 +2002,6 @@ function showNotiSettings() {
   });
   todayTodo.append(todayTodoSwitch);
   onOffList.append(todayTodo);
-
-  var ecmUpdate =  $('<li><span class="a-text">ECM 업데이트</span></li>');
-  var ecmUpdateSwitch = $('<label class="switch">'
-  +'<input type="checkbox" id="ecmUpdate" checked="checked"/>'
-   +'<span class="slider round"></span>'
-  +'</label>'
-  +'</li>');
-  ecmUpdateSwitch.on('click', function() {
-  if($(this).find('#ecmUpdate').prop("checked")) {
-    ecmUpdateSetting = 'Y';  
-  } else {
-    ecmUpdateSetting = 'N';  
-  }
-  });
-  ecmUpdate.append(ecmUpdateSwitch);
-  onOffList.append(ecmUpdate);
-
-  var companyNotice =  $('<li><span class="a-text">전사 공지사항</span></li>');
-  var companyNoticeSwitch = $('<label class="switch">'
-  +'<input type="checkbox" id="companyNotice" checked="checked" />'
-   +'<span class="slider round"></span>'
-  +'</label>'
-  +'</li>');
-  companyNoticeSwitch.on('click', function() {
-  if($(this).find('#companyNotice').prop("checked")) {
-    companyNoticeSetting = 'Y';  
-  } else {
-    companyNoticeSetting = 'N';  
-  }
-  });
-  companyNotice.append(companyNoticeSwitch);
-  onOffList.append(companyNotice);
-
-  var teamBirth =  $('<li><span class="a-text">팀 내 생일자</span></li>');
-  var teamBirthSwitch = $('<label class="switch">'
-  +'<input type="checkbox" id="teamBirth" checked="checked" />'
-   +'<span class="slider round"></span>'
-  +'</label>'
-  +'</li>');
-  teamBirthSwitch.on('click', function() {
-  if($(this).find('#teamBirth').prop("checked")) {
-    teamBirthSetting = 'Y';  
-  } else {
-    teamBirthSetting = 'N';  
-  }
-  });
-  teamBirth.append(teamBirthSwitch);
-  onOffList.append(teamBirth);
-
-
-  var myBirth =  $('<li><span class="a-text">내 생일 축하</span></li>');
-  var myBirthSwitch = $('<label class="switch">'
-  +'<input type="checkbox" id="myBirth" checked="checked" />'
-   +'<span class="slider round"></span>'
-  +'</label>'
-  +'</li>');
-  myBirthSwitch.on('click', function() {
-  if($(this).find('#myBirth').prop("checked")) {
-    myBirthSetting = 'Y';  
-  } else {
-    myBirthSetting = 'N';  
-  }
-  });
-  myBirth.append(myBirthSwitch);
-  onOffList.append(myBirth);
 
   onOffBox.append(onOffList);
   notiSettingContetns.append(onOffBox);
@@ -2084,19 +2024,11 @@ function showNotiSettings() {
       push15BeforeSetting = 'Y';
       $('#pushEduBot').prop('checked', true);
       pushEduBotSetting = 'Y';
-      $('#ecmPush').prop('checked', true);
-      ecmPushSetting = 'Y';
-      $('#noticePush').prop('checked', true);
-      noticePushSetting = 'Y';
     } else {
       $('#push15Before').prop('checked', false);
       push15BeforeSetting = 'N';
       $('#pushEduBot').prop('checked', false);
       pushEduBotSetting = 'N';
-      $('#ecmPush').prop('checked', false);
-      ecmPushSetting = 'N';
-      $('#noticePush').prop('checked', false);
-      noticePushSetting = 'N';
     }
   });
   pushAll.append(pushAllSwitch);
@@ -2134,65 +2066,9 @@ function showNotiSettings() {
   pushEduBot.append(pushEduBotSwitch);
   onOffList2.append(pushEduBot);
 
-  var ecmPush =  $('<li><span class="a-text">ECM 업데이트 알림</span></li>');
-  var ecmPushSwitch = $('<label class="switch">'
-  +'<input type="checkbox" id="ecmPush" checked="checked" />'
-  +'<span class="slider round"></span>'
-  +'</label>'
-  +'</li>');
-  ecmPushSwitch.on('click', function() {
-  if($(this).find('#ecmPush').prop("checked")) {
-    ecmPushSetting = 'Y';  
-  } else {
-    ecmPushSetting = 'N';  
-  }
-  });
-  ecmPush.append(ecmPushSwitch);
-  onOffList2.append(ecmPush);
-
-  var noticePush = $('<li><span class="a-text">공지 사항 알림</span></li>');
-  var noticePushSwitch = $('<label class="switch">'
-  +'<input type="checkbox" id="noticePush" checked="checked" />'
-  +'<span class="slider round"></span>'
-  +'</label>'
-  +'</li>');
-  noticePushSwitch.on('click', function() {
-  if($(this).find('#noticePush').prop("checked")) {
-    noticePushSetting = 'Y';  
-  } else {
-    noticePushSetting = 'N';  
-  }
-  });
-  noticePush.append(noticePushSwitch);
-  onOffList2.append(noticePush);
-
   onOffBox2.append(onOffList2);
   
   notiSettingContetns.append(onOffBox2);
-
-  var privacyTitle = $('<div class="sub-title">개인정보 활용 동의</div>');
-  notiSettingContetns.append(privacyTitle);
-
-  var onOffBox3 = $('<div class="on-off-box"></div>');
-  var onOffList3 = $('<ul></ul>');
-  var birthPrivacy = $('<li><span class="a-text">생일 정보 활용 동의</span></li>');
-  var birthPrivacySwitch = $('<label class="switch">'
-  +'<input type="checkbox" id="birthPrivacy" checked="checked" />'
-   +'<span class="slider round"></span>'
-  +'</label>'
-  +'</li>');
-  birthPrivacySwitch.on('click', function() {
-  if($(this).find('#birthPrivacy').prop("checked")) {
-    birthPrivacySetting = 'Y';  
-  } else {
-    birthPrivacySetting = 'N';  
-  }
-  });
-  birthPrivacy.append(birthPrivacySwitch);
-  onOffList3.append(birthPrivacy);
-
-  onOffBox3.append(onOffList3);
-  notiSettingContetns.append(onOffBox3);
 
   var settingSaveBtn = $('<button type="button" class="btn btn-plugin btn-apply" id="btn-setting">저장</button>');
   settingSaveBtn.on('click', function() {
@@ -2201,21 +2077,15 @@ function showNotiSettings() {
         "event": "registAlarmInfo"
       },
       payload:{
-        "anniversary": teamBirthSetting,
-        "birthInfo": birthPrivacySetting,
-        "favorite": ecmUpdateSetting,
         "learningBot": pushEduBotSetting,
         "message": push15BeforeSetting,
-        "myBirthday": myBirthSetting,
-        "notice": companyNoticeSetting,
         "planner": push15BeforeSetting,
         "schedule": todayTodoSetting,
-        "ecmPush":ecmPushSetting,
-        "noticePush":noticePushSetting,
         "userId": chatui.getSetting('userId')
       }
     };
   
+    console.log('settingSaveBtn : ', requestParam);
     sendChatApi(requestParam, null, function(payload){
       console.log(payload);
     });
@@ -2253,22 +2123,16 @@ function showNotiSettings() {
     var result;
     if(response) result = JSON.parse(response);
 
+    console.log('result : ', result);
     // 푸시 설정 Read 성공일 경우
     if(result) {
       var pushData = result.template.outputs[0].data;
       if(pushData) {
         var data = {
-          "anniversary": pushData.anniversary,
-          "birthInfo": pushData.birthInfo,
-          "favorite": pushData.favorite,
           "lastAccessDate": '',
           "learningBot": pushData.learningBot,
           "message": pushData.message,
-          "myBirthday": pushData.myBirthday,
-          "notice": pushData.notice,
           "planner": pushData.planner,
-          "ecmPush": pushData.hasOwnProperty('ecmPush')?pushData.ecmPush:'Y',
-          "noticePush":pushData.hasOwnProperty('noticePush')?pushData.noticePush:'Y',
           "schedule": pushData.schedule
         }
 
@@ -2279,33 +2143,7 @@ function showNotiSettings() {
           todayTodoSetting = 'N';
         }
 
-        if(data.favorite == 'N') {
-          $('#ecmUpdate').prop('checked', false);
-          ecmUpdateSetting = 'N';
-        }
-
-        if(data.notice == 'N') {
-          $('#companyNotice').prop('checked', false);
-          companyNoticeSetting = 'N';
-        }
-
-        if(data.anniversary == 'N') {
-          $('#teamBirth').prop('checked', false);
-          teamBirthSetting = 'N';
-        }
-
-        if(data.myBirthday == 'N') {
-          $('#myBirth').prop('checked', false);
-          myBirthSetting = 'N';
-        }
-
-        if(data.schedule =='Y' && data.favorite == 'Y' && data.notice == 'Y' && data.anniversary == 'Y' && data.myBirthday == 'Y') {
-          $('#dailyAll').prop('checked', true);
-        } else {
-          $('#dailyAll').prop('checked', false);
-        }
-
-        if(data.message == 'N') {
+        if(data.planner == 'N') {
           $('#push15Before').prop('checked', false);
           push15BeforeSetting = 'N';
         }
@@ -2315,26 +2153,12 @@ function showNotiSettings() {
           pushEduBotSetting = 'N';
         }
 
-        if(data.ecmPush == 'N') {
-          $('#ecmPush').prop('checked',false);
-          ecmPushSetting = 'N';
-        }
-        
-        if(data.noticePush == 'N') {
-          $('#noticePush').prop('checked',false);
-          noticePushSetting = 'N';
-        }
-
-        if(data.message == 'Y' && data.learningBot == 'Y' && data.ecmPush == 'Y' && data.noticePush == 'Y') {
+        if(data.planner == 'Y' && data.learningBot == 'Y') {
           $('#pushAll').prop('checked', true);
         } else {
           $('#pushAll').prop('checked', false);
         }
 
-        if(data.birthInfo == 'N') {
-          $('#birthPrivacy').prop('checked', false);
-          birthPrivacySetting = 'N'
-        }       
       }
     }
   });
@@ -2347,6 +2171,7 @@ function showNotiSettings() {
 
 var welcomeClick = false;
 function welcomeAppend(welcomeMessage) {
+    //console.log('welcomeMessage', welcomeMessage);
 // if(welcomeMessage[0].response !== null) $('.chat-message.left').last().remove();
   $('.chat-message.left').last().remove();
   if(welcomeMessage[0].panelType === "error"){
@@ -2354,36 +2179,54 @@ function welcomeAppend(welcomeMessage) {
   }else{
   if(JSON.parse(welcomeMessage[0].response)) {
     var todaySchedule = JSON.parse(welcomeMessage[0].response).template.outputs[0];
-  var ecmUpdateCount = JSON.parse(welcomeMessage[3].response).template.outputs[0];
-  var notice  = JSON.parse(welcomeMessage[2].response).template.outputs[0];
-  var todayBirth  = JSON.parse(welcomeMessage[1].response).template.outputs[0];
-  var hrInfo  = JSON.parse(welcomeMessage[4].response).template.outputs[0];
-  var userInfo = JSON.parse(welcomeMessage[5].response).template.outputs[0].data[0]; 
+  //var ecmUpdateCount = JSON.parse(welcomeMessage[3].response).template.outputs[0];
+  //var notice  = JSON.parse(welcomeMessage[2].response).template.outputs[0];
+  //var todayBirth  = JSON.parse(welcomeMessage[1].response).template.outputs[0];
+  //var hrInfo  = JSON.parse(welcomeMessage[4].response).template.outputs[0];
+  var userInfo = JSON.parse(welcomeMessage[1].response).template.outputs[0].data[0]; 
 
-  var birthDayYn = JSON.parse(welcomeMessage[5].response).template.outputs[0].birthdayYn;
-  var alarmInfo = JSON.parse(welcomeMessage[6].response).template.outputs[0].data;
+  //var birthDayYn = JSON.parse(welcomeMessage[5].response).template.outputs[0].birthdayYn;
+  var alarmInfo = JSON.parse(welcomeMessage[2].response).template.outputs[0].data;
 
   var welcomeContent = $('<div class="welcome-contents"></div>');
   var timeNow = $('<h6>'+ dateToStr(new Date()) +'</h6>');
   welcomeContent.append(timeNow);
 
-//23.02.07 처음 접속 여부에 따른 메시지 변경 처리  
-//   var userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님,<br />좋은 하루 보내세요.</h1>');
-  var userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님 안녕하세요.<br />오늘도 멋진 하루 보내세요!</h1>');
-  if(alarmInfo.firstMessage == "N") userName = $('<h1>케미를 다시 찾아주셨네요.<br />무엇을 도와드릴까요?</h1>');
-  if(birthDayYn == 'Y') {
-    userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님<br />생일을 축하 드립니다!</h1>');
-    
-    $('.info-area .center').empty().html('<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/m_congratulations.gif" class="birthday" />');
+  var userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, <br />오늘도 멋진 하루 보내세요!</h1>');
+  var characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/hello_big.gif" /></div>');
+  var welcomeMessage = "";
+  if(alarmInfo.openMessage == "Y") {
+     userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, 반가워요!<br />새로워진 엘지니와 대화해 보세요.</h1>');
+     characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/welcome.gif" /></div>');
+     
+     welcomeMessage = $(
+        '<div class="message">'
+        +   '<h2>✔<b>New 엘지니, 무엇이 달라졌을까요?</b></h2>'
+        +    '<p>'
+        +    '    · 일정 등록, 시스템 담당자 검색 등 기존 챗봇 기능을 더욱 편리하게 리뉴얼했어요.</br>'
+        +    '    · 예산시스템과 수입진행현황 조회 기능을 새로 추가했어요. (ERP 관련 기능은 계속 업데이트 될 예정입니다.)</br>'
+        +    '    · 학습봇 모드를 통해 새로운 정보 등록을 요청할 수 있어요.</br>'
+        +    '    · 엘지전자 전용 Chat GPT 서비스를 연동했어요.</br>'
+        +    '</p>'
+        +    '</br>'
+        +    '<h2>✔<b>엘지니를 100% 활용하는 Tip!</b></h2>'
+        +    '<p>'
+        +    '    · HR, 총무, IT 등 원하는 정보를 쉽게 찾아가도록 메뉴를 구성했어요. 정확한 검색어가 생각나지 않아도 버튼을 클릭해 답변을 확인해보세요.</br>'
+        +    '    · 일상대화 기능으로 엘지니의 매력이 한층 업그레이드됐어요. 다정다감한 엘지니와 자주 대화 나눠요.😊</br>'
+        +    '    ex) 사투리해봐, 퀴즈내줘</br>'
+        +    '</p>'
+        +'</div>' )
   }
-
-  var characterBox = $('<div class="welcome-img"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/hello_big.gif" /></div>')
-  if(birthDayYn == 'Y') {
-    characterBox = $('<div class="birthday-img"><img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/congrate.gif" /></div>')
-  };
+  //else {
+  //   if(alarmInfo.firstMessage == "N") userName = $('<h1>케미를 다시 찾아주셨네요.<br />무엇을 도와드릴까요?</h1>');
+  //}
 
   welcomeContent.append(userName);
   welcomeContent.append(characterBox);
+  
+  if(alarmInfo.openMessage == "Y") {
+      welcomeContent.append(welcomeMessage);
+  }
   
   var welcomeList = $('<ul></ul>');
   var todayTodo = $('<li>'
@@ -2409,7 +2252,7 @@ function welcomeAppend(welcomeMessage) {
   if(alarmInfo["schedule"] == 'Y') {
     welcomeList.append(todayTodo); 
   }
-  
+  /*
    var ecmUpdate = $('<li>'
    +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
    +'<path d="M8 13.4C8 13.0687 8.26863 12.8 8.6 12.8H15.4C15.7314 12.8 16 13.0687 16 13.4C16 13.7314 15.7314 14 15.4 14H8.6C8.26863 14 8 13.7314 8 13.4Z" fill="#6B6B6B"/>'
@@ -2486,7 +2329,7 @@ function welcomeAppend(welcomeMessage) {
    });
    
    welcomeList.append(hrInfo);
-
+*/
    welcomeContent.append(welcomeList);
 
 
@@ -2571,7 +2414,7 @@ function openChatFrame() {
   var token = "test";
   var userId = chatui.getSetting('userId');
 
-  var url = "https://chatclient-stg.ai.lgstation.com/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/chat";
+  var url = "https://chatclient-stg.ai.lgstation.com/459bac85-f58f-48eb-9c75-c6f17b73ac59/chat";
 
   var form = document.createElement("form");
   form.setAttribute("target", "caas-chatbot-chat-iframe");
@@ -2622,7 +2465,7 @@ function openGptBotFrame(queryText) {
   var token = "test";
   var userId = chatui.getSetting('userId');
 
-  var url = "https://chatclient-stg.ai.lgstation.com/88a39d64-0e9a-4ea7-ac57-de5783a3e937/chat";
+  var url = "https://chatclient-stg.ai.lgstation.com/53496e65-19e4-4d34-8469-c7b83263b588/chat";
 
   var form = document.createElement("form");
   form.setAttribute("target", "caas-chatbot-chat-iframe");
@@ -2716,10 +2559,10 @@ jQuery(document).ready(function(e){
 
   var is_mobile = Mobile();
   var recoverBtn =  '<div class="recover" id="chatbot-recover">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png" title="기본사이즈로 돌아가기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_resize3.png\';"/>'
+    +    '<img src="'+imgBaseUrl+'/images/img_resize3.png" title="기본사이즈로 돌아가기" onmouseover="this.src=\''+imgBaseUrl+'/images/img_resize_over3.png\';" onmouseout="this.src=\''+imgBaseUrl+'/images/img_resize3.png\';"/>'
     +'</div>';
   var winopenBtn =  '<div class="winopen" id="chatbot-winopen">'
-    +    '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png" title="팝업으로 보여주기" onmouseover="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen_over3.png\';" onmouseout="this.src=\'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/d88153ab-4e9a-4849-b56c-2b2521ea5057/images/img_winopen3.png\';"/>'
+    +    '<img src="'+imgBaseUrl+'/images/img_winopen3.png" title="팝업으로 보여주기" onmouseover="this.src=\''+imgBaseUrl+'/images/img_winopen_over3.png\';" onmouseout="this.src=\''+imgBaseUrl+'/images/img_winopen3.png\';"/>'
     +'</div>';
 
   
@@ -2737,7 +2580,7 @@ jQuery(document).ready(function(e){
   + '</svg>      '
   +'</div>'
   +'<div class="center">'
-  +   '<img src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/hello_03.gif" />'
+  +   '<img src="'+imgBaseUrl+'/images/hello_03.gif" />'
   +'</div>'
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
 
@@ -2872,6 +2715,7 @@ jQuery(document).ready(function(e){
 
   $('.list-menu-sixth').on('click', function() {
     showNotiSettings();
+    $('.list-menu').fadeOut();
   });
 
   
@@ -2889,44 +2733,22 @@ jQuery(document).ready(function(e){
   +  '</div>'
   +  '<div class="faq-body">'
   +     '<div class="btns">'
-//  + ( !isMobile ? '<button type="button" class="btn-s btn-icon btn-text search-g-portal">'
-//  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-//  +             '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.7137 11.2806C9.71915 12.1444 8.42048 12.6673 6.99967 12.6673C3.87006 12.6673 1.33301 10.1303 1.33301 7.00065C1.33301 3.87104 3.87006 1.33398 6.99967 1.33398C10.1293 1.33398 12.6663 3.87104 12.6663 7.00065C12.6663 8.42154 12.1434 9.72028 11.2794 10.7149L14.549 13.9845C14.7052 14.1407 14.7052 14.3939 14.549 14.5501C14.3928 14.7064 14.1395 14.7064 13.9833 14.5501L10.7137 11.2806ZM11.8663 7.00065C11.8663 9.68844 9.68746 11.8673 6.99967 11.8673C4.31189 11.8673 2.13301 9.68844 2.13301 7.00065C2.13301 4.31287 4.31189 2.13398 6.99967 2.13398C9.68746 2.13398 11.8663 4.31287 11.8663 7.00065Z" fill="#E0205C"/>'
-//  +            '</svg>'
-//  +           '지포탈 통합 검색</button>' : '')
-//  +         '<button type="button" class="btn-s btn-icon btn-text search-place">'
-//  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-//  +              '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.3337 6.66732C10.3337 7.95598 9.28899 9.00065 8.00033 9.00065C6.71166 9.00065 5.66699 7.95598 5.66699 6.66732C5.66699 5.37865 6.71166 4.33398 8.00033 4.33398C9.28899 4.33398 10.3337 5.37865 10.3337 6.66732ZM9.53366 6.66732C9.53366 7.51415 8.84716 8.20065 8.00033 8.20065C7.15349 8.20065 6.46699 7.51415 6.46699 6.66732C6.46699 5.82048 7.15349 5.13398 8.00033 5.13398C8.84716 5.13398 9.53366 5.82048 9.53366 6.66732Z" fill="#E0205C"/>'
-//  +              '<path fill-rule="evenodd" clip-rule="evenodd" d="M11.7716 10.6673C11.1662 11.5688 9.65546 13.3358 8.74038 14.3858C8.34769 14.8364 7.65296 14.8364 7.26027 14.3858C6.34519 13.3358 4.8345 11.5688 4.22909 10.6673C3.33366 9.33399 2.66699 8.03224 2.66699 6.66733C2.66699 5.3024 3.18769 3.93748 4.22909 2.89608C6.31189 0.813285 9.68877 0.813285 11.7716 2.89608C12.813 3.93748 13.3337 5.3024 13.3337 6.66733C13.3337 8.03224 12.667 9.33399 11.7716 10.6673ZM4.79477 3.46177C6.56515 1.69139 9.4355 1.69139 11.2059 3.46177C12.0912 4.34711 12.5337 5.5059 12.5337 6.66733C12.5337 7.77868 11.9884 8.9095 11.1074 10.2213C10.5363 11.0717 9.06451 12.7962 8.13726 13.8602C8.06342 13.9449 7.93723 13.9449 7.86339 13.8602C6.93615 12.7962 5.46432 11.0717 4.89322 10.2213C4.01224 8.9095 3.46699 7.77868 3.46699 6.66733C3.46699 5.5059 3.90943 4.34711 4.79477 3.46177Z" fill="#E0205C"/>'
-//  +             '</svg>'
-//  +         '장소 검색</button>'
-//  +         '<button type="button" class="btn-s btn-icon btn-text search-dict">'
-//  +           '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-//  +           '<circle cx="7.99967" cy="8.00065" r="6.06667" stroke="#E0205C" stroke-width="1.2"/>'
-//  +            '<path d="M11.4 8.00065C11.4 9.75155 10.9729 11.3076 10.3139 12.406C9.64775 13.5163 8.81101 14.0673 8 14.0673C7.18899 14.0673 6.35225 13.5163 5.68607 12.406C5.02706 11.3076 4.6 9.75155 4.6 8.00065C4.6 6.24975 5.02706 4.69366 5.68607 3.5953C6.35225 2.48501 7.18899 1.93398 8 1.93398C8.81101 1.93398 9.64775 2.48501 10.3139 3.5953C10.9729 4.69366 11.4 6.24975 11.4 8.00065Z" stroke="#E0205C" stroke-width="1.2"/>'
-//  +            '<rect x="7.59961" y="2" width="0.8" height="12" fill="#E0205C"/>'
-//  +            '<rect x="2" y="8.40039" width="0.8" height="12" transform="rotate(-90 2 8.40039)" fill="#E0205C"/>'
-//  +            '<rect x="2.66699" y="5.33398" width="0.8" height="10.6667" transform="rotate(-90 2.66699 5.33398)" fill="#E0205C"/>'
-//  +            '<rect x="2.66699" y="11.334" width="0.8" height="10.6667" transform="rotate(-90 2.66699 11.334)" fill="#E0205C"/>'
-//  +            '</svg>'
-//  +          '용어 검색</button>'
 
-//  +         '<button type="button" class="btn-s btn-icon btn-text search-employee">'
-//  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-//  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
-//  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M1.33301 11.8667C1.33301 9.62074 3.15372 7.80003 5.39967 7.80003H5.933C8.17896 7.80003 9.99967 9.62074 9.99967 11.8667V12.6C9.99967 12.8209 9.82059 13 9.59967 13C9.37876 13 9.19967 12.8209 9.19967 12.6V11.8667C9.19967 10.0626 7.73714 8.60003 5.933 8.60003H5.39967C3.59554 8.60003 2.13301 10.0626 2.13301 11.8667V12.6C2.13301 12.8209 1.95392 13 1.73301 13C1.51209 13 1.33301 12.8209 1.33301 12.6V11.8667Z" fill="#E0205C"/>'
-//  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.6663 6.86667C11.1449 6.86667 11.5329 6.47865 11.5329 6C11.5329 5.52135 11.1449 5.13333 10.6663 5.13333C10.1876 5.13333 9.79961 5.52135 9.79961 6C9.79961 6.47865 10.1876 6.86667 10.6663 6.86667ZM10.6663 7.66667C11.5868 7.66667 12.3329 6.92047 12.3329 6C12.3329 5.07953 11.5868 4.33333 10.6663 4.33333C9.7458 4.33333 8.99961 5.07953 8.99961 6C8.99961 6.92047 9.7458 7.66667 10.6663 7.66667Z" fill="#E0205C"/>'
-//  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
-//  +            '</svg>'
-//  +         '임직원 그룹사 검색</button>'
+  + ( !isMobile ? '<button type="button" class="btn-s btn-icon btn-text search-ep-total">'
+  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +             '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.7137 11.2806C9.71915 12.1444 8.42048 12.6673 6.99967 12.6673C3.87006 12.6673 1.33301 10.1303 1.33301 7.00065C1.33301 3.87104 3.87006 1.33398 6.99967 1.33398C10.1293 1.33398 12.6663 3.87104 12.6663 7.00065C12.6663 8.42154 12.1434 9.72028 11.2794 10.7149L14.549 13.9845C14.7052 14.1407 14.7052 14.3939 14.549 14.5501C14.3928 14.7064 14.1395 14.7064 13.9833 14.5501L10.7137 11.2806ZM11.8663 7.00065C11.8663 9.68844 9.68746 11.8673 6.99967 11.8673C4.31189 11.8673 2.13301 9.68844 2.13301 7.00065C2.13301 4.31287 4.31189 2.13398 6.99967 2.13398C9.68746 2.13398 11.8663 4.31287 11.8663 7.00065Z" fill="#E0205C"/>'
+  +            '</svg>'
+  +           'EP 통합 검색</button>' : '')
 
-//  +         '<button type="button" class="btn-s btn-icon btn-text search-ai">'
-//  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-//  +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
-//  +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#E0205C"/>'
-//  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#E0205C"/>'
-//  +'</svg>'
-//  +         'AI 검색</button>'
+  +         '<button type="button" class="btn-s btn-icon btn-text search-employee">'
+  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M1.33301 11.8667C1.33301 9.62074 3.15372 7.80003 5.39967 7.80003H5.933C8.17896 7.80003 9.99967 9.62074 9.99967 11.8667V12.6C9.99967 12.8209 9.82059 13 9.59967 13C9.37876 13 9.19967 12.8209 9.19967 12.6V11.8667C9.19967 10.0626 7.73714 8.60003 5.933 8.60003H5.39967C3.59554 8.60003 2.13301 10.0626 2.13301 11.8667V12.6C2.13301 12.8209 1.95392 13 1.73301 13C1.51209 13 1.33301 12.8209 1.33301 12.6V11.8667Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.6663 6.86667C11.1449 6.86667 11.5329 6.47865 11.5329 6C11.5329 5.52135 11.1449 5.13333 10.6663 5.13333C10.1876 5.13333 9.79961 5.52135 9.79961 6C9.79961 6.47865 10.1876 6.86667 10.6663 6.86667ZM10.6663 7.66667C11.5868 7.66667 12.3329 6.92047 12.3329 6C12.3329 5.07953 11.5868 4.33333 10.6663 4.33333C9.7458 4.33333 8.99961 5.07953 8.99961 6C8.99961 6.92047 9.7458 7.66667 10.6663 7.66667Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
+  +            '</svg>'
+  +         '전자/그룹사 임직원 검색</button>'
+
   +         '<button type="button" class="btn-s btn-icon btn-text search-schedule">'
   +            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#E0205C"/>'
@@ -2942,17 +2764,7 @@ jQuery(document).ready(function(e){
   +             '<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
   +           '</svg>'
   +         '시스템 담당자 검색</button>'
-  //+ ( !isMobile ? '<button type="button" class="btn-s btn-icon btn-text search-ecm">'
-  //+            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  //+ '<path fill-rule="evenodd" clip-rule="evenodd" d="M6.18572 3.46602H3.33301C2.67027 3.46602 2.13301 4.00327 2.13301 4.66602V11.3327C2.13301 11.9954 2.67027 12.5327 3.33301 12.5327H12.6663C13.3291 12.5327 13.8663 11.9954 13.8663 11.3327V6.33268C13.8663 5.66994 13.3291 5.13268 12.6663 5.13268H8.4803C7.93349 5.13268 7.41633 4.88412 7.07474 4.45713L6.34189 3.54108C6.30394 3.49363 6.24647 3.46602 6.18572 3.46602ZM6.18572 2.66602C6.4895 2.66602 6.77681 2.80411 6.96659 3.04132L7.69943 3.95738C7.8892 4.19459 8.17652 4.33268 8.4803 4.33268H12.6663C13.7709 4.33268 14.6663 5.22811 14.6663 6.33268V11.3327C14.6663 12.4373 13.7709 13.3327 12.6663 13.3327H3.33301C2.22844 13.3327 1.33301 12.4373 1.33301 11.3327V4.66602C1.33301 3.56145 2.22844 2.66602 3.33301 2.66602H6.18572Z" fill="#E0205C"/>'
-  //+'</svg>'
-  //+           'ECM 문서 검색</button>'
-  //+           '<button type="button" class="btn-s btn-icon btn-text search-standard">'
-  //+            '<svg width="16" height="16" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  //+'<path d="M11.9242 9.02426C12.1585 8.78995 12.1585 8.41005 11.9242 8.17574C11.6899 7.94142 11.31 7.94142 11.0756 8.17574L7.1254 12.126L4.92409 9.92543C4.68974 9.69116 4.30984 9.69122 4.07556 9.92558C3.84129 10.1599 3.84136 10.5398 4.07571 10.7741L6.70129 13.3988C6.93562 13.633 7.31546 13.633 7.54974 13.3987L11.9242 9.02426Z" fill="#E0205C"/>'
-  //+'<path fill-rule="evenodd" clip-rule="evenodd" d="M4 1.5C4 0.671573 4.67157 0 5.5 0H10.5C11.3284 0 12 0.671573 12 1.5H13C13.0647 1.5 13.129 1.50205 13.1927 1.50609L13.2 1.50656C14.7636 1.60948 16 2.91035 16 4.5V17C16 18.6569 14.6569 20 13 20H3C1.34315 20 0 18.6569 0 17V4.5C0 2.9467 1.1805 1.66912 2.69327 1.51549C2.72867 1.51189 2.76425 1.50891 2.8 1.50656C2.8661 1.50221 2.93279 1.5 3 1.5H4ZM5.5 1.2H10.5C10.6657 1.2 10.8 1.33431 10.8 1.5V2.5C10.8 2.66569 10.6657 2.8 10.5 2.8H5.5C5.33431 2.8 5.2 2.66569 5.2 2.5V1.5C5.2 1.33431 5.33431 1.2 5.5 1.2ZM4.01205 2.69105C4.01243 2.69403 4.01282 2.69702 4.01322 2.7H3C2.93787 2.7 2.87647 2.70315 2.81596 2.70929L2.80811 2.71011C1.90422 2.80589 1.2 3.57071 1.2 4.5V17C1.2 17.9941 2.00589 18.8 3 18.8H13C13.9941 18.8 14.8 17.9941 14.8 17V4.5C14.8 3.63015 14.183 2.90441 13.3628 2.73657C13.3067 2.7251 13.2497 2.71623 13.1919 2.71011C13.1288 2.70343 13.0648 2.7 13 2.7H11.9868C11.889 3.43387 11.2606 4 10.5 4H5.5C4.73629 4 4.10589 3.42926 4.01205 2.69105Z" fill="#E0205C"/>'
-  //+'</svg>'
-  //+         '표준 문서 검색</button>': '')
+  
   +         '<button type="button" class="btn-s btn-icon btn-text gpt-bot">'
   +         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +'<path d="M8.5 14C9.05228 14 9.5 13.5523 9.5 13C9.5 12.4477 9.05228 12 8.5 12C7.94772 12 7.5 12.4477 7.5 13C7.5 13.5523 7.94772 14 8.5 14Z" fill="#E0205C"/>'
@@ -3132,12 +2944,12 @@ jQuery(document).ready(function(e){
     //  searchActiveFalse();
     //  return;
     //} 
-    //else if(searchType == 'g-portal' && (e.code == 'Enter' || e.keyCode == 13)) {
-    //  var url = gportalTotalUrl.replace("%query%", $(e.target).val());
-    //  window.open(url, "gportalTotalSearch", "width=1024,height=550,resizable=1,scrollbars=1");
-    //  searchActiveFalse();
-    //  return;
-    //} 
+    else if(searchType == 'ep-total' && (e.code == 'Enter' || e.keyCode == 13)) {
+      var url = epTotalUrl.replace("%query%", $(e.target).val());
+      window.open(url, "epTotalSearch", "width=1024,height=550,resizable=1,scrollbars=1");
+      searchActiveFalse();
+      return;
+    } 
     //else if(searchType == 'dict' && (e.code == 'Enter' || e.keyCode == 13)) {
     //  var findMessage = '/dict ' + val;
     //  appendQueryText(findMessage);
@@ -3296,8 +3108,8 @@ jQuery(document).ready(function(e){
     }
   };
 
-  $('.search-g-portal').on('click', function() {
-    searchActiveGportal();
+  $('.search-ep-total').on('click', function() {
+    searchActiveEpTotal();
     faqOriginalHide();
   });
 
@@ -3603,7 +3415,7 @@ chatui.onReceiveResponse = function(resp, isHistory) {
     //     activeGptBot("");
     // }
     if(resp.response.query.event == 'Welcome' || resp.response.queryResult.intent.name == 'Default Welcome Intent') {
-      //welcomeAppend(resp.response.queryResult.messages); 
+      welcomeAppend(resp.response.queryResult.messages); 
       return;
     }
 
@@ -7445,15 +7257,35 @@ function makeDefaultFallbackCard(data) {
 
   var defaultQuickReply = $('<div class="custom-quick-reply"></div>');
   var btnList = $('<div class="btn-list"></div>');
+  
+  var btnLearningBot = $('<span class="btn-custom-reply btn-text">학습봇 모드</span>');
+  btnLearningBot.on('click', function() {
+    $('body').append('<div id="caas-chatbot-container"><iframe id="caas-chatbot-chat-iframe" name="caas-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe></div>');
+
+    if (!document.getElementById("caas-chatbot-chat-iframe").isLoaded) {
+      document.getElementById("caas-chatbot-chat-iframe").isLoaded = true;
+      openChatFrame();
+    };
+  });
+
+  btnList.append(btnLearningBot);
+  
+  var gptBotBtn = $('<span class="btn-custom-reply btn-text">Chat GPT</span>');
+  gptBotBtn.on('click', function() {
+    searchActiveFalse();
+    activeGptBot("");
+  });
+  btnList.append(gptBotBtn);
+
   if(!isMobile) {
-    var gportalSearchBtn =$('<span class="btn-custom-reply btn-icon btn-text search-g-portal">'
+    var gportalSearchBtn =$('<span class="btn-custom-reply btn-icon btn-text search-ep-total">'
     +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
     +             '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.7137 11.2806C9.71915 12.1444 8.42048 12.6673 6.99967 12.6673C3.87006 12.6673 1.33301 10.1303 1.33301 7.00065C1.33301 3.87104 3.87006 1.33398 6.99967 1.33398C10.1293 1.33398 12.6663 3.87104 12.6663 7.00065C12.6663 8.42154 12.1434 9.72028 11.2794 10.7149L14.549 13.9845C14.7052 14.1407 14.7052 14.3939 14.549 14.5501C14.3928 14.7064 14.1395 14.7064 13.9833 14.5501L10.7137 11.2806ZM11.8663 7.00065C11.8663 9.68844 9.68746 11.8673 6.99967 11.8673C4.31189 11.8673 2.13301 9.68844 2.13301 7.00065C2.13301 4.31287 4.31189 2.13398 6.99967 2.13398C9.68746 2.13398 11.8663 4.31287 11.8663 7.00065Z" fill="#E0205C"/>'
     +            '</svg>'
-    +           '지포탈 통합 검색</span>');
+    +           'EP 통합 검색</span>');
     gportalSearchBtn.on('click', function() {
       searchActiveFalse();
-      searchActiveGportal();
+      searchActiveEpTotal();
       searchActive2 = true;
       setTimeout(function() {
         searchActive2 = false;
@@ -7463,6 +7295,7 @@ function makeDefaultFallbackCard(data) {
     btnList.append(gportalSearchBtn);
   }
 
+  /*
   var placeBtn = $('<span class="btn-custom-reply btn-icon btn-text search-place">'
   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +              '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.3337 6.66732C10.3337 7.95598 9.28899 9.00065 8.00033 9.00065C6.71166 9.00065 5.66699 7.95598 5.66699 6.66732C5.66699 5.37865 6.71166 4.33398 8.00033 4.33398C9.28899 4.33398 10.3337 5.37865 10.3337 6.66732ZM9.53366 6.66732C9.53366 7.51415 8.84716 8.20065 8.00033 8.20065C7.15349 8.20065 6.46699 7.51415 6.46699 6.66732C6.46699 5.82048 7.15349 5.13398 8.00033 5.13398C8.84716 5.13398 9.53366 5.82048 9.53366 6.66732Z" fill="#E0205C"/>'
@@ -7479,7 +7312,8 @@ function makeDefaultFallbackCard(data) {
  
   });
   btnList.append(placeBtn);
-
+    */
+  /*    
   var dictBtn = $('<span class="btn-custom-reply btn-icon btn-text search-dict">'
   +           '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +           '<circle cx="7.99967" cy="8.00065" r="6.06667" stroke="#E0205C" stroke-width="1.2"/>'
@@ -7500,7 +7334,24 @@ function makeDefaultFallbackCard(data) {
  
   });
   btnList.append(dictBtn);
-
+  */
+  
+  var searchSystemBtn = $('<span class="btn-custom-reply btn-icon btn-text search-system">'
+  +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +'<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
+  +'</svg>'
+  +'시스템 담당자 검색</span>'
+  );
+  searchSystemBtn.on('click', function() {
+    searchActiveFalse();
+    searchActiveSystem();
+    searchActive2 = true;
+    setTimeout(function() {
+      searchActive2 = false;
+    }, 500)
+  });
+  btnList.append(searchSystemBtn);
+  
   var searchEmployeeBtn = $('<span class="btn-custom-reply btn-icon btn-text search-employee">'
   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
@@ -7508,7 +7359,7 @@ function makeDefaultFallbackCard(data) {
   +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.6663 6.86667C11.1449 6.86667 11.5329 6.47865 11.5329 6C11.5329 5.52135 11.1449 5.13333 10.6663 5.13333C10.1876 5.13333 9.79961 5.52135 9.79961 6C9.79961 6.47865 10.1876 6.86667 10.6663 6.86667ZM10.6663 7.66667C11.5868 7.66667 12.3329 6.92047 12.3329 6C12.3329 5.07953 11.5868 4.33333 10.6663 4.33333C9.7458 4.33333 8.99961 5.07953 8.99961 6C8.99961 6.92047 9.7458 7.66667 10.6663 7.66667Z" fill="#E0205C"/>'
   +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
   +            '</svg>'
-  +         '임직원 그룹사 검색</span>');
+  +         '전자/그룹사 임직원 검색</span>');
   searchEmployeeBtn.on('click', function(){
     searchActiveFalse();
     searchActiveEmployee();
@@ -7519,7 +7370,7 @@ function makeDefaultFallbackCard(data) {
  
   });
   btnList.append(searchEmployeeBtn);
-
+  /*
   var searchAiBtn = $('<span class="btn-custom-reply btn-icon btn-text search-ai">'
   +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
@@ -7537,7 +7388,8 @@ function makeDefaultFallbackCard(data) {
  
   });
   btnList.append(searchAiBtn);
-
+  */
+  /*
   var searchScheduleBtn = $('<span class="btn-custom-reply btn-icon btn-text search-schedule">'
   +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#E0205C"/>'
@@ -7559,23 +7411,9 @@ function makeDefaultFallbackCard(data) {
  
   });
   btnList.append(searchScheduleBtn);
-
-  var searchSystemBtn = $('<span class="btn-custom-reply btn-icon btn-text search-system">'
-  +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
-  +'</svg>'
-  +'시스템 담당자 검색</span>'
-  );
-  searchSystemBtn.on('click', function() {
-    searchActiveFalse();
-    searchActiveSystem();
-    searchActive2 = true;
-    setTimeout(function() {
-      searchActive2 = false;
-    }, 500)
-  });
-  btnList.append(searchSystemBtn);
-
+  */
+  
+  /*
   if(!isMobile) {
     var searchEcmBtn =$('<span class="btn-custom-reply btn-icon btn-text search-ecm">'
     +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -7592,7 +7430,7 @@ function makeDefaultFallbackCard(data) {
       
     });
     btnList.append(searchEcmBtn);
-    
+
     var standardBtn = $('<span class="btn-custom-reply btn-icon btn-text search-standard">'
     +'<svg width="16" height="16" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
     + '<path d="M11.9242 9.02426C12.1585 8.78995 12.1585 8.41005 11.9242 8.17574C11.6899 7.94142 11.31 7.94142 11.0756 8.17574L7.1254 12.126L4.92409 9.92543C4.68974 9.69116 4.30984 9.69122 4.07556 9.92558C3.84129 10.1599 3.84136 10.5398 4.07571 10.7741L6.70129 13.3988C6.93562 13.633 7.31546 13.633 7.54974 13.3987L11.9242 9.02426Z" fill="#E0205C"/>'
@@ -7610,25 +7448,8 @@ function makeDefaultFallbackCard(data) {
     });
     btnList.append(standardBtn);
   }
+  */
   
-  var gptBotBtn = $('<span class="btn-custom-reply btn-text btn-emphasis">GPT 모드</span>');
-  gptBotBtn.on('click', function() {
-    searchActiveFalse();
-    activeGptBot("");
-  });
-  btnList.append(gptBotBtn);
-
-  var btnLearningBot = $('<span class="btn-custom-reply btn-text btn-emphasis">학습봇 모드</span>');
-  btnLearningBot.on('click', function() {
-    $('body').append('<div id="caas-chatbot-container"><iframe id="caas-chatbot-chat-iframe" name="caas-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe></div>');
-
-    if (!document.getElementById("caas-chatbot-chat-iframe").isLoaded) {
-      document.getElementById("caas-chatbot-chat-iframe").isLoaded = true;
-      openChatFrame();
-    };
-  });
-
-  btnList.append(btnLearningBot);
   defaultQuickReply.append(btnList);
   customMessage.append(defaultQuickReply);
 
@@ -9679,7 +9500,7 @@ function showHtmlSmallDialog(msg) {
 // 시스템 담당자 조회 : 시스템 클릭시 
 function appendChatbotText3(firstMsg, message, customQuick) {
   var chatMessage = $('<div class="chat-message left"></div>');
-  var profile = $('<div class="profile"><img class="img-circle" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>');
   chatMessage.append(profile);
   chatMessage.append(firstMsg);
   chatMessage.append(message);
