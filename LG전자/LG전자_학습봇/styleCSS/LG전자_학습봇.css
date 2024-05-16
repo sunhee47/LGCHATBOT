@@ -280,7 +280,7 @@
   color: #2C2C2C;
   margin-bottom: 10px;
   cursor: pointer;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/search.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/search.png");
   background-repeat: no-repeat;
   background-position: 11px 12px;
   background-size: 24px 24px;
@@ -315,7 +315,7 @@
   line-height: 20px;
   color: #2C2C2C;
   margin-right: 4px;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/ic_close.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/ic_close.png");
   background-position: top 10px right 8px;
   background-repeat: no-repeat;
   background-size: 12px 12px;
@@ -427,7 +427,7 @@
   content: "";
   position: absolute;
   display: none;
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/checked.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/checked.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -781,24 +781,24 @@
 
 @keyframes loading {
   0% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_01.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/loading_01.png");
   }
   50% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_02.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/loading_02.png");
   }
   100% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_03.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/loading_03.png");
   }
 }
 @-webkit-keyframes loading {
   0% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_01.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/loading_01.png");
   }
   50% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_02.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/loading_02.png");
   }
   100% {
-    background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/loading_03.png");
+    background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/loading_03.png");
   }
 }
 @keyframes visible-show {
@@ -1373,7 +1373,7 @@
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .copy-question .f-tooltip::after {
   content: "";
-  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/e860eeaf-bdaf-4d42-9e85-2a3fe249722e/images/tooltip-tale.png");
+  background-image: url("https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/tooltip-tale.png");
   background-size: 12px 8px;
   background-repeat: no-repeat;
   width: 12px;

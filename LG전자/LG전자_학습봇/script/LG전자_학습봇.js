@@ -18,7 +18,7 @@ var iconPopupClose = '<svg width="28" height="28" viewBox="0 0 28 28" fill="none
  + '<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
  + '</svg>';
  
- var imgUrl = "https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/";
+ var imgUrl = "https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/459bac85-f58f-48eb-9c75-c6f17b73ac59/images/";
  
 function timeFormat(e) {
   let now = (e ? moment(e) : moment()).format("a h:mm");
