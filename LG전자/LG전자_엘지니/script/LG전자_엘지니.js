@@ -556,7 +556,12 @@ function intentEvent(btn,type,param){
 		    break;
 		    
 		}
-		
+		//수입화물 현황 by hhs
+	    case "importCargo" :{
+	        var arrParam = param.split(',');
+			chatui.sendEventMessage("importedFreightEvent", {"reqHblNo" : arrParam[0],"reqBlYy" : arrParam[1],"reqCargMtNo" : arrParam[2]});
+			break;
+		}		
 	}	
 }
 
@@ -2900,7 +2905,16 @@ jQuery(document).ready(function(e){
     // }
     else {
     */
-    chatui.sendMessage(val);
+    //전화번호 검색 기능 추가 by hhs
+    var regex = /^[0-9]*$/; // 숫자만 체크
+    var replaceVal = val.replace('-','');
+    if(regex.test(replaceVal) && (4 == replaceVal.length || replaceVal.length == 8)){
+        appendQueryText(val);
+        searchEmployeeByPhone(val);
+        searchActiveFalse();
+    }else{
+        chatui.sendMessage(val);
+    }
     //}
 
     $('.sendText').val("");
@@ -6044,7 +6058,9 @@ function connectMessenger(userId, targetId){
   }
   else{
        var uCapUri = 'LGUCAPL://';
-       uCapUri += 'GUC005;CHAT;'+userId+';'+targetId+'@GUC005';
+       //LG전자 코드로 수정 by hhs
+    //   uCapUri += 'GUC005;CHAT;'+userId+';'+targetId+'@GUC005';
+       uCapUri += 'GUC002;CHAT;'+userId+';'+targetId+'@GUC002';
        window.protocolCheck(uCapUri, function() {
            window.open("http://www.lgucap.com", "width=1100,height=800, resizable=1,scrollbars=1");
        });
@@ -6177,7 +6193,8 @@ function connectMessenger(userId, targetId){
  */
 function makeEmployeeListCard(data,isHistory){
 	
-	var dList = $('<div class="message profile-list"></div>');
+// 	var dList = $('<div class="message profile-list"></div>');
+	var dList = $('<div class="message profile-list employee"></div>'); // [퍼블 수정 및 추가] - 클래스 employee 추가
 	dList.attr("data-sessionId", data.chatSessionId.split("sessions/")[1]);
 	
 	//일정조회 동명이인 전용 파라미터
@@ -6185,6 +6202,23 @@ function makeEmployeeListCard(data,isHistory){
 	dList.attr("data-date", data.date);
 	dList.attr("data-krname", data.krname);
 
+	// [퍼블 수정 및 추가] - list-header-title 추가
+    // list-header-title
+    var dListHeader = $('<div class="list-header-title">' + listHeaderIcon + '</div>');
+    var nameSearch = '';
+    // 검색명 관련 조건
+    // if ('검색 내용이 이름/이름+직책' = true) {
+    //     // 이름/이름+직책 검색 (이름 추가)
+        nameSearch = data.krname == ""? '<span class="search-name"></span>':'<span class="search-name"><b>' + data.krname + '</b>님의 </span>'
+    // } // 그 외 해당 없음.
+    var dListHeaderTitle = $(
+        '<p class="profile-list-box">'
+            + nameSearch + '프로필 리스트'
+        +'</p>'
+    )
+    dListHeader.append(dListHeaderTitle);
+    dList.append(dListHeader);
+    
   var dListWrap = $('<ul></ul>');
 	
 	
@@ -7658,6 +7692,33 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'budgetResultError') {                    // 예산조회 실패
           messageCard = budgetResultError(message.data); 
     	}
+    	/* [퍼블 수정 및 추가] 수입화물 조회 */
+        else if (message.type == 'importCargoInput') {
+          messageCard = makeImportCargoCard(message.data); // 수입화물 조회
+        }
+        else if (message.type == 'importCargoError') {
+          console.log(message.data);
+          messageCard = importCargoResultError(message.data); // 수입화물 조회 실패
+          addImportCargoPopupClose();
+        }
+        else if (message.type == 'importCargoResult') {
+          messageCard = importCargoResult(message.data); // 수입화물 조회 결과(단건)
+          addImportCargoPopupClose();
+        }
+        else if (message.type == 'importCargoResultList') {
+          messageCard = importCargoListResult(message.data); // 수입화물 조회 결과(다건)
+          addImportCargoPopupClose();
+        }
+        else if (message.type == 'importCargoNoCnt') { //수입화물 조회 없음
+            setTimeout( function() {
+                $('.importCargo-tooltip').fadeIn();
+                $('.chat-message.left').last().remove();
+            }, 1);
+            setTimeout(function() {
+                $('.importCargo-tooltip').fadeOut();
+                // $('.chat-message.left').last().remove();
+            },2000);
+        }
         else {
           console.log(message.type);
         }
@@ -9536,4 +9597,721 @@ function appendChatbotText3(firstMsg, message, customQuick) {
   
   }, 100);
   
+}
+
+// 수입화물, 임직원검색 관련 function --------------------------------------------------------------------------------------
+// 수입 화물 메세지 조회
+function makeImportCargoCard(data) {
+    var importCargoInputCard = $('<div class="message simple-text"></div>');
+    var importCargoInputText = $('<p>수입 화물 진행 현황을 조회하려면 아래 버튼을 눌러주세요.</p>');
+    importCargoInputCard.append(importCargoInputText);
+
+    var regBtnWrap = $('<div class="btn"></div>');
+    var regBtn = $('<button type="button" class="btn btn-emphasis add-importCargo">수입 화물 조회</button>');
+    regBtn.on('click', function() {
+        addImportCargoPopupOpen(data);
+    });
+    regBtnWrap.append(regBtn);
+    importCargoInputCard.append(regBtnWrap);
+    
+    if(checkChatHistory == false) {
+        addImportCargoPopupOpen(data);
+    }
+
+    return importCargoInputCard;
+}
+
+// 수입 화물 조회 popup
+function addImportCargoPopupOpen(data) {
+    /* #########[ popup_wrap_start ]######### */
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addImportCargo = $('<div class="plugins" id="addImportCargo"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addImportCargoHeader = $('<div class="plugin-header"><h1>수입 화물 조회</h1></div>');
+    var addImportCargoClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    addImportCargoClose.on('click', function() {
+        addImportCargoPopupClose();
+    })
+    addImportCargoHeader.append(addImportCargoClose);
+    addImportCargo.append(addImportCargoHeader);
+
+    function addImportCargoPopupClose() {
+        $('#addImportCargo').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#addImportCargo').remove();
+        }, 300);
+    }
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addImportCargoContents = $('<div class="plugin-contents"></div>');
+    var addImportCargoForm = $('<form class="form-importCargo"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ House BL No. ]###  */
+    var hblInputBox = $(
+        '<div class="input-box">'
+            +'<label>House BL No.<b>*</b></label>'
+            +'<small class="require-alert show">*입력된 특수 문자는 조회 시 자동 제거됩니다.</small>'
+        +'</div>'
+    );console.log("data.reqHblNo : "+data.hasOwnProperty('reqHblNo')+" / data.reqBlYy : "+data.hasOwnProperty('reqBlYy'));
+    var hblInputForm = $(
+        '<div class="input-form">'
+            +'<input type="text" placeholder="House BL No.를 입력해 주세요." name="importCargo_HBL" id="importCargo_HBL" max-length="358" />'
+            +'<span class="input-val-del">'
+                +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+                +'</svg>'
+            +'</span>'
+        +'</div>'
+    );
+    hblInputForm.on('keyup', function(e) {
+        hblInput = e.target.value;
+        checkImportCargoRequire();
+
+        if (hblInput) {
+            $(this).find('.input-val-del').addClass('show');
+        } else {
+            $(this).find('.input-val-del').removeClass('show');
+        };
+    });
+    hblInputBox.append(hblInputForm);
+    addImportCargoForm.append(hblInputBox);
+
+    /*  ###[ 입항 연도 ]###  */
+    var arrivalYearDropdownBox = $(
+        '<div class="dropdown-box dropdown-arrivalYear">'
+            +'<label>입항 연도<b>*</b></label>'
+            +'<small class="require-alert show">*최대 10년 전까지 조회할 수 있어요.</small>'
+        +'</div>'
+    );
+    var arrivalYearDropdown = $('<button type="button" class="btn btn-dropdown default" id="blYy"><span>입항 연도를 선택해 주세요.</span></button>');
+    var arrivalYearDropdownArrow = $(
+        '<i class="icons">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</i>'
+    );
+    addImportCargoForm.append(arrivalYearDropdownBox);
+    arrivalYearDropdownBox.append(arrivalYearDropdown);
+    arrivalYearDropdown.append(arrivalYearDropdownArrow);
+
+    // 입항 연도 드롭다운메뉴 & 리스트
+    var arrivalYearDropdownListWrap = $('<ul class="dropdown-menu" id=""></ul>');
+
+    // 년도 생성
+    var year = new Date().getFullYear();
+    var yearBox = [];
+    for (let i = 1; i <= 10; i++) {
+        yearBox.push(year);
+        year = year - 1;
+    }
+    yearBox.forEach(function(yearBox, index) {
+        let arrivalYearDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + yearBox + '</a></li>');
+        arrivalYearDropdownListWrap.append(arrivalYearDropdownList)
+    });
+
+    arrivalYearDropdownBox.append(arrivalYearDropdownListWrap);
+
+    /*  ###[ etc ]###  */
+    // 조회 오류 툴팁
+    var importCargoTooltip = $(
+        '<div class="importCargo-tooltip">'
+            +'조회된 수입 화물이 없습니다.</br>'
+            +'House BL No. 또는 입항 연도를 다시 입력해 주세요.'
+        +'</div>'
+    );
+    addImportCargoForm.append(importCargoTooltip);
+    
+    // 조회버튼
+    var addImportCargoSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-importCargo">조회</button>');
+    addImportCargoForm.append(addImportCargoSubmit);
+    addImportCargoSubmit.on('click', function() {
+
+        var reqHblNo = $('#importCargo_HBL').val();
+        var reqBlYy = $('#blYy').text();
+        console.log(reqHblNo+"/"+reqBlYy);
+        var param = {
+            "reqHblNo":reqHblNo,
+            "reqBlYy":reqBlYy
+        }
+        
+        // chatui.sendEventMessage("importedFreightEvent", param);
+        // addImportCargoPopupClose();
+        
+        // 툴팁 확인용 (input 값이 PLIID4F02265 가 아닐때 출력)
+        // if (reqHblNo == "PLIID4F02265") {
+        //   chatui.sendEventMessage("importedFreightEvent", param);
+        //   addImportCargoPopupClose();
+        // } else {
+        //   $('.importCargo-tooltip').fadeIn();
+        //   setTimeout(function() {
+        //       $('.importCargo-tooltip').fadeOut();
+        //   },2000);
+        // }
+        chatui.sendEventMessage("importedFreightEvent", param);
+    });
+    
+    /* #########[ popup_content_wrap_end ]######### */
+    addImportCargoContents.append(addImportCargoForm);
+    addImportCargo.append(addImportCargoContents);
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addImportCargo);
+    $('.plugin-dim').css('display', 'block');
+    $('#addImportCargo').css('display', 'block');
+
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addImportCargo').addClass('show');
+    }, 100);
+
+    /*  #########[ dropdown ]#########  */
+    $('.btn-dropdown').on('click', function() {
+        dropdownBtnEvent(this);
+    });
+    $('.dropdown-menu a').on('click', function() {
+        dropdownMenuEvent(this);
+    });
+
+    function dropdownMenuEvent(target) {
+        const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).text();
+        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        dropmenu.stop().slideUp().removeClass('show');
+        
+        // input box value 유무 검사
+        hblInput = $('#importCargo_HBL').val();
+        checkImportCargoRequire();
+    }
+
+    function dropdownBtnEvent(target) {
+        if ($(target).hasClass('active')) {
+            $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+        }
+        else {
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
+        }
+    }
+    
+    /*  #########[ input-form ]#########  */
+    $('.input-val-del').on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+        }
+    });
+    
+}
+
+// 수입 화물 팝업 close
+function addImportCargoPopupClose() {
+    $('#addImportCargo').removeClass('show');
+    $('.plugin-dim').removeClass('show');
+    setTimeout(function() {
+        $('.plugin-dim').remove();
+        $('#addImportCargo').remove();
+    }, 300);
+}
+
+// 수입 화물 팝업 체크
+var hblInput = '';
+function checkImportCargoRequire() {
+    var btnImportCargo = $('#btn-importCargo');
+    if (hblInput && $('#blYy').hasClass('select')) {
+        btnImportCargo.removeClass('btn-disabled');
+    } else {
+        btnImportCargo.addClass('btn-disabled');
+    }
+}
+
+// 수입 화물 조회 결과 메세지
+function importCargoResult(data) {
+    var importCargoResult = $('<div class="custom-message"></div>');
+    var importCargoResultMessageWrap = $('<div class="message"></div>');
+    var importCargoResultContentWrap = $('<div class="importCargo-wrap"></div>');
+    
+    var importCargoResultHeader = $(
+        '<div class="importCargo-header">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" fill="#898989"></path>'
+            +'</svg>'
+            +'<h2>수입 화물 진행 현황</h2>'
+        +'</div>'
+    );
+    importCargoResultContentWrap.append(importCargoResultHeader);
+    var importCargoResultContent = $(
+        '<div class="importCargo-content">'
+            +'<ul class="importCargo-list-wrap">' 
+                +'<li>'
+                    +'<h4>House B/L</h4>'
+                    +'<div class="importCargo-type"><span>' + data.hblNo + '</span></div>'
+                +'</li>'
+                +'<li>'
+                    +'<h4>입항 연도</h4>'
+                    +'<div class="importCargo-type"><span>' + data.etprDt + '</span></div>'
+                +'</li>'
+                +'<li>'
+                    +'<h4>진행 상태</h4>'
+                    +'<div class="importCargo-user"><span>' + data.prgsStts + '</span></div>'
+                +'</li>'
+                +'<li>'
+                    +'<h4>통관 상태</h4>'
+                    +'<div class="importCargo-remain"><span>' + data.csclPrgsStts + '</span></div>'
+                +'</li>'
+                +'<li>'
+                    +'<h4>처리 일시</h4>'
+                    +'<div class="importCargo-date">'
+                        +'<span>' + data.prcsDt + '</span>'
+                        +'<span>' + data.prcsTm + '</span>'
+                    +'</div>'
+                +'</li>'
+            +'</ul>'
+            // +'<div class="btn">'
+            //     +'<button type="button" class="btn btn-default move_n-erp">'
+            //         +'N-ERP Portal'
+            //         +'<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            //             +'<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
+            //         +'</svg>'
+            //     +'</button>'
+            // +'</div>'
+        +'</div>'
+    );
+
+    importCargoResultContentWrap.append(importCargoResultContent);
+    importCargoResultMessageWrap.append(importCargoResultContentWrap);
+    importCargoResult.append(importCargoResultMessageWrap);        
+
+    // $('.move_n-erp').on('click', function() {
+    //     window.open('', '_blank');
+    // });
+
+    return importCargoResult;
+}
+
+
+// 수입 화물 조회 결과 메세지(다건)
+function importCargoListResult(data) {
+    var dList = $('<div class="message profile-list import-cargo"></div>');
+    
+    // list-header-title
+    var dListHeader = $('<div class="list-header-title">' + listHeaderIcon + '</div>');
+    var dListHeaderTitle = $('<p class="profile-list-box"><b>' + data.reqHblNo + '</b> 수입화물 리스트</p>');
+    dListHeader.append(dListHeaderTitle);
+    dList.append(dListHeader);
+
+    // list
+    var dListWrap = $('<ul></ul>');
+	if (data.cargoList instanceof Array && data.cargoList.length > 0) {
+		data.cargoList.forEach(function(cargoList,index) {
+		    
+		    var dateData = cargoList.etprDt.toString();
+            var date = dateData.substring(0,4) + '-' + dateData.substring(4,6) + '-' + dateData.substring(6,8);
+            
+            var display = (index >= 4)? "none":"flex";
+
+            var liHtml = '<li class="list-box" style="display:' + display + '" onclick="intentEvent(this,\'importCargo\', \''+cargoList.hblNo+','+date+','+cargoList.cargMtNo+'\')">';
+
+            liHtml +=       '<div class="text-box">';
+            liHtml +=           '<div class="name">'
+                                    +'<h1>' + cargoList.mblNo +' - '+ cargoList.hblNo +'</h1>'
+            liHtml +=           '</div>';
+            liHtml +=           '<ul class="profile-info">'
+            liHtml += (
+                                    '<li>'
+                                        +'<h4>화물관리번호</h4>'
+                                        +'<span class="import-cargo-number">' + cargoList.cargMtNo + '</span>'
+                                    +'</li>'
+            );
+            liHtml += (
+                                    '<li>'
+                                        +'<h4>입항날짜</h4>'
+                                        +'<span class="date">' + date + '</span>'
+                                    +'</li>'
+            );
+            liHtml +=           '</ul>';
+
+            liHtml +=           '<span class="arrow">'
+                                    +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                                        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                                    +'</svg>'
+                                +'</span>';
+            liHtml +=       '</div>';
+            liHtml +=    '</li>';
+            var li = $(liHtml);
+			dListWrap.append(li);
+		});
+        dList.append(dListWrap);
+		
+        // 더보기 버튼 출력
+		if (data.cargoList.length > 4) {
+			var btn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            btn.click(function() {
+                $(this).parents('.profile-list').find(".list-box").css("display","flex");
+                $(this).css({"display":"none"});
+            });
+            dList.append(btn);
+		}
+	}
+	return dList;
+}
+
+// 수입 화물 조회 결과 오류 메세지
+function importCargoResultError(data) {
+    var importCargoResultError = $('<div class="custom-message"></div>');
+    var importCargoErrorMessageWrap = $('<div class="message"></div>');
+    var importCargoErrorContent = $('<div class="message simple-text"></div>');
+
+    var importCargoErrorText = $('<p>시스템 오류로 인해 조회되지 않았어요.</br></br>아래 버튼을 눌러 수입 화물을 다시 조회해 보세요.</p>');
+    var importCargoReloadBtn = $(
+        '<div class="btn">'
+        + '<button type="button" class="btn btn-default reload-importCargo">다시 조회하기</button>'
+        + '</div>'
+    );
+    importCargoErrorContent.append(importCargoErrorText);
+    importCargoErrorContent.append(importCargoReloadBtn);
+
+    importCargoReloadBtn.on('click', function() {
+        addImportCargoPopupOpen(data);
+
+        // 조회 오류 실패로 팝업 재오픈 시 값 자동 설정
+        if(data.hasOwnProperty('reqHblNo') == true) $('#importCargo_HBL').val(data.reqHblNo);
+        if(data.hasOwnProperty('reqBlYy') == true) $('#blYy').find('span').text(data.reqBlYy);
+        
+        // 드롭다운 버튼 활성화
+        $('#blYy').removeClass('default');
+        $('#blYy').addClass('select');
+        
+        // 조회 버튼 활성화
+        $('#btn-importCargo').removeClass('btn-disabled');
+    });
+    
+    importCargoErrorMessageWrap.append(importCargoErrorContent);
+    importCargoResultError.append(importCargoErrorMessageWrap);
+            
+    return importCargoResultError;
+}
+
+// 수입 화물 조회 오류 툴팁_샘플
+// function importCargoTooltip() {
+//     var importCargoTooltip = $(
+//         '<div class="importCargo-tooltip">'
+//             +'조회된 수입 화물이 없습니다.</br>'
+//             +'House BL No. 또는 입항 연도를 다시 입력해 주세요.'
+//         +'</div>'
+//     );
+//     addImportCargoForm.append(importCargoTooltip);
+
+//     importCargoTooltip.fadeIn();
+//     setTimeout( function() {
+//         importCargoTooltip.fadeOut();
+//     }, 2000);
+// };
+
+
+// 임직원 검색결과 오류
+function employeeError() {
+    var employeeResultError = $('<div class="custom-message"></div>');
+    var employeeErrorMessageWrap = $('<div class="message"></div>');
+    var employeeErrorContent = $('<div class="message simple-text"></div>');
+    var employeeErrorText = $('<p>검색 결과가 없습니다. 임직원명을 확인한 후 다시 검색해 보세요.</p>');
+    employeeErrorContent.append(employeeErrorText);
+    employeeErrorMessageWrap.append(employeeErrorContent);
+    employeeResultError.append(employeeErrorMessageWrap);
+    return employeeError;
+}
+
+
+
+
+// 그룹사 임직원 조회 검색결과(단건)
+function makeGroupEmployeeCard(data, isHistory){
+	console.log(data);
+    // profileMSG Wrap
+	var dprofile = $('<div class="message profile-one"></div>');
+
+    // top
+    var dprofileList = $('<ul></ul>')
+	var listBox  = $('<li class="list-box"></li>');
+
+    // profileIMG(left)
+    var profileImg = $(data.profilePicture ? '<div class="profile-img">' + `<img src="' + data.profilePicture +'" onerror="this.src='` + pAlternative + `';"></div>` : '<div class="profile-img">' + '<img src="' + pAlternative +'"></div>');
+    listBox.append(profileImg); // profileIMG(left)END
+
+	/* top-info(right) */
+	var textBox = $('<div class="text-box"></div>');
+    // name
+    var nameWrap = $('<div class="name"></div>');
+    var title = $('<h1>'+ data.userNm + ' ' + data.titleNm + isBirthdayToday(data.birth) + '</h1>');
+    nameWrap.append(title);
+    textBox.append(nameWrap);
+ 
+    var descList = $('<ul class="profile-info"></ul>');
+    // company
+    var company = $(
+        '<li>'
+            +'<span class="profile-icon icon-company">'
+                +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M7.07338 1.51904C7.66652 1.27165 8.3338 1.27165 8.92695 1.51904L13.74 3.5265C14.9758 4.04189 14.9758 5.79423 13.74 6.30962L8.92695 8.31708C8.3338 8.56447 7.66652 8.56447 7.07338 8.31708L2.26028 6.30962C1.02457 5.79423 1.02457 4.04189 2.26028 3.5265L7.07338 1.51904ZM8.61802 2.26121C8.22259 2.09628 7.77773 2.09628 7.38231 2.26121L2.56921 4.26866C1.99254 4.50918 1.99254 5.32694 2.56921 5.56746L7.38231 7.57492C7.77773 7.73984 8.22259 7.73984 8.61802 7.57492L13.4311 5.56746C14.0078 5.32694 14.0078 4.50918 13.4311 4.26866L8.61802 2.26121Z"/>'
+                    +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M2.19928 7.00974C2.37607 7.14381 2.41082 7.39596 2.27688 7.57293C2.01401 7.92025 2.12255 8.46317 2.5693 8.6495L7.3824 10.657C7.77782 10.8219 8.22268 10.8219 8.61811 10.657L13.4312 8.6495C13.878 8.46317 13.9865 7.92025 13.7236 7.57293C13.5897 7.39596 13.6244 7.14381 13.8012 7.00974C13.978 6.87566 14.2299 6.91044 14.3639 7.08741C14.9138 7.81407 14.717 8.98424 13.7401 9.39167L8.92704 11.3991C8.3339 11.6465 7.66661 11.6465 7.07347 11.3991L2.26037 9.39167C1.28352 8.98424 1.08668 7.81407 1.63665 7.08741C1.77059 6.91044 2.02249 6.87566 2.19928 7.00974Z"/>'
+                    +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M2.22792 10.0745C2.40068 10.2137 2.42798 10.4667 2.28889 10.6397C2.01112 10.9851 2.11553 11.5424 2.5693 11.7317L7.3824 13.7391C7.77782 13.904 8.22268 13.904 8.61811 13.7391L13.4312 11.7317C13.885 11.5424 13.9894 10.9851 13.7116 10.6397C13.5725 10.4667 13.5998 10.2137 13.7726 10.0745C13.9454 9.93522 14.1982 9.96255 14.3373 10.1355C14.9201 10.8602 14.732 12.0601 13.7401 12.4738L8.92704 14.4813C8.3339 14.7287 7.66661 14.7287 7.07347 14.4813L2.26037 12.4738C1.26848 12.0601 1.08038 10.8602 1.66324 10.1355C1.80233 9.96255 2.05515 9.93522 2.22792 10.0745Z"/>'
+                +'</svg>'
+            +'</span>' + (data.deptKorName ? data.deptKorName : '-')
+        +'</li>'
+    );
+    descList.append(company);
+    // team
+    var team = $(
+        '<li>'
+            +'<span class="profile-icon icon-team">'
+                +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
+                +'</svg>'
+            +'</span>' + (data.deptNm ? data.deptNm : '-')
+        +'</li>'
+    );
+    descList.append(team);
+
+    textBox.append(descList);
+    listBox.append(textBox); // top-info(right)END
+
+    dprofileList.append(listBox);
+    dprofile.append(dprofileList); // topEND
+
+
+    // bottom
+    var moreInfos = $('<div class="more-infos"></div>');
+    var moreInfoList = $('<ul class="p-info"></ul>');
+    
+    var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') + '</span></li>');
+    moreInfoList.append(email);
+    var phone = $('<li><span class="info-label">Phone</span><span class="info">'+ (data.empMobile ? data.empMobile : '-') + '</span></li>');
+    moreInfoList.append(phone);
+    var office = $('<li><span class="info-label">Office</span><span class="info">'+ (data.empTelNo ? data.empTelNo : '-') + '</span></li>');
+    moreInfoList.append(office);
+    
+    moreInfos.append(moreInfoList);
+    var isMobile = Mobile();
+	var userId = data.empMail.split("@");
+    //console.log('data.userId : '+data.userId+', data.targetId : '+data.targetId+', userId : '+userId[0]);	
+    
+    if ( data.isMobile != 'Y') {  
+		// dpContact
+		var dpContactHtml = '<div class="p-btns">';
+
+        // 프로필
+        dpContactHtml += '<button type="button" class="icon-btn" onClick="' + '블로그 페이지 새창 오픈' + '">'
+        +'<span class="b-icon">'
+            +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12 9.8C13.5464 9.8 14.8 8.5464 14.8 7C14.8 5.4536 13.5464 4.2 12 4.2C10.4536 4.2 9.20002 5.4536 9.20002 7C9.20002 8.5464 10.4536 9.8 12 9.8ZM12 11C14.2092 11 16 9.20914 16 7C16 4.79086 14.2092 3 12 3C9.79089 3 8.00002 4.79086 8.00002 7C8.00002 9.20914 9.79089 11 12 11Z" fill="#2C2C2C"/>'
+            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M3.00012 20.3C3.00012 15.8265 6.62662 12.2 11.1001 12.2H12.9001C17.3736 12.2 21.0001 15.8265 21.0001 20.3V20.4C21.0001 20.7314 20.7315 21 20.4001 21C20.0688 21 19.8001 20.7314 19.8001 20.4V20.3C19.8001 16.4893 16.7109 13.4 12.9001 13.4H11.1001C7.28936 13.4 4.20012 16.4893 4.20012 20.3V20.4C4.20012 20.7314 3.93149 21 3.60012 21C3.26875 21 3.00012 20.7314 3.00012 20.4V20.3Z" fill="#2C2C2C"/>'
+            +'</svg>')
+        +'</span><span class="b-text">프로필</span></button>';
+        
+        // 일정
+        if(data.group != 'Y' ) {
+            dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'schedule\', \''+data.targetId+'\');">'
+            +'<span class="b-icon">'
+                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#6B6B6B"/>'
+                +'<path d="M12.8791 14.5999L11.1209 14.5999C10.7896 14.5999 10.5209 14.3313 10.5209 13.9999C10.5209 13.6685 10.7896 13.3999 11.1209 13.3999L12.8791 13.3999C13.2104 13.3999 13.4791 13.6685 13.4791 13.9999C13.4791 14.3313 13.2104 14.5999 12.8791 14.5999Z" fill="#6B6B6B"/>'
+                +'<path d="M8.10698 14.5999L6.6 14.5999C6.26863 14.5999 6 14.3313 6 13.9999C6 13.6685 6.26863 13.3999 6.6 13.3999L8.10698 13.3999C8.43835 13.3999 8.70698 13.6685 8.70698 13.9999C8.70698 14.3313 8.43835 14.5999 8.10698 14.5999Z" fill="#6B6B6B"/>'
+                +'<path d="M11.1209 17.5999L12.8791 17.5999C13.2104 17.5999 13.4791 17.3313 13.4791 16.9999C13.4791 16.6685 13.2104 16.3999 12.8791 16.3999L11.1209 16.3999C10.7896 16.3999 10.5209 16.6685 10.5209 16.9999C10.5209 17.3313 10.7896 17.5999 11.1209 17.5999Z" fill="#6B6B6B"/>'
+                +'<path d="M6.6 17.5999L8.10698 17.5999C8.43835 17.5999 8.70698 17.3313 8.70698 16.9999C8.70698 16.6685 8.43835 16.3999 8.10698 16.3999L6.6 16.3999C6.26863 16.3999 6 16.6685 6 16.9999C6 17.3313 6.26863 17.5999 6.6 17.5999Z" fill="#6B6B6B"/>'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5999 2.6C8.5999 2.26863 8.33127 2 7.9999 2C7.66853 2 7.3999 2.26863 7.3999 2.6V4H6C4.34315 4 3 5.34315 3 7V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V7C21 5.34315 19.6569 4 18 4H16.5999V2.6C16.5999 2.26863 16.3313 2 15.9999 2C15.6685 2 15.3999 2.26863 15.3999 2.6V4H8.5999L8.5999 2.6ZM18 5.2H6C5.00589 5.2 4.2 6.00589 4.2 7V9L19.8 9V7C19.8 6.00589 18.9941 5.2 18 5.2ZM4.2 19V10.2L19.8 10.2V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19Z" fill="#6B6B6B"/>'
+                +'</svg>')
+            +'</span>'
+            +'<span class="b-text">일정</span></button>';
+        }
+
+        // 메일
+        if(!isMobile) {
+            dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
+            +'<span class="b-icon">'
+                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M19 5.2H5C4.00589 5.2 3.2 6.00589 3.2 7V17C3.2 17.9941 4.00589 18.8 5 18.8H19C19.9941 18.8 20.8 17.9941 20.8 17V7C20.8 6.00589 19.9941 5.2 19 5.2ZM5 4C3.34315 4 2 5.34315 2 7V17C2 18.6569 3.34315 20 5 20H19C20.6569 20 22 18.6569 22 17V7C22 5.34315 20.6569 4 19 4H5Z" fill="#6B6B6B"/>'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2 7C2 5.34315 3.34315 4 5 4H19C20.6569 4 22 5.34315 22 7C22 7.58091 21.8783 8.07924 21.5702 8.53793C21.2764 8.9753 20.8423 9.33144 20.3129 9.68998C19.4609 10.267 14.7828 12.8399 13.0035 13.8149C12.3765 14.1584 11.6235 14.1584 10.9965 13.8149C9.21694 12.8397 4.53774 10.2662 3.68633 9.68954C3.15719 9.33114 2.72334 8.97498 2.42973 8.5376C2.12186 8.07897 2 7.5807 2 7ZM5 5.2C4.00589 5.2 3.2 6.00589 3.2 7C3.2 7.39675 3.27829 7.64863 3.42607 7.86878C3.58811 8.11017 3.86561 8.36162 4.35928 8.69598C5.14928 9.23106 9.74951 11.7632 11.5731 12.7625C11.8409 12.9092 12.1591 12.9092 12.4269 12.7625C14.2502 11.7634 18.8494 9.2318 19.64 8.69639C20.1341 8.36174 20.4119 8.11025 20.574 7.86883C20.7219 7.64872 20.8 7.3969 20.8 7C20.8 6.00589 19.9941 5.2 19 5.2H5C5.00001 5.2 4.99999 5.2 5 5.2Z" fill="#6B6B6B"/>'
+                +'</svg>')
+            +'</span>'
+            +'<span class="b-text">메일</span></button>';
+        }
+
+        // 메신저
+        if(data.group != 'Y' ) {
+            dpContactHtml += '<button type="button" class="icon-btn" onClick="connectMessenger(\''+data.userId+'\',\''+userId[0]+'\');">'
+            +'<span class="b-icon">'
+                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M20.2912 20.3478L18.2929 18.3411C18.1053 18.1526 17.8503 18.0467 17.5843 18.0467H9.99979C9.52323 18.0467 9.07261 17.9356 8.67245 17.7378C7.94451 17.3781 7.38352 16.7317 7.13695 15.9461C7.04009 15.6375 7.22544 15.3549 7.50873 15.2467C7.58741 15.2166 7.67363 15.2 7.76346 15.2C7.83698 15.2 7.90632 15.2169 7.96967 15.2467C8.10822 15.3119 8.21807 15.4391 8.28008 15.5873C8.28267 15.5935 8.28517 15.5997 8.28759 15.606C8.28873 15.6089 8.28986 15.6119 8.29096 15.6149C8.29311 15.6206 8.29518 15.6264 8.29719 15.6322C8.54017 16.3389 9.21068 16.8467 9.99979 16.8467H17.5843C18.1694 16.8467 18.7304 17.0797 19.1433 17.4943L20.7998 19.1579V10C20.7998 9.00589 19.9939 8.2 18.9998 8.2H18.8C18.4699 8.2 18.202 7.93339 18.2 7.60374C18.2 7.6025 18.2 7.60125 18.2 7.6C18.2 7.59875 18.2 7.5975 18.2 7.59625C18.202 7.26661 18.4699 7 18.8 7C18.7998 7 18.8002 7 18.8 7H18.9998C20.6567 7 21.9998 8.34315 21.9998 10V19.6422C21.9998 20.5341 20.9205 20.9798 20.2912 20.3478ZM14 14.0467C15.6569 14.0467 17 12.7035 17 11.0467V6C17 4.34315 15.6569 3 14 3H5C3.34315 3 2 4.34314 2 6V15.6422C2 16.5341 3.07925 16.9798 3.7086 16.3478L5.70685 14.3411C5.89451 14.1526 6.1495 14.0467 6.41545 14.0467H14ZM5 4.2C4.00589 4.2 3.2 5.00589 3.2 6V15.1579L4.85653 13.4943C5.26937 13.0797 5.83036 12.8467 6.41545 12.8467H14C14.9941 12.8467 15.8 12.0408 15.8 11.0467V6C15.8 5.00589 14.9941 4.2 14 4.2H5Z" fill="#6B6B6B"/>'
+                +'</svg>')
+            +'</span><span class="b-text">메신저</span></button>';
+        }
+        
+        dpContactHtml += '</div>';
+    		
+    	var dpContact = $(dpContactHtml);
+    	moreInfos.append(dpContact);
+        dprofile.append(moreInfos);
+	}
+	return dprofile;
+}
+
+// 그룹사 임직원 조회 검색결과(다건_동명이인_리스트)
+function makeGroupEmployeeListCard(data, isHistory){
+	
+	var dList = $('<div class="message profile-list employee"></div>');
+	dList.attr("data-sessionId", data.chatSessionId.split("sessions/")[1]);
+	
+	//일정조회 동명이인 전용 파라미터
+	dList.attr("data-loginUserId", data.loginUserId);
+	dList.attr("data-date", data.date);
+	dList.attr("data-krname", data.krname);
+
+    var dListWrap = $('<ul></ul>');
+	if (data.items instanceof Array && data.items.length > 0) {
+		data.items.forEach(function(item,index) {
+            var type = data.type;
+            var empMail = item.empMail.split('@');
+            var userId = empMail[0];
+            var display = (index >= 4)? "none":"flex";
+            
+            var liHtml = '<li class="list-box" style="display:' + display + '" onclick="intentEvent(this , \''+ type +'\', \''+ userId +'\')">';
+                
+            if (data.group == 'Y') {
+                liHtml = '<li class="list-box" style="display:' + display + '" onclick="intentEvent(this , \'group\', \''+ item.empMail +'\')">';
+            }
+                
+            liHtml += (item.profilePicture ? '<div class="profile-img">' + `<img src="' + item.profilePicture + '" onerror="this.src='` + pAlternative + `';"></div>` : '<div class="profile-img"><img class="img-circle" src="'+ pAlternative +'"></div>');
+            
+            liHtml += '<div class="text-box">';
+            liHtml +=   '<div class="name">'
+                            +'<h1>' + item.userNm + ' ' + item.titleNm +'</h1>'
+                        +'</div">';
+
+            liHtml += '<ul class="profile-info">'
+            liHtml += (
+                '<li>'
+                    +'<span class="profile-icon icon-team">'
+                        +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
+                        +'</svg>'
+                    +'</span><span class="team-name">' + (item.deptNm ? item.deptNm : '-') + '</span>'
+                +'</li>'
+            );
+            
+            liHtml += (
+                '<li>'
+                    +'<span class="profile-icon icon-phone">'
+                        + '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5842 10.5261L10.3746 9.14452C10.2925 9.09317 10.1745 9.10065 10.0918 9.18231C10.0131 9.26012 9.9358 9.33551 9.87193 9.39564C9.1487 10.0767 8.21307 9.93799 7.54251 9.66479C6.85048 9.38284 6.1788 8.8696 5.65588 8.34687C5.13291 7.82409 4.61899 7.15196 4.33668 6.45924C4.06308 5.78791 3.92438 4.85121 4.60668 4.12737C4.66788 4.06244 4.74239 3.98595 4.81898 3.90841C4.9012 3.82516 4.90827 3.70712 4.85718 3.62542L3.47542 1.41615L3.47137 1.40939C3.30654 1.1339 2.99922 1.03945 2.68408 1.24462C1.85645 1.78509 1.43723 2.37962 1.25418 2.971C1.06765 3.57363 1.09939 4.26136 1.33263 5.02227C1.80708 6.57004 3.05679 8.22718 4.41578 9.58568C5.77497 10.9444 7.43109 12.1933 8.97796 12.6675C9.7384 12.9006 10.4258 12.9324 11.0283 12.7461C11.6196 12.5632 12.2142 12.1443 12.7552 11.3174C12.9603 11.0029 12.867 10.6959 12.5904 10.5298L12.5842 10.5261ZM13.425 11.7548C10.922 15.5818 6.6355 12.9357 3.8502 10.1515C1.06491 7.3672 -1.58331 3.07544 2.24711 0.574501C2.95544 0.113007 3.76792 0.346919 4.15787 0.998626L5.53544 3.20121C5.78858 3.60595 5.72365 4.13091 5.38816 4.47058C5.31335 4.54632 5.24381 4.61776 5.18882 4.6761C4.46912 5.43963 5.2675 6.82747 6.22146 7.78108C7.17542 8.73469 8.56121 9.531 9.3235 8.81321C9.38036 8.75968 9.45232 8.68957 9.52946 8.61333C9.86892 8.27782 10.394 8.21314 10.7987 8.46619L13.0023 9.84394C13.6537 10.2351 13.887 11.0468 13.425 11.7548Z" fill="#898989"/>'
+                        +'</svg>'
+                    + '</span>' + (item.empMobile ? item.empMobile : '')
+                +'</li>'
+            );
+            liHtml += '</ul>';
+
+            liHtml += '<span class="arrow">'
+                        +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                        +'</svg>'
+                    +'</span>';
+
+            liHtml += '</div>';
+            liHtml += '</li>';
+            var li = $(liHtml);
+			dListWrap.append(li);
+		});
+        dList.append(dListWrap);
+		
+        // 더보기 버튼 출력
+		if (data.items.length > 4) {
+			var btn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            btn.click(function() {
+                $(this).parents('.profile-list').find(".list-box").css("display","flex");
+                $(this).css({"display":"none"});
+            });
+            dList.append(btn);
+		}
+	} else {
+        dList.removeClass('profile-list').addClass('simple-text');
+        dList.append('<p>검색 결과가 없습니다. 임직원명을 확인한 후 다시 검색해 보세요.</p>');
+    }
+	return dList;
+}
+
+// 그룹사 임직원 조회 검색결과 오류
+function groupEmployeeError() {
+    var employeeResultError = $('<div class="custom-message"></div>');
+    var employeeErrorMessageWrap = $('<div class="message"></div>');
+    var employeeErrorContent = $('<div class="message simple-text"></div>');
+    var employeeErrorText = $('<p>검색 결과가 없습니다. 임직원명을 확인한 후 다시 검색해 보세요.</p>');
+    employeeErrorContent.append(employeeErrorText);
+    employeeErrorMessageWrap.append(employeeErrorContent);
+    employeeResultError.append(employeeErrorMessageWrap);
+    return employeeError;
+}
+
+//전화번호로 임직원 검색 by hhs
+function searchEmployeeByPhone(phoneNo){
+    
+    console.log('phoneNo :'+phoneNo);
+    
+    var inputParam = {"phone_number":phoneNo.replace('-','')};
+    var employee = [];
+    var isMobile = Mobile();
+
+    var options = {
+        keyword: inputParam.phone_number,
+        type:'any'
+    };
+
+    chatui.searchEmployees(options).then(function(employees) {
+        if(employees.length > 0){
+            console.log("chatui.searchEmployees employees : " + JSON.stringify(employees));
+
+            $.each(employees, function(index) {
+                var info = {};
+                //오픈 시점은 기본 이미지, singlex hr 전환되면 hr쪽에 있는 이미지를 연결.
+                //전환 시 임직원카드 생성쪽 소스도 같이 수정 필요
+                info.profilePicture = "";
+                info.userNm = employees[index].userKorName;
+                info.titleNm = employees[index].jobTitle;
+                info.deptNm = employees[index].deptKorName;
+                info.empMobile = employees[index].mobilePhoneNo;
+                info.empMail = employees[index].email?employees[index].email:'@';
+                info.empNo = employees[index].empNo;
+                info.empTelNo= '-';
+                employee.push(info);
+            });
+            
+            console.log('employeeList : \n'+JSON.stringify(employee));
+        }
+
+        chatui.sendEventMessage("searchEmployeeByPhone", {"empInfo":JSON.stringify(employee),"isMobile":isMobile?'Y':'N'});
+    });
 }

@@ -13,6 +13,12 @@
   
   /* [퍼블 수정 및 추가] - margin-right 값 수정 (5px -> 2px) */
   margin-right: 2px;
+
+  /* [퍼블 수정 및 추가] - min-width: 20px; height: 20px; text-align: center; vertical-align: bottom; 추가 */
+  min-width: 20px;
+  height: 20px;
+  text-align: center;
+  vertical-align: bottom;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message span.tag.primary {
   border: 1px solid #E0205C;
@@ -691,6 +697,9 @@
   overflow: hidden;
   border-radius: 50%;
   position: relative;
+
+  /* [퍼블 수정 및 추가] - min-width: 48px; 추가 */
+  min-width: 48px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-img img, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-img img {
   position: absolute;
@@ -703,17 +712,29 @@
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .name, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .name {
   display: block;
+
+  /* [퍼블 수정 및 추가] - margin-right: 18px;, margin-bottom: 10px; 추가 */
+  margin-right: 18px;
+  margin-bottom: 10px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1 {
-  padding: 0 0 4px 12px;
   display: inline-block;
+
+  /* [퍼블 수정 및 추가] - padding 값 수정 (0 0 4px 12px -> 0) */
+  padding: 0;
+
+  /* [퍼블 수정 및 추가] - margin-bottom: 0;, line-height: 1.4;, word-break: break-all; 추가 */
+  margin-bottom: 0;
+  line-height: 1.4;
+  word-break: break-all;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1.system, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1.system {
-  padding: 0 0 4px 0;
-  
   /* [퍼블 수정 및 추가] - display: flex;, align-items: center; 추가 */
   display: flex;
   align-items: center;
+
+  /* [퍼블 수정 및 추가] - padding 값 수정 ( 0 0 4px 0 -> 0 ) */
+  padding: 0;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1 .tag, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1 .position, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1 .tag, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1 .position {
   margin-left: 4px;
@@ -732,6 +753,9 @@
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info {
   display: block;
   margin-left: 10px;
+
+  /* [퍼블 수정 및 추가] - margin-left 값 수정 ( 10px -> 0 ) */
+  margin-left: 0;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info.system, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info.system {
   margin-left: 0;
@@ -742,15 +766,19 @@
   font-size: 12px;
   line-height: 18px;
   color: #2C2C2C;
-  
-  /* [퍼블 수정 및 추가] - align-items: center; 추가 */
-  align-items: center;
+
+  /* [퍼블 수정 및 추가] - align-items: flex-start; 추가 */
+  align-items: flex-start;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info li .profile-icon, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info li .profile-icon {
   width: 16px;
   height: 16px;
   position: relative;
   margin-right: 4px;
+
+  /* [퍼블 수정 및 추가] - min-width: 16px; margin-top: 2px; 추가 */
+  min-width: 16px;
+  margin-top: 2px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info li .profile-icon svg, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info li .profile-icon svg {
   position: absolute;
@@ -778,7 +806,8 @@
   color: #6B6B6B;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .text-box, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .text-box {
-  width: 180px;
+  /* [퍼블 수정 및 추가] - width 값 수정 ( 180px -> 100% ) */
+  width: 100%;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .btns, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .btns {
   border-top: 1px solid #E8E8E8;
@@ -790,6 +819,11 @@
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one li.list-box {
   padding-right: 8px;
+
+  /* [퍼블 수정 및 추가] - padding: 2px; display: flex; gap: 10px; 추가 */
+  padding: 2px;
+  display: flex;
+  gap: 10px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one li.list-box:hover {
   background-color: transparent !important;
@@ -799,12 +833,18 @@
   vertical-align: top;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one li.list-box .text-box {
-  width: 210px;
+  /* [퍼블 수정 및 추가] - justify-content 값 수정 ( 210px -> 200px ) */
+  width: 200px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .more-infos {
   margin: 0;
-  padding: 0 12px;
   border-top: 1px solid #DADADA;
+
+  /* [퍼블 수정 및 추가] - margin-top: 12px; 추가 */
+  margin-top: 12px;
+
+  /* [퍼블 수정 및 추가] - padding 값 수정 ( 0 12px -> 2px ) */
+  padding: 2px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .more-infos ul {
   margin-top: 12px;
@@ -831,12 +871,20 @@
   margin: 12px 0;
   padding: 0 14px 0 14px;
   text-align: center;
+
+  /* [퍼블 수정 및 추가] - margin-bottom: 0; display: flex; justify-content: center; gap: 20px; 추가 */
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .more-infos .p-btns button.icon-btn {
   border: 0;
   background-color: transparent;
-  margin-right: 20px;
   padding: 0;
+
+  /* [퍼블 수정 및 추가] - margin-right 값 수정 (20px -> 0) */
+  margin-right: 0;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .more-infos .p-btns button.icon-btn span {
   display: block;
@@ -888,9 +936,11 @@
   padding: 0;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list li.list-box {
-  padding: 8px 22px 8px 12px;
   position: relative;
   display: flex;
+
+  /* [퍼블 수정 및 추가] - padding 값 수정 ( 8px 22px 8px 12px -> 8px 12px ) */
+  padding: 8px 12px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list li.list-box:hover {
   background-color: #E8E8E8;
@@ -1064,9 +1114,9 @@
   border-radius: 50%;
   background-color: transparent;
   border: 0;
-  
-    /* [퍼블 수정 및 추가] - box-sizing: unset; 추가 */
-    box-sizing: unset;
+
+  /* [퍼블 수정 및 추가] - box-sizing: unset; 추가 */
+  box-sizing: unset;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-delete svg {
   position: absolute;
@@ -2700,7 +2750,7 @@
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  
+
   /* [퍼블 수정 및 추가] - overflow-y 값 변경 (scroll -> auto) */
   overflow-y: auto;
 }
@@ -2862,7 +2912,7 @@
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   z-index: 200;
-  
+
   /* [퍼블 수정 및 추가] - width: max-content; 추가 */
   width: max-content;
 }
@@ -3399,8 +3449,10 @@ body {
   height: 200px;
   margin: 12px auto 0;
   display: block;
-  overflow: hidden;
   position: relative;
+
+  /* [퍼블 수정 및 추가] - overflow: hidden; 제거 */
+  /* overflow: hidden; */
 }
 .test-panel .panel-wrapper .chat-panel .welcome-contents .welcome-img img {
   left: 50%;
@@ -4270,10 +4322,20 @@ body {
   color: #333333;
   font-weight: bold;
   font-size: 15px;
-  line-height: 24px;
+
+  /* [퍼블 수정 및 추가] - display: flex; align-items: center; gap: 8px; 추가 */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  /* [퍼블 수정 및 추가] - line-height 값 수정 ( 24px -> 1.4 ) */
+  line-height: 1.4;
 }
 .test-panel .panel-wrapper .chat-panel .faq-menu h1 svg {
   margin-right: 8px;
+
+  /* [퍼블 수정 및 추가] - margin-right 값 수정 ( 8px -> 0 ) */
+  margin-right: 0;
 }
 .test-panel .panel-wrapper .chat-panel .faq-menu h2 {
   color: #565656;
@@ -4344,14 +4406,23 @@ body {
   font-size: 13px;
   line-height: 20px;
   border: 0;
-  display: inline-block;
   margin-right: 4px;
   margin-bottom: 8px;
+
+  /* [퍼블 수정 및 추가] - display 값 수정 ( inline-block -> flex ) */
+  display: flex;
+
+  /* [퍼블 수정 및 추가] - margin: 0; align-items: center; gap: 2px; 추가 */
+  margin: 0;
+  align-items: center;
+  gap: 2px;
 }
 .test-panel .panel-wrapper .chat-panel .faq-menu .btn-s img, .test-panel .panel-wrapper .chat-panel .faq-menu .btn-s svg {
   display: inline-block;
   vertical-align: top;
-  margin-top: 2px;
+
+  /* [퍼블 수정 및 추가] - margin-top 값 수정 ( 2px -> 0 ) */
+  margin-top: 0;
 }
 .test-panel .panel-wrapper .chat-panel .faq-menu .btn-s.btn-text {
   background: white;
@@ -4420,6 +4491,12 @@ body {
 }
 .test-panel .panel-wrapper .chat-panel .faq-menu .faq-list .faq-body .btns {
   margin-bottom: 0;
+
+  /* [퍼블 수정 및 추가] - display: flex; flex-wrap: wrap; column-gap: 4px; row-gap: 8px; 추가 */
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 4px;
+  row-gap: 8px;
 }
 .test-panel .panel-wrapper .chat-panel .faq-menu.search-desc .faq-list .faq-body {
   padding: 7px 16px 20px 16px;
@@ -5176,14 +5253,14 @@ body {
     margin-left: 2px;
     vertical-align: text-top;
 }
-.dropdown-box small.require-alert { /* [퍼블 수정 및 추가] - .dropdown-box small.require-alert 스타일 추가 */
+.dropdown-box small.require-alert {
   margin-top: 4px;
   font-size: 12px;
   line-height: 19px;
   color: #F94B50;
   display: none;
 }
-.dropdown-box small.require-alert.show { /* [퍼블 수정 및 추가] - .dropdown-box small.require-alert.show 스타일 추가 */
+.dropdown-box small.require-alert.show {
   display: block;
 }
 
@@ -5191,8 +5268,6 @@ body {
 .plugins .plugin-contents .form-budget .coment-b {
     margin-bottom: 20px;
     text-decoration: underline;
-
-    /* [퍼블 수정 및 추가] - margin-top 값 수정 (130px -> 50%) */
     margin-top: 50%;
 }
 
@@ -5208,8 +5283,6 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-
-    /* [퍼블 수정 및 추가] - padding 값 수정 ( 9px 12px -> 6px 12px ) */
     padding: 6px 12px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .importCargo-wrap .importCargo-header h2,
@@ -5224,31 +5297,20 @@ body {
     fill: #fff;
 }
 
-/* [퍼블 수정 및 추가] - 추가건 */
-.message .importCargo-wrap .importCargo-content,
-.message .budget-wrap .budget-content {
-  /*margin-bottom: 16px;*/
-}
 .message .importCargo-wrap .importCargo-content .importCargo-content-header svg,
 .message .budget-wrap .budget-content .budget-content-header svg {
   min-width: 16px;
   margin-top: 2px;
 }
-
 .message .importCargo-wrap .importCargo-content .importCargo-content-header,
 .message .budget-wrap .budget-content .budget-content-header {
     display: flex;
     gap: 6px;
-    /* align-items: center; */ /* [퍼블 수정 및 추가] - 제거 */
-
-    /* [퍼블 수정 및 추가] - margin 값 수정 ( 10px 12px -> 12px ) */
     margin: 12px;
 }
 .message .importCargo-wrap .importCargo-content .importCargo-content-header h3,
 .message .budget-wrap .budget-content .budget-content-header h3 {
     font-size: 14px;
-
-    /* [퍼블 수정 및 추가] - line-height 추가 */
     line-height: 1.4;
 }
 .message .importCargo-wrap .importCargo-content .importCargo-list-wrap,
@@ -5292,10 +5354,6 @@ body {
 }
 
 /* 일정등록_메세지 */
-/* [퍼블 수정 및 추가] - .s-detail h2 * + span 스타일 제거 */
-/* .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .s-detail h2 * + span {
-  margin-left: -4px;
-} */
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .attend-button:disabled {
   cursor: default;
 }
@@ -5420,44 +5478,101 @@ p.people-box .people-list b {
   font-weight: 400 !important;
 }
 
-/* 시스템 담당자 통합 */
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.employee .list-header-title,
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system .list-header-title {
+
+/* ############################## 수입화물 & 임직원 & 기타 스타일 추가 ############################## */
+/* 수입 화물 팝업 */
+.plugins .btn-plugin#btn-importCargo {
+  margin-top: 16vh;
+  margin-bottom: 16px;
+}
+.dropdown-box.dropdown-arrivalYear .dropdown-menu {
+  top: 112px;
+}
+#addImportCargo .require-alert {
+  margin: 10px 0;
+  display: block;
+}
+#addImportCargo .importCargo-tooltip {
+  width: max-content;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: #2c2c2ccc;
+  display: none;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  z-index: 100;
+  color: #f5f5f5;
+  font-weight: 400;
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.6;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.11));
+}
+
+/* input-form 추가 */
+.plugins .input-form {
+  position: relative;
+}
+.plugins .input-form input {
+  padding-right: 40px !important;
+}
+.plugins .input-form .input-val-del {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translate(0, -50%);
+  cursor: pointer;
+}
+.plugins .input-form .input-val-del.show {
+  display: flex;
+}
+
+/* 시스템 담당자 // 임직원 조회 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-header-title {
   height: auto;
   position: relative;
   padding: 9px 12px;
   padding-left: 38px;
 }
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.employee .list-header-title svg,
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system .list-header-title svg {
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-header-title svg {
   min-width: 24px;
   margin-right: 0;
   position: absolute;
   top: 4px;
   left: 10px;
 }
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.employee .list-header-title .title-wrap,
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system .list-header-title .title-wrap {
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-header-title .title-wrap {
   display: inline-block;
   word-break: break-word;
 }
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info,
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info {
-  margin-left: 0;
+
+/* 임직원 조회(다건) */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .profile-list-box {
+  display: inline;
+  font-size: 15px;
+  word-break: break-all;
 }
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info li,
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info li {
-  align-items: flex-start;
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .profile-list-box .search-name {
+  display: inline;
+  line-height: inherit;
+  text-overflow: unset;
+  overflow: unset;
+  white-space: unset;
+  vertical-align: unset;
 }
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box .profile-info li .profile-icon,
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box .profile-info li .profile-icon {
-  min-width: 16px;
-  margin-top: 2px;
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.employee .list-box {
+  gap: 10px;
 }
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1,
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1 {
-  padding: 0;
-  margin-bottom: 4px;
+
+/* 임직원 조회(단건) */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message.profile-one {
+  padding: 12px;
+  padding-top: 8px;
 }
 
 /* 시스템 담당자 */
@@ -5467,26 +5582,12 @@ p.people-box .people-list b {
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system li.list-box.list-system:hover {
   background-color: #E8E8E8;
 }
-
-/* 일정 등록 메세지 스타일 추가 */
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li:first-child::before {
-  display: none;
-}
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li::before {
-  content: " ";
-  height: 1px;
-  background-color: #DADADA;
-  width: 256px;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: block;
-  overflow: hidden;
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.system .list-box .name,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one.system .list-box .name {
+  margin-right: 0;
 }
 
-
-/* 일정등록 팝업 추가내용 */
+/* 일정등록 팝업 추가 내용 */
 .schedule-join-member.focus {
   border-color: #2C2C2C;
 }
@@ -5498,40 +5599,61 @@ p.people-box .people-list b {
   margin-left: 34px;
 }
 .schedule-join-member .search-input.select {
-  padding-left: 13px !important;
+  /* padding-left: 0; */
+  padding-left: 13px;
 }
 
 /* 웰컴 스타일 수정 및 추가 */
 .test-panel .panel-wrapper .chat-panel .welcome-contents .message {
-    max-width: 280px;
-    margin-top: 12px;
-    padding: 12px;
-    border-radius: 16px;
-    background-color: #F2F2F2 !important;
-    color: #2C2C2C;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 20px; 
+  max-width: 280px;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background-color: #F2F2F2 !important;
+  color: #2C2C2C;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px; 
 }
 .test-panel .panel-wrapper .chat-panel .welcome-contents .message h2 {
-    font-size: 14px;
-    font-weight: 500;
+  font-size: 14px;
+  font-weight: 500;
 }
 .test-panel .panel-wrapper .chat-panel .welcome-contents .message h2 b {
-    margin-left: 4px;
-    font-weight: inherit;
+  margin-left: 4px;
+  font-weight: inherit;
 }
 .test-panel .panel-wrapper .chat-panel .welcome-contents .message b {
-    color: #E0205C;
-}
-.test-panel .panel-wrapper .chat-panel .welcome-contents .welcome-img {
-    overflow: unset;
+  color: #E0205C;
 }
 .test-panel .panel-wrapper .chat-panel .welcome-contents .welcome-img svg,
 .test-panel .panel-wrapper .chat-panel .welcome-contents .welcome-img img {
-    left: 50%;
-    position: absolute;
-    top: 0;
-    width: auto;
-    transform: translate(-50%, 0);
+  left: 50%;
+  position: absolute;
+  top: 0;
+  width: auto;
+  transform: translate(-50%, 0);
 }
+
+/* 수입 진행 현황 추가 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list h4,
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one h4 {
+  margin: 0;
+  min-width: 90px;
+  color: #898989;
+  font-size: 14px;
+  font-weight: 400;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .profile-info span {
+  font-size: 14px;
+  word-break: break-all;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list li.list-box .arrow {
+  top: 8px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list.import-cargo .profile-info li {
+  width: 100%;
+  justify-content: space-between;
+}
+
+
