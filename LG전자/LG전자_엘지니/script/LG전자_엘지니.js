@@ -7704,10 +7704,12 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if (message.type == 'importCargoResult') {
           messageCard = importCargoResult(message.data); // 수입화물 조회 결과(단건)
           addImportCargoPopupClose();
+          descendScroll();
         }
         else if (message.type == 'importCargoResultList') {
           messageCard = importCargoListResult(message.data); // 수입화물 조회 결과(다건)
           addImportCargoPopupClose();
+          descendScroll();
         }
         else if (message.type == 'importCargoNoCnt') { //수입화물 조회 없음
             setTimeout( function() {
@@ -7716,7 +7718,6 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
             }, 1);
             setTimeout(function() {
                 $('.importCargo-tooltip').fadeOut();
-                // $('.chat-message.left').last().remove();
             },2000);
         }
         else {
@@ -9597,6 +9598,16 @@ function appendChatbotText3(firstMsg, message, customQuick) {
   
   }, 100);
   
+}
+
+/**
+ * '화면 스크롤 최하단으로 내리기' 함수
+ */
+ function descendScroll() {
+	setTimeout(function() {
+        var e = document.getElementById("divScroll");
+        e.scrollTop = e.scrollHeight
+    }, 50)
 }
 
 // 수입화물, 임직원검색 관련 function --------------------------------------------------------------------------------------
