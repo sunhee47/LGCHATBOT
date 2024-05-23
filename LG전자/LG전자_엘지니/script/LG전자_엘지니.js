@@ -2176,11 +2176,13 @@ function showNotiSettings() {
 
 var welcomeClick = false;
 function welcomeAppend(welcomeMessage) {
-    //console.log('welcomeMessage', welcomeMessage);
+    console.log('welcomeMessage', welcomeMessage);
 // if(welcomeMessage[0].response !== null) $('.chat-message.left').last().remove();
   $('.chat-message.left').last().remove();
   if(welcomeMessage[0].panelType === "error"){
     appendWelcomeText("안녕하세요, 스마트 업무비서 케미입니다. 오늘도 좋은 하루 보내세요!");
+  } else if(welcomeMessage[0].panelType === "basic"){
+    appendWelcomeText(welcomeMessage[0].message);
   }else{
   if(JSON.parse(welcomeMessage[0].response)) {
     var todaySchedule = JSON.parse(welcomeMessage[0].response).template.outputs[0];
@@ -2525,6 +2527,57 @@ function openGptBotFrame(queryText) {
   
 }
 
+function openChatFrame(token, userId) {
+  var languageCode = "en";
+//   var token = token;
+//   var userId = chatui.getSetting('userId');
+
+  var url = "https://chatclient-stg.ai.lgstation.com/d495ebce-9bfe-41b7-91e5-205962876680/chat";
+
+  var form = document.createElement("form");
+  form.setAttribute("target", "_self");
+  form.setAttribute("method", "POST");
+  form.setAttribute("action", url);
+
+  var param = null;
+
+  obj = document.createElement("input");
+  obj.setAttribute("type", "hidden");
+  obj.setAttribute("name", "languageCode");
+    obj.setAttribute("value", languageCode);
+    form.appendChild(obj);
+
+  obj = document.createElement("input");
+  obj.setAttribute("type", "hidden");
+  obj.setAttribute("name", "token");
+    obj.setAttribute("value", token);
+    form.appendChild(obj);
+
+//   if(targetParent != null) {
+//     obj = document.createElement("input");
+//     obj.setAttribute("type", "hidden");
+//     obj.setAttribute("name", "targetParent");
+//     obj.setAttribute("value", targetParent);
+//     form.appendChild(obj);
+//   }
+
+
+    if (userId) {
+    obj = document.createElement("input");
+    obj.setAttribute("type", "hidden");
+    obj.setAttribute("name", "userId");
+      obj.setAttribute("value", userId);
+      form.appendChild(obj);
+
+      document.body.appendChild(form);
+    }
+
+  form.submit();
+
+  setTimeout(function() { form.parentNode.removeChild(form); }, 1000);
+  
+}
+
 function sendGptMsg(text) { 
     // iframe으로 메시지 전송 
     var targetWindow = document.getElementById("caas-chatbot-chat-iframe").contentWindow;
@@ -2537,7 +2590,51 @@ function sendGptMsg(text) {
 } 
 
 var targetParent = null;
+let checkUserEvent = "checkUser";
 jQuery(document).ready(function(e){
+    
+    ////////// 사용 제한 
+    var sessionId = chatui.getSessionId();
+    
+    var reqHeader = {};
+    reqHeader["Content-Type"] = "application/json",
+    reqHeader.Authorization = "Bearer " + chatui.getSetting("apiToken"),
+    sessionId && (reqHeader["X-CHATBOT-SESSION"] = sessionId);
+    var requestParam = {
+        "query": {
+            "event": checkUserEvent
+        },
+        "payload": {
+            "userId": chatui.getSetting('userId')
+        }
+    }
+    
+    var response;
+    $.ajax({
+        type: 'POST',
+	    url: chatui.getSetting("chatApiUrl") + "/gateway",
+	    headers: reqHeader,
+	    dataType: 'json',
+	    contentType: "application/json",
+	    data: JSON.stringify(requestParam),
+	    async: false,
+	    success: function(payload, textStatus, jqXHR) {
+            response = JSON.parse(payload.queryResult.messages[0].response);
+            console.log(payload.queryResult.messages[0].response);
+        }
+	});
+    console.log(response.result);
+    if(response.result.accessYn === 'false'){
+        //alert("챗봇 사용 대상자가 아닙니다.");
+        window.close();
+        // 제한 사용자인 경우 어떻게?
+        // chatui.setSetting('apiToken', null);
+    // } else {
+    //     openChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'))
+    //     window.pop("hello");
+    }
+    
+    ////////// 사용 제한 
     
     // 2023.11.21 GPT 팝업시 처리. 
     var paramInitMode = chatui.getParameter('initMode');
