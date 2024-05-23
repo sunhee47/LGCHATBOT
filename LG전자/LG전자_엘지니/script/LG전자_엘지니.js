@@ -2179,10 +2179,12 @@ function welcomeAppend(welcomeMessage) {
     console.log('welcomeMessage', welcomeMessage);
 // if(welcomeMessage[0].response !== null) $('.chat-message.left').last().remove();
   $('.chat-message.left').last().remove();
-  if(welcomeMessage[0].panelType === "error"){
-    appendWelcomeText("안녕하세요, 스마트 업무비서 케미입니다. 오늘도 좋은 하루 보내세요!");
-  } else if(welcomeMessage[0].panelType === "basic"){
-    appendWelcomeText(welcomeMessage[0].message);
+  //if(welcomeMessage[0].panelType === "error"){
+  //appendWelcomeText("안녕하세요, 스마트 업무비서 케미입니다. 오늘도 좋은 하루 보내세요!");
+  //} 
+  if(welcomeMessage[0].panelType === "basic"){
+      console.log(welcomeMessage[0].message);
+      appendWelcomeText('안녕하세요, 엘지니입니다.<br/>오늘도 좋은 하루 보내세요!');
   }else{
   if(JSON.parse(welcomeMessage[0].response)) {
     var todaySchedule = JSON.parse(welcomeMessage[0].response).template.outputs[0];
@@ -6274,8 +6276,7 @@ function connectMessenger(userId, targetId){
     // 프로필 버튼 추가 (프로필 버튼 클릭 시, 블로그 페이지 새창으로 오픈)
     if(data.group != 'Y' ) {
     //프로파일 url 추가 by hhs
-        // var profileBtnUrl = "http://newep.lge.com/support/profile/getProfile.do?targetUserId="+data.userId+"&str="+data.empNo;
-        var profileBtnUrl = "http://newep.lge.com/support/profile/getProfile.do?targetUserId=@__s&str="+data.empNo;
+        var profileBtnUrl ='http://newep.lge.com/support/profile/getProfile.do?targetUserId=@'+window.btoa(data.empNo);
         dpContactHtml += '<button type="button" class="icon-btn" onClick="window.open(\''+profileBtnUrl+'\')">'
         +'<span class="b-icon">'
             +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -6582,7 +6583,13 @@ function sendEquipNameChange(btn) {
 
 //일정등록 Card 생성 함수
 function makeScheduleRegCard(data) {
+
   var scheduleRegCard = $('<div class="message simple-text"></div>');
+  
+  if(data.empNo == "") {  
+      scheduleRegCard.append('<p>사용자 정보가 없습니다. 관리자에게 문의하세요.</p>');
+      return scheduleRegCard;
+  }
   var scheduleRegText = $('<p>새로운 일정을 등록하시려면 아래 버튼을 눌러주세요!</p>'
     + '<h6>※ 일정 등록 화면에서 회의실을 예약할 수 있어요.</h6>');
   scheduleRegCard.append(scheduleRegText);
