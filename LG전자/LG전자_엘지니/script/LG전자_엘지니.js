@@ -2908,7 +2908,7 @@ jQuery(document).ready(function(e){
     //전화번호 검색 기능 추가 by hhs
     var regex = /^[0-9]*$/; // 숫자만 체크
     var replaceVal = val.replace('-','');
-    if(regex.test(replaceVal) && (4 == replaceVal.length || replaceVal.length == 8)){
+    if(regex.test(replaceVal) && (replaceVal.length ==4 || replaceVal.length == 8)){
         appendQueryText(val);
         searchEmployeeByPhone(val);
         searchActiveFalse();
@@ -6175,6 +6175,7 @@ function connectMessenger(userId, targetId){
     //     +'<span class="b-text">일정</span></button>';
     //   }
     // 프로필 버튼 추가 (프로필 버튼 클릭 시, 블로그 페이지 새창으로 오픈)
+    if(data.group != 'Y' ) {
     //프로파일 url 추가 by hhs
         // var profileBtnUrl = "http://newep.lge.com/support/profile/getProfile.do?targetUserId="+data.userId+"&str="+data.empNo;
         var profileBtnUrl = "http://newep.lge.com/support/profile/getProfile.do?targetUserId=@__s&str="+data.empNo;
@@ -6187,7 +6188,7 @@ function connectMessenger(userId, targetId){
         +'</span><span class="b-text">프로필</span></button>';
       
         // 일정
-        if(data.group != 'Y' ) {
+        // if(data.group != 'Y' ) {
             dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'schedule\', \''+data.targetId+'\');">'
             +'<span class="b-icon">'
                 +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
