@@ -662,11 +662,11 @@ chatui.onLoad = function(){
     
     $(".test-panel .panel-wrapper .chat-panel .info-area").html(
         '<div class="edu-header">'
-        +'<h1>ChatGPT Mode</h1>'
+        +'<h1>GPT 모드</h1>'
         +'<div class="dot-flashing">'
         +'</div>'
         +'</div>'
-        +'<span class="edu-close" id="eduClose">Exit</span>'
+        +'<span class="edu-close" id="eduClose">종료하기</span>'
     );
 
     $(".test-panel .panel-wrapper .chat-panel .form-group").empty();
