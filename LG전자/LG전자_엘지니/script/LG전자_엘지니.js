@@ -1,4 +1,8 @@
+// STG URL 세팅
 let imgBaseUrl = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/3ace0979-8ff0-49f3-814b-84c500f5fbef';
+let chatbotUrl = 'https://chatclient-stg.ai.lgstation.com';
+let gptChatbotId = '53496e65-19e4-4d34-8469-c7b83263b588';
+let eduChatbotId = '459bac85-f58f-48eb-9c75-c6f17b73ac59';
 
 let searchActive = false;
 let searchActive2 = false;
@@ -1092,7 +1096,7 @@ function activeGptBot(text) {
     } else{
         console.log("activeGptBot : "+text);
         var paramForm = document.createElement("form");
-        var url = "https://chatclient-stg.ai.lgstation.com/53496e65-19e4-4d34-8469-c7b83263b588/chat";
+        var url = chatbotUrl+"/"+gptChatbotId+"/chat";
         window.open("", "chatGptBot", "top=500, left=500, width=500, height=700, toolbar=1, scrollbars=1, resizable=1");
         
         $(paramForm).attr('action', url);
@@ -2458,10 +2462,10 @@ function searchActiveFalse() {
 
 function openChatFrame() {
   var languageCode = "ko";
-  var token = "test";
+  var token = chatui.getSetting("apiToken");
   var userId = chatui.getSetting('userId');
 
-  var url = "https://chatclient-stg.ai.lgstation.com/459bac85-f58f-48eb-9c75-c6f17b73ac59/chat";
+  var url = chatbotUrl+"/"+eduChatbotId+"/chat";
 
   var form = document.createElement("form");
   form.setAttribute("target", "caas-chatbot-chat-iframe");
@@ -2509,10 +2513,10 @@ function openChatFrame() {
 
 function openGptBotFrame(queryText) {
   var languageCode = "ko";
-  var token = "test";
+  var token = chatui.getSetting("apiToken");
   var userId = chatui.getSetting('userId');
 
-  var url = "https://chatclient-stg.ai.lgstation.com/53496e65-19e4-4d34-8469-c7b83263b588/chat";
+  var url = chatbotUrl+"/"+gptChatbotId+"/chat";
 
   var form = document.createElement("form");
   form.setAttribute("target", "caas-chatbot-chat-iframe");
@@ -2647,11 +2651,11 @@ jQuery(document).ready(function(e){
     sessionId && (reqHeader["X-CHATBOT-SESSION"] = sessionId);
     var requestParam = {
         "query": {
-            "event": checkUserEvent
+            "event": checkUserEvent,
+            "languageCode":"ko"
         },
         "payload": {
-            "userId": chatui.getSetting('userId'),
-            "languageCode":"ko"
+            "userId": chatui.getSetting('userId')
         }
     }
     
