@@ -45,6 +45,7 @@ function answerReset() {
   $('#answer-url').val('');
 
   $("input[name='charge-select']").prop('checked', false);
+  //$('#yes').prop('checked', true);
   $('input[name="charge-no"]').prop('checked', false);
   $('.etc-text').val('');
   $('.not-charge').removeClass('show');
@@ -189,8 +190,33 @@ function sendCheckCharge() {
 	  , data: JSON.stringify(requestParam)
 	  , success: function(payload, textStatus, jqXHR) {
       console.log(payload);
-      answerReset();
-      showConfirmDialog(convert(eduLang.requester_input_msg));
+          if(payload && payload.queryResult && payload.queryResult.messages && payload.queryResult.messages.length>0){    
+            var response = JSON.parse(payload.queryResult.messages[0].response);
+    
+            if(response) {
+                var data = response.data;
+                
+                if(data["successYn"] == 'Y') {
+                    answerReset();
+                    
+                    var param = {
+                        "languageCode": languageCode, 
+                        "questionText": data["questionText"], 
+                        "answerText": data["answerText"], 
+                        "selectedCategory": data["selectedCategory"], 
+                        "answerUrl": data["answerUrl"], 
+                        "addedFilesName": data["addedFilesName"]
+                    }
+                    chatui.sendEventMessage("add_answer_request_end", param);
+                }
+                else{
+                    showConfirmDialog(data["restMessage"]);
+                }
+                console.log(data["successYn"]+" / "+data["restMessage"]);
+            }
+          }
+      //answerReset();
+      //showConfirmDialog(convert(eduLang.requester_input_msg));
     }
 	});
 
@@ -199,8 +225,9 @@ function sendCheckCharge() {
 
 function closeCheckPersonPopup() {
   closePopup();
+  //answerReset();    
   console.log("closeCheckPersonPopup");
-  var requestParam = {
+/*  var requestParam = {
     query: {
       "event": "save_answer_confirm"
     },
@@ -239,6 +266,7 @@ function closeCheckPersonPopup() {
       showConfirmDialog(convert(eduLang.requester_end_msg));
     }
 	});
+	*/
 }
 
 function showSelectStatusPopup(selectedRequestId) {
@@ -991,19 +1019,19 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
       requestCheck.append(checkTitle);
       var checkContents = $('<ul class="check-list">'
       +'<li><span class="check-label">'+convert(eduLang.request_category)+'</span>'
-      +'<span class="check-text">'+ selectedCategory +'</span></li>'
+      +'<span class="check-text">'+ customPayload.item["selectedCategory"] +'</span></li>'
       +'<li><span class="check-label">'+convert(eduLang.request_ask)+'</span>'
-      +'<span class="check-text">'+ questionText +'</span></li>'
+      +'<span class="check-text">'+ customPayload.item["questionText"] +'</span></li>'
       +'<li><span class="check-label">'+convert(eduLang.request_answer)+'</span>'
-      +'<span class="check-text">'+ answerText +'</span></li>'
-      +(answerUrl ? '<li><span class="check-label">'+convert(eduLang.ans_url)+'</span><span class="check-text">'+ answerUrl +'</span></li>' : '')
-      +(addedFilesName ? '<li><span class="check-label">'+convert(eduLang.ans_file)+'</span><span class="check-text">'+ addedFilesName +'</span></li>' : '')
+      +'<span class="check-text">'+ customPayload.item["answerText"] +'</span></li>'
+      +(customPayload.item["answerUrl"] ? '<li><span class="check-label">'+convert(eduLang.ans_url)+'</span><span class="check-text">'+ customPayload.item["answerUrl"] +'</span></li>' : '')
+      +(customPayload.item["addedFilesName"] ? '<li><span class="check-label">'+convert(eduLang.ans_file)+'</span><span class="check-text">'+ customPayload.item["addedFilesName"] +'</span></li>' : '')
       +'</ul>');
 
       requestCheck.append(checkContents);
       customMessage.append(requestCheck);
 
-      showCheckPersonCharge();
+      //showCheckPersonCharge();
     }
 
     if(customPayload["template"] && customPayload.template.outputs[0].data.items) {
@@ -1149,6 +1177,36 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
                 openAddNewAnswerPopup();
                 simpleButton.on('click', function() {
                   openAddNewAnswerPopup();
+                });
+              }
+              simpleText.append(simpleButton);
+            }
+          }
+          customMessage.append(simpleText);
+        }
+      }
+
+      if(customPayload.type == 'requestInput') {
+        for(var i = 0; i<customPayload.data.list.length; i++) {
+          var simpleText = $('<div class="message simple-text"></div>');
+          var list = customPayload.data.list[i];
+          if(list.title) {
+            var title = $('<h2>' + list.title + '</h2>');
+            simpleText.append(title);
+          }
+          if(list.contents) {
+            var text = $('<p>' + list.contents + '</p>');
+            simpleText.append(text);
+          }
+          if(list.buttons) {
+            for(var k = 0; k<list.buttons.length; k++) {
+              var simpleButton = $('<button type="button" class="btn-default" data-value="' + list.buttons[k].value + '">' + list.buttons[k].label + '</button>');
+              if(list.buttons[k].type == "openPopup" && list.buttons[k].value == "open_check_charge_popup") {
+                //openAddNewAnswerPopup();
+                showCheckPersonCharge();
+                simpleButton.on('click', function() {
+                  //openAddNewAnswerPopup();
+                  showCheckPersonCharge();
                 });
               }
               simpleText.append(simpleButton);
@@ -1392,6 +1450,8 @@ const popup = function() {
 window.pop = popup();
 
 jQuery(document).ready(function(e){
+    console.log('document.ready...');
+    
      // Popup Open
       $(document).on('click', '[data-popup-open]', function(e) {
           var targeted_popup = $(this).attr('data-popup-open');
@@ -1636,9 +1696,9 @@ var lang_ko = {
   request_yesorno : "담당여부",
   request_list_title : "요청 목록", 
   list_count : "건", 
-  ask_copy_msg : "복사한 질문을 켐봇에 사용해 보세요!<br />새롭게 반영된 대화를 확인하실 수 있어요.",
+  ask_copy_msg : "복사한 질문을 엘지니에 사용해 보세요!<br />새롭게 반영된 대화를 확인하실 수 있어요.",
   ask_copy_btn :  "질문 복사하기", 
-  ask_copy_finish : "질문이 복사되었습니다.<br />학습봇 모드 종료 후 켐봇에 붙여넣기 해주세요.",
+  ask_copy_finish : "질문이 복사되었습니다.<br />학습봇 모드 종료 후 엘지니에 붙여넣기 해주세요.",
   back_btn : "뒤로가기",
   add_btn : "더보기"
 }
@@ -1693,9 +1753,9 @@ var lang_en = {
   request_yesorno : "In charge or Not",
   request_list_title : "request list", 
   list_count : "case", 
-  ask_copy_msg : "Try using the copied questions in Chembot!<br />You can check the newly reflected conversation.",
+  ask_copy_msg : "Try using the copied questions in LGenie!<br />You can check the newly reflected conversation.",
   ask_copy_btn :  "Copy question", 
-  ask_copy_finish : "The question has been copied.<br />Please paste it into Chembot after exiting learning bot mode.",
+  ask_copy_finish : "The question has been copied.<br />Please paste it into LGenie after exiting learning bot mode.",
   back_btn : "Go back",
   add_btn : "see more" 
 }
