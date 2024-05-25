@@ -348,7 +348,7 @@ function appendQueryText(message) {
 
 function appendWelcomeText(message) {
     var chatMessage = '<div class="chat-message left">'
-    +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>'
+    +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>'
     +'<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"><div class="basic"><div class="message-content" style="white-space: pre-line">'
     +message
     +'</div></div></div>'
@@ -360,7 +360,7 @@ function appendWelcomeText(message) {
 
 function appendChatbotText(message) {
   var chatMessage = '<div class="chat-message left">'
-  +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>'
+  +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>'
   + message
   +'<span class="message-date">' + moment().format("a h:mm") + '</span>';
 
@@ -370,7 +370,7 @@ function appendChatbotText(message) {
 
 function appendChatbotText2(message, customQuick) {
   var chatMessage = $('<div class="chat-message left"></div>');
-  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>');
   chatMessage.append(profile);
   chatMessage.append(message);
   chatMessage.append(customQuick);
@@ -1011,7 +1011,7 @@ function searchActiveSchedule() {
  +'일정 검색'
  );
 
- $('.search-desc').find('.desc').html('‘이름 + 일정’ 혹은 ‘이름 + 직책 + 일정’ 키워드로 화학 임직원 일정 정보를 검색해 보세요.<br />'
+ $('.search-desc').find('.desc').html('‘이름 + 일정’ 혹은 ‘이름 + 직책 + 일정’ 키워드로 전자 임직원 일정 정보를 검색해 보세요.<br />'
  +'검색일 기준 일정이 기본 안내되며, 주간일정 버튼을 통해 주단위 일정도 확인할 수 있습니다.<br /><br />'
  + '예) 홍길동 일정, 홍길동 선임 일정');
  $('.search-desc').addClass('show');
@@ -2213,14 +2213,14 @@ function welcomeAppend(welcomeMessage) {
         +   '<h2>✔<b>New 엘지니, 무엇이 달라졌을까요?</b></h2>'
         +    '<p>'
         +    '    · 일정 등록, 시스템 담당자 검색 등 기존 챗봇 기능을 더욱 편리하게 리뉴얼했어요.</br>'
-        +    '    · 예산시스템과 수입진행현황 조회 기능을 새로 추가했어요. (ERP 관련 기능은 계속 업데이트 될 예정입니다.)</br>'
+//        +    '    · 예산시스템과 수입진행현황 조회 기능을 새로 추가했어요. (ERP 관련 기능은 계속 업데이트 될 예정입니다.)</br>'
         +    '    · 학습봇 모드를 통해 새로운 정보 등록을 요청할 수 있어요.</br>'
-        +    '    · 엘지전자 전용 Chat GPT 서비스를 연동했어요.</br>'
+        +    '    · 수입진행현황 조회 기능을 새로 추가했어요.</br>'
         +    '</p>'
         +    '</br>'
         +    '<h2>✔<b>엘지니를 100% 활용하는 Tip!</b></h2>'
         +    '<p>'
-        +    '    · HR, 총무, IT 등 원하는 정보를 쉽게 찾아가도록 메뉴를 구성했어요. 정확한 검색어가 생각나지 않아도 버튼을 클릭해 답변을 확인해보세요.</br>'
+        +    '    · HR, 총무, IT 등 원하는 정보를 쉽게 찾아가도록 메뉴를 구성했어요. 정확한 검색어가 생각나지 않아도 버튼을 클릭해 답변을 확인해 보세요.</br>'
         +    '    · 일상대화 기능으로 엘지니의 매력이 한층 업그레이드됐어요. 다정다감한 엘지니와 자주 대화 나눠요.😊</br>'
         +    '    ex) 사투리해봐, 퀴즈내줘</br>'
         +    '</p>'
@@ -2231,7 +2231,7 @@ function welcomeAppend(welcomeMessage) {
   //}
 
   welcomeContent.append(userName);
-  welcomeContent.append(characterBox);
+  //welcomeContent.append(characterBox);            // welcome 이미지 일단 추가하지 않음. 
   
   if(alarmInfo.openMessage == "Y") {
       welcomeContent.append(welcomeMessage);
@@ -2339,6 +2339,44 @@ function welcomeAppend(welcomeMessage) {
    
    welcomeList.append(hrInfo);
 */
+
+    var welcomeBtns = $('<div class="btn btn-quick-reply"></div>');
+    
+    var eudBtn = $('<button type="button" class="btn-quick-reply btn-basic">'
+    +             '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +             '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M3.41041 10.3086L2.80655 12.9235C2.76915 13.0855 2.91432 13.2306 3.07628 13.1932L5.69134 12.5893L13.1516 5.12906L10.8708 2.84835L3.41041 10.3086ZM10.3876 2.20012L2.82106 9.76658C2.73054 9.85711 2.66726 9.97125 2.63846 10.096L2.02706 12.7435C1.85661 13.4816 2.5182 14.1432 3.25631 13.9727L5.90398 13.3612C6.02871 13.3324 6.14284 13.2691 6.23336 13.1786L13.7999 5.6122C14.0667 5.34537 14.0667 4.91273 13.7999 4.6459L11.3539 2.2001C11.087 1.93329 10.6544 1.9333 10.3876 2.20012Z"/>'
+    +             '</svg>'
+    +'              학습봇 모드</button>');
+    
+    eudBtn.on('click', function() {
+        $('body').append('<div id="caas-chatbot-container"><iframe id="caas-chatbot-chat-iframe" name="caas-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe></div>');
+
+        if (!document.getElementById("caas-chatbot-chat-iframe").isLoaded) {
+            document.getElementById("caas-chatbot-chat-iframe").isLoaded = true;
+            openChatFrame();
+        };
+    });
+    
+    var schBtn = $('<button type="button" class="btn-quick-reply btn-basic">일정 등록</button>');
+    
+    schBtn.on('click', function() {
+      var mText = '일정 등록';
+      chatui.sendMessage(mText);
+    });
+    
+    var transBtn = $('<button type="button" class="btn-quick-reply btn-basic">번역</button>');
+    
+    transBtn.on('click', function() {
+      var mText = '번역';
+      chatui.sendMessage(mText);
+    });
+    
+    welcomeBtns.append(eudBtn);
+    welcomeBtns.append(schBtn);
+    welcomeBtns.append(transBtn);
+    
+    welcomeList.append(welcomeBtns);
+
    welcomeContent.append(welcomeList);
 
 
@@ -2529,7 +2567,7 @@ function openGptBotFrame(queryText) {
   
 }
 
-function openChatFrame(token, userId) {
+function openEnChatFrame(token, userId) {
   var languageCode = "en";
 //   var token = token;
 //   var userId = chatui.getSetting('userId');
@@ -2596,6 +2634,11 @@ let checkUserEvent = "checkUser";
 jQuery(document).ready(function(e){
     
     ////////// 사용 제한 
+    
+    if(chatui.getSetting("languageCode") !== "ko"){
+        console.log("챗봇 이동")
+        openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'));
+    }
     var sessionId = chatui.getSessionId();
     
     var reqHeader = {};
@@ -2607,7 +2650,8 @@ jQuery(document).ready(function(e){
             "event": checkUserEvent
         },
         "payload": {
-            "userId": chatui.getSetting('userId')
+            "userId": chatui.getSetting('userId'),
+            "languageCode":"ko"
         }
     }
     
@@ -2632,7 +2676,7 @@ jQuery(document).ready(function(e){
         // 제한 사용자인 경우 어떻게?
         // chatui.setSetting('apiToken', null);
     // } else {
-    //     openChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'))
+    //     openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'))
     //     window.pop("hello");
     }
     
@@ -2684,7 +2728,8 @@ jQuery(document).ready(function(e){
   + '</svg>      '
   +'</div>'
   +'<div class="center">'
-  +   '<img src="'+imgBaseUrl+'/images/hello_03.gif" />'
+  +   '<img src="'+imgBaseUrl+'/images/Header_final.png" />'
+//  +   '<img src="'+imgBaseUrl+'/images/Header_smile_right%20align.png" />'
   +'</div>'
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
 
@@ -2708,9 +2753,9 @@ jQuery(document).ready(function(e){
       +'</span>'
     +'</div>'
     +'<ul class="list-menu-body">'
-      +'<li class="list-menu-first">도움말'
-        + arrow2
-      +'</li>'
+//      +'<li class="list-menu-first">도움말'
+//        + arrow2
+//      +'</li>'
       +'<li class="list-menu-second">대화내역 초기화'
       + arrow2
       +'</li>'
@@ -2838,20 +2883,23 @@ jQuery(document).ready(function(e){
   +  '<div class="faq-body">'
   +     '<div class="btns">'
 
+  +         '<button type="button" class="btn-s btn-icon btn-text edu-bot">'
+  +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M3.41041 10.3086L2.80655 12.9235C2.76915 13.0855 2.91432 13.2306 3.07628 13.1932L5.69134 12.5893L13.1516 5.12906L10.8708 2.84835L3.41041 10.3086ZM10.3876 2.20012L2.82106 9.76658C2.73054 9.85711 2.66726 9.97125 2.63846 10.096L2.02706 12.7435C1.85661 13.4816 2.5182 14.1432 3.25631 13.9727L5.90398 13.3612C6.02871 13.3324 6.14284 13.2691 6.23336 13.1786L13.7999 5.6122C14.0667 5.34537 14.0667 4.91273 13.7999 4.6459L11.3539 2.2001C11.087 1.93329 10.6544 1.9333 10.3876 2.20012Z"/>'
+  +         '</svg>'
+  +           '학습봇 모드</button>'
+
+  +         '<button type="button" class="btn-s btn-icon btn-text gpt-bot">'
+  +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >'
+  +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M13.5276 13.5652L12.1955 12.2274C12.0704 12.1017 11.9004 12.0311 11.7231 12.0311H6.66669C6.34898 12.0311 6.04857 11.957 5.7818 11.8252C5.2965 11.5854 4.92251 11.1545 4.75813 10.6307C4.69355 10.425 4.81712 10.2366 5.00599 10.1645C5.05843 10.1444 5.11592 10.1333 5.17581 10.1333C5.22482 10.1333 5.27105 10.1446 5.31328 10.1645C5.40564 10.2079 5.47888 10.2927 5.52022 10.3915C5.52194 10.3957 5.52361 10.3998 5.52522 10.404C5.52598 10.4059 5.52673 10.4079 5.52747 10.4099C5.5289 10.4137 5.53029 10.4176 5.53162 10.4215C5.69361 10.8926 6.14062 11.2311 6.66669 11.2311H11.7231C12.1131 11.2311 12.4871 11.3865 12.7623 11.6629L13.8667 12.7719V6.66667C13.8667 6.00393 13.3294 5.46667 12.6667 5.46667H12.5335C12.3134 5.46667 12.1348 5.28893 12.1335 5.06916C12.1335 5.06833 12.1335 5.0675 12.1335 5.06667C12.1335 5.06583 12.1335 5.065 12.1335 5.06417C12.1348 4.84441 12.3134 4.66667 12.5335 4.66667C12.5334 4.66667 12.5336 4.66667 12.5335 4.66667H12.6667C13.7713 4.66667 14.6667 5.5621 14.6667 6.66667V13.0948C14.6667 13.6894 13.9472 13.9865 13.5276 13.5652ZM9.3335 9.36445C10.4381 9.36445 11.3335 8.46902 11.3335 7.36445V4C11.3335 2.89543 10.4381 2 9.3335 2H3.3335C2.22893 2 1.3335 2.89543 1.3335 4V10.4281C1.3335 11.0227 2.053 11.3199 2.47256 10.8985L3.80473 9.56071C3.92984 9.43508 4.09983 9.36445 4.27713 9.36445H9.3335ZM3.3335 2.8C2.67075 2.8 2.1335 3.33726 2.1335 4V10.1053L3.23785 8.99623C3.51308 8.71983 3.88707 8.56445 4.27713 8.56445H9.3335C9.99624 8.56445 10.5335 8.02719 10.5335 7.36445V4C10.5335 3.33726 9.99624 2.8 9.3335 2.8H3.3335Z"/>'
+  +         '</svg>'
+  +           'GPT 모드</button>'
+
   + ( !isMobile ? '<button type="button" class="btn-s btn-icon btn-text search-ep-total">'
   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +             '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.7137 11.2806C9.71915 12.1444 8.42048 12.6673 6.99967 12.6673C3.87006 12.6673 1.33301 10.1303 1.33301 7.00065C1.33301 3.87104 3.87006 1.33398 6.99967 1.33398C10.1293 1.33398 12.6663 3.87104 12.6663 7.00065C12.6663 8.42154 12.1434 9.72028 11.2794 10.7149L14.549 13.9845C14.7052 14.1407 14.7052 14.3939 14.549 14.5501C14.3928 14.7064 14.1395 14.7064 13.9833 14.5501L10.7137 11.2806ZM11.8663 7.00065C11.8663 9.68844 9.68746 11.8673 6.99967 11.8673C4.31189 11.8673 2.13301 9.68844 2.13301 7.00065C2.13301 4.31287 4.31189 2.13398 6.99967 2.13398C9.68746 2.13398 11.8663 4.31287 11.8663 7.00065Z" fill="#E0205C"/>'
   +            '</svg>'
   +           'EP 통합 검색</button>' : '')
-
-  +         '<button type="button" class="btn-s btn-icon btn-text search-employee">'
-  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
-  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M1.33301 11.8667C1.33301 9.62074 3.15372 7.80003 5.39967 7.80003H5.933C8.17896 7.80003 9.99967 9.62074 9.99967 11.8667V12.6C9.99967 12.8209 9.82059 13 9.59967 13C9.37876 13 9.19967 12.8209 9.19967 12.6V11.8667C9.19967 10.0626 7.73714 8.60003 5.933 8.60003H5.39967C3.59554 8.60003 2.13301 10.0626 2.13301 11.8667V12.6C2.13301 12.8209 1.95392 13 1.73301 13C1.51209 13 1.33301 12.8209 1.33301 12.6V11.8667Z" fill="#E0205C"/>'
-  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.6663 6.86667C11.1449 6.86667 11.5329 6.47865 11.5329 6C11.5329 5.52135 11.1449 5.13333 10.6663 5.13333C10.1876 5.13333 9.79961 5.52135 9.79961 6C9.79961 6.47865 10.1876 6.86667 10.6663 6.86667ZM10.6663 7.66667C11.5868 7.66667 12.3329 6.92047 12.3329 6C12.3329 5.07953 11.5868 4.33333 10.6663 4.33333C9.7458 4.33333 8.99961 5.07953 8.99961 6C8.99961 6.92047 9.7458 7.66667 10.6663 7.66667Z" fill="#E0205C"/>'
-  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
-  +            '</svg>'
-  +         '전자/그룹사 임직원 검색</button>'
 
   +         '<button type="button" class="btn-s btn-icon btn-text search-schedule">'
   +            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -2863,20 +2911,22 @@ jQuery(document).ready(function(e){
   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5999 2.6C8.5999 2.26863 8.33127 2 7.9999 2C7.66853 2 7.3999 2.26863 7.3999 2.6V4H6C4.34315 4 3 5.34315 3 7V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V7C21 5.34315 19.6569 4 18 4H16.5999V2.6C16.5999 2.26863 16.3313 2 15.9999 2C15.6685 2 15.3999 2.26863 15.3999 2.6V4H8.5999L8.5999 2.6ZM18 5.2H6C5.00589 5.2 4.2 6.00589 4.2 7V9L19.8 9V7C19.8 6.00589 18.9941 5.2 18 5.2ZM4.2 19V10.2L19.8 10.2V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19Z" fill="#E0205C"/>'
   +'</svg>'
   +         '일정 검색</button>'
+
+  +         '<button type="button" class="btn-s btn-icon btn-text search-employee">'
+  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M1.33301 11.8667C1.33301 9.62074 3.15372 7.80003 5.39967 7.80003H5.933C8.17896 7.80003 9.99967 9.62074 9.99967 11.8667V12.6C9.99967 12.8209 9.82059 13 9.59967 13C9.37876 13 9.19967 12.8209 9.19967 12.6V11.8667C9.19967 10.0626 7.73714 8.60003 5.933 8.60003H5.39967C3.59554 8.60003 2.13301 10.0626 2.13301 11.8667V12.6C2.13301 12.8209 1.95392 13 1.73301 13C1.51209 13 1.33301 12.8209 1.33301 12.6V11.8667Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.6663 6.86667C11.1449 6.86667 11.5329 6.47865 11.5329 6C11.5329 5.52135 11.1449 5.13333 10.6663 5.13333C10.1876 5.13333 9.79961 5.52135 9.79961 6C9.79961 6.47865 10.1876 6.86667 10.6663 6.86667ZM10.6663 7.66667C11.5868 7.66667 12.3329 6.92047 12.3329 6C12.3329 5.07953 11.5868 4.33333 10.6663 4.33333C9.7458 4.33333 8.99961 5.07953 8.99961 6C8.99961 6.92047 9.7458 7.66667 10.6663 7.66667Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
+  +            '</svg>'
+  +         '전자/그룹사 임직원 검색</button>'
+
   +         '<button type="button" class="btn-s btn-icon btn-text search-system">'
   +           '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +             '<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
   +           '</svg>'
   +         '시스템 담당자 검색</button>'
   
-  +         '<button type="button" class="btn-s btn-icon btn-text gpt-bot">'
-  +         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path d="M8.5 14C9.05228 14 9.5 13.5523 9.5 13C9.5 12.4477 9.05228 12 8.5 12C7.94772 12 7.5 12.4477 7.5 13C7.5 13.5523 7.94772 14 8.5 14Z" fill="#E0205C"/>'
-  +'<path d="M9.22287 15.4679C9.51436 15.3161 9.87319 15.4271 10.0284 15.7157C10.0295 15.7177 10.0326 15.7229 10.0376 15.7309C10.0487 15.7484 10.0691 15.7788 10.0998 15.8181C10.1614 15.8969 10.263 16.0094 10.4124 16.1242C10.7039 16.348 11.2017 16.6 12 16.6C12.7983 16.6 13.2962 16.348 13.5877 16.1242C13.7371 16.0094 13.8387 15.8969 13.9003 15.8181C13.931 15.7788 13.9514 15.7484 13.9624 15.7309C13.9675 15.7229 13.9705 15.7177 13.9717 15.7157C14.1269 15.4271 14.4857 15.3161 14.7772 15.4679C15.0711 15.6209 15.1852 15.9833 15.0322 16.2772L15.0315 16.2785L15.0307 16.28L15.029 16.2832L15.0248 16.291L15.0132 16.3118C15.004 16.3278 14.9918 16.3482 14.9766 16.3723C14.9462 16.4204 14.9031 16.4837 14.8459 16.5569C14.7317 16.7031 14.5598 16.8906 14.3186 17.0759C13.8289 17.452 13.0767 17.8 12 17.8C10.9233 17.8 10.1712 17.452 9.68144 17.0759C9.44022 16.8906 9.26838 16.7031 9.15416 16.5569C9.09698 16.4837 9.0539 16.4204 9.02345 16.3723C9.00821 16.3482 8.99608 16.3278 8.98689 16.3118L8.97527 16.291L8.97105 16.2832L8.96934 16.28L8.96857 16.2785C8.96759 16.2766 8.96788 16.2772 8.96788 16.2772C8.81481 15.9833 8.92897 15.6209 9.22287 15.4679Z" fill="#E0205C"/>'
-  +'<path d="M16.5 13C16.5 13.5523 16.0523 14 15.5 14C14.9477 14 14.5 13.5523 14.5 13C14.5 12.4477 14.9477 12 15.5 12C16.0523 12 16.5 12.4477 16.5 13Z" fill="#E0205C"/>'
-  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10 4C10 4.89556 9.41137 5.65365 8.5999 5.90847L8.5999 7H15.3999V5.90841C14.5885 5.65353 14 4.89549 14 4C14 2.89543 14.8954 2 16 2C17.1046 2 18 2.89543 18 4C18 4.89556 17.4114 5.65365 16.5999 5.90847L16.5999 7H18C19.6569 7 21 8.34315 21 10V19C21 20.6569 19.6569 22 18 22H6C4.34315 22 3 20.6569 3 19V10C3 8.34315 4.34315 7 6 7H7.3999V5.90841C6.58853 5.65353 6 4.89549 6 4C6 2.89543 6.89543 2 8 2C9.10457 2 10 2.89543 10 4ZM8.8 4C8.8 4.44183 8.44183 4.8 8 4.8C7.55817 4.8 7.2 4.44183 7.2 4C7.2 3.55817 7.55817 3.2 8 3.2C8.44183 3.2 8.8 3.55817 8.8 4ZM16.8 4C16.8 4.44183 16.4418 4.8 16 4.8C15.5582 4.8 15.2 4.44183 15.2 4C15.2 3.55817 15.5582 3.2 16 3.2C16.4418 3.2 16.8 3.55817 16.8 4ZM6 8.2H18C18.9941 8.2 19.8 9.00589 19.8 10V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19V10C4.2 9.00589 5.00589 8.2 6 8.2Z" fill="#E0205C"/>'
-  +'</svg>'
-  +           'GPT 모드</button>'
   +     '</div>'
   +   '</div>'
   + '</div>'
@@ -2896,47 +2946,53 @@ jQuery(document).ready(function(e){
   +     '</div>'
   +   '</div>'
   +   '<div class="faq-body">'
-  +     '<h2>주요업무</h2>'
+  +     '<h2>주요 메뉴</h2>'
   +     '<div class="btns">'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">HR</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">정도경영</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">IT</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">DX</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">업무지원</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">회사일반</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">도움말</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">홍보자료</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">번역</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 등록</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">나의 일정 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">통근 버스</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">주차</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">법인카드 이용내역</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
   +     '</div>'
-  +     '<h2>IT 관련 문의가 있으신가요?</h2>'
+  +     '<h2>주요 업무</h2>'
   +     '<div class="btns">'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">Webex(화상회의)</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">PC 신청/반납</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">SW 신청</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">복합기 설치</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">GUAS</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">G Portal</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">메일</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">HR</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">총무</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">내부회계관리제도</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">금융</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">연말정산</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">ERP</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">GP</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">IT</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">CTO</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">LG Magna</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">회사일반</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">정도경영</button>'
   +     '</div>'
-  +     '<h2>업무에 필요한 정보를 안내해 드릴게요.</h2>'
-  +     '<div class="btns">'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">출입/보안</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">출장</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">전임여비</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">차량 주차</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">사내 생활 안내</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">전화신청</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">사원증</button>'
-  +     '</div>'
-  +     '<h2>다양한 사내 복지 제도를 소개해 드릴게요!</h2>'
-  +     '<div class="btns">'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">통근버스</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">주택자금</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">교육</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">의료비</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">자격증</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">휴양소</button>'
-  +     '</div>'
+
+//  +     '<h2>업무에 필요한 정보를 안내해 드릴게요.</h2>'
+//  +     '<div class="btns">'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">출입/보안</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">출장</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">전임여비</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">차량 주차</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">사내 생활 안내</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">전화신청</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">사원증</button>'
+//  +     '</div>'
+//  +     '<h2>다양한 사내 복지 제도를 소개해 드릴게요!</h2>'
+//  +     '<div class="btns">'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">통근버스</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">주택자금</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">교육</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">의료비</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">자격증</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">휴양소</button>'
+//  +     '</div>'
   +   '</div>'
   +'</div>'
   +'</div>');
@@ -3274,6 +3330,19 @@ jQuery(document).ready(function(e){
   $('.gpt-bot').on('click', function() {
     activeGptBot("");
     faqOriginalHide();
+  });
+
+  $('.edu-bot').on('click', function() {
+//    activeGptBot("");
+//    faqOriginalHide();
+
+        $('body').append('<div id="caas-chatbot-container"><iframe id="caas-chatbot-chat-iframe" name="caas-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe></div>');
+
+        if (!document.getElementById("caas-chatbot-chat-iframe").isLoaded) {
+            document.getElementById("caas-chatbot-chat-iframe").isLoaded = true;
+            openChatFrame();
+        };
+
   });
 
   $('.btn-sendtext').each(function() {
@@ -7446,7 +7515,11 @@ function makeDefaultFallbackCard(data) {
   var defaultQuickReply = $('<div class="custom-quick-reply"></div>');
   var btnList = $('<div class="btn-list"></div>');
   
-  var btnLearningBot = $('<span class="btn-custom-reply btn-text">학습봇 모드</span>');
+  var btnLearningBot = $('<span class="btn-custom-reply btn-text">'
+  +             '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +             '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M3.41041 10.3086L2.80655 12.9235C2.76915 13.0855 2.91432 13.2306 3.07628 13.1932L5.69134 12.5893L13.1516 5.12906L10.8708 2.84835L3.41041 10.3086ZM10.3876 2.20012L2.82106 9.76658C2.73054 9.85711 2.66726 9.97125 2.63846 10.096L2.02706 12.7435C1.85661 13.4816 2.5182 14.1432 3.25631 13.9727L5.90398 13.3612C6.02871 13.3324 6.14284 13.2691 6.23336 13.1786L13.7999 5.6122C14.0667 5.34537 14.0667 4.91273 13.7999 4.6459L11.3539 2.2001C11.087 1.93329 10.6544 1.9333 10.3876 2.20012Z"/>'
+  +             '</svg>'
+  +             ' 학습봇 모드</span>');
   btnLearningBot.on('click', function() {
     $('body').append('<div id="caas-chatbot-container"><iframe id="caas-chatbot-chat-iframe" name="caas-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe></div>');
 
@@ -7458,7 +7531,11 @@ function makeDefaultFallbackCard(data) {
 
   btnList.append(btnLearningBot);
   
-  var gptBotBtn = $('<span class="btn-custom-reply btn-text">Chat GPT</span>');
+  var gptBotBtn = $('<span class="btn-custom-reply btn-text">'
+  +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >'
+  +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M13.5276 13.5652L12.1955 12.2274C12.0704 12.1017 11.9004 12.0311 11.7231 12.0311H6.66669C6.34898 12.0311 6.04857 11.957 5.7818 11.8252C5.2965 11.5854 4.92251 11.1545 4.75813 10.6307C4.69355 10.425 4.81712 10.2366 5.00599 10.1645C5.05843 10.1444 5.11592 10.1333 5.17581 10.1333C5.22482 10.1333 5.27105 10.1446 5.31328 10.1645C5.40564 10.2079 5.47888 10.2927 5.52022 10.3915C5.52194 10.3957 5.52361 10.3998 5.52522 10.404C5.52598 10.4059 5.52673 10.4079 5.52747 10.4099C5.5289 10.4137 5.53029 10.4176 5.53162 10.4215C5.69361 10.8926 6.14062 11.2311 6.66669 11.2311H11.7231C12.1131 11.2311 12.4871 11.3865 12.7623 11.6629L13.8667 12.7719V6.66667C13.8667 6.00393 13.3294 5.46667 12.6667 5.46667H12.5335C12.3134 5.46667 12.1348 5.28893 12.1335 5.06916C12.1335 5.06833 12.1335 5.0675 12.1335 5.06667C12.1335 5.06583 12.1335 5.065 12.1335 5.06417C12.1348 4.84441 12.3134 4.66667 12.5335 4.66667C12.5334 4.66667 12.5336 4.66667 12.5335 4.66667H12.6667C13.7713 4.66667 14.6667 5.5621 14.6667 6.66667V13.0948C14.6667 13.6894 13.9472 13.9865 13.5276 13.5652ZM9.3335 9.36445C10.4381 9.36445 11.3335 8.46902 11.3335 7.36445V4C11.3335 2.89543 10.4381 2 9.3335 2H3.3335C2.22893 2 1.3335 2.89543 1.3335 4V10.4281C1.3335 11.0227 2.053 11.3199 2.47256 10.8985L3.80473 9.56071C3.92984 9.43508 4.09983 9.36445 4.27713 9.36445H9.3335ZM3.3335 2.8C2.67075 2.8 2.1335 3.33726 2.1335 4V10.1053L3.23785 8.99623C3.51308 8.71983 3.88707 8.56445 4.27713 8.56445H9.3335C9.99624 8.56445 10.5335 8.02719 10.5335 7.36445V4C10.5335 3.33726 9.99624 2.8 9.3335 2.8H3.3335Z"/>'
+  +         '</svg>'
+  +         ' GPT 모드</span>');
   gptBotBtn.on('click', function() {
     searchActiveFalse();
     activeGptBot("");
@@ -7524,22 +7601,6 @@ function makeDefaultFallbackCard(data) {
   btnList.append(dictBtn);
   */
   
-  var searchSystemBtn = $('<span class="btn-custom-reply btn-icon btn-text search-system">'
-  +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
-  +'</svg>'
-  +'시스템 담당자 검색</span>'
-  );
-  searchSystemBtn.on('click', function() {
-    searchActiveFalse();
-    searchActiveSystem();
-    searchActive2 = true;
-    setTimeout(function() {
-      searchActive2 = false;
-    }, 500)
-  });
-  btnList.append(searchSystemBtn);
-  
   var searchEmployeeBtn = $('<span class="btn-custom-reply btn-icon btn-text search-employee">'
   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
@@ -7558,6 +7619,23 @@ function makeDefaultFallbackCard(data) {
  
   });
   btnList.append(searchEmployeeBtn);
+  
+  var searchSystemBtn = $('<span class="btn-custom-reply btn-icon btn-text search-system">'
+  +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +'<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
+  +'</svg>'
+  +'시스템 담당자 검색</span>'
+  );
+  searchSystemBtn.on('click', function() {
+    searchActiveFalse();
+    searchActiveSystem();
+    searchActive2 = true;
+    setTimeout(function() {
+      searchActive2 = false;
+    }, 500)
+  });
+  btnList.append(searchSystemBtn);
+  
   /*
   var searchAiBtn = $('<span class="btn-custom-reply btn-icon btn-text search-ai">'
   +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -9650,6 +9728,7 @@ function makeScheduleItemSample(scheduleList, scheduleBody){
 
 // 일정 등록 실패
 function scheduleResultError(data) {
+    
     console.log('scheduleResultError : ', data);
     var scheduleResultMessage = $('<div class="custom-message"></div>');
     var scheduleMessageResult = $('<div class="message"></div>');
@@ -9716,7 +9795,7 @@ function showHtmlSmallDialog(msg) {
 // 시스템 담당자 조회 : 시스템 클릭시 
 function appendChatbotText3(firstMsg, message, customQuick) {
   var chatMessage = $('<div class="chat-message left"></div>');
-  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>');
   chatMessage.append(profile);
   chatMessage.append(firstMsg);
   chatMessage.append(message);

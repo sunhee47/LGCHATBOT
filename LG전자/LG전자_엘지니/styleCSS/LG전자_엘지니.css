@@ -3606,8 +3606,11 @@ body {
 }
 .test-panel .panel-wrapper .chat-panel .info-area .center img {
   margin-left: 19px;
-  margin-top: -10px;
-  width: 160px;
+  /*margin-top: -10px; */
+  margin-top: 25px;
+  width: 97px;
+  height: 28px;
+  height: 2;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
@@ -4034,7 +4037,8 @@ body {
   display: block;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message {
-  max-width: 280px;
+  /* max-width: 280px; */       /* quick 버튼 가로로 ..*/
+  max-width: 330px;     
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -4054,7 +4058,8 @@ body {
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-quick-reply {
   margin: 0 0 0 40px;
-  max-width: 310px;
+  /* max-width: 310px; */   /* quick 버튼 가로로 ..*/
+  max-width: 360px;
   clear: both;
   float: left;
 }
@@ -5657,3 +5662,75 @@ p.people-box .people-list b {
 }
 
 
+/* btn-quick-reply 스타일 */
+.test-panel div.btn {
+    margin: 16px 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.test-panel .btn button:disabled {
+    background-color: #fff !important;
+    cursor: default !important;
+}
+.test-panel div.btn button {
+    border: 1px solid #111;
+    border-radius: 4px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #111;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    cursor: pointer;
+}
+.test-panel .btn.btn-quick-reply {
+    column-gap: 4px;
+    row-gap: 8px;
+}
+.test-panel .btn.btn-quick-reply button {
+    padding: 9px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic {
+    border-color: #F55D8D;
+    color: #E0205C;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic svg path {
+    fill: #E0205C;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic:hover {
+    background-color: #FBE4E9;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic:active {
+    background-color: #FEBBD0;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic:disabled {
+    border-color: #FB89AD !important;
+    color: #FB89AD !important;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic:disabled svg path {
+    fill: #FB89AD !important;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight {
+    border: 0;
+    background-color: #F55D8D;
+    color: #fff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight svg path {
+    fill: #fff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight:hover {
+    background-color: #ED3A72;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight:active {
+    background-color: #E0205C;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight:disabled {
+    background-color: #FEBBD0 !important;
+}
