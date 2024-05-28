@@ -995,8 +995,8 @@ function searchActiveSystem() {
  );
 
  $('.search-desc').find('.desc').html('시스템 담당자를 검색합니다.<br />'
- +'‘시스템명 + 담당자’ 로 검색해 보세요.<br /><br />'
- +'예) GERP 담당자, ecm 담당자');
+ +'‘시스템명’ 또는 ‘시스템명 + 담당자’ 로 검색해 보세요.<br /><br />'
+ +'예) GQMS, GQMS 담당자');
  $('.search-desc').addClass('show');
 };
 
@@ -1234,6 +1234,8 @@ const autoSearchEmployees = function(inputVal) {
               keyword = employees;
             $(".test-sentence-input").autocomplete("option", "source", keyword);
               $(".test-sentence-input").autocomplete("option", "appendTo", $(".test-sentence-input").closest(".form-group").find(".autocomplete-wrap"));
+              
+              $(".test-sentence-input").focus();
           }else{
             $.each(window.phrases, function(index) {
                 keyword.push({
@@ -1448,6 +1450,8 @@ const setAutocompleteJoinMember = function(input) {
                keyword = employees;
              $(input).autocomplete("option", "source", keyword);
                $(input).autocomplete("option", "appendTo", $(input).closest(".form-schedule").find(".autocomplete-member"));
+               
+               $(input).focus();
            }
          });
       
@@ -2639,6 +2643,7 @@ jQuery(document).ready(function(e){
     
     ////////// 사용 제한 
     
+    console.log('languageCode : '+chatui.getSetting("languageCode"));
     if(chatui.getSetting("languageCode") !== "ko"){
         console.log("챗봇 이동")
         openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'));
@@ -2675,13 +2680,10 @@ jQuery(document).ready(function(e){
 	});
     console.log(response.result);
     if(response.result.accessYn === 'false'){
-        //alert("챗봇 사용 대상자가 아닙니다.");
+        alert("챗봇 사용 대상자가 아닙니다.");
         window.close();
-        // 제한 사용자인 경우 어떻게?
-        // chatui.setSetting('apiToken', null);
-    // } else {
-    //     openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'))
-    //     window.pop("hello");
+    } else if (response.result.localeKoYn === 'false'){
+        openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'))
     }
     
     ////////// 사용 제한 
@@ -3066,10 +3068,14 @@ jQuery(document).ready(function(e){
     */
     //전화번호 검색 기능 추가 by hhs
     var regex = /^[0-9]*$/; // 숫자만 체크
-    var replaceVal = val.replace('-','');
-    if(regex.test(replaceVal) && (replaceVal.length ==4 || replaceVal.length == 8)){
+    var replaceVal = val.replaceAll('-','');
+    if(regex.test(replaceVal) && (replaceVal.length == 11 && replaceVal.substr(0,3) == '010')){
         appendQueryText(val);
-        searchEmployeeByPhone(val);
+        searchEmployeeByPhone(replaceVal.substr(3,replaceVal.length));
+        searchActiveFalse();
+    }else if(regex.test(replaceVal) && (replaceVal.length ==4 || replaceVal.length == 8)){
+        appendQueryText(val);
+        searchEmployeeByPhone(replaceVal);
         searchActiveFalse();
     }else{
         chatui.sendMessage(val);
@@ -3119,7 +3125,7 @@ jQuery(document).ready(function(e){
     //} 
     else if(searchType == 'ep-total' && (e.code == 'Enter' || e.keyCode == 13)) {
       var url = epTotalUrl.replace("%query%", $(e.target).val());
-      window.open(url, "epTotalSearch", "width=1024,height=550,resizable=1,scrollbars=1");
+      window.open(url, "epTotalSearch", "width=1280,height=800,resizable=1,scrollbars=1");
       searchActiveFalse();
       return;
     } 
@@ -3241,6 +3247,9 @@ jQuery(document).ready(function(e){
   );
 
   $('.send-more').on('click', function() {
+      
+      $('.faq-menu').removeClass('show'); // [퍼블 수정 및 추가_0527] - faq-menu 닫힘
+      
     if($(this).hasClass('active')) {
       $(this).removeClass('active');
       $('.faq-original').removeClass('show');
@@ -3351,6 +3360,9 @@ jQuery(document).ready(function(e){
 
   $('.btn-sendtext').each(function() {
     $(this).on('click', function() {
+        
+        $('.faq-menu').removeClass('show'); // [퍼블 수정 및 추가_0527] - faq-menu 닫힘
+        
       var sendText = $(this).text();
       chatui.sendMessage(sendText);
       $('.faq-original').removeClass('show');
@@ -9121,7 +9133,7 @@ var data = {
                 searchStartTime:startTime,
                 searchEndDt:endDate, 
                 searchEndTime:endTime, 
-                loginUserId:"999991"
+                loginUserId:empNo
             }
           };
           

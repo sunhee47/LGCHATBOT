@@ -5734,3 +5734,25 @@ p.people-box .people-list b {
 .test-panel .btn.btn-quick-reply button.btn-highlight:disabled {
     background-color: #FEBBD0 !important;
 }
+
+
+/* 일정 조회 추가 수정 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message span.tag {
+  min-width: max-content;
+}
+
+
+/* 사용자 평가 추가 수정 */
+.test-panel .panel-wrapper .chat-panel .popup.feedback .pop-info {
+  top: auto;
+  bottom: 0;
+}
+.test-panel .panel-wrapper .chat-panel .popup.feedback .pop-info .pop-content {
+  font-size: 13px;
+  font-weight: 500;
+}
+.test-panel .panel-wrapper .chat-panel .popup.feedback .pop-info .pop-content textarea.form-control {
+  color: #2c2c2c;
+  font-size: 12px;
+}
+
