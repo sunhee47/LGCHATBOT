@@ -662,11 +662,11 @@ chatui.onLoad = function(){
     
     $(".test-panel .panel-wrapper .chat-panel .info-area").html(
         '<div class="edu-header">'
-        +'<h1>GPT 모드</h1>'
+        +'<h1>'+convert(gptLang.gpt_title)+'</h1>'
         +'<div class="dot-flashing">'
         +'</div>'
         +'</div>'
-        +'<span class="edu-close" id="eduClose">종료하기</span>'
+        +'<span class="edu-close" id="eduClose">'+convert(gptLang.gpt_close)+'</span>'
     );
 
     $(".test-panel .panel-wrapper .chat-panel .form-group").empty();
@@ -743,7 +743,7 @@ chatui.onLoad = function(){
         }
 
         resizeTA(this);
-        if(checkByteSize(val,1024)){
+        if(checkByteSize(val,4000)){
             $('.sendText').focus();
             return;
         }
@@ -778,7 +778,7 @@ chatui.onLoad = function(){
 
     $('.btn-send').on('click', function(e) {
       var val = $('.sendText').val();
-      if(checkByteSize(val,1024)){
+      if(checkByteSize(val,4000)){
           $('.sendText').focus();
           return;
       } else {
@@ -1554,6 +1554,8 @@ var loadEl = {
 var languageCode = null;
 var gptLang = null;
 var lang_ko = {
+  gpt_title : "GPT 모드", 
+  gpt_close : "종료하기", 
   gpt_answer : "답변",
   gpt_copyall : "답변 전체 복사하기.", 
   gpt_copy : "답변 복사하기", 
@@ -1571,6 +1573,8 @@ var lang_ko = {
 }
 
 var lang_en = {
+  gpt_title : "GPT Mode", 
+  gpt_close : "Exit", 
   gpt_answer : "response",
   gpt_copyall : "Copy all responses.", 
   gpt_copy : "Copy response", 
@@ -1580,7 +1584,7 @@ var lang_en = {
   input_size:  "Messages can be entered up to {0} bytes at a time.", 
   git_answer2 : "This is ChatGPT's answer.", 
   view_all : "View all", 
-  msg_input : "Please enter your message (Shift + Enter for line breaks)", 
+  msg_input : "Please enter your message. (The new line is 'Shift + Enter')", 
   gpt_close_title : "Exit ChatGPT Mode", 
   gpt_close_msg : "When you quit, your conversation will not be saved<br />and you will return to the work chatbot.<br />Do you want to quit?", 
   gpt_quit : "Quit", 
