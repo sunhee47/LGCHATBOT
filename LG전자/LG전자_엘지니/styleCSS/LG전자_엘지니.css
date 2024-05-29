@@ -5756,3 +5756,178 @@ p.people-box .people-list b {
   font-size: 12px;
 }
 
+/* faq 버튼 스타일 추가 */
+.test-panel .faq-menu .btns button.btn-highlight {
+  border: 0;
+  background-color: #F55D8D;
+  color: #fff;
+}
+.test-panel .faq-menu .btns button.btn-highlight svg path {
+  fill: #fff;
+}
+.test-panel .faq-menu .btns button.btn-highlight:hover {
+  background-color: #ED3A72;
+}
+.test-panel .faq-menu .btns button.btn-highlight:active {
+  background-color: #E0205C;
+}
+.test-panel .faq-menu .btns button.btn-highlight:disabled {
+  background-color: #FEBBD0 !important;
+}
+
+
+/* faq 버튼 스타일 추가_blue */
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.blue {
+  border-color: #7CA7FF;
+  color: #4E86F8;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.blue svg path {
+  fill: #4E86F8;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.blue:hover {
+  background-color: #e9f0ff;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.blue:active {
+  background-color: #c8daff;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.blue:disabled {
+  border-color: #bcd1ff !important;
+  color: #bcd1ff !important;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.blue:disabled svg path {
+  fill: #bcd1ff !important;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.blue {
+  border: 0;
+  background-color: #4E86F8;
+  color: #fff;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.blue svg path {
+  fill: #fff;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.blue:hover {
+  background-color: #7CA7FF;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.blue:active {
+  background-color: #5e93ff;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.blue:disabled {
+  background-color: #8eb3ff !important;
+}
+
+/* faq 버튼 스타일 추가_green */
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.green {
+  border-color: #46BF90;
+  color: #329A72;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.green svg path {
+  fill: #329A72;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.green:hover {
+  background-color: #e0fff3;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.green:active {
+  background-color: #abe7d0;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.green:disabled {
+  border-color: #91c7b2 !important;
+  color: #91c7b2 !important;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-s.green:disabled svg path {
+  fill: #91c7b2 !important;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.green {
+  border: 0;
+  background-color: #329A72;
+  color: #fff;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.green svg path {
+  fill: #fff;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.green:hover {
+  background-color: #45cf9b;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.green:active {
+  background-color: #46BF90;
+}
+.test-panel .panel-wrapper .chat-panel .faq-menu .btns button.btn-highlight.green:disabled {
+  background-color: #91c7b2 !important;
+}
+
+/* btn-quick-reply 버튼 스타일 추가_blue */
+.test-panel .btn.btn-quick-reply button.btn-basic.blue {
+  border-color: #7CA7FF;
+  color: #4E86F8;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.blue svg path {
+  fill: #4E86F8;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.blue:hover {
+  background-color: #e9f0ff;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.blue:active {
+  background-color: #c8daff;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.blue:disabled {
+  border-color: #bcd1ff !important;
+  color: #bcd1ff !important;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.blue:disabled svg path {
+  fill: #bcd1ff !important;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.blue {
+  border: 0;
+  background-color: #4E86F8;
+  color: #fff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.blue svg path {
+  fill: #fff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.blue:hover {
+  background-color: #7CA7FF;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.blue:active {
+  background-color: #5e93ff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.blue:disabled {
+  background-color: #8eb3ff !important;
+}
+
+/* btn-quick-reply 버튼 스타일 추가_green */
+.test-panel .btn.btn-quick-reply button.btn-basic.green {
+  border-color: #46BF90;
+  color: #329A72;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.green svg path {
+  fill: #329A72;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.green:hover {
+  background-color: #e0fff3;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.green:active {
+  background-color: #abe7d0;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.green:disabled {
+  border-color: #91c7b2 !important;
+  color: #91c7b2 !important;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic.green:disabled svg path {
+  fill: #91c7b2 !important;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.green {
+  border: 0;
+  background-color: #329A72;
+  color: #fff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.green svg path {
+  fill: #fff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.green:hover {
+  background-color: #45cf9b;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.green:active {
+  background-color: #46BF90;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight.green:disabled {
+  background-color: #91c7b2 !important;
+}
