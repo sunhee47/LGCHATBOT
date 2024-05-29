@@ -42,6 +42,24 @@ let smsUrl = "http://gportal.lgchem.com/support/sms/sms.do?gubun=1&receiverId=";
 // EP 통합검색 
 let epTotalUrl = "https://ep.lgcns.com/support/search/totalSearch.do?totalSearch=%query%";          
 
+// 일정등록 에러 메시지 
+let ScheduleRegErrorMap = new Map([
+  ["exchange_user", "일정 및 회의실 기능은 Domino Mail 사용자에게만 제공되는 기능입니다."],
+  ["parameter_error", "일정 시작일시 또는 종료일시를 다시 한번 확인해 주세요."],
+  ["locationGroupId_null", "회의실 예약에 필요한 지역그룹이 없습니다.</br>Help Desk에 문의해 주세요."], 
+  ["not_use_system", "회의실 예약에 필요한 지역그룹 담당자가 설정돼 있지 않습니다.</br>Help Desk에 문의해 주세요."], 
+  ["error_authorized", "권한이 없는 지역그룹에 속한 회의실을 선택했어요.</br>회의실을 다시 선택해 주세요."], 
+
+  ["WritePermission_error", "예약 권한이 없는 회의실입니다.</br>회의실을 다시 선택해 주세요."],
+  ["usage_error", "사용하지 않는 회의실입니다.</br>회의실을 다시 선택해 주세요."],
+  ["RestrictionUse_error", "사용이 제한된 회의실입니다.</br>회의실을 다시 선택해 주세요."], 
+  ["MaxPerReservation_error", "회의실 최대 예약 가능 시간을 초과했어요.</br>일정 시간을 다시 설정해 주세요."], 
+  ["LimitAvaliableTime_error", "회의실 사용이 불가능한 시간대입니다.</br>일정 시간을 다시 설정해 주세요."], 
+
+  ["ID_null", "회의실 예약이 정상적으로 처리되지 않았네요.</br>일정 등록을 다시 한번 시도해 주세요."], 
+  ["Participant_error", "사용자 정보가 없는 참여자가 있습니다.</br>참여자를 다시 설정한 후 일정을 등록해 주세요."]
+]);
+
 // Push 초기화 비활성화(챗봇창 오픈 시 push 시점 제어)
 // chatSettings["initPush"] = "N";
 var tempLogo = document.getElementsByClassName('bot-profile');
@@ -1426,10 +1444,11 @@ const setAutocompleteJoinMember = function(input) {
 
   //var $autocompleteWrap;
   $(input).on('keyup', function(e) {
-      var inputVal = $(input).val();
+      var inputVal = $(this).val();
       var searchVal = "'" + inputVal + "'";
       var sessionId = $(input).closest(".form-schedule").attr("data-sessionId");
       
+     console.log('searchVal : '+searchVal);
      // 임직원 검색
      var options = {
        keyword: inputVal, // 이름 또는 전화번호 (Ex. "홍길동", "1234")
@@ -1438,7 +1457,9 @@ const setAutocompleteJoinMember = function(input) {
 
      chatui.searchEmployees(options)
          .then(function (employees) {
-           if(employees){
+           //if(employees.length > 0){
+           if(employees) {
+               console.log("employees : " + JSON.stringify(employees));
              // autoComplete는 Label 기준으로 세팅하기 때문에 Label 값을 insert
              $.each(employees, function(index) {
                var employee = employees[index]
@@ -1452,6 +1473,9 @@ const setAutocompleteJoinMember = function(input) {
                $(input).autocomplete("option", "appendTo", $(input).closest(".form-schedule").find(".autocomplete-member"));
                
                $(input).focus();
+           }
+           else{
+               console.log('no employees...');
            }
          });
       
@@ -1802,10 +1826,10 @@ function sendSMSPopupOpen(data, targetName, targetDept, targetMobileNum) {
 
   memberList.append(selectedMembers);
   var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-3" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
-  memberList.append(autocompleteMember);
+  //memberList.append(autocompleteMember);
   var memberInput = $('<input type="text" placeholder="이름을 입력해 주세요." id="attendees" class="search-input" />');
-  setAutocompleteJoinMember(memberInput);
-  memberList.append(memberInput);
+  //setAutocompleteJoinMember(memberInput);
+  //memberList.append(memberInput);
 
   var groupInput = $('<input type="text" placeholder="조직명을 입력해 주세요." id="department" class="search-input hide" />');
   setAutocompleteJoinGroup(groupInput);
@@ -2210,11 +2234,11 @@ function welcomeAppend(welcomeMessage) {
   welcomeContent.append(timeNow);
 
   var userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, <br />오늘도 멋진 하루 보내세요!</h1>');
-  var characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/hello_big.gif" /></div>');
+  //var characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/hello_big.gif" /></div>');
   var welcomeMessage = "";
   if(alarmInfo.openMessage == "Y") {
-     userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, 반가워요!<br />새로워진 엘지니와 대화해 보세요.</h1>');
-     characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/welcome.gif" /></div>');
+     userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, 반가워요!<br />new 엘지니와 대화해 보세요.</h1>');
+     //characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/welcome.gif" /></div>');
      
      welcomeMessage = $(
         '<div class="message">'
@@ -2262,7 +2286,7 @@ function welcomeAppend(welcomeMessage) {
 
    
    todayTodo.on('click', function() {
-    chatui.sendMessage("오늘의 일정");
+    chatui.sendMessage("오늘 일정");
     welcomeClick = true;
    });
 
@@ -2349,6 +2373,16 @@ function welcomeAppend(welcomeMessage) {
 */
 
     var welcomeBtns = $('<div class="btn btn-quick-reply"></div>');
+
+    var gptBtn = $('<button type="button" class="btn-quick-reply btn-basic blue">' 
+      +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >'
+      +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M13.5276 13.5652L12.1955 12.2274C12.0704 12.1017 11.9004 12.0311 11.7231 12.0311H6.66669C6.34898 12.0311 6.04857 11.957 5.7818 11.8252C5.2965 11.5854 4.92251 11.1545 4.75813 10.6307C4.69355 10.425 4.81712 10.2366 5.00599 10.1645C5.05843 10.1444 5.11592 10.1333 5.17581 10.1333C5.22482 10.1333 5.27105 10.1446 5.31328 10.1645C5.40564 10.2079 5.47888 10.2927 5.52022 10.3915C5.52194 10.3957 5.52361 10.3998 5.52522 10.404C5.52598 10.4059 5.52673 10.4079 5.52747 10.4099C5.5289 10.4137 5.53029 10.4176 5.53162 10.4215C5.69361 10.8926 6.14062 11.2311 6.66669 11.2311H11.7231C12.1131 11.2311 12.4871 11.3865 12.7623 11.6629L13.8667 12.7719V6.66667C13.8667 6.00393 13.3294 5.46667 12.6667 5.46667H12.5335C12.3134 5.46667 12.1348 5.28893 12.1335 5.06916C12.1335 5.06833 12.1335 5.0675 12.1335 5.06667C12.1335 5.06583 12.1335 5.065 12.1335 5.06417C12.1348 4.84441 12.3134 4.66667 12.5335 4.66667C12.5334 4.66667 12.5336 4.66667 12.5335 4.66667H12.6667C13.7713 4.66667 14.6667 5.5621 14.6667 6.66667V13.0948C14.6667 13.6894 13.9472 13.9865 13.5276 13.5652ZM9.3335 9.36445C10.4381 9.36445 11.3335 8.46902 11.3335 7.36445V4C11.3335 2.89543 10.4381 2 9.3335 2H3.3335C2.22893 2 1.3335 2.89543 1.3335 4V10.4281C1.3335 11.0227 2.053 11.3199 2.47256 10.8985L3.80473 9.56071C3.92984 9.43508 4.09983 9.36445 4.27713 9.36445H9.3335ZM3.3335 2.8C2.67075 2.8 2.1335 3.33726 2.1335 4V10.1053L3.23785 8.99623C3.51308 8.71983 3.88707 8.56445 4.27713 8.56445H9.3335C9.99624 8.56445 10.5335 8.02719 10.5335 7.36445V4C10.5335 3.33726 9.99624 2.8 9.3335 2.8H3.3335Z"/>'
+      +         '</svg>'
+        +'              GPT 모드</button>');
+    
+    gptBtn.on('click', function() {
+        activeGptBot("");
+    });
     
     var eudBtn = $('<button type="button" class="btn-quick-reply btn-basic green">' // [퍼블 수정_240528 (클래스 btn-highlight 제거 & green 추가)]
     +             '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -2365,12 +2399,12 @@ function welcomeAppend(welcomeMessage) {
         };
     });
     
-    var schBtn = $('<button type="button" class="btn-quick-reply btn-basic">일정 등록</button>');
+    //var schBtn = $('<button type="button" class="btn-quick-reply btn-basic">일정 등록</button>');
     
-    schBtn.on('click', function() {
-      var mText = '일정 등록';
-      chatui.sendMessage(mText);
-    });
+    //schBtn.on('click', function() {
+    //  var mText = '일정 등록';
+    //  chatui.sendMessage(mText);
+    //});
     
     var transBtn = $('<button type="button" class="btn-quick-reply btn-basic">번역</button>');
     
@@ -2379,8 +2413,9 @@ function welcomeAppend(welcomeMessage) {
       chatui.sendMessage(mText);
     });
     
+    welcomeBtns.append(gptBtn);
     welcomeBtns.append(eudBtn);
-    welcomeBtns.append(schBtn);
+    //welcomeBtns.append(schBtn);
     welcomeBtns.append(transBtn);
     
     welcomeList.append(welcomeBtns);
@@ -2956,13 +2991,14 @@ jQuery(document).ready(function(e){
   +     '<div class="btns">'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">번역</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 등록</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">화상회의 등록</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">월마감</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
   +     '</div>'
   
   +     '<h2>주요 메뉴</h2>'
   +     '<div class="btns">'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">나의 일정 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">통근 버스</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">주차</button>'
@@ -3727,63 +3763,29 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       welcomeClick = false;
 
     } else if(welcomeClick == true) {
-      var quickReply = $('<div class="quick-list custom-quick-reply"></div>');
-      var homeBtn = $('<span class="btn-custom-reply btn-emphasis">Home</span>')
-
-      homeBtn.on('click', function() {
-        sendWelcomeEvent();
-      });
-      quickReply.append(homeBtn);
-      var lastFeedback = $('.chat-message.left').last().find('.feedback');
-      quickReply.insertBefore(lastFeedback); 
-      welcomeClick = false;
+        var quickReply = $('<div class="quick-list custom-quick-reply"></div>');
+        if(resp.response.query.text != "공지사항") {
+          var homeBtn = $('<span class="btn-custom-reply btn-emphasis">Home</span>')
+    
+          homeBtn.on('click', function() {
+            sendWelcomeEvent();
+          });
+          quickReply.append(homeBtn);
+        }
+        var lastFeedback = $('.chat-message.left').last().find('.feedback');
+        quickReply.insertBefore(lastFeedback); 
+        welcomeClick = false;
     }
     else{
         
-        // 대화 내용 중 A링크 새창으로 띄우기 위해서 처리함. 
-        //console.log($('.chat-message .message .message-content').last().html());
-        
-        var messageText = $('.chat-message .message .message-content').last();
-        if(messageText) {
-            
-            var atag = messageText.children('a');
-            //console.log(atag[1]);
-
-            for(var i=0; i<atag.length; i++) {
-                var element = atag[i];
-//                console.log($(element).attr('href'));
-
-                var link = $(element).attr('href');
-                var clickValue = 'window.open("'+link+'", "abc", "_blank")';
-
-                $(element).removeAttr('href');
-                $(element).removeAttr('target');
-
-                $(element).attr('href', '#');
-                $(element).attr('onClick', clickValue);
-
-            }
-            
-            /*var targetObj = messageText.children('a');
-            console.log('length > '+targetObj.length);
-            for(var i=0; i<targetObj.length; i++) {
-                var target = targetObj[i];
-                var link = target.attr('href');
-                var clickValue = 'window.open("'+link+'", "abc", "_blank")';
-    
-                target.removeAttr('href');
-                target.removeAttr('target');
-    
-                target.attr('href', '#');
-                target.attr('onClick', clickValue);
-            }*/
-            
-            //targetObj.forEach(function(){
-            //});
-            //var message = $('.chat-message .message .message-content').last().html();
-        }
-        
     }
+
+    // 대화 내용 중 A링크 새창으로 띄우기 위해서 처리함. 
+    //console.log($('.chat-message .message .message-content').last().html());
+    //console.log('content >>> '+$('.chat-message .message .message-content').length);
+        
+    var lastLeftMessage = $('.chat-message.left').last();
+    newWindowForLink(lastLeftMessage);
 
 
     $('.btn-system').on('click', function() {
@@ -3838,6 +3840,37 @@ chatui.onReceiveResponse = function(resp, isHistory) {
             sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg - 230);
         }
     },100);
+}
+
+function newWindowForLink(lastLeftMessage) {
+    var childMessages = lastLeftMessage.children('.message');
+    
+    console.log('길이 : '+lastLeftMessage.children('.message').length);
+    
+    for(var m=0; m<childMessages.length; m++) {
+        var childMessage = childMessages[m];
+        var atag = $(childMessage).find('.message-content > a');
+    
+        //var atag = $(childMessage).children('.message-content').children('a');
+        //console.log(childMessage);
+        //console.log(messageCont);
+        
+        for(var i=0; i<atag.length; i++) {
+            var element = atag[i];
+            console.log($(element).attr('href'));
+            
+            var link = $(element).attr('href');
+            var clickValue = 'window.open("'+link+'", "title'+i+'", "location=0,status=0,toolbar=0", "_blank")';
+
+            $(element).removeAttr('href');
+            $(element).removeAttr('target');
+
+            $(element).attr('href', '#');
+            $(element).attr('onClick', clickValue);
+            
+        }            
+    }
+    
 }
 
 /**
@@ -4661,10 +4694,10 @@ function addSchedulePopupOpen(data) {
   var selectedMembers = $('<div class="selected-members fold"></div>');
   memberList.append(selectedMembers);
   var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-2" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
-  memberList.append(autocompleteMember);
+  //memberList.append(autocompleteMember);
   var memberInput = $('<input type="text" placeholder="직원명을 입력해 주세요" id="attendees" class="search-input" />');
-  setAutocompleteJoinMember(memberInput);
-  memberList.append(memberInput);
+  //setAutocompleteJoinMember(memberInput);
+  //memberList.append(memberInput);
   memberInputBox.append(memberList);
   addScheduleForm.append(memberInputBox);
   
@@ -6338,20 +6371,46 @@ function connectMessenger(userId, targetId){
  
 
   var descList = $('<ul class="profile-info"></ul>');
-  var team = $('<li>'
-  +'<span class="profile-icon icon-team">'
-    +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-      +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
-    +'</svg>'
-  +'</span>' + (data.deptNm ? data.deptNm : '-') + '</li>');
-  descList.append(team);
-
-  var mobile = $('<li>'
-  +'<span class="profile-icon icon-phone">'
-    +'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
-      +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5842 10.5261L10.3746 9.14452C10.2925 9.09317 10.1745 9.10065 10.0918 9.18231C10.0131 9.26012 9.9358 9.33551 9.87193 9.39564C9.1487 10.0767 8.21307 9.93799 7.54251 9.66479C6.85048 9.38284 6.1788 8.8696 5.65588 8.34687C5.13291 7.82409 4.61899 7.15196 4.33668 6.45924C4.06308 5.78791 3.92438 4.85121 4.60668 4.12737C4.66788 4.06244 4.74239 3.98595 4.81898 3.90841C4.9012 3.82516 4.90827 3.70712 4.85718 3.62542L3.47542 1.41615L3.47137 1.40939C3.30654 1.1339 2.99922 1.03945 2.68408 1.24462C1.85645 1.78509 1.43723 2.37962 1.25418 2.971C1.06765 3.57363 1.09939 4.26136 1.33263 5.02227C1.80708 6.57004 3.05679 8.22718 4.41578 9.58568C5.77497 10.9444 7.43109 12.1933 8.97796 12.6675C9.7384 12.9006 10.4258 12.9324 11.0283 12.7461C11.6196 12.5632 12.2142 12.1443 12.7552 11.3174C12.9603 11.0029 12.867 10.6959 12.5904 10.5298L12.5842 10.5261ZM13.425 11.7548C10.922 15.5818 6.6355 12.9357 3.8502 10.1515C1.06491 7.3672 -1.58331 3.07544 2.24711 0.574501C2.95544 0.113007 3.76792 0.346919 4.15787 0.998626L5.53544 3.20121C5.78858 3.60595 5.72365 4.13091 5.38816 4.47058C5.31335 4.54632 5.24381 4.61776 5.18882 4.6761C4.46912 5.43963 5.2675 6.82747 6.22146 7.78108C7.17542 8.73469 8.56121 9.531 9.3235 8.81321C9.38036 8.75968 9.45232 8.68957 9.52946 8.61333C9.86892 8.27782 10.394 8.21314 10.7987 8.46619L13.0023 9.84394C13.6537 10.2351 13.887 11.0468 13.425 11.7548Z" fill="#898989"/>'
-    +'</svg>'
-  +'</span>' + (data.empMobile ? data.empMobile : '-') + '</li>');
+  //메일 버튼 제거 및 임직원 / 그룹사 조회 간 항목 수정
+  if(data.group != 'Y' ) {
+        var team = $('<li>'
+        +'<span class="profile-icon icon-team">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
+            +'</svg>'
+        +'</span>' + (data.deptNm ? data.deptNm : '-') + '</li>');
+        descList.append(team);
+    
+        var mobile = $('<li>'
+        +'<span class="profile-icon icon-phone">'
+            +'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5842 10.5261L10.3746 9.14452C10.2925 9.09317 10.1745 9.10065 10.0918 9.18231C10.0131 9.26012 9.9358 9.33551 9.87193 9.39564C9.1487 10.0767 8.21307 9.93799 7.54251 9.66479C6.85048 9.38284 6.1788 8.8696 5.65588 8.34687C5.13291 7.82409 4.61899 7.15196 4.33668 6.45924C4.06308 5.78791 3.92438 4.85121 4.60668 4.12737C4.66788 4.06244 4.74239 3.98595 4.81898 3.90841C4.9012 3.82516 4.90827 3.70712 4.85718 3.62542L3.47542 1.41615L3.47137 1.40939C3.30654 1.1339 2.99922 1.03945 2.68408 1.24462C1.85645 1.78509 1.43723 2.37962 1.25418 2.971C1.06765 3.57363 1.09939 4.26136 1.33263 5.02227C1.80708 6.57004 3.05679 8.22718 4.41578 9.58568C5.77497 10.9444 7.43109 12.1933 8.97796 12.6675C9.7384 12.9006 10.4258 12.9324 11.0283 12.7461C11.6196 12.5632 12.2142 12.1443 12.7552 11.3174C12.9603 11.0029 12.867 10.6959 12.5904 10.5298L12.5842 10.5261ZM13.425 11.7548C10.922 15.5818 6.6355 12.9357 3.8502 10.1515C1.06491 7.3672 -1.58331 3.07544 2.24711 0.574501C2.95544 0.113007 3.76792 0.346919 4.15787 0.998626L5.53544 3.20121C5.78858 3.60595 5.72365 4.13091 5.38816 4.47058C5.31335 4.54632 5.24381 4.61776 5.18882 4.6761C4.46912 5.43963 5.2675 6.82747 6.22146 7.78108C7.17542 8.73469 8.56121 9.531 9.3235 8.81321C9.38036 8.75968 9.45232 8.68957 9.52946 8.61333C9.86892 8.27782 10.394 8.21314 10.7987 8.46619L13.0023 9.84394C13.6537 10.2351 13.887 11.0468 13.425 11.7548Z" fill="#898989"/>'
+            +'</svg>'
+        +'</span>' + (data.empMobile ? data.empMobile : '-') + '</li>');
+    }else{
+        var team = $(
+            '<li>'
+                +'<span class="profile-icon icon-company">'
+                    +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M7.07338 1.51904C7.66652 1.27165 8.3338 1.27165 8.92695 1.51904L13.74 3.5265C14.9758 4.04189 14.9758 5.79423 13.74 6.30962L8.92695 8.31708C8.3338 8.56447 7.66652 8.56447 7.07338 8.31708L2.26028 6.30962C1.02457 5.79423 1.02457 4.04189 2.26028 3.5265L7.07338 1.51904ZM8.61802 2.26121C8.22259 2.09628 7.77773 2.09628 7.38231 2.26121L2.56921 4.26866C1.99254 4.50918 1.99254 5.32694 2.56921 5.56746L7.38231 7.57492C7.77773 7.73984 8.22259 7.73984 8.61802 7.57492L13.4311 5.56746C14.0078 5.32694 14.0078 4.50918 13.4311 4.26866L8.61802 2.26121Z"/>'
+                        +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M2.19928 7.00974C2.37607 7.14381 2.41082 7.39596 2.27688 7.57293C2.01401 7.92025 2.12255 8.46317 2.5693 8.6495L7.3824 10.657C7.77782 10.8219 8.22268 10.8219 8.61811 10.657L13.4312 8.6495C13.878 8.46317 13.9865 7.92025 13.7236 7.57293C13.5897 7.39596 13.6244 7.14381 13.8012 7.00974C13.978 6.87566 14.2299 6.91044 14.3639 7.08741C14.9138 7.81407 14.717 8.98424 13.7401 9.39167L8.92704 11.3991C8.3339 11.6465 7.66661 11.6465 7.07347 11.3991L2.26037 9.39167C1.28352 8.98424 1.08668 7.81407 1.63665 7.08741C1.77059 6.91044 2.02249 6.87566 2.19928 7.00974Z"/>'
+                        +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M2.22792 10.0745C2.40068 10.2137 2.42798 10.4667 2.28889 10.6397C2.01112 10.9851 2.11553 11.5424 2.5693 11.7317L7.3824 13.7391C7.77782 13.904 8.22268 13.904 8.61811 13.7391L13.4312 11.7317C13.885 11.5424 13.9894 10.9851 13.7116 10.6397C13.5725 10.4667 13.5998 10.2137 13.7726 10.0745C13.9454 9.93522 14.1982 9.96255 14.3373 10.1355C14.9201 10.8602 14.732 12.0601 13.7401 12.4738L8.92704 14.4813C8.3339 14.7287 7.66661 14.7287 7.07347 14.4813L2.26037 12.4738C1.26848 12.0601 1.08038 10.8602 1.66324 10.1355C1.80233 9.96255 2.05515 9.93522 2.22792 10.0745Z"/>'
+                    +'</svg>'
+                +'</span>' + (data.cmpnyKorNm ? data.cmpnyKorNm : '-')
+            +'</li>'
+        );
+        descList.append(team);
+        // team
+        var mobile = $(
+            '<li>'
+                +'<span class="profile-icon icon-team">'
+                    +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
+                    +'</svg>'
+                +'</span>' + (data.deptNm ? data.deptNm : '-')
+            +'</li>'
+        );
+    }
   descList.append(mobile);
   textBox.append(descList);
 
@@ -6364,6 +6423,11 @@ function connectMessenger(userId, targetId){
   var moreInfoList = $('<ul class="p-info"></ul>');
   var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') + '</span></li>');
   moreInfoList.append(email);
+  //메일 버튼 제거 및 임직원 / 그룹사 조회 간 항목 수정
+  if(data.group == 'Y' ) {
+     var phone = $('<li><span class="info-label">Phone</span><span class="info">'+ (data.empMobile ? data.empMobile : '-') + '</span></li>');
+     moreInfoList.append(phone);
+  }
   var office = $('<li><span class="info-label">Office</span><span class="info">'+ (data.empTelNo ? data.empTelNo : '-') + '</span></li>');
   moreInfoList.append(office);
   moreInfos.append(moreInfoList);
@@ -6447,17 +6511,18 @@ function connectMessenger(userId, targetId){
             +'<span class="b-text">일정</span></button>';
         }
 
+        //메일 버튼 기능 삭제
         // 메일
-        if(!isMobile) {
-            dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
-            +'<span class="b-icon">'
-                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M19 5.2H5C4.00589 5.2 3.2 6.00589 3.2 7V17C3.2 17.9941 4.00589 18.8 5 18.8H19C19.9941 18.8 20.8 17.9941 20.8 17V7C20.8 6.00589 19.9941 5.2 19 5.2ZM5 4C3.34315 4 2 5.34315 2 7V17C2 18.6569 3.34315 20 5 20H19C20.6569 20 22 18.6569 22 17V7C22 5.34315 20.6569 4 19 4H5Z" fill="#6B6B6B"/>'
-                    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2 7C2 5.34315 3.34315 4 5 4H19C20.6569 4 22 5.34315 22 7C22 7.58091 21.8783 8.07924 21.5702 8.53793C21.2764 8.9753 20.8423 9.33144 20.3129 9.68998C19.4609 10.267 14.7828 12.8399 13.0035 13.8149C12.3765 14.1584 11.6235 14.1584 10.9965 13.8149C9.21694 12.8397 4.53774 10.2662 3.68633 9.68954C3.15719 9.33114 2.72334 8.97498 2.42973 8.5376C2.12186 8.07897 2 7.5807 2 7ZM5 5.2C4.00589 5.2 3.2 6.00589 3.2 7C3.2 7.39675 3.27829 7.64863 3.42607 7.86878C3.58811 8.11017 3.86561 8.36162 4.35928 8.69598C5.14928 9.23106 9.74951 11.7632 11.5731 12.7625C11.8409 12.9092 12.1591 12.9092 12.4269 12.7625C14.2502 11.7634 18.8494 9.2318 19.64 8.69639C20.1341 8.36174 20.4119 8.11025 20.574 7.86883C20.7219 7.64872 20.8 7.3969 20.8 7C20.8 6.00589 19.9941 5.2 19 5.2H5C5.00001 5.2 4.99999 5.2 5 5.2Z" fill="#6B6B6B"/>'
-                +'</svg>')
-            +'</span>'
-            +'<span class="b-text">메일</span></button>';
-        }
+        // if(!isMobile) {
+        //     dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
+        //     +'<span class="b-icon">'
+        //         +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        //             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M19 5.2H5C4.00589 5.2 3.2 6.00589 3.2 7V17C3.2 17.9941 4.00589 18.8 5 18.8H19C19.9941 18.8 20.8 17.9941 20.8 17V7C20.8 6.00589 19.9941 5.2 19 5.2ZM5 4C3.34315 4 2 5.34315 2 7V17C2 18.6569 3.34315 20 5 20H19C20.6569 20 22 18.6569 22 17V7C22 5.34315 20.6569 4 19 4H5Z" fill="#6B6B6B"/>'
+        //             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2 7C2 5.34315 3.34315 4 5 4H19C20.6569 4 22 5.34315 22 7C22 7.58091 21.8783 8.07924 21.5702 8.53793C21.2764 8.9753 20.8423 9.33144 20.3129 9.68998C19.4609 10.267 14.7828 12.8399 13.0035 13.8149C12.3765 14.1584 11.6235 14.1584 10.9965 13.8149C9.21694 12.8397 4.53774 10.2662 3.68633 9.68954C3.15719 9.33114 2.72334 8.97498 2.42973 8.5376C2.12186 8.07897 2 7.5807 2 7ZM5 5.2C4.00589 5.2 3.2 6.00589 3.2 7C3.2 7.39675 3.27829 7.64863 3.42607 7.86878C3.58811 8.11017 3.86561 8.36162 4.35928 8.69598C5.14928 9.23106 9.74951 11.7632 11.5731 12.7625C11.8409 12.9092 12.1591 12.9092 12.4269 12.7625C14.2502 11.7634 18.8494 9.2318 19.64 8.69639C20.1341 8.36174 20.4119 8.11025 20.574 7.86883C20.7219 7.64872 20.8 7.3969 20.8 7C20.8 6.00589 19.9941 5.2 19 5.2H5C5.00001 5.2 4.99999 5.2 5 5.2Z" fill="#6B6B6B"/>'
+        //         +'</svg>')
+        //     +'</span>'
+        //     +'<span class="b-text">메일</span></button>';
+        // }
         
         // 메신저
         if(data.group != 'Y' ) {
@@ -9111,7 +9176,7 @@ var data = {
         endDate = moment().format('YYYYMMDD') + '2400';
     };
     var userId = data.userId;
-    var empNo = data.empNo;    // "999991"; //
+    var empNo = data.empNo;    // "999991"; // 
     
     var placeInput = $('<input type="text" placeholder="회의실 선택 또는 장소를 입력해 주세요." id="schedule-place" />');
     var placeList = $('<div class="place-list"></div>');
@@ -9497,6 +9562,7 @@ var data = {
                 console.log('일정 등록 : ', payload);
                 var savedInfo = '';
                 var regSuccessYn = '';
+                var errorMessage = '';
                 if (payload && payload.queryResult && payload.queryResult.messages.length > 1 && payload.queryResult.messages[1].response) {
                     var savedResponse = JSON.parse(payload.queryResult.messages[1].response);
                     console.log(savedResponse["successYn"]);
@@ -9508,6 +9574,7 @@ var data = {
                         else{
                             console.log('errorMessage : '+savedResponse["errorMessage"]);
                             regSuccessYn = 'N';
+                            errorMessage = savedResponse["errorMessage"];               // 에러메시지.
                         }
                     } else {
                         regSuccessYn = 'Y';
@@ -9523,7 +9590,8 @@ var data = {
                 if(regSuccessYn == 'N') {
                     
                     var scheduleResult = '<div class="message simple-text">'
-                                + '<p>일정 등록에 실패했습니다. 다시 시도해 주세요.</p>'
+                                + '<p>일정이 등록되지 않았어요.</p>'
+                                + '<p>' + ScheduleRegErrorMap.get(errorMessage) + '</p>'
                                 + '<div class="btn">'
                                 + '<button type="button" class="btn btn-default reload-schedule">일정 재등록</button>'
                                 + '</div>'
@@ -10631,8 +10699,10 @@ function searchEmployeeByPhone(phoneNo){
             });
             
             console.log('employeeList : \n'+JSON.stringify(employee));
+            chatui.sendEventMessage("searchEmployeeByPhone", {"empInfo":JSON.stringify(employee),"isMobile":isMobile?'Y':'N'});
+        } else {
+            chatui.sendEventMessage("searchEmployeeByPhone", {"empInfo":JSON.stringify(employee),"isMobile":isMobile?'Y':'N'});
         }
-
-        chatui.sendEventMessage("searchEmployeeByPhone", {"empInfo":JSON.stringify(employee),"isMobile":isMobile?'Y':'N'});
+        
     });
 }

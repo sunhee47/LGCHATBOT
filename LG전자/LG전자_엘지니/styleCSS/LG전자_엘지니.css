@@ -5931,3 +5931,376 @@ p.people-box .people-list b {
 .test-panel .btn.btn-quick-reply button.btn-highlight.green:disabled {
   background-color: #91c7b2 !important;
 }
+
+
+/* 240529 스타일 추가 반영 */
+/* [버튼] */
+.test-panel div.btn {
+  margin: 16px 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.test-panel div.btn button {
+  border: 1px solid #111;
+  border-radius: 4px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #111;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+}
+.test-panel .btn button:disabled {
+  background-color: #fff !important;
+  cursor: default !important;
+}
+
+/* [ 일반 버튼 ] */
+.test-panel .btn button.btn-default {
+  border-color: #BEBEBE;
+  color: #2C2C2C;
+}
+.test-panel .btn button.btn-default svg path {
+  fill: #2C2C2C;
+}
+.test-panel .btn button.btn-default:hover {
+  background-color: #F5F5F5;
+}
+.test-panel .btn button.btn-default:active {
+  background-color: #E8E8E8;
+}
+.test-panel .btn button.btn-default:disabled {
+  border-color: #E8E8E8 !important;
+  color: #BEBEBE !important;
+}
+.test-panel .btn button.btn-default:disabled svg path {
+  fill: #BEBEBE !important;
+}
+.test-panel .btn button.btn-emphasis {
+  border-color: #F55D8D;
+  color: #E0205C;
+}
+.test-panel .btn button.btn-emphasis svg path {
+  fill: #E0205C;
+}
+.test-panel .btn button.btn-emphasis:hover {
+  background-color: #FBE4E9;
+}
+.test-panel .btn button.btn-emphasis:active {
+  background-color: #FEBBD0;
+}
+.test-panel .btn button.btn-emphasis:disabled {
+  border-color: #FEBBD0 !important;
+  color: #FEBBD0 !important;
+}
+.test-panel .btn button.btn-emphasis:disabled svg path {
+  fill: #FEBBD0 !important;
+}
+.test-panel .btn button.btn-small {
+  padding: 7px 12px;
+}
+.test-panel .btn button.btn-big {
+  width: 100%;
+  padding: 16px 10px;
+}
+
+/* [ 퀵 버튼 ] */
+.test-panel .btn.btn-quick-reply {
+  column-gap: 4px;
+  row-gap: 8px;
+}
+.test-panel .btn.btn-quick-reply button {
+  padding: 9px 12px;
+  border-radius: 50px;
+  font-size: 12px;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic {
+  border-color: #F55D8D;
+  color: #E0205C;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic svg path {
+  fill: #E0205C;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic:hover {
+  background-color: #FBE4E9;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic:active {
+  background-color: #FEBBD0;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic:disabled {
+  border-color: #FB89AD !important;
+  color: #FB89AD !important;
+}
+.test-panel .btn.btn-quick-reply button.btn-basic:disabled svg path {
+  fill: #FB89AD !important;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight {
+  border: 0;
+  background-color: #F55D8D;
+  color: #fff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight svg path {
+  fill: #fff;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight:hover {
+  background-color: #ED3A72;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight:active {
+  background-color: #E0205C;
+}
+.test-panel .btn.btn-quick-reply button.btn-highlight:disabled {
+  background-color: #FEBBD0 !important;
+}
+
+/* [ 메세지 버튼 스타일 ] */
+.test-panel .message div.btn {
+  margin: 0;
+  padding: 10px;
+}
+.test-panel .message div.btn button {
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.test-panel .message div.btn button:last-child {
+  margin-bottom: 0;
+}
+
+/* 드롭다운 추가 */
+.dropdown-box .dropdown-menu {
+  border-radius: 3px;
+  box-shadow: 0 0 5px -1px rgb(0 0 0 / 20%);
+}
+.dropdown-box .dropdown-menu.top {
+  top: auto;
+  bottom: 60px;
+}
+.dropdown-box .dropdown-menu.twoLines {
+    max-height: 202px;
+}
+.dropdown-box .dropdown-menu.twoLines.top {
+    bottom: 60px;
+}
+.dropdown-box .dropdown-menu.twoLines a {
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.dropdown-box .dropdown-menu.twoLines a:hover,
+.dropdown-box .dropdown-menu.twoLines a:focus {
+    background-color: #f5f5f5;
+}
+.dropdown-box .dropdown-menu.twoLines p {
+    margin: 0;
+    color: #2c2c2c;
+    font-size: 14px;
+}
+.dropdown-box .dropdown-menu.twoLines span {
+    color: #565656;
+    font-size: 12px;
+}
+
+/* input-form 추가 */
+.plugins .input-form.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.plugins .plugin-contents .input-box.top-note {
+  margin-bottom: 20px;
+  padding-bottom: 0;
+}
+
+.plugins .input-form input {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #BEBEBE;
+  border-radius: 3px;
+  background-color: #fff;
+  display: block;
+  color: #2c2c2c;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.05px;
+  box-sizing: border-box;
+}
+.plugins .input-form.searchIcon {
+  border: 1px solid #BEBEBE;
+  border-radius: 3px;
+}
+.plugins .input-form.searchIcon input[type="text"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  border: 0 !important;
+}
+.plugins .input-form .data-wrap {
+  padding: 13px 0;
+  color: #2c2c2c;
+  font-size: 14px;
+}
+.plugins .input-form .data-wrap p {
+  margin: 0;
+  color: #2c2c2c;
+  font-size: 14px;
+}
+.plugins .input-form .data-wrap span {
+  color: #565656;
+  font-size: 12px;
+}
+.plugins .input-form.searchIcon.select input {
+display: none;
+}
+.plugins .input-form.active {
+border: 1px solid #2C2C2C;
+box-shadow: none;
+}
+.plugins .input-form.addValue .searchIcon {
+padding-left: 13px !important;
+background: #F5F5F5 !important;
+}
+
+/* search-input-box 추가 */
+.search-input-box {
+  margin: 10px 0;
+  padding: 0;
+  border: 1px solid #BEBEBE;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+.search-input-box.focus {
+  border-color: #2C2C2C;
+}
+.search-input-box input[type="text"] {
+  border: 0 !important;
+  padding-left: 0 !important;
+  background-color: transparent;
+  color: #565656;
+  font-size: 12px;
+}
+.search-input-box input:first-child {
+  color: #2c2c2c;
+  font-size: 16px;
+}
+.search-input-box .data-wrap {
+  padding: 13px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  top: 0;
+  left: 0;
+}
+.search-input-box .data-wrap p,
+.search-input-box .data-wrap span {
+  margin: 0;
+  color: #565656;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+.search-input-box .data-wrap p {
+  color: #2c2c2c;
+  font-size: 16px;
+}
+
+/* prev-msg 수정 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.prev-msg > a {
+  max-width: max-content;
+}
+
+/* 시스템 담당자 결과 메세지 name 수정 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-list .list-box h1.system, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .profile-one .list-box h1.system {
+  display: block;
+  margin-right: 16px;
+}
+
+/* faq메뉴 btns 간격 수정 */
+.test-panel .panel-wrapper .chat-panel .faq-menu .faq-list .faq-body .btns {
+  margin-bottom: 16px;
+}
+
+/* 기타 추가 스타일 */
+.backBtn {
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+}
+.radio-wrap {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.p-bot-20vh {
+  padding-bottom: 20vh !important;
+}
+.searchIcon {
+  padding-left: 44px !important;
+  padding-right: 13px !important;
+  background: url('https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/search-input.png') #fff !important;
+  background-repeat: no-repeat !important;
+  background-size: 24px !important;
+  background-position: 12px center !important;
+}
+.plugins button.btn-plugin {
+  margin: 16px 0;
+  margin-top: 26px;
+}
+.plugins .plugin-contents .input-box input[type=text], .plugins .plugin-contents .input-box input[type=email], .plugins .plugin-contents .input-box textarea {
+  color: #2c2c2c;
+}
+.plugins .plugin-contents small.note {
+  margin: 10px 0;
+  display: block;
+  color: #F94B50;
+  font-size: 10.5px;
+  line-height: 1.2;
+}
+.plugins .plugin-contents small.note:first-child {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.plugins .btn-plugin.btn-next, .plugins .btn-plugin.btn-apply, .plugins .btn-plugin.btn-close {
+  background-color: #B1053C;
+}
+
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message ~ .custom-message .message.simple-text {
+  margin-top: 0 !important;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .message.simple-text p {
+  margin: 12px !important;
+  color: #2c2c2c;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message > .btn {
+  padding: 0;
+  margin: 12px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message > .btn button {
+  margin-top: 0;
+  padding: 8px;
+  line-height: 22px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message {
+  background-color: #f5f5f5 !important;
+}
+.datepicker-chem .btn-datepicker {
+  margin: 0 16px !important;
+}
+
+
+
