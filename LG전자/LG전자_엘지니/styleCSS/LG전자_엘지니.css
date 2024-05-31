@@ -6302,5 +6302,13 @@ background: #F5F5F5 !important;
   margin: 0 16px !important;
 }
 
-
+/* 240530 [퍼블 추가] */
+/* 일정확인 리스트 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message .schedule-wrap ul.schedule-list li .detail-box {
+  gap: 10px;
+}
+/* 버튼 */
+.test-panel .plugins div.btn {
+  cursor: default;
+}
 
