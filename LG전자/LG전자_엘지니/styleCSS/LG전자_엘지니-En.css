@@ -3611,7 +3611,7 @@ body {
   width: 116px;
   height: 28px;
   height: 2;
-  opacity: 0;
+  /*opacity: 0; */
   transition: opacity 0.3s ease-in-out;
 }
 .test-panel .panel-wrapper .chat-panel .info-area .center img.birthday {

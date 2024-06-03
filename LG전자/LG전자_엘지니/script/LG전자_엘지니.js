@@ -1467,7 +1467,7 @@ function smsCheck() {
     $('#attendees').attr('placeholder', '');
     $('#department').attr('placeholder', '');
   } else {
-    $('#attendees').attr('placeholder', '직원명을 입력해 주세요');
+    $('#attendees').attr('placeholder', '직원명을 입력해 주세요.');
     $('#department').attr('placeholder', '조직명을 입력해 주세요.');
   }
 }
@@ -2323,7 +2323,7 @@ function welcomeAppend(welcomeMessage) {
    
    todayTodo.on('click', function() {
     chatui.sendMessage("오늘 일정");
-    welcomeClick = true;
+    //welcomeClick = true;
    });
 
   if(alarmInfo["schedule"] == 'Y') {
@@ -2362,7 +2362,7 @@ function welcomeAppend(welcomeMessage) {
 
    allNotice.on('click', function() {
     chatui.sendMessage("공지사항");
-    welcomeClick = true;
+    //welcomeClick = true;
    });
 
 
@@ -2452,7 +2452,7 @@ function welcomeAppend(welcomeMessage) {
     welcomeBtns.append(gptBtn);
     welcomeBtns.append(eudBtn);
     //welcomeBtns.append(schBtn);
-    welcomeBtns.append(transBtn);
+    //welcomeBtns.append(transBtn);
     
     welcomeList.append(welcomeBtns);
 

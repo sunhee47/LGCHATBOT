@@ -2190,16 +2190,8 @@ function welcomeAppend(welcomeMessage) {
       console.log(welcomeMessage[0].message);
       appendWelcomeText('안녕하세요, 엘지니입니다.<br/>오늘도 좋은 하루 보내세요!');
   }else{
+      
   if(JSON.parse(welcomeMessage[0].response)) {
-//    var todaySchedule = JSON.parse(welcomeMessage[0].response).template.outputs[0];
-  //var ecmUpdateCount = JSON.parse(welcomeMessage[3].response).template.outputs[0];
-  //var notice  = JSON.parse(welcomeMessage[2].response).template.outputs[0];
-  //var todayBirth  = JSON.parse(welcomeMessage[1].response).template.outputs[0];
-  //var hrInfo  = JSON.parse(welcomeMessage[4].response).template.outputs[0];
-//  var userInfo = JSON.parse(welcomeMessage[1].response).template.outputs[0].data[0]; 
-
-  //var birthDayYn = JSON.parse(welcomeMessage[5].response).template.outputs[0].birthdayYn;
-//  var alarmInfo = JSON.parse(welcomeMessage[2].response).template.outputs[0].data;
 
   var welcomeContent = $('<div class="welcome-contents"></div>');
   var timeNow = $('<h6>'+ dateToStr(new Date()) +'</h6>');
@@ -2243,109 +2235,6 @@ function welcomeAppend(welcomeMessage) {
   //}
   
   var welcomeList = $('<ul></ul>');
-  /*
-  var todayTodo = $('<li>'
-  +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  + '<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#6B6B6B"/>'
-  +'<path d="M12.8791 14.5999L11.1209 14.5999C10.7896 14.5999 10.5209 14.3313 10.5209 13.9999C10.5209 13.6685 10.7896 13.3999 11.1209 13.3999L12.8791 13.3999C13.2104 13.3999 13.4791 13.6685 13.4791 13.9999C13.4791 14.3313 13.2104 14.5999 12.8791 14.5999Z" fill="#6B6B6B"/>'
-  +'<path d="M8.10698 14.5999L6.6 14.5999C6.26863 14.5999 6 14.3313 6 13.9999C6 13.6685 6.26863 13.3999 6.6 13.3999L8.10698 13.3999C8.43835 13.3999 8.70698 13.6685 8.70698 13.9999C8.70698 14.3313 8.43835 14.5999 8.10698 14.5999Z" fill="#6B6B6B"/>'
-  +'<path d="M11.1209 17.5999L12.8791 17.5999C13.2104 17.5999 13.4791 17.3313 13.4791 16.9999C13.4791 16.6685 13.2104 16.3999 12.8791 16.3999L11.1209 16.3999C10.7896 16.3999 10.5209 16.6685 10.5209 16.9999C10.5209 17.3313 10.7896 17.5999 11.1209 17.5999Z" fill="#6B6B6B"/>'
-  +'<path d="M6.6 17.5999L8.10698 17.5999C8.43835 17.5999 8.70698 17.3313 8.70698 16.9999C8.70698 16.6685 8.43835 16.3999 8.10698 16.3999L6.6 16.3999C6.26863 16.3999 6 16.6685 6 16.9999C6 17.3313 6.26863 17.5999 6.6 17.5999Z" fill="#6B6B6B"/>'
-  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5999 2.6C8.5999 2.26863 8.33127 2 7.9999 2C7.66853 2 7.3999 2.26863 7.3999 2.6V4H6C4.34315 4 3 5.34315 3 7V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V7C21 5.34315 19.6569 4 18 4H16.5999V2.6C16.5999 2.26863 16.3313 2 15.9999 2C15.6685 2 15.3999 2.26863 15.3999 2.6V4H8.5999L8.5999 2.6ZM18 5.2H6C5.00589 5.2 4.2 6.00589 4.2 7V9L19.8 9V7C19.8 6.00589 18.9941 5.2 18 5.2ZM4.2 19V10.2L19.8 10.2V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19Z" fill="#6B6B6B"/>'
-  +'</svg>'
-   +'<span class="list-title">오늘의 일정</span>'
-   +'<span class="count"><b>' + (todaySchedule.totalCnt ? todaySchedule.totalCnt : '0' )+ '</b>건</span>'
-   +'<span class="arrow-right">' + arrowRight + '</span>'
-   +'</li>');
-
-   
-   todayTodo.on('click', function() {
-    chatui.sendMessage("오늘의 일정");
-    welcomeClick = true;
-   });
-
-  if(alarmInfo["schedule"] == 'Y') {
-    welcomeList.append(todayTodo); 
-  }
-  */
-  /*
-   var ecmUpdate = $('<li>'
-   +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-   +'<path d="M8 13.4C8 13.0687 8.26863 12.8 8.6 12.8H15.4C15.7314 12.8 16 13.0687 16 13.4C16 13.7314 15.7314 14 15.4 14H8.6C8.26863 14 8 13.7314 8 13.4Z" fill="#6B6B6B"/>'
-   +'<path d="M8.6 15.8C8.26863 15.8 8 16.0687 8 16.4C8 16.7314 8.26863 17 8.6 17H13.4C13.7314 17 14 16.7314 14 16.4C14 16.0687 13.7314 15.8 13.4 15.8H8.6Z" fill="#6B6B6B"/>'
-   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M4 5C4 3.34315 5.34315 2 7 2H12.7574C13.553 2 14.3161 2.31607 14.8787 2.87868L19.1213 7.12132C19.6839 7.68393 20 8.44699 20 9.24264V19C20 20.6569 18.6569 22 17 22H7C5.34315 22 4 20.6569 4 19V5ZM17 20.8H7C6.00589 20.8 5.2 19.9941 5.2 19V5C5.2 4.00589 6.00589 3.2 7 3.2H12.7574C12.8051 3.2 12.8527 3.2019 12.8999 3.20565V7C12.8999 8.1598 13.8401 9.1 14.9999 9.1H18.7943C18.7981 9.14728 18.8 9.19486 18.8 9.24264V19C18.8 19.9941 17.9941 20.8 17 20.8ZM18.2029 7.9L14.0999 3.79696V7C14.0999 7.49706 14.5028 7.9 14.9999 7.9H18.2029Z" fill="#6B6B6B"/>'
-   +'</svg>'
-   +'<span class="list-title">ECM 업데이트</span>'
-   +'<span class="count"><b>' + ecmUpdateCount.totalCnt +'</b>건</span>' 
-   +'<span class="arrow-right">' + arrowRight + '</span>'
-   +'</li>'
-   );
-
-   ecmUpdate.on('click', function() {
-    chatui.sendMessage("ECM 업데이트");
-    welcomeClick = true;
-   });
-
-  if(alarmInfo["favorite"] == 'Y') {
-    welcomeList.append(ecmUpdate);
-  }
-
-   var allNotice = $('<li>'
-   +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-   + '<path fill-rule="evenodd" clip-rule="evenodd" d="M12.4995 17.8474C11.3803 17.3306 10.219 16.9198 9.03082 16.6184C9.13589 18.3636 9.48754 19.7475 9.72656 20.5156C9.94447 21.2158 9.43883 22.0006 8.65011 22.0006H6.43325C5.99256 22.0006 5.57349 21.7335 5.41742 21.2874C5.15375 20.5336 4.56276 18.5754 4.50463 16.0085C4.37456 16.006 4.24441 16.0047 4.11419 16.0047H3.5C2.67157 16.0047 2 15.3331 2 14.5047V7.50468C2 6.67626 2.67157 6.00468 3.5 6.00468H4.09711C7.00105 6.00468 9.87016 5.3723 12.505 4.1515L16.6592 2.22675C17.9847 1.61261 19.5 2.58057 19.5 4.04143V8.04198C20.9188 8.28006 21.9999 9.51402 21.9999 11.0005C21.9999 12.487 20.9188 13.7209 19.5 13.959V17.9538C19.5 19.4135 17.9867 20.3815 16.6615 19.7695L12.4995 17.8474ZM4.11419 14.8047H3.5C3.33431 14.8047 3.2 14.6704 3.2 14.5047V7.50468C3.2 7.339 3.33431 7.20468 3.5 7.20468H4.09711C5.34204 7.20468 6.58093 7.09504 7.79981 6.87883L7.7998 15.1275C6.58642 14.9133 5.35329 14.8047 4.11419 14.8047ZM8.9998 15.3753C10.3729 15.7005 11.7141 16.1629 13.0027 16.758L17.1646 18.68C17.6947 18.9249 18.3 18.5377 18.3 17.9538V4.04143C18.3 3.45708 17.6939 3.0699 17.1637 3.31556L13.0095 5.24031C11.719 5.83823 10.3755 6.30299 8.9998 6.63L8.9998 15.3753ZM19.5 12.7301C20.2508 12.5134 20.7999 11.8211 20.7999 11.0005C20.7999 10.1799 20.2508 9.48757 19.5 9.27087V12.7301ZM5.70651 16.0682C6.41485 16.1247 7.11889 16.219 7.81569 16.3502C7.89754 18.3225 8.28433 19.9023 8.5587 20.8006H6.51893C6.27092 20.0694 5.76931 18.3285 5.70651 16.0682Z" fill="#6B6B6B"/>'
-   + '</svg>'
-   +'<span class="list-title">전사 공지사항</span>'
-   +'<span class="count"><b>'+ notice.totalCnt + '</b>건</span>'
-   +'<span class="arrow-right">' + arrowRight + '</span>'
-   +'</li>');
-
-   allNotice.on('click', function() {
-    chatui.sendMessage("전사 공지사항");
-    welcomeClick = true;
-   });
-
-
-  if(alarmInfo["notice"] == 'Y') {
-    welcomeList.append(allNotice);
-  }
-
-   var todayBirthday = $('<li>'
-   +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M15.5921 8.87659C15.2009 8.81956 14.8629 8.57354 14.6884 8.21882L12.3178 3.39968C12.1868 3.13344 11.8124 3.13344 11.6814 3.39968L9.31081 8.21882C9.13632 8.57354 8.79833 8.81956 8.40715 8.87659L3.10634 9.64937C2.81897 9.69127 2.69307 10.0539 2.91011 10.2661L6.74581 14.0173C7.02752 14.2928 7.15603 14.689 7.08963 15.0774L6.18414 20.3742C6.13233 20.6773 6.44548 20.8893 6.69857 20.7559L11.4398 18.2551C11.7901 18.0703 12.2091 18.0703 12.5595 18.2551L17.3006 20.7559C17.5537 20.8893 17.8669 20.6773 17.8151 20.3742L16.9096 15.0774C16.8432 14.689 16.9717 14.2928 17.2534 14.0173L21.0891 10.2661C21.3061 10.0539 21.1803 9.69127 20.8929 9.64937L15.5921 8.87659ZM13.3946 2.87C12.824 1.71 11.1753 1.71 10.6046 2.87L8.23404 7.68914L2.93323 8.46193C1.65728 8.64794 1.1478 10.2211 2.07109 11.1241L5.90679 14.8752L5.0013 20.172C4.78334 21.4469 6.11718 22.4192 7.25842 21.8173L11.9996 19.3165L16.7408 21.8173C17.882 22.4192 19.2159 21.4469 18.9979 20.172L18.0924 14.8752L21.9281 11.124C22.8514 10.2211 22.3419 8.64794 21.066 8.46193L15.7652 7.68914L13.3946 2.87Z" fill="#6B6B6B"/>'
-   +'</svg>'
-   +'<span class="list-title">금주의 생일 소식</span>'
-   +'<span class="count"><b>' + todayBirth.totalCnt +'</b>건</span>'
-   +'<span class="arrow-right">' + arrowRight + '</span>'
-   +'</li>');
-
-   todayBirthday.on('click', function() {
-    chatui.sendMessage("금주의 생일 소식");
-    welcomeClick = true;
-   });
-   
-  if(alarmInfo["anniversary"] == 'Y') {
-   welcomeList.append(todayBirthday);
-  }
-
-   var hrInfo = $('<li>'
-   +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.4999 9.3C9.49401 9.3 10.2999 8.49411 10.2999 7.5C10.2999 6.50589 9.49401 5.7 8.4999 5.7C7.50579 5.7 6.6999 6.50589 6.6999 7.5C6.6999 8.49411 7.50579 9.3 8.4999 9.3ZM8.4999 10.5C10.1568 10.5 11.4999 9.15685 11.4999 7.5C11.4999 5.84315 10.1568 4.5 8.4999 4.5C6.84305 4.5 5.4999 5.84315 5.4999 7.5C5.4999 9.15685 6.84305 10.5 8.4999 10.5Z" fill="#6B6B6B"/>'
-   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2 17.8C2 14.4311 4.73106 11.7 8.1 11.7H8.9C12.2689 11.7 15 14.4311 15 17.8V18.9C15 19.2314 14.7314 19.5 14.4 19.5C14.0686 19.5 13.8 19.2314 13.8 18.9V17.8C13.8 15.0939 11.6062 12.9 8.9 12.9H8.1C5.3938 12.9 3.2 15.0939 3.2 17.8V18.9C3.2 19.2314 2.93137 19.5 2.6 19.5C2.26863 19.5 2 19.2314 2 18.9V17.8Z" fill="#6B6B6B"/>'
-   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M15.9999 10.3C16.7179 10.3 17.2999 9.71797 17.2999 9C17.2999 8.28203 16.7179 7.7 15.9999 7.7C15.2819 7.7 14.6999 8.28203 14.6999 9C14.6999 9.71797 15.2819 10.3 15.9999 10.3ZM15.9999 11.5C17.3806 11.5 18.4999 10.3807 18.4999 9C18.4999 7.61929 17.3806 6.5 15.9999 6.5C14.6192 6.5 13.4999 7.61929 13.4999 9C13.4999 10.3807 14.6192 11.5 15.9999 11.5Z" fill="#6B6B6B"/>'
-   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M14.7998 13.3C14.7998 12.9687 15.0684 12.7 15.3998 12.7H16.3999C19.4927 12.7 21.9999 15.2073 21.9999 18.3V18.9C21.9999 19.2314 21.7313 19.5 21.3999 19.5C21.0685 19.5 20.7999 19.2314 20.7999 18.9V18.3C20.7999 15.87 18.83 13.9 16.3999 13.9H15.3998C15.0684 13.9 14.7998 13.6314 14.7998 13.3Z" fill="#6B6B6B"/>'
-   +'</svg>'
-   +'<span class="list-title">팀 휴가/FlexTime 정보</span>'
-   +'<span class="count"><b>' + (hrInfo["totalCnt"] ? hrInfo["totalCnt"]: 0) +'</b>건</span>'
-   +'<span class="arrow-right">' + arrowRight + '</span>'
-   +'</li>');
-
-   hrInfo.on('click', function() {
-    chatui.sendMessage("HR 정보");
-    welcomeClick = true;
-   });
-   
-   welcomeList.append(hrInfo);
-*/
 
     var welcomeBtns = $('<div class="btn btn-quick-reply"></div>');
     
@@ -2392,6 +2281,7 @@ function welcomeAppend(welcomeMessage) {
 
   descendScroll();
   }
+
   }
 }
 
@@ -2685,7 +2575,7 @@ jQuery(document).ready(function(e){
   + '</svg>      '
   +'</div>'
   +'<div class="center">'
-  +   '<img src="'+imgBaseUrl+'/images/LogoSample.png" />'
+  +   '<img src="'+imgBaseUrl+'/images/LogoSample.png"/>'
 //  +   '<img src="'+imgBaseUrl+'/images/Header_smile_right%20align.png" />'
   +'</div>'
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
@@ -3676,6 +3566,12 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       welcomeClick = false;
     }
 
+    // 대화 내용 중 A링크 새창으로 띄우기 위해서 처리함. 
+    //console.log($('.chat-message .message .message-content').last().html());
+    //console.log('content >>> '+$('.chat-message .message .message-content').length);
+    var lastLeftMessage = $('.chat-message.left').last();
+    newWindowForLink(lastLeftMessage);
+
 
     $('.btn-system').on('click', function() {
       var systemSelect = $(this).data('system');
@@ -3718,6 +3614,48 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 
   }, 100)
   
+    // [퍼블 수정_240528 (스크롤 이동_커스텀)]
+    setTimeout(function() {
+        var sclTarget = $('#divScroll');
+        if (sclTarget.find('.chat-message').hasClass('right')) {
+            var sclHeight = sclTarget.prop('scrollHeight');
+            var lastLeftMsg = sclTarget.find('.chat-message.left').last().height();
+            var lastRightMsg = sclTarget.find('.chat-message.right').last().height();
+            console.log('스크롤', sclHeight, lastLeftMsg, lastRightMsg);
+            sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg - 230);
+        }
+    },100);
+  
+}
+
+function newWindowForLink(lastLeftMessage) {
+    var childMessages = lastLeftMessage.children('.message');
+    
+    console.log('길이 : '+lastLeftMessage.children('.message').length);
+    
+    for(var m=0; m<childMessages.length; m++) {
+        var childMessage = childMessages[m];
+        var atag = $(childMessage).find('.message-content > a');
+    
+        //var atag = $(childMessage).children('.message-content').children('a');
+        //console.log(atag.length);
+
+        for(var i=0; i<atag.length; i++) {
+            var element = atag[i];
+            console.log($(element).attr('href'));
+            
+            var link = $(element).attr('href');
+            var clickValue = 'window.open("'+link+'", "title'+i+'", "location=0,status=0,toolbar=0", "_blank")';
+
+            $(element).removeAttr('href');
+            $(element).removeAttr('target');
+
+            $(element).attr('href', '#');
+            $(element).attr('onClick', clickValue);
+            
+        }            
+    }
+    
 }
 
 /**
