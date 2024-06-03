@@ -77,6 +77,10 @@ function resGptAllText(text, gubun) {
     dictDetail.append(dictDetail1);
     dictDetail.append(dictDetail2);
 
+    /////////////////////////////////////// highlight 적용....
+    highlightCodeBlock(dictDetail);
+    ///////////////////////////////////////
+
     $('.test-panel').append(pulginDim);
     $('.test-panel').append(dictDetail);
 
@@ -820,9 +824,21 @@ chatui.onLoad = function(){
 
     });
 
+    var hlscriptSrc = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+    loadScript(hlscriptSrc, function() {
+        // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+    });
 
 };
 
+function loadScript(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    
+    script.onload = () => callback(script);
+    
+    document.head.appendChild(script);
+}
 
 var saveQuestion = false;
 
@@ -1162,6 +1178,10 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
 
             customMessage.append(messages);
             customMessage.append(checkContents);
+            
+            /////////////////////////////////////// highlight 적용....
+            highlightCodeBlock(customMessage);
+            ///////////////////////////////////////
 
         }else if(customPayload.type == 'callGpt') {
             var reqMsg = customPayload.template.outputs[0].data.message;
@@ -1508,6 +1528,78 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
     }
 
 }
+
+/*
+ * 코드 블럭이 있는 경우 
+ * 코드 블럭에 highlight 적용
+ */
+function highlightCodeBlock($customMessage) {
+    
+    //console.log('....'+$customMessage.find('pre > code').length);
+    //var $answerText = $customMessage.find('#answer-message').find('.check-text');
+    var $answerText = $customMessage.find('.hidden-text');
+
+    $answerText.find('pre > code').each(function() {
+        var codehtml = $(this).text();
+        console.log('codeHtml : '+codehtml);
+        
+        let codeLang = $(this).attr('class');
+        
+        if(codeLang == "undefined" || codeLang == null) {
+            codeLang = "language-xml";
+            $(this).addClass(codeLang);
+        }
+        
+        let realLang = isIncludeLanguage(codeLang);
+        
+        $(this).empty();
+        $(this).attr('data-highlighted', 'yes').addClass('hljs');
+            
+        $(this).before('<div class="code-language" style="text-align: right; padding-right: 10px;"><small class="code-language-text" style="font-weight: bold;"><span class="sr-only">Language:</span>'+realLang+'</small></div>');
+        $(this).append(hljs.highlight(codehtml, { language: realLang }).value);
+    });
+}
+
+const languageMap = new Map([
+  ["python", "PYTHON"],
+  ["파이썬", "PYTHON"],
+  ["파이선", "PYTHON"],
+  ["javascript", "JAVASCRIPT"], 
+  ["자바스크립트", "JAVASCRIPT"], 
+  ["JavaScript", "JAVASCRIPT"], 
+  ["js", "JAVASCRIPT"], 
+  ["java", "JAVA"], 
+  ["자바", "JAVA"], 
+  ["json", "JSON"], 
+  ["css", "CSS"],  
+  ["CSS", "CSS"],  
+  ["html", "HTML"], 
+  ["HTML", "HTML"],
+  ["xml", "XML"], 
+  ["SQL", "SQL"], 
+  ["sql", "SQL"], 
+  ["C++", "C++"],  
+  ["c++", "C++"],  
+  ["C언어", "C"],  
+  ["c언어", "C"]  
+  //,["C", "c"],  
+  //,["c", "c"] 
+]);
+
+function isIncludeLanguage(cont) {
+  var retVal = "";
+  
+  if(cont == "undefined" || cont == null) {
+      return retVal;
+  }
+  
+  for (let [key, value] of languageMap) {
+    if(cont.lastIndexOf(key) > -1)  {
+      return value;
+    }    
+  }
+}
+
 /********************************************************** element *************************************************************************************/
 var loadEl = {
     'gpt_bot_close': function(popTitle, msg) {
