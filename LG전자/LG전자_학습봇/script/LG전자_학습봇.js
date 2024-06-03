@@ -157,7 +157,8 @@ function sendCheckCharge() {
 
   var requestParam = {
     query: {
-      "event": "save_answer_confirm"
+      "event": "save_answer_confirm",
+      "languageCode":languageCode
     },
     payload :{
       "assigneeYn": assigneeYn,
