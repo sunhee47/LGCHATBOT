@@ -78,7 +78,7 @@ function resGptAllText(text, gubun) {
     dictDetail.append(dictDetail2);
 
     /////////////////////////////////////// highlight 적용....
-    highlightCodeBlock(dictDetail);
+    // highlightCodeBlock(dictDetail);
     ///////////////////////////////////////
 
     $('.test-panel').append(pulginDim);
@@ -747,7 +747,7 @@ chatui.onLoad = function(){
         }
 
         resizeTA(this);
-        if(checkByteSize(val,4000)){
+        if(checkByteSize(val,8000)){
             $('.sendText').focus();
             return;
         }
@@ -782,7 +782,7 @@ chatui.onLoad = function(){
 
     $('.btn-send').on('click', function(e) {
       var val = $('.sendText').val();
-      if(checkByteSize(val,4000)){
+      if(checkByteSize(val,8000)){
           $('.sendText').focus();
           return;
       } else {
@@ -825,9 +825,9 @@ chatui.onLoad = function(){
     });
 
     var hlscriptSrc = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
-    loadScript(hlscriptSrc, function() {
+    //loadScript(hlscriptSrc, function() {
         // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
-    });
+    //});
 
 };
 
@@ -1180,7 +1180,7 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
             customMessage.append(checkContents);
             
             /////////////////////////////////////// highlight 적용....
-            highlightCodeBlock(customMessage);
+            // highlightCodeBlock(customMessage);
             ///////////////////////////////////////
 
         }else if(customPayload.type == 'callGpt') {
