@@ -743,7 +743,7 @@ chatui.onLoad = function(){
         }
 
         resizeTA(this);
-        if(checkByteSize(val,4000)){
+        if(checkByteSize(val,8000)){
             $('.sendText').focus();
             return;
         }
@@ -778,7 +778,7 @@ chatui.onLoad = function(){
 
     $('.btn-send').on('click', function(e) {
       var val = $('.sendText').val();
-      if(checkByteSize(val,4000)){
+      if(checkByteSize(val,8000)){
           $('.sendText').focus();
           return;
       } else {
