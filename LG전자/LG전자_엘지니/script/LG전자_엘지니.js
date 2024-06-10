@@ -2712,50 +2712,50 @@ var targetParent = null;
 let checkUserEvent = "checkUser";
 jQuery(document).ready(function(e){
     
-    ////////// 사용 제한 
+//     ////////// 사용 제한 
     
-    console.log('languageCode : '+chatui.getSetting("languageCode"));
-    if(chatui.getSetting("languageCode") !== "ko"){
-        console.log("챗봇 이동")
-        openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'));
-    }
-    var sessionId = chatui.getSessionId();
+//     console.log('languageCode : '+chatui.getSetting("languageCode"));
+//     if(chatui.getSetting("languageCode") !== "ko"){
+//         console.log("챗봇 이동")
+//         openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'));
+//     }
+//     var sessionId = chatui.getSessionId();
     
-    var reqHeader = {};
-    reqHeader["Content-Type"] = "application/json",
-    reqHeader.Authorization = "Bearer " + chatui.getSetting("apiToken"),
-    sessionId && (reqHeader["X-CHATBOT-SESSION"] = sessionId);
-    var requestParam = {
-        "query": {
-            "event": checkUserEvent,
-            "languageCode":"ko"
-        },
-        "payload": {
-            "userId": chatui.getSetting('userId')
-        }
-    }
+//     var reqHeader = {};
+//     reqHeader["Content-Type"] = "application/json",
+//     reqHeader.Authorization = "Bearer " + chatui.getSetting("apiToken"),
+//     sessionId && (reqHeader["X-CHATBOT-SESSION"] = sessionId);
+//     var requestParam = {
+//         "query": {
+//             "event": checkUserEvent,
+//             "languageCode":"ko"
+//         },
+//         "payload": {
+//             "userId": chatui.getSetting('userId')
+//         }
+//     }
     
-    var response;
-    $.ajax({
-        type: 'POST',
-	    url: chatui.getSetting("chatApiUrl") + "/gateway",
-	    headers: reqHeader,
-	    dataType: 'json',
-	    contentType: "application/json",
-	    data: JSON.stringify(requestParam),
-	    async: false,
-	    success: function(payload, textStatus, jqXHR) {
-            response = JSON.parse(payload.queryResult.messages[0].response);
-            console.log(payload.queryResult.messages[0].response);
-        }
-	});
-    console.log(response.result);
-    if(response.result.accessYn === 'false'){
-        alert("챗봇 사용 대상자가 아닙니다. (Not eligible for use chatbot.)");
-        window.close();
-    } else if (response.result.localeKoYn === 'false'){
-        openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'))
-    }
+//     var response;
+//     $.ajax({
+//         type: 'POST',
+// 	    url: chatui.getSetting("chatApiUrl") + "/gateway",
+// 	    headers: reqHeader,
+// 	    dataType: 'json',
+// 	    contentType: "application/json",
+// 	    data: JSON.stringify(requestParam),
+// 	    async: false,
+// 	    success: function(payload, textStatus, jqXHR) {
+//             response = JSON.parse(payload.queryResult.messages[0].response);
+//             console.log(payload.queryResult.messages[0].response);
+//         }
+// 	});
+//     console.log(response.result);
+//     if(response.result.accessYn === 'false'){
+//         alert("챗봇 사용 대상자가 아닙니다. (Not eligible for use chatbot.)");
+//         window.close();
+//     } else if (response.result.localeKoYn === 'false'){
+//         openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'))
+//     }
     
     ////////// 사용 제한 
     
@@ -6463,7 +6463,9 @@ function connectMessenger(userId, targetId){
 
   var moreInfos = $('<div class="more-infos"></div>');
   var moreInfoList = $('<ul class="p-info"></ul>');
-  var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') + '</span></li>');
+  var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') 
+                + '&nbsp;<a href="#"><img src="'+imgBaseUrl+'/images/copy.png" style="width:16px;height:16px;vertical-align: top;color:#6b6b6b;"/></a></span></li>');
+                
   moreInfoList.append(email);
   //메일 버튼 제거 및 임직원 / 그룹사 조회 간 항목 수정
   if(data.group == 'Y' ) {
@@ -6476,6 +6478,20 @@ function connectMessenger(userId, targetId){
 
   var isMobile = Mobile();
 
+    email.find('img').click(function() {
+        //console.log($(this).attr('src'));
+        //console.log($(this).parents('li').find('.info').text());
+        
+        var emailAddr = $(this).parents('li').find('.info').text().trim();
+        var temp = $('<textarea type="text" class="hidden-textbox" />');
+        $("body").append(temp);
+        temp.val(emailAddr).select();
+        document.execCommand('copy');
+        showHtmlSmallDialog(temp);
+        temp.remove();
+
+        showHtmlSmallDialog('E-mail 주소가 복사되었습니다.');
+    });	
 	
 	var userId = data.empMail.split("@");
     //console.log('data.userId : '+data.userId+', data.targetId : '+data.targetId+', userId : '+userId[0]);	
