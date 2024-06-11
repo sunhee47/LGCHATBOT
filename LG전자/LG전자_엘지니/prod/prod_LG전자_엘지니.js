@@ -2454,7 +2454,7 @@ function welcomeAppend(welcomeMessage) {
     });
     
     welcomeBtns.append(gptBtn);
-    welcomeBtns.append(eudBtn);
+    //welcomeBtns.append(eudBtn);
     //welcomeBtns.append(schBtn);
     //welcomeBtns.append(transBtn);
     
