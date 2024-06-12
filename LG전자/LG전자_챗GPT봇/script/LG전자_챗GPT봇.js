@@ -747,7 +747,7 @@ chatui.onLoad = function(){
         }
 
         resizeTA(this);
-        if(checkByteSize(val,8000)){
+        if(checkByteSize(val,16000)){
             $('.sendText').focus();
             return;
         }
@@ -782,7 +782,7 @@ chatui.onLoad = function(){
 
     $('.btn-send').on('click', function(e) {
       var val = $('.sendText').val();
-      if(checkByteSize(val,8000)){
+      if(checkByteSize(val,16000)){
           $('.sendText').focus();
           return;
       } else {
@@ -1131,13 +1131,14 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
             var checkContents;
             var messages = $('<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color">'+convert(gptLang.git_answer2)+'</div>');
 
-            if(checkContentsText.length>viewLimit){
-                checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
-                    +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
-            }else{
+            // GPT 답변 무조건 다 보여주기 
+            //if(checkContentsText.length>viewLimit){
+            //    checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
+            //        +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
+            //}else{
                 checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
                     +checkContentsText+'</span></div>');
-            }
+            //}
             var statusMessageCopy = $('<div class="copy-question"></div>');
             var messageCopyTooltip = $('<div class="f-tooltip">ChatGPT '+convert(gptLang.gpt_copyall)+'</div>');
             statusMessageCopy.append(messageCopyTooltip);
@@ -1171,7 +1172,9 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
                 //   $(this).remove();
             });
 
-            checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
+            // GPT 답변 무조건 다 보여주기 
+            //checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
+            checkContents.append(statusMessageCopy.append(copyButton));
 
             // requestCheck.append(checkContents);
             // customMessage.append(requestCheck);
