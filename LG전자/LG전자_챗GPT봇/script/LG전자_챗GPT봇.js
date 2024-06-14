@@ -761,10 +761,16 @@ chatui.onLoad = function(){
               $('.sendText').val('');
               $('.btn-send').removeClass('active');
               setTimeout(function() {
-                  var keyWord = chkSecureText(val);
+                  var keyWord = '';  // chkSecureText(val);       // 보안키워드 체크 제외.
+
+                  org_chgVal = replaceHtmlCodeForChar(orgVal);
+                  chgVal = replaceHtmlCodeForChar(val);
+                  //chgVal = he.encode(val);
+                  //chgVal = chgVal.replace(/\(/g,"&#40;").replace(/\)/g,"&#41;");
+                  console.log('chgVal : '+chgVal);
                   secBtnDisable();
-                  appendQueryText(orgVal);
-                  chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":orgVal,"keyWord":keyWord});
+                  appendQueryText(org_chgVal);
+                  chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":chgVal,"keyWord":keyWord});
               }, 100);
           }
       }
@@ -790,10 +796,15 @@ chatui.onLoad = function(){
               $('.sendText').val('');
               $('.btn-send').removeClass('active');
               setTimeout(function() {
-                  var keyWord = chkSecureText(val);
+                  var keyWord = '';  //chkSecureText(val);       // 보안키워드 체크 제외.
+                  
+                  chgVal = replaceHtmlCodeForChar(val);
+                  //chgVal = he.encode(val);
+                  //chgVal = chgVal.replace(/\(/g,"&#40;").replace(/\)/g,"&#41;");
+                  console.log('chgVal : '+chgVal);                  
                   secBtnDisable();
-                  appendQueryText(val);
-                  chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":val,"keyWord":keyWord});
+                  appendQueryText(chgVal);
+                  chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":chgVal,"keyWord":keyWord});
               }, 100);
           }
           
@@ -825,7 +836,15 @@ chatui.onLoad = function(){
     });
 
     var hlscriptSrc = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+    //var htmlentitiesSrc = 'https://cdn.jsdelivr.net/npm/html-entities@2.5.2/lib/named-references.js';
+    //var htmlentitiesSrc = 'https://cdn.jsdelivr.net/npm/html-entities@1.2.1/lib/html4-entities.min.js';
+    var htmlentitiesSrc = 'https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.js';
+
     //loadScript(hlscriptSrc, function() {
+        // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+    //});
+
+    //loadScript(htmlentitiesSrc, function() {
         // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
     //});
 
@@ -839,6 +858,26 @@ function loadScript(src, callback) {
     
     document.head.appendChild(script);
 }
+
+// 발화내용 중 특수문자 포함된 경우 html 코드로 치환.
+function replaceHtmlCodeForChar(val) {
+    let chgVal = val.replace(/\(/g,"&#40;")
+                .replace(/\)/g,"&#41;")
+                .replace(/\"/gi,"&quot;")
+                .replace(/\'/gi,"&#39;")
+//                .replace(/\#/g,"&#35;")           // 치환한 html 문자에 포함되어 있어서 일단 제외함. 
+                .replace(/\$/g,"&#36;")
+                .replace(/\./g,"&#46;")
+                .replace(/\%/g,"&#37;")
+                .replace(/\</g,"&#60;")
+                .replace(/\>/g,"&#62;")
+                .replace(/\[/g,"&#91;")
+                .replace(/\]/g,"&#93;")
+                .replace(/\{/g,"&#123;")
+                .replace(/\}/g,"&#125;");
+                
+    return chgVal;
+} 
 
 var saveQuestion = false;
 
