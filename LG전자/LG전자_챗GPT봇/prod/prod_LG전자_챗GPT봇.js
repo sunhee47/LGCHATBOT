@@ -757,10 +757,15 @@ chatui.onLoad = function(){
               $('.sendText').val('');
               $('.btn-send').removeClass('active');
               setTimeout(function() {
-                  var keyWord = chkSecureText(val);
+                  var keyWord = '';  // chkSecureText(val);       // 보안키워드 체크 제외.
+
+                  org_chgVal = replaceHtmlCodeForChar(orgVal);
+                  chgVal = replaceHtmlCodeForChar(val);
+                  console.log('chgVal : '+chgVal);
                   secBtnDisable();
-                  appendQueryText(orgVal);
-                  chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":orgVal,"keyWord":keyWord});
+                  appendQueryText(org_chgVal);
+                  chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":chgVal,"keyWord":keyWord});
+                  
               }, 100);
           }
       }
@@ -786,10 +791,14 @@ chatui.onLoad = function(){
               $('.sendText').val('');
               $('.btn-send').removeClass('active');
               setTimeout(function() {
-                  var keyWord = chkSecureText(val);
+                  var keyWord = '';  //chkSecureText(val);       // 보안키워드 체크 제외.
+                  
+                  chgVal = replaceHtmlCodeForChar(val);
+                  console.log('chgVal : '+chgVal);                  
                   secBtnDisable();
-                  appendQueryText(val);
-                  chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":val,"keyWord":keyWord});
+                  appendQueryText(chgVal);
+                  chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":chgVal,"keyWord":keyWord});
+                  
               }, 100);
           }
           
@@ -823,6 +832,25 @@ chatui.onLoad = function(){
 
 };
 
+// 발화내용 중 특수문자 포함된 경우 html 코드로 치환.
+function replaceHtmlCodeForChar(val) {
+    let chgVal = val.replace(/\(/g,"&#40;")
+                .replace(/\)/g,"&#41;")
+                .replace(/\"/gi,"&quot;")
+                .replace(/\'/gi,"&#39;")
+//                .replace(/\#/g,"&#35;")           // 치환한 html 문자에 포함되어 있어서 일단 제외함. 
+                .replace(/\$/g,"&#36;")
+                .replace(/\./g,"&#46;")
+                .replace(/\%/g,"&#37;")
+                .replace(/\</g,"&#60;")
+                .replace(/\>/g,"&#62;")
+                .replace(/\[/g,"&#91;")
+                .replace(/\]/g,"&#93;")
+                .replace(/\{/g,"&#123;")
+                .replace(/\}/g,"&#125;");
+                
+    return chgVal;
+} 
 
 var saveQuestion = false;
 
@@ -1115,13 +1143,13 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
             var checkContents;
             var messages = $('<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color">'+convert(gptLang.git_answer2)+'</div>');
 
-            if(checkContentsText.length>viewLimit){
-                checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
-                    +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
-            }else{
+            //if(checkContentsText.length>viewLimit){
+            //    checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
+            //        +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
+            //}else{
                 checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
                     +checkContentsText+'</span></div>');
-            }
+            //}
             var statusMessageCopy = $('<div class="copy-question"></div>');
             var messageCopyTooltip = $('<div class="f-tooltip">ChatGPT '+convert(gptLang.gpt_copyall)+'</div>');
             statusMessageCopy.append(messageCopyTooltip);
@@ -1155,8 +1183,9 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
                 //   $(this).remove();
             });
 
-            checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
-
+            //checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
+            checkContents.append(statusMessageCopy.append(copyButton));
+            
             // requestCheck.append(checkContents);
             // customMessage.append(requestCheck);
 
