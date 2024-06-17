@@ -834,11 +834,12 @@ chatui.onLoad = function(){
 
 // 발화내용 중 특수문자 포함된 경우 html 코드로 치환.
 function replaceHtmlCodeForChar(val) {
-    let chgVal = val.replace(/\(/g,"&#40;")
+    let chgVal = val.replace(/\&/g,"&amp;")              // &#38; 
+                .replace(/\#/g,"&#35;")           // 치환한 html 문자에 포함되어 있어서 제일 먼저 치환함. 
+                .replace(/\(/g,"&#40;")
                 .replace(/\)/g,"&#41;")
-                .replace(/\"/gi,"&quot;")
+                .replace(/\"/gi,"&quot;")               // 	&#34;
                 .replace(/\'/gi,"&#39;")
-//                .replace(/\#/g,"&#35;")           // 치환한 html 문자에 포함되어 있어서 일단 제외함. 
                 .replace(/\$/g,"&#36;")
                 .replace(/\./g,"&#46;")
                 .replace(/\%/g,"&#37;")
@@ -847,8 +848,23 @@ function replaceHtmlCodeForChar(val) {
                 .replace(/\[/g,"&#91;")
                 .replace(/\]/g,"&#93;")
                 .replace(/\{/g,"&#123;")
-                .replace(/\}/g,"&#125;");
-                
+                .replace(/\}/g,"&#125;")
+                .replace(/\!/g,"&#33;")
+                .replace(/\*/g,"&#42;")
+                .replace(/\+/g,"&#43;")
+                .replace(/\,/g,"&#44;")
+                .replace(/\-/g,"&#45;")
+                .replace(/\//g,"&#47;")
+                .replace(/\:/g,"&#58;")
+                //.replace(/\;/g,"&#59;")       // 처리시 모든 특수문자뒤에 세미콜론이 붙는다...
+                .replace(/\=/g,"&#61;")
+                .replace(/\?/g,"&#63;")
+                .replace(/\@/g,"&#64;")
+                .replace(/\\/g,"&#92;")
+                .replace(/\^/g,"&#94;")
+                .replace(/\`/g,"&#96;")
+                .replace(/\~/g,"&#126;");
+
     return chgVal;
 } 
 
@@ -1143,13 +1159,13 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
             var checkContents;
             var messages = $('<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color">'+convert(gptLang.git_answer2)+'</div>');
 
-            //if(checkContentsText.length>viewLimit){
-            //    checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
-            //        +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
-            //}else{
+            if(checkContentsText.length>viewLimit){
+                checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
+                    +checkContentsText.substr(0,viewLimit)+"..."+'</span></div>');
+            }else{
                 checkContents = $('<div class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color"><span class="check-text hidden-text">'
                     +checkContentsText+'</span></div>');
-            //}
+            }
             var statusMessageCopy = $('<div class="copy-question"></div>');
             var messageCopyTooltip = $('<div class="f-tooltip">ChatGPT '+convert(gptLang.gpt_copyall)+'</div>');
             statusMessageCopy.append(messageCopyTooltip);
@@ -1183,8 +1199,8 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
                 //   $(this).remove();
             });
 
-            //checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
-            checkContents.append(statusMessageCopy.append(copyButton));
+            checkContentsText.length>viewLimit?checkContents.append(seeMore):checkContents.append(statusMessageCopy.append(copyButton));
+            //checkContents.append(statusMessageCopy.append(copyButton));
             
             // requestCheck.append(checkContents);
             // customMessage.append(requestCheck);
