@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap");
 /* GPT 고도화 highlight 적용 */
-/* @import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"); */ 
+@import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"); 
 
 .ex-slide-box {
   width: 100%;
@@ -1222,10 +1222,26 @@
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .profile + .custom-message .custom-quick-reply {
   margin-left: 0;
 }
-.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message, .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message {
+/* 24.06.07 반응형 웹 추가 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left {
+  float: none;
+}
+/* 24.06.07 반응형 웹 분리 전 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message {
   /*width: 280px;*/
   max-width: 50px;
   max-width: 280px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #2C2C2C;
+  border-radius: 16px;
+  padding: 12px;
+  background-color: #F2F2F2 !important;
+}
+/* 24.06.07 반응형 웹 분리 후 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message {
+  max-width: 85%;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
@@ -1455,8 +1471,10 @@
   margin-left: 40px;
 }
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-message .answer-message {
-  width: 280px;
-  max-width: 280px;
+  width: 100%;                  /* 24.06.07 반응형 웹 추가 */
+  max-width: 100%;              /* 24.06.07 반응형 웹 추가 */
+/*  width: 280px;
+  max-width: 280px; */          /* 24.06.07 반응형 웹 제외 */
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
