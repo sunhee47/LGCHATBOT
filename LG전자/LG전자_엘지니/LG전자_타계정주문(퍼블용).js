@@ -3420,20 +3420,6 @@ chatui.onReceiveResponse = function(resp, isHistory) {
    console.log("chatui.onReceiveResponse", resp, isHistory);
    
    
-    // 스크롤 이동_리뉴얼
-    setTimeout(function() {
-        var sclTarget = $('#divScroll');
-        if (sclTarget.find('.chat-message').hasClass('right')) {
-            var sclHeight = sclTarget.prop('scrollHeight');
-            var lastLeftMsg = sclTarget.find('.chat-message.left').last().height();
-            var lastRightMsg = sclTarget.find('.chat-message.right').last().height();
-            console.log('스크롤', sclHeight, lastLeftMsg, lastRightMsg);
-            sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg)
-        }
-    },500);
-
-
-
    setTimeout(function() {
 
     // if(resp.response.query.text =="GPT 모드"){
@@ -3445,7 +3431,7 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       
         // [테스트 용으로 사용_시작점]
 
-		makeAnotherAccountOrderCard();
+		//makeAnotherAccountOrderCard();
 
 		// [테스트 용으로 사용_종료점]
       
@@ -3453,6 +3439,12 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       return;
     }
 
+    if(resp.response.queryResult.intent.name == '기능_타계정주문_메뉴') {
+        makeAnotherAccountOrderCard();
+        
+        //return;
+    }
+    
     if(resp.response.query.event == 'sendSmsNew') {
       sendSmsNewAppend(resp.response.queryResult);
       return;
@@ -3613,6 +3605,19 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 
   }, 100)
   
+    // 스크롤 이동_리뉴얼
+    // [퍼블 수정_240528 (스크롤 이동_커스텀)]
+    setTimeout(function() {
+        var sclTarget = $('#divScroll');
+        if (sclTarget.find('.chat-message').hasClass('right')) {
+            var sclHeight = sclTarget.prop('scrollHeight');
+            var lastLeftMsg = sclTarget.find('.chat-message.left').last().height();
+            var lastRightMsg = sclTarget.find('.chat-message.right').last().height();
+            console.log('스크롤', sclHeight, lastLeftMsg, lastRightMsg);
+            sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg - 230);
+        }
+    },100);
+
 }
 
 /**
@@ -3623,8 +3628,6 @@ chatui.onReceiveResponse = function(resp, isHistory) {
         var e = document.getElementById("divScroll");
         e.scrollTop = e.scrollHeight
         
-        console.log('sssss', e.scrollTop)
-        console.log('하하')
     }, 50)
 }
 
@@ -7695,6 +7698,15 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'budgetResultError') {                    // 예산조회 실패
           messageCard = budgetResultError(message.data); 
     	}
+        else if(message.type == 'anotherBudgetInput') {                    // 타계정 부서예산조회
+          messageCard = makeCardGBMS(message.data); 
+    	}
+        else if(message.type == 'anotherApmsInput') {                    // 타계정 광고판촉비조회
+          messageCard = makeCardAPMS(message.data); 
+    	}
+        else if(message.type == 'anotherOrderInputStep1') {                    // 타계정 주문 입력
+          messageCard = makeCardAnotherAccountOrder(message.data); 
+    	}
         else {
           console.log(message.type);
         }
@@ -9624,6 +9636,10 @@ var popBackBtn = '<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xm
 /* ########### 타계정 추가 ########### */
 /* ##### [ 타계정 주문_메인 메세지 카드 ] ##### */
 function makeAnotherAccountOrderCard() {
+    
+    var html = $('.chat-message.left').last().find('.message').remove();
+    //console.log('html : '+html);
+    
     var anotherAccountOrderResultMessage = $(
         '<div class="message simple-text">'
             +'<p>'
@@ -9650,28 +9666,32 @@ function makeAnotherAccountOrderCard() {
         console.log('타계정 주문 절차 및 가이드 클릭');
     })
     gbmsBtn.on('click', function() { // console.log('부서 예산(GBMS) 조회 클릭');
-        $('.chat-message.left').last().append(makeCardGBMS());
-        gbmsPopupOpen();
+        //$('.chat-message.left').last().append(makeCardGBMS());
+        //gbmsPopupOpen();
+        chatui.sendMessage("부서예산(GBMS) 조회");
     })
     apmsBtn.on('click', function() { // console.log('광고판촉비(APMS) 조회 클릭');
-        $('.chat-message.left').last().append(makeCardAPMS());
-        apmsPopupOpen();
+        //$('.chat-message.left').last().append(makeCardAPMS());
+        //apmsPopupOpen();
+        chatui.sendMessage("광고판촉비(APMS) 조회");        
     })
     orderInputBtn.on('click', function() { // console.log('타계정 주문 입력 클릭');
-        $('.chat-message.left').last().append(makeCardAnotherAccountOrder()); // 조회
-        anotherAccountPopupOpen();
+        //$('.chat-message.left').last().append(makeCardAnotherAccountOrder()); // 조회
+        //anotherAccountPopupOpen();
+        chatui.sendMessage("타계정 주문 입력");   
     })
     orderListViewBtn.on('click', function() { // console.log('타계정 주문 현황 조회 클릭');
         $('.chat-message.left').last().append(makeCardAALV());
         anotherAccountListViewPopupOpen();
     })
-    $('.chat-message.left').last().append(anotherAccountOrderResultMessage);
+    $('.chat-message.left').last().find('.profile').after(anotherAccountOrderResultMessage);
+
 }
 
 /* ##### [ 타계정 팝업 ] ##### */
 // [ 타계정 주문 입력 팝업 ]
 var anotherAccountOrderForm;
-function anotherAccountPopupOpen() {
+function anotherAccountPopupOpen(orderdata) {
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
     var addPlugin = $('<div class="plugins another-account-order" id="another-account-order"></div>');
@@ -9695,8 +9715,9 @@ function anotherAccountPopupOpen() {
 
     /* #########[ popup_content_wrap ]######### */
     var pluginContents = $('<div class="plugin-contents"></div>');
-    anotherAccountOrderFirst();
-    pluginContents.append(anotherAccountOrderForm);
+    var anotherForm = anotherAccountOrderFirst(orderdata);
+    pluginContents.append(anotherForm);
+    //pluginContents.append(anotherAccountOrderForm);
     addPlugin.append(pluginContents);
 
     /* #########[ popup_wrap_end ]######### */
@@ -9711,7 +9732,13 @@ function anotherAccountPopupOpen() {
 }
 
 // 타계정 주문 입력 팝업 컨텐츠 1
-function anotherAccountOrderFirst() {
+function anotherAccountOrderFirst(orderdata) {
+    console.log('orderdata : ', orderdata);
+    //console.log('anotherAccountOrderForm : ', anotherAccountOrderForm);
+    var selSelfYn = (orderdata.selfYN == null)? 'YES':orderdata.selfYN;
+    var selDeputyEmpno = (orderdata.deputyEmpNo == null)? '':orderdata.deputyEmpNo;
+    var selDeputyUsername = (orderdata.deputyUserName == null)? '':orderdata.deputyUserName;
+
     var pluginHeader = $('.plugin-header');
     pluginHeader.find('h1').text('타계정 주문 입력 ('+ '1' + '/' + '8' +')');
     pluginHeader.find('.backBtn').remove();
@@ -9733,11 +9760,12 @@ function anotherAccountOrderFirst() {
         radioWrap.append($(
             '<label class="input-radio">'
                 +radioContentList
-                +'<input type="radio" name="another-select" id="" value="' + radioContentList + '" />'
+                +'<input type="radio" name="another-selfYN" id="" value="' + radioContentList + '" />'
                 +'<span class="radiomark"></span>'
             +'</label>'
         ));
-        if (index == 0) {
+        //if (index == 0) {
+        if( radioContentList == selSelfYn) {
             radioWrap.find('input').attr('checked', true);
         }
     });
@@ -9754,6 +9782,7 @@ function anotherAccountOrderFirst() {
     dropdownBox.append(dropdownInput);
     pluginForm.append(dropdownBox);
     
+    var teamMemberList = orderdata.teamMemberList;
     // 조회 구분 메뉴 & 리스트(아이템)
     var testData = [
         {'user':'홍길동','class':'책임','lg':'LG01','manager':'담당01','team':'Team01','part':'part01','group':'조01'},
@@ -9769,7 +9798,7 @@ function anotherAccountOrderFirst() {
     ];
     var dropdownMenuListWrap = $('<ul class="dropdown-menu top twoLines"></ul>');
     let dropdownListItem = '';
-    for ( var i = 0; i < testData.length; i++ ) {
+    /*for ( var i = 0; i < testData.length; i++ ) {
         var data = testData[i];
         dropdownListItem += (
             '<li class="dropdown-item">'
@@ -9779,7 +9808,26 @@ function anotherAccountOrderFirst() {
                 +'</a>'
             +'</li>'
         );
+    };*/
+    
+    for ( var i = 0; i < teamMemberList.length; i++ ) {
+        var member = teamMemberList[i];
+        var selected = '';
+        if(member.empNo == selDeputyEmpno) {
+            selected = 'selected';
+        }
+        dropdownListItem += (
+            '<li class="dropdown-item">'
+                +'<a href="javascript:void(0)" class="'+selected+'">'
+                    +'<p>'+member.empName+' '+''+'</p>'
+                    +'<span>'+'LG'+'/'+member.deptName+'</span>'
+                +'</a>'
+                +'<span class="member-empNo" style="display:none;">'+member.empNo+'</span>'
+                +'<span class="member-deptCd" style="display:none;">'+member.deptCd+'</span>'
+            +'</li>'
+        );
     };
+    
     dropdownMenuListWrap.append(dropdownListItem);
     dropdownBox.append(dropdownMenuListWrap);
 
@@ -9788,10 +9836,30 @@ function anotherAccountOrderFirst() {
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        
+        var selfYN = $('[name="another-selfYN"]:checked').val();
+        var deputyEmpNo = $('.deputy-EmpNo').val();
+        var deputyUserName = $('.deputy-UserName').val();
+        
+        console.log('selfYN : '+selfYN);
+        
+        orderdata.step = 2;
+        orderdata.selfYN = selfYN;
+        orderdata.deputyEmpNo = deputyEmpNo;
+        orderdata.deputyUserName = deputyUserName;
+        
+        if( selfYN == 'NO') {
+            orderdata.orderEmpNo =  deputyEmpNo;         // 대리 주문
+        }
+        else{
+            orderdata.orderEmpNo =  orderdata.empNo;                // 본인. 
+        }
+
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderSecond();
-        $('.plugin-contents').append(anotherAccountOrderForm);
+        var anotherForm = anotherAccountOrderSecond(orderdata);
+        $('.plugin-contents').append(anotherForm);
+        //$('.plugin-contents').append(anotherAccountOrderForm);
     })
     
     // 라디오 버튼 이벤트
@@ -9823,11 +9891,16 @@ function anotherAccountOrderFirst() {
     function dropdownMenuInputEvent(target) {
         let mainText = $(target).find('p').text();
         let subText = $(target).find('span').text();
+        let memEmpNo = $(target).parents('.dropdown-item').find('.member-empNo').text();
+
+        console.log('memEmpNo > '+memEmpNo);
         const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
         var dataText = $(
             '<div class="data-wrap">'
                 +'<p>' + mainText + '</p>'
                 +'<span>' + subText + '</span>'
+                + '<input type="hidden" value="'+ memEmpNo +'" class="deputy-EmpNo"/>'
+                + '<input type="hidden" value="'+ mainText+'" class="deputy-UserName"/>'
             +'</div>'
         );
         dropdownInput.append(dataText);
@@ -9845,13 +9918,34 @@ function anotherAccountOrderFirst() {
         },1000);
     }
     
+    // 설정된 값이 있으면. 
+    if(selSelfYn == 'NO') {
+        inputBoxRadio.find('input').trigger('click');
+        
+        console.log('length : '+dropdownMenuListWrap.find('li a').length);
+        
+        console.log('select : '+dropdownMenuListWrap.find('li').find('.selected'));
+        
+        var selectedDeputyUser = dropdownMenuListWrap.find('li').find('.selected');
+        if(selectedDeputyUser) {
+            selectedDeputyUser.trigger('click');
+        }
+    }
+    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
 }
 
 // 타계정 주문 입력 팝업 컨텐츠 2
-function anotherAccountOrderSecond() {
+function anotherAccountOrderSecond(orderdata) {
+    console.log('orderdata : ', orderdata);    
+    //console.log('anotherAccountOrderForm2 : ', anotherAccountOrderForm);
+    var selOrderType = (orderdata.orderType == null)? '':orderdata.orderType;
+    var selReasonCode = (orderdata.reasonCode == null)? '':orderdata.reasonCode;
+    var selReasonName = (orderdata.reasonName == null)? '':orderdata.reasonName;
+    
+    
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
@@ -9859,63 +9953,287 @@ function anotherAccountOrderSecond() {
     pluginHeader.find('.backBtn').remove();
     pluginHeader.prepend(backBtn);
     
+    $('.plugin-contents').focus();
     /* #########[ popup_content_form_start ]######### */
     var pluginForm = $('<form class="form-second"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 주문 목적 ]### */
-    var inputBoxText = $('<div class="input-box"><label>주문 목적<b>*</b></label></div>');
-    var inputTextContent = $(
-        '<div class="input-form searchIcon">'
-            +'<input type="text" placeholder="내용을 입력해 주세요." name="" id="" max-length="50" />'
-        +'</div>'
-    );
-    inputTextContent.on('click', function() {
-        if ($(this).hasClass('select')) {
-            $(this).removeClass('select');
-            $(this).find('.data-wrap').remove();
-            nextBtn.find('button').attr('disabled', true);
+    var orderInputBox = $('<div class="input-box add-order"><label>주문 목적</label></div>');
+    var orderSelectBox = $('<div class="order-select searchIcon"></div>');
+    var orderSelected = $('<div class="selected-order"></div>');
+    orderSelectBox.append(orderSelected);
+    var orderTooltip = $('<div class="order-tooltip">타계정 주문 목적 목록을 조회합니다.</div>');
+    orderSelectBox.append(orderTooltip);
+  
+    var orderInput = $('<input type="text" placeholder="주문 목적을 선택해 주세요." id="schedule-order"/>');
+    var orderList = $('<div class="order-list"></div>');
+    var orderByText = $('<div class="order-text"><p class="texted"></p><p class="small">입력한 이 위치 사용하기</p></div>');
+    var orderValue = '';
+    orderList.append(orderByText);
+
+    orderInput.on('keyup', function() {
+        orderValue = $(this).val();
+        if (orderValue.length > 0) {
+            $('.order-text').addClass('show');
+            $('.order-text .texted').text(orderValue); 
         } else {
-            var dataText = $(
-                '<div class="data-wrap">'
-                    +'<p>' + '주문 목적이 보여집니다. 주문 목적이 보여집니다.' + '</p>'
-                    +'<span>' + '[Others Out No Return] SMP' + '</span>'
-                +'</div>'
-            );
-            inputTextContent.append(dataText);
-            $(this).addClass('select');
-            nextBtn.find('button').attr('disabled', false);
+            $('.order-text').removeClass('show');
+            $('.order-text .texted').text(''); 
         }
     });
-    inputBoxText.append(inputTextContent);
-    pluginForm.append(inputBoxText);
+  
+    // [입력한 이 위치에 사용하기] 클릭
+    /*orderByText.on('click', function() {
+        var orderInfo = $(
+            '<div class="order-info">'
+                + orderValue
+                + '<button type="button" class="btn btn-delete">' 
+                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+                    + '</svg>'
+                + '</button>'
+                + '<input type="hidden" value="'+ orderValue +'" class="order-name"/>'
+            +'</div>'
+        );
+  
+        orderSelected.empty();
+        orderInput.val('');
+        $('.order-text').removeClass('show');
+        $('.order-text .texted').text(''); 
+        orderSelected.append(orderInfo);
+        
+        // [퍼블 수정 및 추가]
+        var targetHeight = $('.selected-order').height();
+        $('.order-select').removeClass('focus');
+        console.log(targetHeight);
 
+        $('.order-list').removeClass('show');
+        // $('.order-list').css('top', '82px');
+        $('.order-list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+        $('#schedule-order').attr('placeholder', '');
+
+        scheduleorderWidth();
+    });
+   */
+   
+    var orderListTitle = $('<span>주문 목적 목록</span>');
+    orderList.append(orderListTitle);
+    
+    var orderUl = $('<ul></ul>');
+    
+    ///////
+/*    var orderLi = $(
+        '<li class="selected">'
+            +'<p>'+ orderdata.reasonName // + '()' 
+            +'</p>'
+            +'<p class="small">'
+            + '['+ orderdata.orderType +'] '+ orderdata.reasonCode
+            +'</p>'
+        +'</li>'
+    );
+    
+    // 예약 가능한 회의실 목록 리스트 클릭
+    orderUl.append(orderLi);
+    orderList.append(orderUl);
+*/    
+    ///////
+    
+    orderInput.on('click', function() {
+    //orderSelectBox.on('click', function() {
+        // [퍼블 수정 및 추가] - order-select 스타일 변경
+        $('.order-select').addClass('focus');
+            
+        $('.order-list').addClass('show');
+        orderUl.empty();
+
+
+        var requestParam = {
+            query: {
+              "event": "orderTypeInquiryEvent"
+            },
+            payload: {
+            }
+          };
+
+          sendChatApi(requestParam, null, function(payload){
+            //console.log('payload > ', payload);
+            var result = JSON.parse(payload.queryResult.messages[0].response);
+            console.log('result', result);
+            orderTypeList = result.resultList;
+    
+            if(orderTypeList.length == 0) {
+              var orderLi = $('<li class="no-res">주문 목적 목록이 없습니다.</li>');
+              orderUl.append(orderLi);
+              orderList.append(orderUl);
+            } else {
+              orderTypeList.map(orderType => {
+                  
+                var orderLi = $(
+                    '<li>'
+                        +'<p>'+ orderType.reasonName // + '()' 
+                        +'</p>'
+                        +'<p class="small">'
+                        + '['+ orderType.orderType +'] '+ orderType.reasonCode
+                        +'</p>'
+                    +'</li>'
+                );
+                
+                // 예약 가능한 회의실 목록 리스트 클릭
+                orderLi.on('click', function() {
+                    
+                    var orderInfo = $(
+                        '<div class="data-wrap">'
+                            +'<p>' + orderType.reasonName + '</p>'
+                            +'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
+                          + '<input type="hidden" value="'+ orderType.orderType +'" class="order-type"/>'
+                          + '<input type="hidden" value="'+ orderType.reasonCode +'" class="reason-code"/>'
+                          + '<input type="hidden" value="'+ orderType.reasonName +'" class="reason-name"/>'
+                        +'</div>'
+                    );
+                    orderSelected.empty();
+                    orderSelected.append(orderInfo);
+                    
+                    //orderInput.val(orderInfo.html());
+                    
+                    // [퍼블 수정 및 추가]
+                    var targetHeight = $('.selected-order').height();
+                    $('.order-select').removeClass('focus');
+                    console.log(targetHeight);
+            
+                    $('.order-list').removeClass('show');
+                    // $('.order-list').css('top', '82px');
+                    $('.order-list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+                    $('#schedule-order').attr('placeholder', '');
+                    scheduleorderWidth();
+                    
+                    nextBtn.find('button').attr('disabled', false);
+
+                });
+
+                if(selReasonCode == orderType.reasonCode) {
+                    if(orderdata.action == 'back') {
+                        orderLi.trigger('click');       
+                        orderdata.action = '';
+                    }
+                }
+                orderUl.append(orderLi);
+              });
+              orderList.append(orderUl);
+            }
+   
+          });
+          
+        ///////
+    });
+
+    orderSelectBox.append(orderInput);
+    orderSelectBox.append(orderList);
+    orderInputBox.append(orderSelectBox);
+    pluginForm.append(orderInputBox);
+
+    orderSelected.on('click', function() {
+        orderInput.trigger('click');
+    });
+    
+    $(document).on('click', '.order-info .btn-delete', function(){
+        $(this).closest(".order-info").remove();
+        $('#schedule-order').attr('placeholder', '장소를 입력해 주세요.');
+        // $('.order-list').css('top', '82px');
+        $('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
+        scheduleorderWidth();
+    });
+
+    // order-select 제외 클릭
+    $(document).on('click', function(e) {
+        if ($('.order-select').has(e.target).length === 0) {
+            $('.order-list').removeClass('show');
+            
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            $('.order-select').removeClass('focus');
+        }
+    });
+
+    $(window).resize(function() {
+        scheduleorderWidth();
+    });
+
+    // 장소 입력 input width 변경
+    function scheduleorderWidth() {
+        let orderSelectWidth = $('.order-select').width();
+        let selectedorderWidth = $('.selected-order').width();
+        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        $('#schedule-order').css('width', scheduleorderWidth + "px");
+        if ($('#schedule-order').width() === 0) {
+            $('#schedule-order').attr('style', '');
+        };
+    };
+
+    var spareHtml = $('<p style="height:100px;"></p>');
+    pluginForm.append(spareHtml);
+    
     /*  ###[ etc ]### */
     // 다음버튼
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        
+        var orderTypeVal = $('.order-type').val();
+        var reasonCodeVal = $('.reason-code').val();
+        var reasonNameVal = $('.reason-name').val();
+
+        orderdata.step = 3;        
+        orderdata.orderType = orderTypeVal;
+        orderdata.reasonCode = reasonCodeVal;
+        orderdata.reasonName = reasonNameVal;
+        
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderThird();
+        anotherAccountOrderThird(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     });
     
     // back버튼
     pluginHeader.find('.backBtn').off('click').on('click', function() {
+        
+        orderdata.step = 1;
+        orderdata.action = 'back';
+
+        delete orderdata.orderType;
+        delete orderdata.reasonCode;
+        delete orderdata.reasonName;
+
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderFirst();
+        anotherAccountOrderFirst(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     });
     
+    if (orderdata.orderType != null) {
+        //orderLi.trigger('click');
+        orderInput.trigger('click');
+    }
+
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
 }
 
 // 타계정 주문 입력 팝업 컨텐츠 3 (달력 미진행)
-function anotherAccountOrderThird() {
+function anotherAccountOrderThird(orderdata) {
+    console.log('orderdata : ', orderdata);
+
+    var placeholderToday = moment().format('YYYY.MM.DD');
+
+    var selReceiverName = (orderdata.receiverName == null)? '':orderdata.receiverName;
+    var selAddress1 = (orderdata.address1 == null)? '':orderdata.address1;
+    var selAddress2 = (orderdata.address2 == null)? '':orderdata.address2;
+    var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '':orderdata.receiverPhoneNo;
+    var selRedidenceType = (orderdata.redidenceType == null)? '':orderdata.redidenceType;
+    var selDonationCode = (orderdata.donationCode == null)? '':orderdata.donationCode;
+    var selDonationName = (orderdata.donationName == null)? '':orderdata.donationName;
+    var selDonationDate = (orderdata.donationDate == null)? placeholderToday:orderdata.donationDate;
+
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
@@ -9933,7 +10251,7 @@ function anotherAccountOrderThird() {
 
     /* ###[ 받는 사람 ]### */
     var inputBoxText = $('<div class="input-box"><label>받는 사람<b>*</b></label></div>');
-    var inputTextContent = $('<div class="input-form"><input type="text" placeholder="내용을 입력해 주세요." max-length="50" /></div>');
+    var inputTextContent = $('<div class="input-form"><input type="text" placeholder="내용을 입력해 주세요." max-length="50" id="receiver_name" value="'+selReceiverName+'"/></div>');
     inputBoxText.append(inputTextContent);
     pluginForm.append(inputBoxText);
 
@@ -9941,8 +10259,8 @@ function anotherAccountOrderThird() {
     var inputBoxText = $('<div class="input-box"><label>우편 번호<b>*</b></label></div>');
     var inputTextContent = $(
         '<div class="input-form post-form">'
-            +'<input class="searchIcon" type="text" placeholder="도로명/ 건물명/ 번지" max-length="50" />'
-            +'<input type="text" placeholder="상세 주소를 입력해 주세요." max-length="50" />'
+            +'<input class="searchIcon" type="text" placeholder="도로명/ 건물명/ 번지" max-length="50" id="address1" value="'+selAddress1+'"/>'
+            +'<input type="text" placeholder="상세 주소를 입력해 주세요." max-length="50" id="address2" value="'+selAddress2+'" />'
         +'</div>'
     );
     inputBoxText.append(inputTextContent);
@@ -9950,7 +10268,7 @@ function anotherAccountOrderThird() {
 
     /* ###[ 전화 번호 ]### */
     var inputBoxText = $('<div class="input-box"><label>전화 번호<b>*</b></label></div>');
-    var inputTextContent = $('<div class="input-form"><input type="text" placeholder="전화 번호를 ‘-’ 없이 입력해 주세요." max-length="50" /></div>');
+    var inputTextContent = $('<div class="input-form"><input type="text" placeholder="전화 번호를 ‘-’ 없이 입력해 주세요." max-length="50" id="receiver_phone_no" value="'+selReceiverPhoneNo+'" /></div>');
     inputBoxText.append(inputTextContent);
     pluginForm.append(inputBoxText);
 
@@ -9964,31 +10282,173 @@ function anotherAccountOrderThird() {
             +'</svg>'
         +'</i>'
     );
-    pluginForm.append(dropdownBox);
     dropdownBox.append(dropdownMainBtn);
     dropdownMainBtn.append(dropdownArrow);
+    
+    var redidenceTypeList = [{"redidenceCode":"01", "redidenceName":"Apartment with elevator"}
+                            ,{"redidenceCode":"02", "redidenceName":"Apartment without elevator"}
+                            ,{"redidenceCode":"03", "redidenceName":"Single House"}
+                            ,{"redidenceCode":"04", "redidenceName":"Multiplex House"}
+                            ,{"redidenceCode":"E1", "redidenceName":"인터넷"}
+                            ,{"redidenceCode":"E2", "redidenceName":"인터넷, 유무선공유기"}
+                            ,{"redidenceCode":"E3", "redidenceName":"인터넷, 유무선공유기, 무선동글"}
+                            ,{"redidenceCode":"E4", "redidenceName":"인터넷, 무선동글"}
+                            ,{"redidenceCode":"E5", "redidenceName":"인터넷 설치 안됨"}
+                            ,{"redidenceCode":"E6", "redidenceName":"해당사항 없음_DEfault value"} ];
+    
     var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
-    let dropdownListItem = $(
-        '<li class="dropdown-item"><a href="javascript:void(0)">Apartment with elevator(01)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">Apartment without elevator(02)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">Single House(03)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">Multiplex House(04)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">인터넷(E1)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">인터넷, 유무선공유기(E2)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">인터넷, 유무선공유기, 무선동글(E3)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">인터넷, 무선동글(E4)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">인터넷 설치 안됨(E5)</a></li>'
-        +'<li class="dropdown-item"><a href="javascript:void(0)">해당사항 없음_DEfault value(E6)</a></li>'
-    );
+    var redidenceTypeListText = '';    
+    redidenceTypeList.forEach(function(redidenceType, index) {
+        var selected = '';
+        if(redidenceType.redidenceCode == selRedidenceType) {
+            selected = 'selected';
+        }
+
+        redidenceTypeListText += '<li class="dropdown-item"><a href="javascript:void(0)" class="'+selected+'">'+redidenceType.redidenceName+'</a><span class="redidence_type" style="display:none;">'+redidenceType.redidenceCode+'</span></li>';
+    });        
+    let dropdownListItem = $(redidenceTypeListText);
+    
     dropdownMenuListWrap.append(dropdownListItem);
     dropdownBox.append(dropdownMenuListWrap);
+    
+    dropdownBox.append('<input type="hidden" value="" id="redidence_type"/>');
+    
+    if(orderdata.reasonCode != 'R&D') { 
+        pluginForm.append(dropdownBox);
+    }
 
     /* ###[ 기부처 ]### */
-    var inputBoxText = $('<div class="input-box"><label>기부처<b>*</b></label></div>');
-    var inputTextContent = $('<div class="input-form post-form"><input class="searchIcon" type="text" placeholder="도로명/ 건물명/ 번지" max-length="50" /></div>');
-    inputBoxText.append(inputTextContent);
-    pluginForm.append(inputBoxText);
+    var inputBoxText = $('<div class="input-box add-order"><label>기부처<b>*</b></label></div>');
+    var inputTextContent = $('<div class="input-form order-select searchIcon"></div>');
+    var donationSelected = $('<div class="selected-order"></div>');
+    var inputBox = $('<input type="text" placeholder="기부처를 선택하세요." max-length="50" id="donation-input" readonly/>');
+    
+    var donationListCont = $('<div class="order-list"></div>');
 
+    var donationListTitle = $('<span>기부처 목록</span>');
+    donationListCont.append(donationListTitle);
+
+    inputBox.append('<input type="text" value="" id="donation-code"/>');
+    
+    inputTextContent.append(donationSelected);
+    inputTextContent.append(inputBox);
+    inputTextContent.append(donationListCont);
+    
+    var orderUl = $('<ul></ul>');
+
+    inputBox.on('click', function() {
+    //orderSelectBox.on('click', function() {
+        // [퍼블 수정 및 추가] - order-select 스타일 변경
+        $('.order-select').addClass('focus');
+            
+        $('.order-list').addClass('show');
+        //donationList.addClass('show');
+        orderUl.empty();
+        
+        var requestParam = {
+            query: {
+              "event": "donationCompanyInquiryEvent"
+            },
+            payload: {
+              donatinName : '',
+            }
+          };
+
+          sendChatApi(requestParam, null, function(payload){
+            //console.log('payload > ', payload);
+            var result = JSON.parse(payload.queryResult.messages[0].response);
+            console.log('result', result);
+            donationCompanyList = result.resultList;
+            
+            if(donationCompanyList.length == 0) {
+              var orderLi = $('<li class="no-res">조건에 맞는 기부처가 없습니다.</li>');
+              orderUl.append(orderLi);
+              donationListCont.append(orderUl);
+            } else {
+              donationCompanyList.map(donationCompany => {
+                  
+                var orderLi = $(
+                    '<li>'
+                        +'<p>'+ donationCompany.donationName // + '()' 
+                        +'</p>'
+                        //+'<p class="small">'
+                        //+ '['+ orderType.orderType +'] '+ orderType.reasonCode
+                        //+'</p>'
+                    +'</li>'
+                );
+                
+                // 예약 가능한 회의실 목록 리스트 클릭
+                orderLi.on('click', function() {
+                    
+                    var donationInfo = $(
+                        '<div class="data-wrap">'
+                            +'<p>' + donationCompany.donationName + '</p>'
+                            //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
+                          + '<input type="hidden" value="'+ donationCompany.donationCode +'" id="donation-code"/>'
+                          + '<input type="hidden" value="'+ donationCompany.donationName +'" id="donation-name"/>'
+                        +'</div>'
+                    );
+                    
+                    inputBox.empty();
+                    donationSelected.empty();
+                    donationSelected.append(donationInfo);
+                    
+                    //orderInput.val(orderInfo.html());
+                    
+                    // [퍼블 수정 및 추가]
+                    var targetHeight = $('.selected-order').height();
+                    $('.order-select').removeClass('focus');
+                    console.log(targetHeight);
+            
+                    $('.order-list').removeClass('show');
+                    // $('.order-list').css('top', '82px');
+                    $('.order-list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+                    $('#donation-input').attr('placeholder', '');
+                    scheduleorderWidth();
+                    
+                    //nextBtn.find('button').attr('disabled', false);
+
+                    nextBtnEvent($(this));
+
+                });
+
+                if(selDonationCode == donationCompany.donationCode) {
+                    //if(orderdata.action == 'back') {
+                        orderLi.trigger('click');       
+                        orderdata.action = '';
+                    //}
+                }
+
+                orderUl.append(orderLi);
+              });
+              donationListCont.append(orderUl);
+            }
+            
+          });
+        
+        //////        
+    });
+    
+    donationSelected.on('click', function() {
+        inputBox.trigger('click');
+    });
+    
+    inputBoxText.append(inputTextContent);
+    if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') { 
+        pluginForm.append(inputBoxText);
+    }
+    
+// 장소 입력 input width 변경
+    function scheduleorderWidth() {
+        let orderSelectWidth = $('.order-select').width();
+        let selectedorderWidth = $('.selected-order').width();
+        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        $('#donation-input').css('width', scheduleorderWidth + "px");
+        if ($('#donation-input').width() === 0) {
+            $('#donation-input').attr('style', '');
+        };
+    };
+    
     /* ###[ 기부 일자 ]### */
     var inputTimeBox = $('<div class="input-box"><label>기부 일자<b>*</b></label></div>');
     var dateTimeWrap = $('<div class="schedule-wrap"></div>');
@@ -10002,27 +10462,58 @@ function anotherAccountOrderThird() {
     
     dateTimeWrap.append(dateTimeStartBox);
     inputTimeBox.append(dateTimeWrap);
-    pluginForm.append(inputTimeBox);
-    var placeholderToday = moment().format('YYYY.MM.DD');
-    dateStartInput.val(placeholderToday);
+    
+    if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') { 
+        pluginForm.append(inputTimeBox);
+        dateStartInput.val(selDonationDate);
+    }
 
     /*  ###[ etc ]### */
     // 다음버튼
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        
+        var receiver_name = $('#receiver_name').val();
+        var address1 = $('#address1').val();
+        var address2 = $('#address2').val();
+        var receiver_phone_no = $('#receiver_phone_no').val();
+        var redidence_type = $('#redidence_type').val();
+        var donation_data = dateStartInput.val();
+        
+        var donation_code = $('#donation-code').val();
+        var donation_name = $('#donation-name').val();
+
+        orderdata.step = 4;        
+        orderdata.receiverName = receiver_name;
+        orderdata.address1 = address1;
+        orderdata.address2 = address2;
+        orderdata.receiverPhoneNo = receiver_phone_no;
+        orderdata.redidenceType = redidence_type;
+        orderdata.donationDate = donation_data;
+        
+        orderdata.donationCode = donation_code;
+        orderdata.donationName = donation_name;
+        
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderFourth();
+        anotherAccountOrderFourth(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     });
     var inputVal = false;
     function nextBtnEvent(target) {
-        var inputObj = pluginForm.find('input');
+        var inputObj = pluginForm.find('input').not('#donation-input');
+
+         //console.log('length : '+inputObj.length);
         for ( let i = 0; i <= (inputObj.length)-1; i++ ) {
+            
+            //console.log('val : '+$(inputObj[i]).val());
             if ($(inputObj[i]).val()) {
                 inputVal = true;
                 if (inputVal && pluginForm.find('.btn-dropdown').hasClass('select')) {
+                    nextBtn.find('button').attr('disabled', false);
+                }
+                else if (inputVal && pluginForm.find('.btn-dropdown').hasClass('select') == false) {        // 연구개발.
                     nextBtn.find('button').attr('disabled', false);
                 }
                 else if (inputVal == false || pluginForm.find('.btn-dropdown').hasClass('select') == false) {
@@ -10044,9 +10535,23 @@ function anotherAccountOrderThird() {
     
     // back버튼
     pluginHeader.find('.backBtn').off('click').on('click', function() {
+        
+        orderdata.step = 2; 
+        orderdata.action = 'back';
+        
+        delete orderdata.receiverName;
+        delete orderdata.address1;
+        delete orderdata.address2;
+        delete orderdata.receiverPhoneNo;
+        delete orderdata.redidenceType;
+        delete orderdata.donationDate;
+        
+        delete orderdata.donationCode;
+        delete orderdata.donationName;
+        
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderSecond();
+        anotherAccountOrderSecond(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     });
 
@@ -10071,18 +10576,41 @@ function anotherAccountOrderThird() {
     function dropdownMenuEvent(target) {
         const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
         const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        //const $(target).parents('.dropdown-box').find('#redidence_type');
         let targetText = $(target).text();
+        let redidence_type = $(target).parents('.dropdown-item').find('.redidence_type').text();
+        console.log(''+targetText+' : '+redidence_type);
         dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        $(target).parents('.dropdown-box').find('#redidence_type').val(redidence_type);
         dropmenu.stop().slideUp().removeClass('show');
     }
 
+    if(selRedidenceType != '') {
+        var selectedRedidenceType = dropdownMenuListWrap.find('li').find('.selected');
+        
+        selectedRedidenceType.trigger('click');
+    }
+    
+    if (selDonationCode != '') {
+        //orderLi.trigger('click');
+        inputBox.trigger('click');
+    }
+    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
 }
 
 // 타계정 주문 입력 팝업 컨텐츠 4
-function anotherAccountOrderFourth() {
+function anotherAccountOrderFourth(orderdata) {
+    console.log('orderdata : ', orderdata);
+    
+    userId = chatui.getSetting("userId"); 
+    var selApmsYN = (orderdata.apmsYN == null)? 'YES':orderdata.apmsYN;
+    var selApmsNo = (orderdata.apmsNo == null)? '':orderdata.apmsNo;
+    
+    console.log('selApmsYN : '+selApmsYN);
+    
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
@@ -10095,18 +10623,18 @@ function anotherAccountOrderFourth() {
 
     /* #########[ popup_content ]######### */
     /* ###[ 사용 예산이 광고판촉비(APMS)인가요? ]### */
-    var inputBoxRadio = $('<div class="input-box"><label>타계정 주문을 발행하는 사람이 본인인가요?<b>*</b></label>');
+    var inputBoxRadio = $('<div class="input-box"><label>사용 예산이 광고판촉비(APMS)인가요?<b>*</b></label>');
     var radioContentList = ['YES','NO'];
     var radioWrap = $('<div class="radio-wrap"></div>');
     radioContentList.forEach(function(radioContentList, index) {
         radioWrap.append($(
             '<label class="input-radio">'
                 +radioContentList
-                +'<input type="radio" name="another-select" value="' + radioContentList + '" />'
+                +'<input type="radio" name="budget-apmsYN" value="' + radioContentList + '" />'
                 +'<span class="radiomark"></span>'
             +'</label>'
         ));
-        if (index == 0) {
+        if (radioContentList == selApmsYN) {
             radioWrap.find('input').attr('checked', true);
         }
     });
@@ -10117,10 +10645,10 @@ function anotherAccountOrderFourth() {
     var inputBoxText = $('<div class="input-box"><label>광고판촉비(APMS) 품의 번호<b>*</b></label></div>');
     var inputTextContent = $(
         '<div class="input-form">'
-            +'<input class="searchIcon" type="text" placeholder="내용을 입력해 주세요." max-length="50" />'
+            +'<input class="searchIcon" type="text" placeholder="내용을 입력해 주세요." max-length="50" id="apms-no" value="'+selApmsNo+'"/>'
         +'</div>'
     );
-    var titleNote = $('<small class="note">※ 사전에 확보한 APMS 품의 번호를 검색해 보세요.</small>');
+    var titleNote = $('<small class="note">※ 사전에 확보한 APMS 품의 번호를  입력하세요.</small>');
     inputBoxText.append(titleNote);
     inputBoxText.append(inputTextContent);
     pluginForm.append(inputBoxText);
@@ -10130,17 +10658,145 @@ function anotherAccountOrderFourth() {
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
-        pluginForm.removeClass('show');
-        pluginForm.remove();
-        anotherAccountOrderFifth();
-        $('.plugin-contents').append(anotherAccountOrderForm);
+        
+        var apmsYN = $('[name="budget-apmsYN"]:checked').val();        
+        var apmsNo = $('#apms-no').val();
+        
+        orderdata.step = 5; 
+        orderdata.apmsYN = apmsYN;
+        orderdata.apmsNo = apmsNo;
+
+        if(apmsYN == 'YES' && apmsNo != '') {
+            
+            var reviewParam = {
+                    userId:userId,
+                    //empNo:empNo, 
+                    apms_no : apmsNo
+            }
+    
+            var requestParam = {
+                query: {
+                    "event": "anotherApmsQueryEvent"
+                },
+                payload: {
+                    userId:userId,
+                    //empNo:empNo, 
+                    apmsNo : apmsNo
+                }
+            };        
+            
+            console.log('requestParam > ', requestParam);
+            
+            sendChatApi(requestParam, userId, function(payload) {
+                console.log('타계정 광고판촉비(APMS) 조회 결과 : ', payload);
+                
+                var apmsList = '';
+                var regSuccessYn = '';
+                var errorMessage = '';
+                if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                    var apmsResponse = JSON.parse(payload.queryResult.messages[0].response);
+                    console.log(apmsResponse["successYn"]);
+                    
+                    if (apmsResponse["successYn"] == 'N') {
+                        console.log('errorMessage : '+apmsResponse["errorMessage"]);
+                        regSuccessYn = 'N';
+                        errorMessage = apmsResponse["errorMessage"];               // 에러메시지.
+                    } else {
+                        regSuccessYn = 'Y';
+                        if (apmsResponse.template && apmsResponse.template.outputs.length > 0 && apmsResponse.template.outputs[0] && apmsResponse.template.outputs[0].resultItem) {
+                            
+                            apmsList = apmsResponse.template.outputs[0].resultItem;
+                        }
+                    }
+                    
+                }
+                else {
+                    regSuccessYn = 'N';
+                }
+                
+                if(regSuccessYn == 'N') {
+                    
+                    console.log('광고판촉비 조회 실패 : '+errorMessage);
+                    
+                    setTimeout(function() {
+                        showSmallDialog('광고판촉비 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                    }, 500);
+                }   
+                else{
+                
+                    console.log('광고판촉비 조회 완료 : ', apmsList);
+
+                    if(apmsList.length == 1) {                // 광고판촉비 조회 단건
+                        let apmsInfo = apmsList[0];
+                        
+                        orderdata.apms_no = apmsInfo.apms_no;
+                        orderdata.au_code = apmsInfo.au_code;
+                        orderdata.au_name = apmsInfo.au_name;
+                        orderdata.department_code = apmsInfo.department_code;
+                        orderdata.department_name = apmsInfo.department_name;
+                        orderdata.account_code = apmsInfo.account_code;
+                        orderdata.account_name = apmsInfo.account_name;
+                        orderdata.activity_code = apmsInfo.activity_code;
+                        orderdata.activity_id = apmsInfo.activity_id;
+                        orderdata.activity_name = apmsInfo.activity_name;
+                        orderdata.activity_amount = apmsInfo.activity_amount;
+                        orderdata.activity_rate = apmsInfo.activity_rate;
+                        
+                        pluginForm.removeClass('show');
+                        pluginForm.remove();
+                        anotherAccountOrderFifth(orderdata);
+                        $('.plugin-contents').append(anotherAccountOrderForm);
+                        
+                    }
+                    //else if(apmsInfo.length > 1) {            // 예산 조회 다건
+                    //    
+                    //}
+                    else{
+                        console.log('광고판촉비 조회 : 0건.');
+                        
+                        setTimeout(function() {
+                            showSmallDialog('광고판촉비 조회 내역이 없습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        }, 500);
+                    }
+                    
+                    
+                }            
+            });
+            
+        }
+        else{
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+            anotherAccountOrderFifth(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+        }
     });
     
     // back버튼
     pluginHeader.find('.backBtn').off('click').on('click', function() {
+
+        orderdata.step = 3; 
+        orderdata.action = 'back';
+
+        delete orderdata.apmsYN;
+        delete orderdata.apmsNo;
+
+        delete orderdata.apms_no;
+        delete orderdata.au_code;
+        delete orderdata.au_name;
+        delete orderdata.department_code;
+        delete orderdata.department_name;
+        delete orderdata.account_code;
+        delete orderdata.account_name;
+        delete orderdata.activity_code;
+        delete orderdata.activity_id;
+        delete orderdata.activity_name;
+        delete orderdata.activity_amount;
+        delete orderdata.activity_rate;
+
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderThird();
+        anotherAccountOrderThird(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     });
     
@@ -10166,13 +10822,24 @@ function anotherAccountOrderFourth() {
         }
     });
     
+    if(orderdata.action == 'back') {
+        if(selApmsYN == 'NO') {
+            inputBoxRadio.find('input').trigger('click');
+        }
+        if(selApmsYN == 'YES' && $('#apms-no').val() != '') {
+            console.log('5555');
+            nextBtn.find('button').attr('disabled', false);
+        }
+    }    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
 }
 
 // 타계정 주문 입력 팝업 컨텐츠 5
-function anotherAccountOrderFifth() {
+function anotherAccountOrderFifth(orderdata) {
+    console.log('orderdata : ', orderdata);
+    
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
@@ -10278,9 +10945,11 @@ function anotherAccountOrderFifth() {
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        orderdata.step = 6; 
+        
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderSixth();
+        anotherAccountOrderSixth(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     });
     var inputVal = false;
@@ -10311,9 +10980,12 @@ function anotherAccountOrderFifth() {
     
     // back버튼
     pluginHeader.find('.backBtn').off('click').on('click', function() {
+        orderdata.step = 4; 
+        orderdata.action = 'back';
+        
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderFourth();
+        anotherAccountOrderFourth(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     });
     
@@ -10761,7 +11433,21 @@ function anotherAccountOrderEighth() {
 }
 
 // [ 부서 예산 팝업 ]
-function gbmsPopupOpen() {
+function gbmsPopupOpen(data) {
+    
+    console.log('data : ', data);
+    var userId = data.userId;
+    var empNo = data.empNo;    // "999991"; // 
+    
+    var costAuCode = (data.reAuCode != null && data.reAuCode != '')? data.reAuCode:"45130711";
+    var costAuName = (data.reAuName != null && data.reAuName != '')? data.reAuName:"부품매출원가)_내수(렌탈 자가관리)";
+    var costDeptCode = (data.reDeptCode != null && data.reDeptCode != '')? data.reDeptCode:"54545511";
+    var costDeptName = (data.reDeptName != null && data.reDeptName != '')? data.reDeptName:"Enterprise AI팀";
+    var expMonth = data.expMonth;                  // '06'
+    
+    console.log('Cost AU : ['+costAuCode+'] '+costAuName);
+    console.log('비용처리부서 : ['+costDeptCode+'] '+costDeptName);
+    console.log('조회 월 : '+expMonth);
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
     var addPlugin = $('<div class="plugins" id="gbmsPopup"></div>');
@@ -10793,14 +11479,23 @@ function gbmsPopupOpen() {
     var inputTextContentCostAU = $(
         '<div class="input-form">'
             +'<input class="searchIcon" type="text" placeholder="Cost AU를 입력해 주세요." name="" id="" max-length="50" />'
+              + '<input type="hidden" value="'+costAuCode+'" id="costAu-code"/>'
+              + '<input type="hidden" value="'+costAuName+'" id="costAu-name"/>'
         +'</div>'
     );
-    inputTextContentCostAU.find('input').val('[45130711] 부품매출원가)_내수(렌탈 자가관리)');
+    
+    inputTextContentCostAU.find('input[type=text]').val('['+costAuCode+'] '+costAuName);
     inputBoxTextCostAU.append(inputTextContentCostAU);
     pluginForm.append(inputBoxTextCostAU);
     inputTextContentCostAU.on('keyup', function(e) {
         hblInput = e.target.value;
         btnValueCheck();
+        
+        // 테스트용. 
+        var orgInputAttr = hblInput.split('[');
+        var inputArr = orgInputAttr[1].split('] ');
+        $(this).find('input[id=costAu-code]').val(inputArr[0]);
+        $(this).find('input[id=costAu-name]').val(inputArr[1]);
     });
 
     /* ###[ 비용 처리 부서 ]### */
@@ -10808,14 +11503,25 @@ function gbmsPopupOpen() {
     var inputTextContentCP = $(
         '<div class="input-form">'
             +'<input class="searchIcon" type="text" placeholder="비용 처리 부서를 입력해 주세요." name="" id="" max-length="50" />'
+              + '<input type="hidden" value="" id="costDept-code"/>'
+              + '<input type="hidden" value="" id="costDept-name"/>'
         +'</div>'
     );
-    inputTextContentCP.find('input').val('[54545511] Enterprise AI팀');
+    
+    inputTextContentCP.find('input[type=text]').val('['+costDeptCode+'] '+costDeptName);
+    inputTextContentCP.find('input[id=costDept-code]').val(costDeptCode);
+    inputTextContentCP.find('input[id=costDept-name]').val(costDeptName);
     inputBoxTextCP.append(inputTextContentCP);
     pluginForm.append(inputBoxTextCP);
     inputTextContentCP.on('keyup', function(e) {
         hblInput = e.target.value;
         btnValueCheck();
+        
+        // 테스트용. 
+        var orgInputAttr = hblInput.split('[');
+        var inputArr = orgInputAttr[1].split('] ');
+        $(this).find('input[id=costDept-code]').val(inputArr[0]);
+        $(this).find('input[id=costDept-name]').val(inputArr[1]);
     });
 
     /* ###[ 조회 월 ]### */
@@ -10835,19 +11541,123 @@ function gbmsPopupOpen() {
     // 조회 월 메뉴 & 리스트(아이템)
     var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
     for (let i = 1; i <= 12; i++) {
-        let dropdownListItem = $('<li class="dropdown-item"><a href="javascript:void(0)">' + i + '월' + '</a></li>');
+        let s = i;
+        if(i < 10)  s = '0'+i;
+        let dropdownListItem = $('<li class="dropdown-item"><a href="javascript:void(0)" value="'+s+'">' + i + '월' + '</a></li>');
         dropdownMenuListWrap.append(dropdownListItem);
     }
     dropdownBox.append(dropdownMenuListWrap);
     
-
+    var selMonth = expMonth;
+    
     /*  ###[ etc ]### */
     // 조회버튼
     var submitBtn = $('<button disabled type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-gbms">조회</button>');
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
-        thisPluginClose();
-        $('.chat-message.left').last().append(gbmsResult()); // 결과 메세지 (임시 확인용)
+        
+        //$('.chat-message.left').last().append(gbmsResult()); // 결과 메세지 (임시 확인용)
+        
+        var reviewParam = {
+                userId:userId,
+                //empNo:empNo, 
+                reAuCode : $('#costAu-code').val(), 
+                reAuName : $('#costAu-name').val(),
+                reDeptCode : $('#costDept-code').val(),
+                reDeptName : $('#costDept-name').val(),
+                expMonth : selMonth
+        }
+        
+        //console.log('reAuName : '+$('#costAu-name').val());
+
+        var requestParam = {
+            query: {
+                "event": "anotherBudgetQueryEvent"
+            },
+            payload: {
+                userId:userId,
+                //empNo:empNo, 
+                costAuCode : $('#costAu-code').val(),
+                costAuName : $('#costAu-name').val(),
+                costDeptCode : $('#costDept-code').val(),
+                costDeptName : $('#costDept-name').val(),
+                expMonth : selMonth
+            }
+        };        
+        
+        console.log('requestParam > ', requestParam);
+        
+        sendChatApi(requestParam, userId, function(payload) {
+            console.log('타계정 예산(GBMS) 조회 결과 : ', payload);
+            
+            var budgetInfo = '';
+            var regSuccessYn = '';
+            var errorMessage = '';
+            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                var budgetResponse = JSON.parse(payload.queryResult.messages[0].response);
+                console.log(budgetResponse["successYn"]);
+                
+                if (budgetResponse["successYn"] == 'N') {
+                    console.log('errorMessage : '+budgetResponse["errorMessage"]);
+                    regSuccessYn = 'N';
+                    errorMessage = budgetResponse["errorMessage"];               // 에러메시지.
+                } else {
+                    regSuccessYn = 'Y';
+                    if (budgetResponse.template && budgetResponse.template.outputs.length > 0 && budgetResponse.template.outputs[0] && budgetResponse.template.outputs[0].resultItem) {
+                        
+                        budgetInfo = budgetResponse.template.outputs[0].resultItem;
+                    }
+                }
+                
+            }
+            
+            thisPluginClose();
+            
+            if(regSuccessYn == 'N') {
+                
+                console.log('부서 예산 조회 실패 : ');
+                
+                var anotherGbmsResult = '<div class="message simple-text">'
+                                 +'<p>'
+                                    +'시스템 오류로 인해 조회되지 않았어요.<br><br>'
+                                    +'아래 버튼을 눌러 부서 예산을 다시 조회해 보세요.'
+                                 +'</p>'
+                                +'<div class="btn">'
+                                    +'<button type="button" class="btn btn-default btn-big reload-budget">다시 조회하기</button>'
+                                +'</div>'
+                                + '</div>'; 
+                                
+                appendChatbotText(anotherGbmsResult);
+                
+                $('.reload-budget').on('click', function() {
+                    gbmsPopupOpen(reviewParam);
+                });
+                
+            }   
+            else{
+            
+                console.log('부서 예산 조회 완료 : ', budgetInfo);
+                
+                var msgGbmsResult = '<div class="message simple-text">'
+                                 +'<p>'
+                                    +'<b>부서 예산(GBMS)</b>을 확인해 주세요. '
+                                 +'</p>'
+                                + '</div>'; 
+                
+                var anotherGbmsResult = '';
+                if(budgetInfo.length == 1) {                // 예산 조회 단건
+                    var anotherGbmsResult = msgGbmsResult + gbmsResultSingle(budgetInfo);
+                }
+                else if(budgetInfo.length > 1) {            // 예산 조회 다건
+                    
+                }
+                else{
+                    console.log('부서 예산 조회 : 0건.');
+                }
+                
+                appendChatbotText(anotherGbmsResult);
+            }            
+        });
     });
 
     /* #########[ popup_content_wrap_end ]######### */
@@ -10888,11 +11698,13 @@ function gbmsPopupOpen() {
         let targetText = $(target).text();
         dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
         dropmenu.stop().slideUp().removeClass('show');
+        
+        selMonth = $(target).attr('value');
     }
     
     // dropdown_등록되어있는 값이 있을경우 해당 값 선택
     dropdownMenuListWrap.find('li').each(function() {
-        if ($(this).text() == '6월') {
+        if ($(this).text() == Number(expMonth)+'월') {
             $(this).find('a').trigger('click');
             return;
         }
@@ -10913,7 +11725,12 @@ function gbmsPopupOpen() {
 };
 
 // [ 광고판촉비 팝업 ]
-function apmsPopupOpen() {
+function apmsPopupOpen(data) {
+    
+    console.log('data : ', data);
+    var userId = data.userId;
+    
+    var apms_no = (data.apms_no != null && data.apms_no != '')? data.apms_no:"EKHQ-MKT-20231127-0087";
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
     var addPlugin = $('<div class="plugins" id="apmsPopup"></div>');
@@ -10943,15 +11760,15 @@ function apmsPopupOpen() {
     /* ###[ 광고 판촉비(APMS) 폼의 번호 ]### */
     var inputBoxTextAPMS = $('<div class="input-box"><label>광고 판촉비(APMS) 품의 번호<b>*</b></label></div>');
 
-    var titleNote = $('<small class="note">※ 사전에 확보한 APMS 품의 번호를 검색해 보세요.</small>');
+    var titleNote = $('<small class="note">※ 사전에 확보한 APMS 품의 번호를 입력 하세요.</small>');
     inputBoxTextAPMS.append(titleNote);
 
     var inputBoxTextAPMSNum = $(
         '<div class="input-form">'
-            +'<input class="searchIcon" type="text" placeholder="내용을 입력해 주세요." name="" id="" max-length="50" />'
+            +'<input class="" type="text" placeholder="내용을 입력해 주세요." name="" id="apms-no" max-length="50" />'
         +'</div>'
     );
-    inputBoxTextAPMSNum.find('input').val('546815741');
+    inputBoxTextAPMSNum.find('input').val(apms_no);
     inputBoxTextAPMS.append(inputBoxTextAPMSNum);
     pluginForm.append(inputBoxTextAPMS);
     inputBoxTextAPMSNum.on('keyup', function(e) {
@@ -10964,8 +11781,102 @@ function apmsPopupOpen() {
     var submitBtn = $('<button disabled type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-apms">조회</button>');
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
-        thisPluginClose();
-        $('.chat-message.left').last().append(apmsResult()); // 결과 메세지 (임시 확인용)
+        //thisPluginClose();
+        //$('.chat-message.left').last().append(apmsResult()); // 결과 메세지 (임시 확인용)
+        var reviewParam = {
+                userId:userId,
+                //empNo:empNo, 
+                apms_no : $('#apms-no').val()
+        }
+
+        var requestParam = {
+            query: {
+                "event": "anotherApmsQueryEvent"
+            },
+            payload: {
+                userId:userId,
+                //empNo:empNo, 
+                apmsNo : $('#apms-no').val()
+            }
+        };        
+        
+        console.log('requestParam > ', requestParam);
+        
+        sendChatApi(requestParam, userId, function(payload) {
+            console.log('타계정 광고판촉비(APMS) 조회 결과 : ', payload);
+            
+            var apmsInfo = '';
+            var regSuccessYn = '';
+            var errorMessage = '';
+            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                var apmsResponse = JSON.parse(payload.queryResult.messages[0].response);
+                console.log(apmsResponse["successYn"]);
+                
+                if (apmsResponse["successYn"] == 'N') {
+                    console.log('errorMessage : '+apmsResponse["errorMessage"]);
+                    regSuccessYn = 'N';
+                    errorMessage = apmsResponse["errorMessage"];               // 에러메시지.
+                } else {
+                    regSuccessYn = 'Y';
+                    if (apmsResponse.template && apmsResponse.template.outputs.length > 0 && apmsResponse.template.outputs[0] && apmsResponse.template.outputs[0].resultItem) {
+                        
+                        apmsInfo = apmsResponse.template.outputs[0].resultItem;
+                    }
+                }
+                
+            }
+            else {
+                regSuccessYn = 'N';
+            }
+            
+            thisPluginClose();
+            
+            if(regSuccessYn == 'N') {
+                
+                console.log('광고판촉비 조회 실패 : ');
+                
+                var anotherApmsResult = '<div class="message simple-text">'
+                                 +'<p>'
+                                    +'시스템 오류로 인해 조회되지 않았어요.<br><br>'
+                                    +'아래 버튼을 눌러 광고판촉비를 다시 조회해 보세요.'
+                                 +'</p>'
+                                +'<div class="btn">'
+                                    +'<button type="button" class="btn btn-default btn-big reload-apms">다시 조회하기</button>'
+                                +'</div>'
+                                + '</div>'; 
+                                
+                appendChatbotText(anotherApmsResult);
+                
+                $('.reload-apms').on('click', function() {
+                    apmsPopupOpen(reviewParam);
+                });
+                
+            }   
+            else{
+            
+                console.log('광고판촉비 조회 완료 : ', apmsInfo);
+                
+                var msgApmsResult = '<div class="message simple-text">'
+                                 +'<p>'
+                                    +'<b>광고판촉비(APMS)</b>를 확인해 보세요. '
+                                 +'</p>'
+                                + '</div>'; 
+                
+                var anotherApmsResult = '';
+                if(apmsInfo.length == 1) {                // 광고판촉비 조회 단건
+                    var anotherApmsResult = msgApmsResult + apmsResult(apmsInfo);
+                }
+                //else if(apmsInfo.length > 1) {            // 예산 조회 다건
+                //    
+                //}
+                else{
+                    console.log('광고판촉비 조회 : 0건.');
+                }
+                
+                appendChatbotText(anotherApmsResult);
+            }            
+        });
+        
     });
 
     /* #########[ popup_content_wrap_end ]######### */
@@ -11163,7 +12074,7 @@ function anotherAccountListViewPopupOpen() {
 
 /* ##### [ 타계정 조회 메세지 ] ##### */
 // 부서 예산 조회 메세지
-function makeCardGBMS() {
+function makeCardGBMS(data) {
     var messageWrap = $('<div class="custom-message"></div>');
     var messageBox = $('<div class="message"></div>');
     var messageTextWrap = $('<div class="message simple-text"></div>');
@@ -11178,17 +12089,22 @@ function makeCardGBMS() {
         +'</div>'
     );
     loadBtn.on('click', function() {
-        gbmsPopupOpen();
+        gbmsPopupOpen(data);
     });
     messageTextWrap.append(messageTextContent);
     messageTextWrap.append(loadBtn);
-    messageBox.append(messageTextWrap);
-    messageWrap.append(messageBox);
-    return messageWrap; 
+    
+    if(checkChatHistory == false) {
+        gbmsPopupOpen(data);
+    }
+    //messageBox.append(messageTextWrap);
+    //messageWrap.append(messageBox);
+    //return messageWrap; 
+    return messageTextWrap;
 }
 
 // 광고판촉비 조회 메세지
-function makeCardAPMS() {
+function makeCardAPMS(data) {
     var messageWrap = $('<div class="custom-message"></div>');
     var messageBox = $('<div class="message"></div>');
     var messageTextWrap = $('<div class="message simple-text"></div>');
@@ -11203,17 +12119,23 @@ function makeCardAPMS() {
         +'</div>'
     );
     loadBtn.on('click', function() {
-        apmsPopupOpen();
+        apmsPopupOpen(data);
     });
     messageTextWrap.append(messageTextContent);
     messageTextWrap.append(loadBtn);
-    messageBox.append(messageTextWrap);
-    messageWrap.append(messageBox);
-    return messageWrap; 
+    
+    if(checkChatHistory == false) {
+        apmsPopupOpen(data);
+    }
+    
+    //messageBox.append(messageTextWrap);
+    //messageWrap.append(messageBox);
+    //return messageWrap; 
+    return messageTextWrap;
 }
 
 // 타계정 주문 입력 조회 메세지
-function makeCardAnotherAccountOrder() {
+function makeCardAnotherAccountOrder(orderdata) {
     var messageWrap = $('<div class="custom-message"></div>');
     var messageBox = $('<div class="message"></div>');
     var messageTextWrap = $('<div class="message simple-text"></div>');
@@ -11228,13 +12150,20 @@ function makeCardAnotherAccountOrder() {
         +'</div>'
     );
     loadBtn.on('click', function() {
-        anotherAccountPopupOpen();
+        orderdata.step = 1;
+        anotherAccountPopupOpen(orderdata);
     });
     messageTextWrap.append(messageTextContent);
     messageTextWrap.append(loadBtn);
-    messageBox.append(messageTextWrap);
-    messageWrap.append(messageBox);
-    return messageWrap;
+    
+    if(checkChatHistory == false) {
+        anotherAccountPopupOpen(orderdata);
+    }
+    
+    //messageBox.append(messageTextWrap);
+    //messageWrap.append(messageBox);
+    //return messageWrap;
+    return messageTextWrap;
 }
 
 // 타계정 주문 현황 조회 메세지
@@ -11264,7 +12193,7 @@ function makeCardAALV() {
 
 /* ##### [ 타계정 오류 메세지 ] ##### */
 // 부서 예산 오류 메세지
-function gbmsResultError() {
+function gbmsResultError(data) {
     var messageWrap = $('<div class="custom-message"></div>');
     var messageBox = $('<div class="message"></div>');
     var messageTextWrap = $('<div class="message simple-text"></div>');
@@ -11280,13 +12209,15 @@ function gbmsResultError() {
         +'</div>'
     );
     reloadBtn.on('click', function() {
-        gbmsPopupOpen();
+        gbmsPopupOpen(data);
     });
     messageTextWrap.append(messageTextContent);
     messageTextWrap.append(reloadBtn);
     messageBox.append(messageTextWrap);
-    messageWrap.append(messageBox);
-    return messageWrap;
+    //messageWrap.append(messageBox);
+    
+    return messageBox.html();
+    //return messageWrap;
 }
 
 // 광고판촉비 오류 메세지
@@ -11369,34 +12300,35 @@ function aalvResultError() {
 
 /* ##### [ 타계정 결과 메세지 ] ##### */
 // 부서 예산 결과 메세지
-function gbmsResult() {
+function gbmsResultSingle(budgetInfo) {
     var messageWrap = $('<div class="custom-message"></div>');
     var messageBox = $('<div class="message"></div>');
     var contentWarp = $('<div class="content-wrap"></div>');
     var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>잔여 예산 현황</h2></div>');
     contentWarp.append(contentHeader);
     
+    var budget = budgetInfo[0];
     var contentBox = $(
         '<div class="content-box">'
             +'<div class="content-box-header">'
                 +iconRoundCheck
-                +'<h3>' + 'Enterprise AI팀' + '</h3>'
+                +'<h3>' + budget.deptName + '</h3>'
             +'</div>'
             +'<ul class="content-list-wrap">'
                 +'<li>'
                     +'<h4>조회 월</h4>'
-                    +'<div class="content-list-val text"><span>' + '06월' + '</span></div>'
+                    +'<div class="content-list-val text"><span>' + budget.expMonth+'월' + '</span></div>'
                 +'</li>'
                 +'<li>'
                     +'<h4>기준 일시</h4>'
                     +'<div class="content-list-val date">'
-                        +'<span>' + '2024-06-08' + '</span>'
-                        +'<span>' + '11:08:00' + '</span>'
+                        +'<span>' + budget.expDate + '</span>'
+                        +'<span>' + budget.expTime + '</span>'
                     +'</div>'
                 +'</li>'
                 +'<li>'
                     +'<h4>예산 잔액</h4>'
-                    +'<div class="content-list-val amount"><span>' + '240,820' + '</span>원</div>'
+                    +'<div class="content-list-val amount"><span>' + formatAmount(budget.budgetAmt) + '</span>원</div>'
                 +'</li>'
             +'</ul>'
         +'</div>'
@@ -11404,26 +12336,29 @@ function gbmsResult() {
     contentWarp.append(contentBox);
     messageBox.append(contentWarp);
     messageWrap.append(messageBox);
-    return messageWrap;
+    
+    return messageWrap.html();
 }
 
 // 광고 판촉비 결과 메세지
-function apmsResult() {
+function apmsResult(apmsInfo) {
     var messageWrap = $('<div class="custom-message"></div>');
     var messageBox = $('<div class="message"></div>');
     var contentWarp = $('<div class="content-wrap"></div>');
     var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>광고판촉비</h2></div>');
     contentWarp.append(contentHeader);
+    
+    var apms = apmsInfo[0];
     var contentBox = $(
         '<div class="content-box">'
             +'<ul class="content-list-wrap">'
                 +'<li>'
                     +'<h4>품의 번호</h4>'
-                    +'<div class="content-list-val text"><span>' + '521651651' + '</span></div>'
+                    +'<div class="content-list-val text"><span>' + apms.apms_no + '</span></div>'
                 +'</li>'
                 +'<li>'
                     +'<h4>광고판촉비</h4>'
-                    +'<div class="content-list-val amount"><span>' + '240,820' + '</span>원</div>'
+                    +'<div class="content-list-val amount"><span>' + formatAmount(apms.activity_amount) + '</span>원</div>'
                 +'</li>'
             +'</ul>'
         +'</div>'
@@ -11431,7 +12366,7 @@ function apmsResult() {
     contentWarp.append(contentBox);
     messageBox.append(contentWarp);
     messageWrap.append(messageBox);
-    return messageWrap;
+    return messageWrap.html();
 }
 
 // 타계정 주문 입력 결과 메세지
@@ -11545,5 +12480,6 @@ function aalvResult() {
     return messageWrap;
 }
 
-
-    
+function formatAmount(amt) {
+    return amt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')    
+}
