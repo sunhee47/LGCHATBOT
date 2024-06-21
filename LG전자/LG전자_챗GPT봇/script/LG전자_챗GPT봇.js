@@ -1200,7 +1200,8 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
             }
             else if(checkContentsText.length > viewLimit){
                 console.log("2222");
-                isCopyBtn = false;
+                //isCopyBtn = false;        1)
+                isCopyBtn = true;
                 
                 checkContents = $('<div id="answer-message" class="answer-message caas-chat-response-message-back-color caas-chat-response-message-font-color">'
                 //+'<div class="full-message" style="display:none">'+checkContentsText+'</div>'
@@ -1213,7 +1214,8 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
                 // 코드 데이터가 있을 경우 태그가 잘리는 문제가 있어서 수정함. 
                 var htmlContents = checkContents.find('.check-text').html();
                 //console.log('htmlContents : '+htmlContents);
-                var subContentsText = htmlContents.substr(0,viewLimit)+"...";
+                //var subContentsText = htmlContents.substr(0,viewLimit)+"...";     1)
+                var subContentsText = htmlContents;
                 //console.log('subContentsText > '+subContentsText);
             
                 checkContents.find('.check-text').html(subContentsText);
@@ -1748,17 +1750,18 @@ function customMessageResize() {
 //              }
 //              else{
                   console.log('not history...');
-                  if(viewLimit < viewTextLength) {
-                      newContentText = fullText.substr(0,viewLimit)+"...";
-                      $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>'); // 응답내용을 일부를 보여주든, 전체를 보여주든 full-message 포함(feat.창 사이즈 변경시 필요)
+                  
+                  //if(viewLimit < viewTextLength) {                1)  
+                    //  newContentText = fullText.substr(0,viewLimit)+"...";       1)
+                    //  $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>'); // 1) 응답내용을 일부를 보여주든, 전체를 보여주든 full-message 포함(feat.창 사이즈 변경시 필요)
                       
-                      $(this).append(appendAnswerButton('more', fullText));
-                  }
-                  else{
+                    //  $(this).append(appendAnswerButton('more', fullText));       1)
+                  //}                                               1)
+                  //else{                                           1)    
                       newContentText = fullText;
                       $(this).prepend('<div class="full-message" style="display:none">'+fullText+'</div>'); // 응답내용을 일부를 보여주든, 전체를 보여주든 full-message 포함(feat.창 사이즈 변경시 필요)
                       $(this).append(appendAnswerButton('copy'));
-                  }
+                  //}                                               1)
                   $(this).find(".hidden-text").html(newContentText);
                   highlightCodeBlock($(this));
 //              }
