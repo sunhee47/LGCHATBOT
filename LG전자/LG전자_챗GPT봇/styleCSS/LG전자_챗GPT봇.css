@@ -1585,6 +1585,10 @@
   background-color: #FBE4E9;
   border: 1px solid #E0205C;
 }
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.right {
+   max-width: 85%;    
+   width: 100%;
+}
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.right .message {
   background-color: #E0205C;
   color: white;
@@ -1593,6 +1597,7 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
+  max-width: 100%;
 }
 .test-panel .panel-wrapper .chat-panel span.tag {
   padding: 1px 5px 2px;
