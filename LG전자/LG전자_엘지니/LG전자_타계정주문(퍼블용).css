@@ -5203,6 +5203,9 @@ body {
 .dropdown-box .btn-dropdown.accent {
     border-color: #F55D8D;
 }
+.dropdown-box .btn-dropdown.disabled {
+      background-color: #F5F5F5;
+}
 .dropdown-box .dropdown-menu {
     width: 100%;
     max-height: 158px;
@@ -7072,3 +7075,13 @@ background: #F5F5F5 !important;
   top: 50%;
   transform: translate(-50%, -50%); */
 }
+
+.plugins .add-order .disable-searchIcon {
+  background-color: #F5F5F5;
+  border: none;
+}
+
+.plugins .input-box .input-form input[type=text]:disabled {
+  background-color: #F5F5F5;
+}
+
