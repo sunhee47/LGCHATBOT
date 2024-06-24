@@ -1273,7 +1273,7 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
             // requestCheck.append(checkContents);
             // customMessage.append(requestCheck);
 
-            customMessage.append(messages);
+            // customMessage.append(messages);          // ChatGPT의 답변입니다. 삭제.          
             customMessage.append(checkContents);
             
             /////////////////////////////////////// highlight 적용....
