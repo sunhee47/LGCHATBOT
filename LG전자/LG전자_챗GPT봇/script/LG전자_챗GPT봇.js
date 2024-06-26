@@ -1638,22 +1638,30 @@ function highlightCodeBlock($customMessage) {
 
     $answerText.find('pre > code').each(function() {
         var codehtml = $(this).text();
-        console.log('codeHtml : '+codehtml);
+        //console.log('codeHtml : '+codehtml);
         
         let codeLang = $(this).attr('class');
-        
+        //console.log('codeLang : '+codeLang);
         if(codeLang == "undefined" || codeLang == null) {
             codeLang = "language-xml";
             $(this).addClass(codeLang);
         }
+        //console.log('codeLang : '+codeLang);
         
         let realLang = isIncludeLanguage(codeLang);
+        //console.log('realLang : '+realLang);
         
         $(this).empty();
         $(this).attr('data-highlighted', 'yes').addClass('hljs');
             
         $(this).before('<div class="code-language" style="text-align: right; padding-right: 10px;"><small class="code-language-text" style="font-weight: bold;"><span class="sr-only">Language:</span>'+realLang+'</small></div>');
-        $(this).append(hljs.highlight(codehtml, { language: realLang }).value);
+        
+        if(realLang == '') {
+            $(this).append(hljs.highlight(codehtml, { language: 'sh' }).value);         // 선언된 language 가 없으면 기본 : sh
+        }
+        else{
+            $(this).append(hljs.highlight(codehtml, { language: realLang }).value);
+        }
     });
 }
 
@@ -1675,6 +1683,10 @@ const languageMap = new Map([
   ["xml", "XML"], 
   ["SQL", "SQL"], 
   ["sql", "SQL"], 
+  ["bash", "BASH"],  
+  ["BASH", "BASH"],  
+  ["-sh", "SH"],  
+  ["-SH", "SH"],  
   ["C++", "C++"],  
   ["c++", "C++"],  
   ["C언어", "C"],  
@@ -1686,6 +1698,7 @@ const languageMap = new Map([
 function isIncludeLanguage(cont) {
   var retVal = "";
   
+  //console.log('cont : '+cont);
   if(cont == "undefined" || cont == null) {
       return retVal;
   }
@@ -1693,8 +1706,10 @@ function isIncludeLanguage(cont) {
   for (let [key, value] of languageMap) {
     if(cont.lastIndexOf(key) > -1)  {
       return value;
-    }    
+    } 
   }
+  
+  return retVal;
 }
 
 // 2023.11.27 반응형 UI Start
