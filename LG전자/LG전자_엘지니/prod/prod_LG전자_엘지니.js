@@ -6477,7 +6477,8 @@ function connectMessenger(userId, targetId){
 
   var moreInfos = $('<div class="more-infos"></div>');
   var moreInfoList = $('<ul class="p-info"></ul>');
-  var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') + '</span></li>');
+  var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') + '&nbsp;<a href="#"><img src="'+imgBaseUrl+'/images/copy.png" style="width:16px;height:16px;vertical-align: top;color:#6b6b6b;"/></a></span></li>');
+
   moreInfoList.append(email);
   //메일 버튼 제거 및 임직원 / 그룹사 조회 간 항목 수정
   if(data.group == 'Y' ) {
@@ -6490,7 +6491,21 @@ function connectMessenger(userId, targetId){
 
   var isMobile = Mobile();
 
-	
+    email.find('img').click(function() {
+        //console.log($(this).attr('src'));
+        //console.log($(this).parents('li').find('.info').text());
+        
+        var emailAddr = $(this).parents('li').find('.info').text().trim();
+        var temp = $('<textarea type="text" class="hidden-textbox" />');
+        $("body").append(temp);
+        temp.val(emailAddr).select();
+        document.execCommand('copy');
+        showHtmlSmallDialog(temp);
+        temp.remove();
+
+        showHtmlSmallDialog('E-mail 주소가 복사되었습니다.');
+    });	
+
 	var userId = data.empMail.split("@");
     //console.log('data.userId : '+data.userId+', data.targetId : '+data.targetId+', userId : '+userId[0]);	
     
