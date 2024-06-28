@@ -758,6 +758,28 @@ const popup = function() {
  };
  window.pop = popup();
 
+var lodashDebounce ;
+
+function loadScript(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    // script.type = 'module';
+    script.dataset.name ='lodash';
+    
+    script.onload = () => callback(script);
+    
+    document.head.appendChild(script);
+}
+
+chatui.onLoad = function(){
+    var lodashSrc = 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js';
+    loadScript(lodashSrc, function() {
+        // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+        window.lodash = _.noConflict();
+        lodashDebounce = lodash.debounce(autoSearchEmployees, 500);
+    });
+};
+
  //Popup Event
  jQuery(document).ready(function(e){
      // Popup Open
@@ -1233,27 +1255,26 @@ const setAutocomplete = function() {
   });
  };
  
-
 const autoSearchEmployees = function(inputVal) {
-  // Reset Input Message
-  function resetInputMsg() {
-  // activeAutoComplete('N');
-      $(".chat-footer-form").removeClass('search-where search-dict search-person search-total');
-      $(".autocomplete-wrap .search-title").removeClass("keyword person on");
-      $(".autocomplete-wrap .btn-goSearch").removeClass("show");
-      $(".autocomplete-wrap .btn-goSearch span").text('');
-      $(".chat-footer-form").attr('data-mode','message');
-      $(".test-sentence-input").val('');
-  }
+// function autoSearchEmployees(inputVal) {
+    console.log("검색")
+    // Reset Input Message
+    function resetInputMsg() {
+        // activeAutoComplete('N');
+        $(".chat-footer-form").removeClass('search-where search-dict search-person search-total');
+        $(".autocomplete-wrap .search-title").removeClass("keyword person on");
+        $(".autocomplete-wrap .btn-goSearch").removeClass("show");
+        $(".autocomplete-wrap .btn-goSearch span").text('');
+        $(".chat-footer-form").attr('data-mode','message');
+        $(".test-sentence-input").val('');
+    }
+    // Set Autocomplete
+    var keyword = [];
+    var $frmWrap = $(".chat-footer-form");
+    //var inputVal = $(this).val();
+    var searchVal = "'" + inputVal + "'";
     
-  // Set Autocomplete
-  var keyword = [];
- 
-      var $frmWrap = $(".chat-footer-form");
-      //var inputVal = $(this).val();
-      var searchVal = "'" + inputVal + "'";
- 
-      console.log('searchVal : '+searchVal);
+    console.log('searchVal : '+searchVal);
       if ($frmWrap.hasClass("search-where") || $frmWrap.hasClass("search-dict")) {
           if ($.trim(inputVal) == "") {
               resetInputMsg();
@@ -1272,39 +1293,41 @@ const autoSearchEmployees = function(inputVal) {
         limit: 10   
     };
     
-    chatui.searchEmployees(options)
-        .then(function (employees) {
-          if(employees.length > 0){
-            console.log("employees : " + JSON.stringify(employees));
-              
-            // autoComplete는 Label 기준으로 세팅하기 때문에 Label 값을 insert
-            $.each(employees, function(index) {
-              var employee = employees[index]
-              var userKorName = employee.userKorName;
-              employee.label = userKorName;
-              employee.type = "person";
-            });
-              
-              keyword = employees;
-            $(".test-sentence-input").autocomplete("option", "source", keyword);
-              $(".test-sentence-input").autocomplete("option", "appendTo", $(".test-sentence-input").closest(".form-group").find(".autocomplete-wrap"));
-              
-              $(".test-sentence-input").focus();
-          }else{
-            $.each(window.phrases, function(index) {
-                keyword.push({
-                    "type": "keyword",
-                    "label": window.phrases[index]
-                });
-                
-              if(index > 2000){
-                return false;
-              }
-            });
-            keyword = [];
-          }
-    });
+    console.log('func length > '+inputVal.length);
 
+    if (inputVal.length > 1) {
+        chatui.searchEmployees(options).then(function(employees) {
+            if (employees.length > 0) {
+                console.log("employees : " + JSON.stringify(employees));
+    
+                // autoComplete는 Label 기준으로 세팅하기 때문에 Label 값을 insert
+                $.each(employees, function(index) {
+                    var employee = employees[index]
+                    var userKorName = employee.userKorName;
+                    employee.label = userKorName;
+                    employee.type = "person";
+                });
+    
+                keyword = employees;
+                $(".test-sentence-input").autocomplete("option", "source", keyword);
+                $(".test-sentence-input").autocomplete("option", "appendTo", $(".test-sentence-input").closest(".form-group").find(".autocomplete-wrap"));
+    
+                $(".test-sentence-input").focus();
+            } else {
+                $.each(window.phrases, function(index) {
+                    keyword.push({
+                        "type": "keyword",
+                        "label": window.phrases[index]
+                    });
+    
+                    if (index > 2000) {
+                        return false;
+                    }
+                });
+                keyword = [];
+            }
+        });
+    }
 
   $(".test-sentence-input").autocomplete({
       appendTo: ".form-group .autocomplete-wrap",
@@ -3279,12 +3302,14 @@ jQuery(document).ready(function(e){
         setAutocomplete();
       }
     }
+    
+    console.log('length : '+val.length);
     if(val.length > 0) {
-
         //console.log('e.code : '+e.code);
         // 입력된 메시지에 대한 자동완성 기능. 
         if(!ignoreKeyArr.includes(e.code)) {
-            autoSearchEmployees(val);
+            console.log("lodashDebounce");
+            lodashDebounce(val);
         }
       /*  
       if(val == '/') {
@@ -3692,7 +3717,7 @@ function dictDeatilOpen(btn, termId) {
 
 
  
-
+var button_data = null;
 chatui.onReceiveResponse = function(resp, isHistory) {
    console.log("chatui.onReceiveResponse", resp, isHistory);
    
@@ -3788,6 +3813,18 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 
         $('.quick-list').last().html(quickButtons);
       }
+      
+      if(message.buttons && message.buttons.length > 0) {
+          for(var k=0; k<message.buttons.length; k++) {
+              var button = message.buttons[k];
+              
+              if(button.label == '마곡 LG 사이언스 파크') {
+                  //console.log('button.value : '+button.value);
+                  
+                  button_data = button;
+              }
+          }
+      }
     }
 
     
@@ -3830,6 +3867,8 @@ chatui.onReceiveResponse = function(resp, isHistory) {
     //console.log('content >>> '+$('.chat-message .message .message-content').length);
     var lastLeftMessage = $('.chat-message.left').last();
     newWindowForLink(lastLeftMessage);
+    
+    buttonLink(lastLeftMessage);
         
     $('.btn-system').on('click', function() {
       var systemSelect = $(this).data('system');
@@ -3885,10 +3924,52 @@ chatui.onReceiveResponse = function(resp, isHistory) {
     },100);
 }
 
+
+function openWindows(link, userInfo) {
+    
+    if($('#menu_form').length) {
+        var paramForm = $('#menu_form');
+        
+        var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
+        window.open("", "LGenieWin", "");
+        
+        $(paramForm).attr('action', url);
+        $(paramForm).attr('target', "LGenieWin");
+        $(paramForm).attr('method', 'post');
+        
+        paramForm.submit();        
+    }
+    else{
+        var paramForm = document.createElement("form");
+        var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
+        window.open("", "LGenieWin", "");
+        
+        $(paramForm).attr('id', "menu_form");
+        $(paramForm).attr('action', url);
+        $(paramForm).attr('target', "LGenieWin");
+        $(paramForm).attr('method', 'post');
+    
+        var obj = document.createElement("input");
+        obj.setAttribute("type", "hidden");
+        obj.setAttribute("name", "cid");
+        obj.setAttribute("value", "040");
+        paramForm.appendChild(obj);
+    
+        var obj = document.createElement("input");
+        obj.setAttribute("type", "hidden");
+        obj.setAttribute("name", "userInfo");
+        obj.setAttribute("value", userInfo);
+        paramForm.appendChild(obj);
+    
+        document.body.appendChild(paramForm);
+        paramForm.submit();
+    }
+}
+
 function newWindowForLink(lastLeftMessage) {
     var childMessages = lastLeftMessage.children('.message');
     
-    console.log('길이 : '+lastLeftMessage.children('.message').length);
+    //console.log('길이 : '+lastLeftMessage.children('.message').length);
     
     for(var m=0; m<childMessages.length; m++) {
         var childMessage = childMessages[m];
@@ -3915,6 +3996,44 @@ function newWindowForLink(lastLeftMessage) {
     
 }
 
+function buttonLink(lastLeftMessage) {
+    var childMessages = lastLeftMessage.children('.message');
+    
+    console.log('길이 : '+lastLeftMessage.children('.message').length);
+    
+    for(var m=0; m<childMessages.length; m++) {
+        var childMessage = childMessages[m];
+        var buttons = $(childMessage).find('.btn-wrap').find('.btn-default');
+        
+        console.log(buttons.length);
+        
+        for(var i=0; i<buttons.length; i++) {
+            var button = buttons[i];
+            //console.log('buttons : ', button);
+            
+            //console.log('label : '+$(button).children('span').text());
+            
+            let label = $(button).children('span').text();
+            if(label == '마곡 LG 사이언스 파크') {
+                
+                if(button_data.label == label) {
+                    let linkBtn = $(button);  
+              
+                    let addBtn = $('<div><button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color"><span>'+button_data.label+'</span></button></div>');
+               
+                    linkBtn.after(addBtn);
+                    linkBtn.remove();
+               
+                    //console.log('button_data > ', button_data);
+                    addBtn.on('click', function(){
+                        openWindows('https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do', button_data.value);
+                    });     
+                }
+            }
+        }
+        
+    }    
+}
 /**
  * '화면 스크롤 최하단으로 내리기' 함수
  */
