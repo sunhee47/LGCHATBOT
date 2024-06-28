@@ -1273,7 +1273,7 @@ const autoSearchEmployees = function(inputVal) {
         limit: 10   
     };
     
-    chatui.searchEmployees(options)
+/*    chatui.searchEmployees(options)
         .then(function (employees) {
           if(employees.length > 0){
             console.log("employees : " + JSON.stringify(employees));
@@ -1305,7 +1305,7 @@ const autoSearchEmployees = function(inputVal) {
             keyword = [];
           }
     });
-
+*/
 
   $(".test-sentence-input").autocomplete({
       appendTo: ".form-group .autocomplete-wrap",
@@ -2714,11 +2714,13 @@ function sendGptMsg(text) {
 } 
 
 var targetParent = null;
-let checkUserEvent = "checkUser";
+// let checkUserEvent = "checkUser";
+let checkUserEvent = "checkAuth";
 jQuery(document).ready(function(e){
     
     ////////// 사용 제한 
-    
+    // alert("챗봇 서비스 배포 작업 중입니다. 잠시 후 이용 부탁드립니다.\n(We are currently deploying our chatbot service. Please try again in a little while.)");
+    // window.close();
     if(chatui.getSetting("languageCode") !== "ko"){
         console.log("챗봇 이동")
         openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'));
