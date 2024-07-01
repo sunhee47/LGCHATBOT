@@ -7085,3 +7085,75 @@ background: #F5F5F5 !important;
   background-color: #F5F5F5;
 }
 
+.stepper-wrap li .model-list {
+  /*position: absolute; */ 
+  background: white;
+  border: 1px solid #BEBEBE;
+  border-radius: 3px;
+  padding: 8px;
+  z-index: 100;
+  display: none;
+  overflow-y: auto;
+
+  /* [퍼블 수정 및 추가] - width 값 수정 ( 100% -> calc(100% + 2px) ), max-height 값 수정 ( 215px -> 230px ), top 값 수정 ( 82px -> 50px ) */
+  width: calc(100% - 30px);
+  max-height: 230px;
+  /*top: 200px;*/
+
+  /* [퍼블 수정 및 추가] - left: -1px; 추가 */
+  /*left: -1px; */ 
+}
+.stepper-wrap .model-list.show {
+  display: block;
+}
+.stepper-wrap .model-list span {
+  font-size: 12px;
+  line-height: 18px;
+  display: block;
+  color: #E0205C;
+  padding: 10px 8px;
+}
+.stepper-wrap .model-list p {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  margin: 0;
+  
+  /* [퍼블 수정 및 추가] - word-break: break-all; 추가 */
+  word-break: break-all;
+}
+.stepper-wrap .model-list p.small {
+  font-size: 12px;
+  line-height: 18px;
+  color: #565656;
+}
+.stepper-wrap .model-list .no-res {
+  padding: 10px 8px;
+  font-weight: 500;
+  color: #898989;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-left: 0;
+  border-right: 0;
+  cursor: default;
+}
+.stepper-wrap .model-list .no-res:hover {
+  background-color: transparent;
+}
+.stepper-wrap .model-list ul {
+  max-height: 120px;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+
+  /* [퍼블 수정 및 추가] - overflow-y 값 변경 (scroll -> auto) */
+  overflow-y: auto;
+}
+.stepper-wrap .model-list ul li {
+  padding: 10px 8px;
+  cursor: pointer;
+}
+.stepper-wrap .model-list ul li:hover {
+  background-color: #F5F5F5;
+}
