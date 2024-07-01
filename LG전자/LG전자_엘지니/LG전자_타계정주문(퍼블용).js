@@ -9740,6 +9740,7 @@ function anotherAccountOrderFirst(orderdata) {
     var selDeputyEmpno = (orderdata.deputyEmpNo == null)? '':orderdata.deputyEmpNo;
     var selDeputyUsername = (orderdata.deputyUserName == null)? '':orderdata.deputyUserName;
 
+    $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     pluginHeader.find('h1').text('타계정 주문 입력 ('+ '1' + '/' + '8' +')');
     pluginHeader.find('.backBtn').remove();
@@ -9774,64 +9775,146 @@ function anotherAccountOrderFirst(orderdata) {
     pluginForm.append(inputBoxRadio);
 
     /* ###[ 대리 주문자 ]### */
-    var dropdownBox = $('<div class="dropdown-box dropdown-another" style="display: none;"><label>대리 주문자</label></div>');
-    var dropdownInput = $(
-        '<div class="input-form btn-dropdownn searchIcon">'
-            +'<input placeholder="대리 주문자를 입력해주세요." type="text" value="" />'
-        +'</div>'
-    );
-    dropdownBox.append(dropdownInput);
-    pluginForm.append(dropdownBox);
+    var inputBoxText1 = $('<div class="input-box add-order" style="display:none;"><label>대리 주문자<b>*</b></label></div>');
+    // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
+    var inputTextContent1 = $('<div class="input-form order-select searchIcon"></div>');
+    var deputySelected = $('<div class="selected-order"></div>');
+    var inputBox1 = $('<input type="text" placeholder="대리 주문자를 선택하세요." max-length="50" id="deputy-name" readonly/>');
+    if(selDeputyEmpno != '') {
+        var inputBox1 = $('<input type="text" placeholder="조회 중 ..." max-length="50" id="deputy-name" readonly/>');
+    }    
+    var deputyListCont = $('<div class="order-list"></div>');
     
-    var teamMemberList = orderdata.teamMemberList;
-    // 조회 구분 메뉴 & 리스트(아이템)
-    var testData = [
-        {'user':'홍길동','class':'책임','lg':'LG01','manager':'담당01','team':'Team01','part':'part01','group':'조01'},
-        {'user':'김길동','class':'선임','lg':'LG02','manager':'담당02','team':'Team02','part':'part02','group':'조02'},
-        {'user':'이길동','class':'책임','lg':'LG03','manager':'담당03','team':'Team03','part':'part03','group':'조03'},
-        {'user':'박길동','class':'선임','lg':'LG04','manager':'담당04','team':'Team04','part':'part04','group':'조04'},
-        {'user':'최길동','class':'책임','lg':'LG05','manager':'담당05','team':'Team05','part':'part05','group':'조05'},
-        {'user':'정길동','class':'선임','lg':'LG06','manager':'담당06','team':'Team06','part':'part06','group':'조06'},
-        {'user':'테스트','class':'책임','lg':'LG07','manager':'담당07','team':'Team07','part':'part07','group':'조07'},
-        {'user':'이름',  'class':'선임','lg':'LG08','manager':'담당08','team':'Team08','part':'part08','group':'조08'},
-        {'user':'이름이름','class':'책임','lg':'LG09','manager':'담당09','team':'Team09','part':'part09','group':'조09'},
-        {'user':'홍길동','class':'선임','lg':'LG10','manager':'담당10','team':'Team10','part':'part10','group':'조10'},
-    ];
-    var dropdownMenuListWrap = $('<ul class="dropdown-menu top twoLines"></ul>');
-    let dropdownListItem = '';
-    /*for ( var i = 0; i < testData.length; i++ ) {
-        var data = testData[i];
-        dropdownListItem += (
-            '<li class="dropdown-item">'
-                +'<a href="javascript:void(0)">'
-                    +'<p>'+data.user+' '+data.class+'</p>'
-                    +'<span>'+data.lg+'/'+data.manager+'/'+data.team+'/'+data.part+'/'+data.group+'</span>'
-                +'</a>'
-            +'</li>'
-        );
-    };*/
+    var deputyListTitle = $('<span>대리 주문자 목록</span>');
+    deputyListCont.append(deputyListTitle);
+    //inputBox.append('<input type="text" value="" id="costau-code"/>');
     
-    for ( var i = 0; i < teamMemberList.length; i++ ) {
-        var member = teamMemberList[i];
-        var selected = '';
-        if(member.empNo == selDeputyEmpno) {
-            selected = 'selected';
-        }
-        dropdownListItem += (
-            '<li class="dropdown-item">'
-                +'<a href="javascript:void(0)" class="'+selected+'">'
-                    +'<p>'+member.empName+' '+''+'</p>'
-                    +'<span>'+'LG'+'/'+member.deptName+'</span>'
-                +'</a>'
-                +'<span class="member-empNo" style="display:none;">'+member.empNo+'</span>'
-                +'<span class="member-deptCd" style="display:none;">'+member.deptCd+'</span>'
-            +'</li>'
-        );
+    inputTextContent1.append(deputySelected);
+    inputTextContent1.append(inputBox1);
+    inputTextContent1.append(deputyListCont);
+    
+    var orderUl1 = $('<ul></ul>');
+    
+    inputBox1.on('click', function() {
+    //orderSelectBox.on('click', function() {
+        // [퍼블 수정 및 추가] - order-select 스타일 변경
+        inputTextContent1.addClass('focus');
+            
+        deputyListCont.addClass('show');
+        //donationList.addClass('show');
+        orderUl1.empty();
+        
+        //spareHtml.css('height', '100px');
+        
+        var requestParam = {
+            query: {
+              "event": "teamRequestorInquiryEvent"
+            },
+            payload: {
+            }
+          };
+
+          sendChatApi(requestParam, null, function(payload){
+            //console.log('payload > ', payload);
+            var result = JSON.parse(payload.queryResult.messages[0].response);
+            console.log('result', result);
+            teamMemberList = result.resultList;
+            
+            if(teamMemberList.length == 0) {
+              var orderLi1 = $('<li class="no-res">대리 주문자 정보가 없습니다.</li>');
+              orderUl1.append(orderLi1);
+              deputyListCont.append(orderUl1);
+            } else {
+              teamMemberList.map(teamMember => {
+                  
+                var orderLi1 = $(
+                    '<li>'
+                        +'<p>'+ teamMember.employee_name // + '()' 
+                        +'</p>'
+                        +'<p class="small">'
+                        + '['+ teamMember.department_name +'] '
+                        //+ orderType.reasonCode
+                        +'</p>'
+                    +'</li>'
+                );
+                
+                // Cost AU 목록 리스트 클릭
+                orderLi1.on('click', function() {
+                    
+                    var deputyInfo = $(
+                        '<div class="data-wrap">'
+                            +'<p>' + teamMember.employee_name + '</p>'
+                            +'<span>' + teamMember.department_name + '</span>'
+                            + '<input type="hidden" value="'+ teamMember.employee_number +'" class="deputy-EmpNo"/>'
+                            + '<input type="hidden" value="'+ teamMember.employee_name+'" class="deputy-UserName"/>'
+                        +'</div>'
+                    );                        
+
+                    inputBox1.val('');
+                    inputBox1.empty();
+                    deputySelected.empty();
+                    deputySelected.append(deputyInfo);
+                    
+                    //orderInput.val(orderInfo.html());
+                    
+                    // [퍼블 수정 및 추가]
+                    var targetHeight = deputySelected.height();
+                    inputTextContent1.removeClass('focus');
+                    console.log(targetHeight);
+            
+                    deputyListCont.removeClass('show');
+                    // $('.order-list').css('top', '82px');
+                    deputyListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+                    $('#deputy-name').attr('placeholder', '');
+                    
+                    //scheduleorderWidth($('#deputy-name'));
+                    scheduleorderWidth(inputTextContent1, deputySelected, $('#deputy-name'));
+                    //nextBtnEvent($(this));
+
+                });
+                
+                
+                if(selDeputyEmpno == teamMember.employee_number) {
+                    if(orderdata.action == 'back') {
+                        orderLi1.trigger('click');       
+                        orderdata.action = '';
+                        
+                        //spareHtml.css('height', '0px');
+                    }
+                }
+                
+                orderUl1.append(orderLi1);
+              });
+              deputyListCont.append(orderUl1);
+            }
+            
+          });
+        
+        //////        
+    });
+    
+    
+    //////////
+    //var inputTextContent = $(
+    //    '<div class="input-form addValue">'
+    //        +'<input class="searchIcon" type="text" placeholder="Cost AU를 입력해 주세요." max-length="50" value="계정 정보 자동입력" disabled />'
+    //    +'</div>');
+    inputBoxText1.append(inputTextContent1);
+    pluginForm.append(inputBoxText1);
+
+    var spareHtml = $('<p style="height:0px;"></p>');
+    pluginForm.append(spareHtml);
+
+    function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
+        let orderSelectWidth = $inputTextContent.width();
+        let selectedorderWidth = $costSelected.width();
+        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        $inputId.css('width', scheduleorderWidth + "px");
+        if ($inputId.width() === 0) {
+            $inputId.attr('style', '');
+        };
     };
     
-    dropdownMenuListWrap.append(dropdownListItem);
-    dropdownBox.append(dropdownMenuListWrap);
-
     /*  ###[ etc ]### */
     // 다음버튼
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>');
@@ -9854,6 +9937,10 @@ function anotherAccountOrderFirst(orderdata) {
         }
         else{
             orderdata.orderEmpNo =  orderdata.empNo;                // 본인. 
+            
+            delete orderdata.deputyEmpNo;
+            delete orderdata.deputyUserName;
+            
         }
 
         delete orderdata.action;    
@@ -9866,73 +9953,42 @@ function anotherAccountOrderFirst(orderdata) {
     })
     
     // 라디오 버튼 이벤트
-    var eventTarget = $('.dropdown-another');
+    var eventTarget = inputBoxText1;    //$('.dropdown-another');
     setTimeout(function() {
-        eventTarget.css('display','none');
+        if(selSelfYn == "YES")
+            eventTarget.css('display','none');
+        else 
+            eventTarget.css('display','block');
     },1);
     inputBoxRadio.find('input').on('click', function(e) {
         if (e.target.value == 'NO') {
-            dropdownBox.stop().slideDown();
+            eventTarget.stop().slideDown();
+            spareHtml.css('height', '100px');
         } else {
-            dropdownBox.stop().slideUp();
+            eventTarget.stop().slideUp();
+            spareHtml.css('height', '0px');
+            
+            delete orderdata.deputyEmpNo;
+            delete orderdata.deputyUserName;
+            
+            deputySelected.empty();
+            
+            deputyListCont.css('top', '50px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+            $('#deputy-name').attr('placeholder', '대리 주문자를 선택하세요.');            
+            //orderUl1.empty();
         }
     });
     
-    // dropdown_input
-    dropdownInput.on('click', function() {
-        dropdownBtnEvent(this);
-    });
-    dropdownMenuListWrap.find('li a').on('click', function() {
-        dropdownMenuInputEvent(this);
-    });
-    function dropdownBtnEvent(target) {
-        if ($(target).hasClass('active')) {
-        } else {
-            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
-        }
-    }
-    function dropdownMenuInputEvent(target) {
-        let mainText = $(target).find('p').text();
-        let subText = $(target).find('span').text();
-        let memEmpNo = $(target).parents('.dropdown-item').find('.member-empNo').text();
 
-        console.log('memEmpNo > '+memEmpNo);
-        const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
-        var dataText = $(
-            '<div class="data-wrap">'
-                +'<p>' + mainText + '</p>'
-                +'<span>' + subText + '</span>'
-                + '<input type="hidden" value="'+ memEmpNo +'" class="deputy-EmpNo"/>'
-                + '<input type="hidden" value="'+ mainText+'" class="deputy-UserName"/>'
-            +'</div>'
-        );
-        dropdownInput.append(dataText);
-        dataText.on('click', function() {
-            dropdownInput.find('input').css('display','block').val('').focus();
-            $(this).remove();
-        });
-        dropdownInput.removeClass('active').addClass('select').find('input').css('display', 'none');
-        let inputHeight = Math.ceil(dropdownInput.height());
-        inputHeight = inputHeight + 14;
-        dropmenu.css('bottom', inputHeight+'px');
-        dropmenu.stop().slideUp().removeClass('show');
-        setTimeout(function() {
-            dropmenu.attr('style','');
-        },1000);
-    }
-    
     // 설정된 값이 있으면. 
     if(selSelfYn == 'NO') {
+        //$('#deputy-name').attr('placeholder', '조회중 ...');  
         inputBoxRadio.find('input').trigger('click');
         
-        console.log('length : '+dropdownMenuListWrap.find('li a').length);
-        
-        console.log('select : '+dropdownMenuListWrap.find('li').find('.selected'));
-        
-        var selectedDeputyUser = dropdownMenuListWrap.find('li').find('.selected');
-        if(selectedDeputyUser) {
-            selectedDeputyUser.trigger('click');
+        if (selDeputyEmpno != null) {
+            inputBox1.trigger('click');
         }
+
     }
     
     /* #########[ popup_content_form_end ]######### */
