@@ -6315,3 +6315,17 @@ background: #F5F5F5 !important;
   cursor: default;
 }
 
+/* default fallback GPT 버튼 blue 처리 */
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-quick-reply .btn-custom-reply.blue {
+  border-color: #7CA7FF;
+  color: #4E86F8;    
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-quick-reply .btn-custom-reply.blue svg path {
+  fill: #4E86F8;
+} 
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-quick-reply .btn-custom-reply.blue:hover {
+  background-color: #e9f0ff;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-quick-reply .btn-custom-reply.blue:active {
+  background-color: #c8daff;
+}
