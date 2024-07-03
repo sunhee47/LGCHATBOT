@@ -2127,8 +2127,8 @@ function showNotiSettings() {
       pushEduBotSetting = 'N';
     }
   });
-  pushAll.append(pushAllSwitch);
-  onOffList2.append(pushAll);
+  //pushAll.append(pushAllSwitch);
+  //onOffList2.append(pushAll);
 
   var push15Before =  $('<li><span class="a-text">일정 15분 전 알림</span></li>');
   var push15BeforeSwitch = $('<label class="switch">'
@@ -2159,8 +2159,8 @@ function showNotiSettings() {
     pushEduBotSetting = 'N';  
   }
   });
-  pushEduBot.append(pushEduBotSwitch);
-  onOffList2.append(pushEduBot);
+  //pushEduBot.append(pushEduBotSwitch);
+  //onOffList2.append(pushEduBot);
 
   onOffBox2.append(onOffList2);
   
@@ -2305,7 +2305,7 @@ function welcomeAppend(welcomeMessage) {
         +    '<p>'
         +    '    · 일정 등록, 시스템 담당자 검색 등 기존 챗봇 기능을 더욱 편리하게 리뉴얼했어요.</br>'
 //        +    '    · 예산시스템과 수입진행현황 조회 기능을 새로 추가했어요. (ERP 관련 기능은 계속 업데이트 될 예정입니다.)</br>'
-        +    '    · 학습봇 모드를 통해 새로운 정보 등록을 요청할 수 있어요.</br>'
+//        +    '    · 학습봇 모드를 통해 새로운 정보 등록을 요청할 수 있어요.</br>'
         +    '    · 수입진행현황 조회 기능을 새로 추가했어요.</br>'
         +    '</p>'
         +    '</br>'
@@ -2862,9 +2862,9 @@ jQuery(document).ready(function(e){
       +'<li class="list-menu-third">챗봇 평가 및 사용자 의견'
         + arrow2
       +'</li>'
-      +'<li class="list-menu-fourth">학습봇 모드'
-        + arrow2
-    +'</li>'
+//      +'<li class="list-menu-fourth">학습봇 모드'
+//        + arrow2
+//    +'</li>'
       +'<li class="list-menu-fifth">GPT 모드'
         + arrow2
     +'</li>'
@@ -2983,11 +2983,11 @@ jQuery(document).ready(function(e){
   +  '<div class="faq-body">'
   +     '<div class="btns">'
 
-  +         '<button type="button" class="btn-s btn-icon btn-text edu-bot green">' // [퍼블 수정_240528 (클래스 btn-highlight 제거 & green 추가)]
-  +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M3.41041 10.3086L2.80655 12.9235C2.76915 13.0855 2.91432 13.2306 3.07628 13.1932L5.69134 12.5893L13.1516 5.12906L10.8708 2.84835L3.41041 10.3086ZM10.3876 2.20012L2.82106 9.76658C2.73054 9.85711 2.66726 9.97125 2.63846 10.096L2.02706 12.7435C1.85661 13.4816 2.5182 14.1432 3.25631 13.9727L5.90398 13.3612C6.02871 13.3324 6.14284 13.2691 6.23336 13.1786L13.7999 5.6122C14.0667 5.34537 14.0667 4.91273 13.7999 4.6459L11.3539 2.2001C11.087 1.93329 10.6544 1.9333 10.3876 2.20012Z"/>'
-  +         '</svg>'
-  +           '학습봇 모드</button>'
+//  +         '<button type="button" class="btn-s btn-icon btn-text edu-bot green">' // [퍼블 수정_240528 (클래스 btn-highlight 제거 & green 추가)]
+//  +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//  +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M3.41041 10.3086L2.80655 12.9235C2.76915 13.0855 2.91432 13.2306 3.07628 13.1932L5.69134 12.5893L13.1516 5.12906L10.8708 2.84835L3.41041 10.3086ZM10.3876 2.20012L2.82106 9.76658C2.73054 9.85711 2.66726 9.97125 2.63846 10.096L2.02706 12.7435C1.85661 13.4816 2.5182 14.1432 3.25631 13.9727L5.90398 13.3612C6.02871 13.3324 6.14284 13.2691 6.23336 13.1786L13.7999 5.6122C14.0667 5.34537 14.0667 4.91273 13.7999 4.6459L11.3539 2.2001C11.087 1.93329 10.6544 1.9333 10.3876 2.20012Z"/>'
+//  +         '</svg>'
+//  +           '학습봇 모드</button>'
 
   +         '<button type="button" class="btn-s btn-icon btn-text gpt-bot blue">' // [퍼블 수정_240528 (클래스 blue 추가)]
   +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >'
@@ -7848,7 +7848,7 @@ function makeDefaultFallbackCard(data) {
     };
   });
 
-  btnList.append(btnLearningBot);
+  //btnList.append(btnLearningBot);
   
   var gptBotBtn = $('<span class="btn-custom-reply btn-text blue">' // [퍼블 수정_240528 (클래스 blue 추가)]
   +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >'
