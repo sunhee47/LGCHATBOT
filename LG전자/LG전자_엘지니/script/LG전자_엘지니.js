@@ -8884,7 +8884,7 @@ function addBudgetPopupOpen(data) {
 
     /*  ###[ etc ]###  */
     // 코멘트
-    var addBudgetComent = $('<p class="small coment-b">※ 현재 시간 기준으로 조회합니다.</p>');
+    var addBudgetComent = $('<p class="small coment-b" style="margin-top: 20%;">※ 현재 시간 기준으로 조회합니다.</p>');
     
     // var formAddHiddenText = $(
     //     '<input type="hidden" id="accountType" value=""/>'    
@@ -9036,8 +9036,8 @@ function addBudgetPopupOpen(data) {
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
-            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
-            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
         }
     }
 }
