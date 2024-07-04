@@ -8143,17 +8143,17 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         }
         else if (message.type == 'importCargoError') {
           console.log(message.data);
-          messageCard = importCargoResultError(message.data); // 수입화물 조회 실패
           addImportCargoPopupClose();
+          messageCard = importCargoResultError(message.data); // 수입화물 조회 실패
         }
         else if (message.type == 'importCargoResult') {
-          messageCard = importCargoResult(message.data); // 수입화물 조회 결과(단건)
           addImportCargoPopupClose();
+          messageCard = importCargoResult(message.data); // 수입화물 조회 결과(단건)
           descendScroll();
         }
         else if (message.type == 'importCargoResultList') {
-          messageCard = importCargoListResult(message.data); // 수입화물 조회 결과(다건)
           addImportCargoPopupClose();
+          messageCard = importCargoListResult(message.data); // 수입화물 조회 결과(다건)
           descendScroll();
         }
         else if (message.type == 'importCargoNoCnt') { //수입화물 조회 없음
@@ -10153,7 +10153,7 @@ function addImportCargoPopupOpen(data) {
             +'<small class="require-alert show">*최대 10년 전까지 조회할 수 있어요.</small>'
         +'</div>'
     );
-    var arrivalYearDropdown = $('<button type="button" class="btn btn-dropdown default" id="blYy"><span>입항 연도를 선택해 주세요.</span></button>');
+    var arrivalYearDropdown = $('<button type="button" class="btn btn-dropdown default" id="blYy"><span>입항 연도를 선택해 주세요.</span></button>');      // 
     var arrivalYearDropdownArrow = $(
         '<i class="icons">'
             +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -10219,6 +10219,8 @@ function addImportCargoPopupOpen(data) {
         //   },2000);
         // }
         chatui.sendEventMessage("importedFreightEvent", param);
+        
+        //addImportCargoPopupClose();
     });
     
     /* #########[ popup_content_wrap_end ]######### */
@@ -10261,8 +10263,12 @@ function addImportCargoPopupOpen(data) {
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
-            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
-            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
+            // .dropdown-menu 의 'show' 클랙스가 이상하다. 
+            //$(target).not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+            //$(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
+            
+            $(target).not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
         }
     }
     
