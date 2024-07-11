@@ -3305,7 +3305,7 @@ jQuery(document).ready(function(e){
         //console.log('e.code : '+e.code);
         // 입력된 메시지에 대한 자동완성 기능. 
         if(!ignoreKeyArr.includes(e.code)) {
-            console.log("lodashDebounce");
+            // console.log("lodashDebounce");
             lodashDebounce(val);
         }
       /*  
@@ -8892,6 +8892,14 @@ function addBudgetPopupOpen(data) {
     //     +'<input type="hidden" id="accountName" value=""/>'    
     // );
     
+    var projectInputBox = $('<div class="input-box"><label>프로젝트 코드</label></div>');
+    
+    var formProjectText = $(
+        '<input type="text" id="projectCode" placeholder="미 입력시 \'0000\' 기준으로 검색됩니다. " />'
+    );
+    addBudgetForm.append(projectInputBox);
+    projectInputBox.append(formProjectText);
+    
     var formAddHiddenText = $(
         '<input type="hidden" id="accountType" value=""/>'    
         +'<input type="hidden" id="accountCode" value=""/>'    
@@ -8919,6 +8927,7 @@ function addBudgetPopupOpen(data) {
         var deptKorName = $('#deptKorName').val();
         var deptAccountUnit = $('#deptAccountUnit').val();
         var corpId = $('#corpId').val();
+        var projectCode = $('#projectCode').val();
         
         // var param = {
         //     "deptId": data.deptId, 
@@ -8938,7 +8947,8 @@ function addBudgetPopupOpen(data) {
             "deptKorName": deptKorName,
             "deptExtraCode" : deptExtraCode,
             "deptAccountUnit" : deptAccountUnit,
-            "corpId": corpId
+            "corpId": corpId,
+            "projectCode": projectCode
         }
         
         chatui.sendEventMessage("searchBudgetResult", param);
@@ -9083,6 +9093,7 @@ function budgetResult(data) {
         + '<h4>예산 잔액</h4>'
         // + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].BALANCE)+'</span>원</div>'
         + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].P_BALANCED_BUDGET_AMOUNT)+'</span>원</div>'
+        // + '<div class="budget-remain"><span>'+getAmountComma(data.totalBudget)+'</span>원</div>'
         + '</li>'
         + '</ul>'
         // + '<div class="btn">'
@@ -9114,6 +9125,8 @@ function budgetResultError(data) {
     
     var budgetResultErrorMessage = $(
          '<p>시스템 오류로 인해 조회되지 않았어요. 아래 버튼을 눌러 잔여 예산을 다시 조회해 보세요.</p>'
+         + '<p>'+data.errorMsg+'</p>'
+         
     );
     
     var budgetResultReloadBtn = $(
@@ -9124,7 +9137,6 @@ function budgetResultError(data) {
     //appendChatbotText2(budgetResultErrorMessage);
     
     budgetResultReloadBtn.on('click', function() {
-        console.log('aaaaa');
         addBudgetPopupOpen(data);
 
         ////////////     
