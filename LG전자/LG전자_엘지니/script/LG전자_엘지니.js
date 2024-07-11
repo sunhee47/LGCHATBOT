@@ -8786,14 +8786,14 @@ function addBudgetPopupOpen(data) {
         gAccountList = data.account;
     }
     var accountList = gAccountList;                 // expense type에 맞는 계정목록.
-    console.log('accountList length : '+accountList.length);
+    //console.log('accountList length : '+accountList.length);
 
     let accTypeList = [];                                   // expense type에 맞는 계정유형목록
     accountList.filter((origin, index) => {
         if(!accTypeList.find((_retData, _retIndex) => origin.group === _retData.group && index !== _retIndex)) accTypeList.push(origin);
     }); 
             
-    console.log('typeList length : '+accTypeList.length);
+    //console.log('typeList length : '+accTypeList.length);
     
     var accountTypeText = '예산 유형을 선택해 주세요.';
     
@@ -8972,6 +8972,21 @@ function addBudgetPopupOpen(data) {
 
     /*  #########[ dropdown ]#########  */
     
+    // dropdown box 열려 있으면 닫기. 
+    $(document).on('click', function(e) {
+        
+        //console.log('length : '+$('.dropdown-box').has(e.target).length+' / '+$('.dropdown-box').length+' / ', e.target);
+        for(var i=0; i<$('.dropdown-box').length; i++) {
+            let dropdownBox = $('.dropdown-box')[i];
+            
+            if($(dropdownBox).has(e.target).length === 0) {
+                if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
+                    dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
+                }
+            }            
+        }
+    });
+
     function reloadPopup() {
         $('.budget-tooltip').fadeOut(1);
         $('.dropdown-budget .btn-dropdown').removeClass('accent');
@@ -9155,6 +9170,7 @@ function budgetResultError(data) {
 }
 
 function reloadSearchBudget(data) {
+    console.log('data : ', data);
     $('.budget-tooltip').fadeOut(1);
     $('.dropdown-budget .btn-dropdown').removeClass('accent');
     
@@ -9171,7 +9187,7 @@ function reloadSearchBudget(data) {
         }
     }
     
-    //console.log('list-account : '+$('#list-account > li').length);
+    console.log('list-account : '+$('#list-account > li').length);
     
     var listAccount = $('#list-account > li');
     for(var i=0; i<listAccount.length; i++) {
@@ -9179,10 +9195,13 @@ function reloadSearchBudget(data) {
         var nameTag = $(listAccount[i]).find('a');
         var codeTag = $(listAccount[i]).find('span');
         
-        if(codeTag.text() == data.accountItem[0].ACCOUNT_CODE) {
+        console.log('tag : '+codeTag.text()+' / '+nameTag.text());
+        if(codeTag.text() == data.accountItem[0].P_ACCOUNT_CODE) {
             nameTag.trigger('click');
         }
     }
+    
+    $('#projectCode').val(data.projectCode);
 }
 
 function getAmountComma(price) {
