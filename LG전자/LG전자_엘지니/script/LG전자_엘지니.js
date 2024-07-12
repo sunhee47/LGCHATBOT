@@ -8917,7 +8917,6 @@ function addBudgetPopupOpen(data) {
     var addBudgetSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-budget">조회</button>');
     addBudgetForm.append(addBudgetSubmit);
     addBudgetSubmit.on('click', function() {
-        addBudgetPopupClose();
         
         var accountCd = $('#accountCode').val();
         var accountNm = $('#accountName').val();
@@ -8927,8 +8926,15 @@ function addBudgetPopupOpen(data) {
         var deptKorName = $('#deptKorName').val();
         var deptAccountUnit = $('#deptAccountUnit').val();
         var corpId = $('#corpId').val();
-        var projectCode = $('#projectCode').val();
+        var projectCode = $('#projectCode').val().trim();
         
+        if(projectCode.length != 13) {
+            showSmallDialog("프로젝트 코드 13자리를 다시 한번 확인해 주세요. ");
+            $('#projectCode').focus();
+            return;
+        }
+
+        //console.log(':'+projectCode+':');
         // var param = {
         //     "deptId": data.deptId, 
         //     "userId": data.userId, 
@@ -8950,6 +8956,8 @@ function addBudgetPopupOpen(data) {
             "corpId": corpId,
             "projectCode": projectCode
         }
+        
+        addBudgetPopupClose();
         
         chatui.sendEventMessage("searchBudgetResult", param);
     });
@@ -9171,6 +9179,7 @@ function budgetResultError(data) {
 
 function reloadSearchBudget(data) {
     console.log('data : ', data);
+    
     $('.budget-tooltip').fadeOut(1);
     $('.dropdown-budget .btn-dropdown').removeClass('accent');
     
@@ -9187,7 +9196,7 @@ function reloadSearchBudget(data) {
         }
     }
     
-    console.log('list-account : '+$('#list-account > li').length);
+    //console.log('list-account : '+$('#list-account > li').length);
     
     var listAccount = $('#list-account > li');
     for(var i=0; i<listAccount.length; i++) {
@@ -9195,7 +9204,7 @@ function reloadSearchBudget(data) {
         var nameTag = $(listAccount[i]).find('a');
         var codeTag = $(listAccount[i]).find('span');
         
-        console.log('tag : '+codeTag.text()+' / '+nameTag.text());
+        //console.log('tag : '+codeTag.text()+' / '+nameTag.text());
         if(codeTag.text() == data.accountItem[0].P_ACCOUNT_CODE) {
             nameTag.trigger('click');
         }
