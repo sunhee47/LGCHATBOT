@@ -1,5 +1,6 @@
 
 let imgBaseUrl = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/3ace0979-8ff0-49f3-814b-84c500f5fbef';
+let imgPurBaseUrl = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/048bc84c-e99a-4a1f-8573-26b4128d9256';
 
 let searchActive = false;
 let searchActive2 = false;
@@ -8051,7 +8052,7 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
                     orderLi3.on('click', function() {
                         
                         var coastAccountInfo = $(
-                            '<div class="place-info">'
+                            /*'<div class="place-info">'
                                 + '['+costAccount.account_code+'] ' + costAccount.account_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                                 + '<button type="button" class="btn btn-delete">' 
                                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -8060,18 +8061,22 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
                                 + '</button>'
                                   + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
                                   + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
+                            +'</div>'*/
+                            '<div class="data-wrap">'
+                                 +'<p>['+costAccount.account_code+'] ' + costAccount.account_name
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
+                              + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
                             +'</div>'
-                            //'<div class="data-wrap">'
-                            //    +'<p>' + costAccount.account_name + '</p>'
-                                //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
-                            //  + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
-                            //  + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
-                            //+'</div>'
                         );
                         
                         $('#costaccount').empty();
                         $('#costaccount').val('');
                         $('.cost_accnt_selected').empty();
+                        $('.cost_accnt_selected').css('width', '100%'); 
                         $('.cost_accnt_selected').append(coastAccountInfo);
                         
                         //orderInput.val(orderInfo.html());
@@ -8089,14 +8094,14 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
                         
                         scheduleorderWidth($('.cost_accnt_input'), $('.cost_accnt_selected'), $('#costaccount-name')); 
                         
-                        selectBoxAction(inputBox4, inputTextContent4, 'enabled');
-                        selectBoxAction(inputBox5, inputTextContent5, 'enabled');
+                        selectBoxAction($('#project-name'), $('.project_input'), 'enabled');
+                        selectBoxAction($('#activity-name'), $('.activity_input'), 'enabled');
 
-                        //projectCodeSelected.empty();
-                        //activityCodeSelected.empty();
+						$('.project_selected').empty();
+						$('.activity_selected').empty();
                         
-                        //inputBox4.attr('placeholder', 'Project Code를 선택하세요.');
-                        //inputBox5.attr('placeholder', 'Activity Code를 선택하세요.');
+                        $('#project-name').attr('placeholder', 'Project Code를 선택하세요.');
+                        $('#activity-name').attr('placeholder', 'Activity Code를 선택하세요.');
     
                         //nextBtnEvent($(this));
                         
@@ -8123,7 +8128,14 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         $inputId.css('width', scheduleorderWidth + "px");
         if ($inputId.width() === 0) {
             $inputId.attr('style', '');
-        };
+        }
+        
+        if(selectedorderWidth == 0) {
+            $inputId.css('display', 'block');
+        }
+        else{
+            $inputId.css('display', 'none');
+        }
     };    
     
     function selectBoxAction($input, $inputContent, action) {
@@ -8139,6 +8151,8 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
             //$inputContent.removeClass('addValue');
         }
     }	    
+    
+    /////////////////////////////////////////////////////////////////////////////////////   End Push
     
     if (customPayload['template'] && customPayload.template.outputs instanceof Array && customPayload.template.outputs.length > 0) {
       var messages = customPayload.template.outputs;
@@ -10277,7 +10291,7 @@ function anotherAccountPopupOpen(orderdata) {
     /* #########[ popup_content_wrap ]######### */
     var pluginContents = $('<div class="plugin-contents"></div>');
     //var anotherForm = anotherAccountOrderFirst(orderdata);
-    var anotherForm = anotherAccountOrderFourth(orderdata);
+    var anotherForm = anotherAccountOrderSeventh(orderdata);
     pluginContents.append(anotherForm);
     //pluginContents.append(anotherAccountOrderForm);
     addPlugin.append(pluginContents);
@@ -10838,13 +10852,13 @@ function anotherAccountOrderThird(orderdata) {
 
     var placeholderToday = moment().format('YYYY.MM.DD');
 
-//    orderdata.reasonCode = "DON";              // 임시
-//    var selReceiverName = (orderdata.receiverName == null)? '홍길동':orderdata.receiverName;
-//    var selZipno = (orderdata.zipno == null)? '99999':orderdata.zipno;
-//    var selAddress1 = (orderdata.address1 == null)? '서울시 강서구 마곡동':orderdata.address1;
-//    var selAddress2 = (orderdata.address2 == null)? 'LG사이언스파크':orderdata.address2;
-//    var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '024692154':orderdata.receiverPhoneNo;
-//    var selRedidenceType = (orderdata.redidenceType == null)? 'E2':orderdata.redidenceType;
+    //orderdata.reasonCode = "DON";              // 임시
+    //var selReceiverName = (orderdata.receiverName == null)? '홍길동':orderdata.receiverName;
+    //var selZipno = (orderdata.zipno == null)? '99999':orderdata.zipno;
+    //var selAddress1 = (orderdata.address1 == null)? '서울시 강서구 마곡동':orderdata.address1;
+    //var selAddress2 = (orderdata.address2 == null)? 'LG사이언스파크':orderdata.address2;
+    //var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '024692154':orderdata.receiverPhoneNo;
+    //var selRedidenceType = (orderdata.redidenceType == null)? 'E2':orderdata.redidenceType;
     
     var selReceiverName = (orderdata.receiverName == null)? '':orderdata.receiverName;
     var selZipno = (orderdata.zipno == null)? '':orderdata.zipno;
@@ -11032,7 +11046,7 @@ function anotherAccountOrderThird(orderdata) {
                 orderLi.on('click', function() {
                     
                     var donationInfo = $(
-                        '<div class="place-info">'
+                        /*'<div class="place-info">'
                             + donationCompany.donation_company_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                             + '<button type="button" class="btn btn-delete">' 
                                 + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -11041,11 +11055,21 @@ function anotherAccountOrderThird(orderdata) {
                             + '</button>'
                           + '<input type="hidden" value="'+ donationCompany.donation_company_code +'" id="donation-code"/>'
                           + '<input type="hidden" value="'+ donationCompany.donation_company_name +'" id="donation-name"/>'
-                        +'</div>'
+                        +'</div>'*/
+                            '<div class="data-wrap">'
+                                 +'<p>' + donationCompany.donation_company_name 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ donationCompany.donation_company_code +'" id="donation-code"/>'
+                              + '<input type="hidden" value="'+ donationCompany.donation_company_name +'" id="donation-name"/>'
+                            +'</div>'
                     );
                     
                     inputBox.empty();
                     donationSelected.empty();
+                    donationSelected.css('width', '100%');        // 0717 추가 
                     donationSelected.append(donationInfo);
                     
                     //orderInput.val(orderInfo.html());
@@ -11089,11 +11113,12 @@ function anotherAccountOrderThird(orderdata) {
     }
     
     // 지정된 장소 삭제 버튼 클릭
-    $(document).on('click', '.place-info .btn-delete', function(){
-        $(this).closest(".place-info").remove();
+    $(document).on('click', '.data-wrap .btn-delete', function(){
+        $(this).closest(".data-wrap").remove();
         $('#donation-input').attr('placeholder', '기부처를 검색해 주세요.');
         // $('.place-list').css('top', '82px');
         $('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
+        $('.selected-order').css('width', '0px');                   // 0717 추가
         scheduleorderWidth();
     });
 
@@ -11120,6 +11145,13 @@ function anotherAccountOrderThird(orderdata) {
         if ($('#donation-input').width() === 0) {
             $('#donation-input').attr('style', '');
         };
+        
+        if(selectedorderWidth == 0) {
+            $('#donation-input').css('display', 'block');
+        }
+        else{
+            $('#donation-input').css('display', 'none');
+        }        
     };
     
     /* ###[ 기부 일자 ]### */
@@ -11276,7 +11308,7 @@ function anotherAccountOrderThird(orderdata) {
     if (selDonationCode != '') {
 
         var donationInfo = $(
-            '<div class="place-info">'
+            /*'<div class="place-info">'
                 + selDonationName
                 + '<button type="button" class="btn btn-delete">' 
                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -11285,14 +11317,25 @@ function anotherAccountOrderThird(orderdata) {
                 + '</button>'
                   + '<input type="hidden" value="'+ selDonationCode +'" id="donation-code"/>'
                   + '<input type="hidden" value="'+ selDonationName +'" id="donation-name"/>'
+            +'</div>' */ 
+            '<div class="data-wrap">'
+                 +'<p>' + selDonationName
+                 + '</p>'
+            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+            + '</button>'
+              + '<input type="hidden" value="'+ selDonationCode +'" id="donation-code"/>'
+              + '<input type="hidden" value="'+ selDonationName +'" id="donation-name"/>'
             +'</div>'
         );
     
         donationSelected.empty();
+        donationSelected.css('width', '100%');  
         donationSelected.append(donationInfo);
     
         inputBox.attr('placeholder', '');  
         inputBox.css('width', "266px");
+        inputBox.css('display', 'none');
         //scheduleorderWidth();    
         
     }
@@ -11600,7 +11643,7 @@ function anotherAccountOrderFifth(orderdata) {
     var selMajorCategory = (orderdata.major_category == null)? '':orderdata.major_category;
     var selMinorCategory = (orderdata.minor_category == null)? '':orderdata.minor_category;
 
-/*    var selAuCode = (orderdata.au_code == null)? 'DMZ':orderdata.au_code;
+    /*var selAuCode = (orderdata.au_code == null)? 'DMZ':orderdata.au_code;
     var selAuName = (orderdata.au_name == null)? 'CAC AU':orderdata.au_name;
     var selDeptCode = (orderdata.department_code == null)? '77009':orderdata.department_code;
     var selDeptName = (orderdata.department_name == null)? '시스템에어컨고객품질개선팀':orderdata.department_name;
@@ -11614,8 +11657,8 @@ function anotherAccountOrderFifth(orderdata) {
     var selAssetName = (orderdata.asset_name == null)? 'A자산':orderdata.asset_name;
     var selMajorCategory = (orderdata.major_category == null)? 'TOOLS':orderdata.major_category;
     var selMinorCategory = (orderdata.minor_category == null)? 'MEASR(ELEC)':orderdata.minor_category;
-*/
-
+    */
+    
 //    console.log('selDeptCode : '+selDeptCode);
     
     $('.plugin-contents').css('overflow-y', 'auto');
@@ -11718,7 +11761,7 @@ function anotherAccountOrderFifth(orderdata) {
                     orderLi1.on('click', function() {
                         
                         var coastAUInfo = $(
-                            '<div class="place-info">'
+                            /*'<div class="place-info">'
                                 + '['+costAU.au_code+'] ' + costAU.au_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                                 + '<button type="button" class="btn btn-delete">' 
                                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -11727,18 +11770,22 @@ function anotherAccountOrderFifth(orderdata) {
                                 + '</button>'
                                   + '<input type="hidden" value="'+ costAU.au_code +'" id="au_code"/>'
                                   + '<input type="hidden" value="'+ costAU.au_name +'" id="au_name"/>'
+                            +'</div>'*/
+                            '<div class="data-wrap">'
+                                 +'<p>['+costAU.au_code+'] ' + costAU.au_name 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ costAU.au_code +'" id="au_code"/>'
+                              + '<input type="hidden" value="'+ costAU.au_name +'" id="au_name"/>'
                             +'</div>'
-                            //'<div class="data-wrap">'
-                            //    +'<p>' + costAU.au_name + '</p>'
-                                //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
-                            //  + '<input type="hidden" value="'+ costAU.au_code +'" id="au_code"/>'
-                            //  + '<input type="hidden" value="'+ costAU.au_name +'" id="au_name"/>'
-                            //+'</div>'
                         );
                         
                         inputBox1.val('');
                         inputBox1.empty();
                         costAuSelected.empty();
+                        costAuSelected.css('width', '100%');
                         costAuSelected.append(coastAUInfo);
                         
                         //orderInput.val(orderInfo.html());
@@ -11793,14 +11840,15 @@ function anotherAccountOrderFifth(orderdata) {
     inputBoxText1.append(inputTextContent1);
     pluginForm.append(inputBoxText1);
 
-    $(document).on('click', '.place-info .btn-delete', function(){
+    $(document).on('click', '.data-wrap .btn-delete', function(){
         var content = $(this).parents(".order-select");
         var selected = $(this).parents(".order-select").find('.selected-order');
         var input = $(this).parents(".order-select").find('input');
 
         input.attr('placeholder', "코드 입력 후 'Enter'로 검색");
         content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
-        $(this).closest(".place-info").remove();
+        $(this).closest(".data-wrap").remove();
+        selected.css('width', '0px');
         scheduleorderWidth(content, selected, input);
         
         nextBtnEvent();
@@ -11814,7 +11862,14 @@ function anotherAccountOrderFifth(orderdata) {
         $inputId.css('width', scheduleorderWidth + "px");
         if ($inputId.width() === 0) {
             $inputId.attr('style', '');
-        };
+        }
+        
+        if(selectedorderWidth == 0) {
+            $inputId.css('display', 'block');
+        }
+        else{
+            $inputId.css('display', 'none');
+        }        
     };
 
     // order-select 제외 클릭
@@ -11931,7 +11986,7 @@ function anotherAccountOrderFifth(orderdata) {
                     orderLi2.on('click', function() {
                         
                         var coastDeptInfo = $(
-                            '<div class="place-info">'
+                            /*'<div class="place-info">'
                                 + '['+costDept.department_code+']' + costDept.department_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                                 + '<button type="button" class="btn btn-delete">' 
                                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -11940,18 +11995,22 @@ function anotherAccountOrderFifth(orderdata) {
                                 + '</button>'
                                   + '<input type="hidden" value="'+ costDept.department_code +'" id="costdept_code"/>'
                                   + '<input type="hidden" value="'+ costDept.department_name +'" id="costdept_name"/>'
+                            +'</div>'*/
+                            '<div class="data-wrap">'
+                                 +'<p>['+costDept.department_code+']' + costDept.department_name 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ costDept.department_code +'" id="costdept_code"/>'
+                              + '<input type="hidden" value="'+ costDept.department_name +'" id="costdept_name"/>'
                             +'</div>'
-                            //'<div class="data-wrap">'
-                            //    +'<p>' + costDept.department_name + '</p>'
-                                //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
-                            //  + '<input type="hidden" value="'+ costDept.department_code +'" id="costdept_code"/>'
-                            //  + '<input type="hidden" value="'+ costDept.department_name +'" id="costdept_name"/>'
-                            //+'</div>'
                         );
                         
                         inputBox2.empty();
                         inputBox2.val('');
                         costDeptSelected.empty();
+                        costDeptSelected.css('width', '100%');
                         costDeptSelected.append(coastDeptInfo);
                         
                         //orderInput.val(orderInfo.html());
@@ -12174,7 +12233,7 @@ function anotherAccountOrderFifth(orderdata) {
                 orderLi4.on('click', function() {
                     
                     var projectCodeInfo = $(
-                        '<div class="place-info">'
+                        /*'<div class="place-info">'
                             + '['+projectCode.project_code+'] ' + projectCode.project_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                             + '<button type="button" class="btn btn-delete">' 
                                 + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -12183,18 +12242,22 @@ function anotherAccountOrderFifth(orderdata) {
                             + '</button>'
                               + '<input type="hidden" value="'+ projectCode.project_code +'" id="project_code"/>'
                               + '<input type="hidden" value="'+ projectCode.project_name +'" id="project_name"/>'
-                        +'</div>'
-                        //'<div class="data-wrap">'
-                        //    +'<p>' + projectCode.project_name + '</p>'
-                            //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
-                        //  + '<input type="hidden" value="'+ projectCode.project_code +'" id="project_code"/>'
-                        //  + '<input type="hidden" value="'+ projectCode.project_name +'" id="project_name"/>'
-                        //+'</div>'
+                        +'</div>'*/
+                            '<div class="data-wrap">'
+                                 +'<p>['+projectCode.project_code+'] ' + projectCode.project_name 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ projectCode.project_code +'" id="project_code"/>'
+                              + '<input type="hidden" value="'+ projectCode.project_name +'" id="project_name"/>'
+                            +'</div>'
                     );
                     
                     inputBox4.empty();
                     inputBox4.val('');
                     projectCodeSelected.empty();
+                    projectCodeSelected.css('width', '100%');   
                     projectCodeSelected.append(projectCodeInfo);
                     
                     //orderInput.val(orderInfo.html());
@@ -12313,7 +12376,7 @@ function anotherAccountOrderFifth(orderdata) {
                 orderLi5.on('click', function() {
                     
                     var activityCodeInfo = $(
-                        '<div class="place-info">'
+                        /*'<div class="place-info">'
                             + '['+activityCode.activity_code+']' + activityCode.activity_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                             + '<button type="button" class="btn btn-delete">' 
                                 + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -12322,18 +12385,22 @@ function anotherAccountOrderFifth(orderdata) {
                             + '</button>'
                               + '<input type="hidden" value="'+ activityCode.activity_code +'" id="activity_code"/>'
                               + '<input type="hidden" value="'+ activityCode.activity_name +'" id="activity_name"/>'
-                        +'</div>'
-                        //'<div class="data-wrap">'
-                        //    +'<p>' + activityCode.activity_name + '</p>'
-                            //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
-                        //  + '<input type="hidden" value="'+ activityCode.activity_code +'" id="activity_code"/>'
-                        //  + '<input type="hidden" value="'+ activityCode.activity_name +'" id="activity_name"/>'
-                        //+'</div>'
+                        +'</div>'*/
+                            '<div class="data-wrap">'
+                                 +'<p>['+activityCode.activity_code+']' + activityCode.activity_name 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ activityCode.activity_code +'" id="activity_code"/>'
+                              + '<input type="hidden" value="'+ activityCode.activity_name +'" id="activity_name"/>'
+                            +'</div>'
                     );
                     
                     inputBox5.empty();
                     inputBox5.val('');
                     activityCodeSelected.empty();
+                    activityCodeSelected.css('width', '100%');
                     activityCodeSelected.append(activityCodeInfo);
                     
                     //orderInput.val(orderInfo.html());
@@ -12508,7 +12575,7 @@ function anotherAccountOrderFifth(orderdata) {
                 orderLi7.on('click', function() {
                     
                     var minorCategoryInfo = $(
-                        '<div class="place-info">'
+                        /*'<div class="place-info">'
                             + minorCategory.minor_category //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                             + '<button type="button" class="btn btn-delete">' 
                                 + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -12516,17 +12583,21 @@ function anotherAccountOrderFifth(orderdata) {
                                 + '</svg>'
                             + '</button>'
                             + '<input type="hidden" value="'+ minorCategory.minor_category +'" id="minor_category"/>'
-                        +'</div>'
-                        //'<div class="data-wrap">'
-                        //    +'<p>' + minorCategory.minor_category + '</p>'
-                            //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
-                        //  + '<input type="hidden" value="'+ minorCategory.minor_category +'" id="minor_category"/>'
-                        //+'</div>'
+                        +'</div>'*/
+                            '<div class="data-wrap">'
+                                 +'<p>'+minorCategory.minor_category 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                            + '<input type="hidden" value="'+ minorCategory.minor_category +'" id="minor_category"/>'
+                            +'</div>'
                     );
                     
                     inputBox7.empty();
                     inputBox7.val('');
                     minorCategorySelected.empty();
+                    minorCategorySelected.css('width', '100%');      
                     minorCategorySelected.append(minorCategoryInfo);
                     
                     //orderInput.val(orderInfo.html());
@@ -12648,12 +12719,12 @@ function anotherAccountOrderFifth(orderdata) {
     }
     var inputVal = false;
     function nextBtnEvent(target) {
-        var costval = costAuSelected.find('.place-info').text();
-        var deptval = costDeptSelected.find('.place-info').text();
-        var accountval = costAccountSelected.find('.place-info').text();
-        var projectval = projectCodeSelected.find('.place-info').text();
-        var activityval = activityCodeSelected.find('.place-info').text();
-        var minorval = minorCategorySelected.find('.place-info').text();
+        var costval = costAuSelected.find('.data-wrap').text();
+        var deptval = costDeptSelected.find('.data-wrap').text();
+        var accountval = costAccountSelected.find('.data-wrap').text();
+        var projectval = projectCodeSelected.find('.data-wrap').text();
+        var activityval = activityCodeSelected.find('.data-wrap').text();
+        var minorval = minorCategorySelected.find('.data-wrap').text();
         var assetName = inputBoxA.val();    
         var majorval = dropdownHidden.val();
         
@@ -12777,7 +12848,7 @@ function anotherAccountOrderFifth(orderdata) {
     if (selAuCode != '') {
 
         var hiddenInfo = $(
-            '<div class="place-info">'
+            /*'<div class="place-info">'
                 + '['+selAuCode+'] ' + selAuName //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                 +'<button type="button" class="btn btn-delete" style="'+deleteStyle+'">' 
                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -12786,6 +12857,15 @@ function anotherAccountOrderFifth(orderdata) {
                 + '</button>'                  
                   + '<input type="hidden" value="'+ selAuCode +'" id="au_code"/>'
                   + '<input type="hidden" value="'+ selAuName +'" id="au_name"/>'
+            +'</div>'*/ 
+            '<div class="data-wrap">'
+                 +'<p>['+selAuCode+']' + selAuName 
+                 + '</p>'
+            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+            + '</button>'
+              + '<input type="hidden" value="'+ selAuCode +'" id="au_code"/>'
+              + '<input type="hidden" value="'+ selAuName +'" id="au_name"/>'
             +'</div>'
         );
                     
@@ -12793,7 +12873,8 @@ function anotherAccountOrderFifth(orderdata) {
         costAuSelected.append(hiddenInfo);
 
         inputBox1.attr('placeholder', '');  
-        inputBox1.css('width', '0px');
+        //inputBox1.css('width', '0px');
+        inputBox1.css('display', 'none');   
         
         selectBoxAction(inputBox1, inputTextContent1, 'enabled');
         //scheduleorderWidth($('#input_content1'), $('#input_selected1'), $('#costau-name'));
@@ -12804,7 +12885,7 @@ function anotherAccountOrderFifth(orderdata) {
     if (selDeptCode != '') {
 
         var hiddenInfo = $(
-            '<div class="place-info">'
+            /*'<div class="place-info">'
                 + '['+selDeptCode+'] ' + selDeptName //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                 +'<button type="button" class="btn btn-delete" style="'+deleteStyle+'">' 
                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -12813,7 +12894,15 @@ function anotherAccountOrderFifth(orderdata) {
                 + '</button>'                  
                   + '<input type="hidden" value="'+ selDeptCode +'" id="costdept_code"/>'
                   + '<input type="hidden" value="'+ selDeptName +'" id="costdept_name"/>'
-                  
+            +'</div>'*/
+            '<div class="data-wrap">'
+                 +'<p>['+selDeptCode+']' + selDeptName 
+                 + '</p>'
+            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+            + '</button>'
+              + '<input type="hidden" value="'+ selDeptCode +'" id="costdept_code"/>'
+              + '<input type="hidden" value="'+ selDeptName +'" id="costdept_name"/>'
             +'</div>'
         );
                     
@@ -12821,9 +12910,10 @@ function anotherAccountOrderFifth(orderdata) {
         costDeptSelected.append(hiddenInfo);
 
         inputBox2.attr('placeholder', '');  
-        inputBox2.css('width', '0px');
-        selectBoxAction(inputBox2, inputTextContent2, 'enabled');
+        //inputBox2.css('width', '0px');
+        inputBox2.css('display', 'none'); 
         
+        selectBoxAction(inputBox2, inputTextContent2, 'enabled');
         //scheduleorderWidth(inputTextContent2, costDeptSelected, inputBox2);
         
         //nextBtnEvent(inputBox2);
@@ -12832,13 +12922,22 @@ function anotherAccountOrderFifth(orderdata) {
     if (selAccountCode != '') {
 
         var hiddenInfo = $(
-            '<div class="place-info">'
+           /* '<div class="place-info">'
                 + '['+selAccountCode+'] ' + selAccountName //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                 +'<button type="button" class="btn btn-delete" style="'+deleteStyle+'">' 
                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
                         + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
                     + '</svg>'
                 + '</button>'                  
+                +'<input type="hidden" value="'+ selAccountCode +'" id="costaccount_code"/>'
+                +'<input type="hidden" value="'+ selAccountName +'" id="costaccount_name"/>'
+            +'</div>' */
+            '<div class="data-wrap">'
+                 +'<p>['+selAccountCode+']' + selAccountName 
+                 + '</p>'
+            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+            + '</button>'
                 +'<input type="hidden" value="'+ selAccountCode +'" id="costaccount_code"/>'
                 +'<input type="hidden" value="'+ selAccountName +'" id="costaccount_name"/>'
             +'</div>'
@@ -12848,7 +12947,9 @@ function anotherAccountOrderFifth(orderdata) {
         costAccountSelected.append(hiddenInfo);
 
         inputBox3.attr('placeholder', '');  
-        inputBox3.css('width', '0px');
+        //inputBox3.css('width', '0px');
+        inputBox3.css('display', 'none'); 
+
         selectBoxAction(inputBox3, inputTextContent3, 'enabled');
 
         //scheduleorderWidth(inputTextContent3, costAccountSelected, inputBox3);
@@ -12858,13 +12959,22 @@ function anotherAccountOrderFifth(orderdata) {
     if (selPojectCode != '') {
 
         var hiddenInfo = $(
-            '<div class="place-info">'
+            /*'<div class="place-info">'
                 + '['+selPojectCode+'] ' + selProjectName //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                 +'<button type="button" class="btn btn-delete" style="'+deleteStyle+'">' 
                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
                         + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
                     + '</svg>'
                 + '</button>'                  
+                +'<input type="hidden" value="'+ selPojectCode +'" id="project_code"/>'
+                +'<input type="hidden" value="'+ selProjectName +'" id="project_name"/>'
+            +'</div>'*/
+            '<div class="data-wrap">'
+                 +'<p>['+selPojectCode+']' + selProjectName 
+                 + '</p>'
+            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+            + '</button>'
                 +'<input type="hidden" value="'+ selPojectCode +'" id="project_code"/>'
                 +'<input type="hidden" value="'+ selProjectName +'" id="project_name"/>'
             +'</div>'
@@ -12874,9 +12984,10 @@ function anotherAccountOrderFifth(orderdata) {
         projectCodeSelected.append(hiddenInfo);
 
         inputBox4.attr('placeholder', '');  
-        inputBox4.css('width', '0px');
-        selectBoxAction(inputBox4, inputTextContent4, 'enabled');
+        //inputBox4.css('width', '0px');
+        inputBox4.css('display', 'none'); 
         
+        selectBoxAction(inputBox4, inputTextContent4, 'enabled');
         //scheduleorderWidth(inputTextContent4, projectCodeSelected, inputBox4);
         
         //nextBtnEvent(inputBox4);
@@ -12888,13 +12999,22 @@ function anotherAccountOrderFifth(orderdata) {
     if (selActivityCode != '') {
 
         var hiddenInfo = $(
-            '<div class="place-info">'
+            /*'<div class="place-info">'
                 + '['+selActivityCode+'] ' + selActivityName //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                 +'<button type="button" class="btn btn-delete" style="'+deleteStyle+'">' 
                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
                         + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
                     + '</svg>'
                 + '</button>'                  
+                +'<input type="hidden" value="'+ selActivityCode +'" id="activity_code"/>'
+                +'<input type="hidden" value="'+ selActivityName +'" id="activity_name"/>'
+            +'</div>'*/
+            '<div class="data-wrap">'
+                 +'<p>['+selActivityCode+']' + selActivityName 
+                 + '</p>'
+            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+            + '</button>'
                 +'<input type="hidden" value="'+ selActivityCode +'" id="activity_code"/>'
                 +'<input type="hidden" value="'+ selActivityName +'" id="activity_name"/>'
             +'</div>'
@@ -12904,7 +13024,9 @@ function anotherAccountOrderFifth(orderdata) {
         activityCodeSelected.append(hiddenInfo);
 
         inputBox5.attr('placeholder', '');  
-        inputBox5.css('width', '0px');
+        //inputBox5.css('width', '0px');
+        inputBox5.css('display', 'none'); 
+        
         selectBoxAction(inputBox5, inputTextContent5, 'enabled');
         //scheduleorderWidth(inputTextContent5, activityCodeSelected, inputBox5);
         
@@ -12922,7 +13044,7 @@ function anotherAccountOrderFifth(orderdata) {
     if (selMinorCategory != '') {
 
         var hiddenInfo = $(
-            '<div class="place-info">'
+            /*'<div class="place-info">'
                 + selMinorCategory //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                 +'<button type="button" class="btn btn-delete">' 
                     + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -12930,17 +13052,25 @@ function anotherAccountOrderFifth(orderdata) {
                     + '</svg>'
                 + '</button>'                  
                 +'<input type="hidden" value="'+ selMinorCategory +'" id="minor_category"/>'
+            +'</div>'*/
+            '<div class="data-wrap">'
+                 +'<p>'+selMinorCategory 
+                 + '</p>'
+            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+            + '</button>'
+                +'<input type="hidden" value="'+ selMinorCategory +'" id="minor_category"/>'
             +'</div>'
-            
         );
                     
         minorCategorySelected.empty();
         minorCategorySelected.append(hiddenInfo);
                     
         inputBox7.attr('placeholder', '');  
-        inputBox7.css('width', '0px');
+        //inputBox7.css('width', '0px');
+        inputBox7.css('display', 'none'); 
+
         selectBoxAction(inputBox7, inputTextContent7, 'enabled');
-        
         //scheduleorderWidth(inputTextContent7, minorCategorySelected, inputBox7);
         
         //nextBtnEvent(inputBox7);
@@ -13360,20 +13490,50 @@ function anotherAccountOrderSixth(orderdata) {
     function checkRequestDate() {
         //datepicker.open(this);
         
+        LoadingWithMask();
+        
         var delivery_type = $('[name="delivery_type"]:checked').val();   
         var arrival_date = $('.input-schedule-date').val();
         var model_codes = $('#model_codes').val();
+        var model_qtys = $('#model_qtys').val();
+        var install_type = $('#install_type').val();
+        var postal_code = $('#postal_code').val();
         
-        console.log('deliveryType : '+ delivery_type+', arrivalDate : '+arrival_date+ ', modelCodes : '+model_codes);
+        var request_date = moment(arrival_date).format('YYYYMMDD')
+        
+        console.log('model_codes > ', request_date);
+        //var apmsModelList = JSON.parse(model_codes);
+        var paramList = new Array();
+        
+        var model_code_arr = model_codes.split(',');
+        var model_qty_arr = model_qtys.split(',');
 
+        for(var i=0; i<model_code_arr.length; i++) {
+            let model_code = model_code_arr[i];    
+            let model_qty = model_qty_arr[i];    
+            
+            var data = new Object();
+            data.p_company_code = 'LGEKR';
+            data.p_model_code = model_code;
+            data.p_ordered_quantity = model_qty;
+            data.p_shipping_method = delivery_type;
+            data.p_installation_type = install_type;
+            data.p_postal_code = postal_code;
+            data.p_request_date = request_date;
+            
+            paramList.push(data);
+        }
+        
+        console.log('paramList : ', paramList);
+        
+        let paramListStr = JSON.stringify(paramList);
+        
         var requestParam = {
             query: {
               "event": "availableRequestDateEvent"
             },
             payload: {
-              deliveryType : delivery_type,
-              modelCodes : model_codes,
-              arrivalDate : arrival_date 
+              paramList : paramListStr
             }
          };
           
@@ -13394,7 +13554,7 @@ function anotherAccountOrderSixth(orderdata) {
                 let api_date = moment(requestDate).format('YYYY.MM.DD');
                 
                 $('.btn-quick-reply').find('button').text(api_date);
-                if(api_date != arrival_date) {
+                if(api_date != request_date) {
                     $('.btn-quick-reply').css('display', 'block');
                     $('.note').css('display', 'block');
                 }
@@ -13403,9 +13563,12 @@ function anotherAccountOrderSixth(orderdata) {
                 $('.note').text('※ 가능한 도착날짜가 없습니다. 확인하세요. ');
                 $('.note').css('display', 'block');
             }
+            
+            closeLoadingWithMask();   
+
         });
         
-        
+     
     }
     
 // 타계정 주문 입력 팝업 컨텐츠 7
@@ -13418,34 +13581,39 @@ function anotherAccountOrderSeventh(orderdata) {
     var selInstallType = (orderdata.install_type == null)? '':orderdata.install_type;
     var selArrivalDate = (orderdata.arrival_date == null)? '':orderdata.arrival_date;
     
+    var selPostalCode = (orderdata.zipno == null)? '07795':orderdata.zipno;
+    
     //var apmsModelList = orderdata.apmsModelList;
     var apmsModelList = [
         {
-            "model_code": "W10EGN.AKOR",
+            "model_code": "A",
             "model_name": "Clothes Stacked Washer Dryer",
-            "model_number": "1"
+            "model_number": "2"
         },
         {
-            "model_code": "FL25EJUE.AKOR",
+            "model_code": "B",
             "model_name": "Clothes Stacked Washer Dryer_Washer",
-            "model_number": "1"
-        },
-        {
-            "model_code": "RL21GJUG.AKOR",
-            "model_name": "Clothes Stacked Washer Dryer_Dryer",
-            "model_number": "1"
+            "model_number": "3"
         }
     ];                     // 
     
     var apmsModelStr = '';
+    var apmsModelNum = '';
     for(var i=0; i<apmsModelList.length; i++) {
         let apmsModel = apmsModelList[i];
         
-        if(i > 0) apmsModelStr += ", ";
-        apmsModelStr += "'" + apmsModel.model_code + "'";
+        if(i > 0){
+          apmsModelStr += ",";
+          apmsModelNum += ",";
+        } 
+        apmsModelStr += apmsModel.model_code;
+        apmsModelNum += apmsModel.model_number;
     }
     
+    //let apmsModelListStr = JSON.stringify(apmsModelList);
+    
     console.log('apmsModelStr : '+apmsModelStr);
+    
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
@@ -13481,6 +13649,8 @@ function anotherAccountOrderSeventh(orderdata) {
     pluginForm.append(inputBoxRadio);
     
     inputBoxRadio.append('<input type="hidden" value="'+apmsModelStr+'" id="model_codes"/>');
+    inputBoxRadio.append('<input type="hidden" value="'+apmsModelNum+'" id="model_qtys"/>');
+    inputBoxRadio.append('<input type="hidden" value="'+selPostalCode+'" id="postal_code"/>');
 
     /* ###[ 설치 유형 ]### */
     var dropdownBox = $('<div class="dropdown-box dropdown-install"><label>설치 유형<b>*</b></label></div>');
@@ -14107,23 +14277,14 @@ function gbmsPopupOpen(data) {
                     orderLi1.on('click', function() {
                         
                         var coastAUInfo = $(
-                        /*'<div class="place-info">'
-                            + '['+costAU.au_code+']' + costAU.au_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                            + '<button type="button" class="btn btn-delete">' 
-                                + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                    + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                + '</svg>'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ costAU.au_code +'" id="au_code"/>'
-                              + '<input type="hidden" value="'+ costAU.au_name +'" id="au_name"/>'
-                        +'</div>' */ 
                             '<div class="data-wrap">'
                                  +'<p>['+costAU.au_code+']' + costAU.au_name 
                                  + '</p>'
-                            + '<button type="button" class="btn btn-delete">' 
-                                + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                    + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                + '</svg>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                                //+ '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                                //    + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+                                //+ '</svg>'
                             + '</button>'
                                 //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
                               + '<input type="hidden" value="'+ costAU.au_code +'" id="au_code"/>'
@@ -14134,6 +14295,7 @@ function gbmsPopupOpen(data) {
                         inputBox1.val('');
                         inputBox1.empty();
                         costAuSelected.empty();
+                        costAuSelected.css('width', '100%');        // 0717 추가 
                         costAuSelected.append(coastAUInfo);
                         
                         //inputBox1.val('['+costAU.au_code+'] '+costAU.au_name);
@@ -14176,14 +14338,15 @@ function gbmsPopupOpen(data) {
     inputBoxText1.append(inputTextContent1);
     pluginForm.append(inputBoxText1);
 
-    $(document).on('click', '.place-info .btn-delete', function(){
+    $(document).on('click', '.data-wrap .btn-delete', function(){
         var content = $(this).parents(".order-select");
         var selected = $(this).parents(".order-select").find('.selected-order');
         var input = $(this).parents(".order-select").find('input');
 
         input.attr('placeholder', "코드 입력 후 'Enter'로 검색");
         content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
-        $(this).closest(".place-info").remove();
+        $(this).closest(".data-wrap").remove();
+        selected.css('width', '0px');                   // 0717 추가
         scheduleorderWidth(content, selected, input);
         
         btnValueCheck();
@@ -14192,11 +14355,20 @@ function gbmsPopupOpen(data) {
     function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
         let orderSelectWidth = $inputTextContent.width();
         let selectedorderWidth = $costSelected.width();
+        
+        //console.log('inputTextContent width : '+orderSelectWidth+', selected width : '+selectedorderWidth);
         let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
         $inputId.css('width', scheduleorderWidth + "px");
         if ($inputId.width() === 0) {
             $inputId.attr('style', '');
-        };
+        }
+        
+        if(selectedorderWidth == 0) {
+            $inputId.css('display', 'block');
+        }
+        else{
+            $inputId.css('display', 'none');
+        }
     };
     
         // order-select 제외 클릭
@@ -14324,7 +14496,7 @@ function gbmsPopupOpen(data) {
                     orderLi2.on('click', function() {
                         
                         var coastDeptInfo = $(
-                        '<div class="place-info">'
+                        /*'<div class="place-info">'
                             + '['+costDept.department_code+']' + costDept.department_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                             + '<button type="button" class="btn btn-delete">' 
                                 + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -14333,18 +14505,22 @@ function gbmsPopupOpen(data) {
                             + '</button>'
                               + '<input type="hidden" value="'+ costDept.department_code +'" id="costdept_code"/>'
                               + '<input type="hidden" value="'+ costDept.department_name +'" id="costdept_name"/>'
-                        +'</div>'
-                        //    '<div class="data-wrap">'
-                        //        +'<p>['+costDept.department_code+']' + costDept.department_name + '</p>'
-                                //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
-                        //      + '<input type="hidden" value="'+ costDept.department_code +'" id="costdept_code"/>'
-                        //      + '<input type="hidden" value="'+ costDept.department_name +'" id="costdept_name"/>'
-                        //    +'</div>'
+                        +'</div>'*/ 
+                            '<div class="data-wrap">'
+                                 +'<p>['+costDept.department_code+']' + costDept.department_name 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ costDept.department_code +'" id="costdept_code"/>'
+                              + '<input type="hidden" value="'+ costDept.department_name +'" id="costdept_name"/>'
+                            +'</div>'
                         );
                         
                         inputBox2.empty();
                         inputBox2.val('');
                         costDeptSelected.empty();
+                        costDeptSelected.css('width', '100%');        // 0717 추가 
                         costDeptSelected.append(coastDeptInfo);
                         
                         //orderInput.val(orderInfo.html());
@@ -14592,8 +14768,8 @@ function gbmsPopupOpen(data) {
         function btnActive() {submitBtn.removeClass('btn-disabled');submitBtn.attr('disabled', false);}
         function btnDisabled() {submitBtn.addClass('btn-disabled');submitBtn.attr('disabled', true);}
 
-        var costval = costAuSelected.find('.place-info').text();
-        var deptval = costDeptSelected.find('.place-info').text();
+        var costval = costAuSelected.find('.data-wrap').text();
+        var deptval = costDeptSelected.find('.data-wrap').text();
         
         console.log('costval : '+costval + ', deptval : '+deptval);
         
@@ -14611,7 +14787,7 @@ function gbmsPopupOpen(data) {
     if (costAuCode != '') {
 
             var hiddenInfo = $(
-                        '<div class="place-info">'
+                        /*'<div class="place-info">'
                             + '['+costAuCode+']' + costAuName //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                             + '<button type="button" class="btn btn-delete">' 
                                 + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -14620,7 +14796,17 @@ function gbmsPopupOpen(data) {
                             + '</button>'
                               + '<input type="hidden" value="'+ costAuCode +'" id="au_code"/>'
                               + '<input type="hidden" value="'+ costAuName +'" id="au_name"/>'
-                        +'</div>'
+                        +'</div>' */
+                            '<div class="data-wrap">'
+                                 +'<p>['+costAuCode+']' + costAuName 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                                //+'<span>' + '['+orderType.orderType+'] '+ orderType.reasonCode + '</span>'
+                              + '<input type="hidden" value="'+ costAuCode +'" id="au_code"/>'
+                              + '<input type="hidden" value="'+ costAuName +'" id="au_name"/>'
+                            +'</div>'
             );                        
 
         costAuSelected.empty();
@@ -14637,7 +14823,7 @@ function gbmsPopupOpen(data) {
         selectBoxAction(inputBox2, inputTextContent2, 'enabled');
         
         var hiddenInfo = $(
-                    '<div class="place-info">'
+                    /*'<div class="place-info">'
                         + '['+costDeptCode+']' + costDeptName //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
                         + '<button type="button" class="btn btn-delete">' 
                             + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -14646,7 +14832,16 @@ function gbmsPopupOpen(data) {
                         + '</button>'
                           + '<input type="hidden" value="'+ costDeptCode +'" id="costdept_code"/>'
                           + '<input type="hidden" value="'+ costDeptName +'" id="costdept_name"/>'
-                    +'</div>'
+                    +'</div>' */
+                            '<div class="data-wrap">'
+                                 +'<p>['+costDeptCode+']' + costDeptName 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ costDeptCode +'" id="costdept_code"/>'
+                              + '<input type="hidden" value="'+ costDeptName +'" id="costdept_name"/>'
+                            +'</div>'
         );                        
 
         costDeptSelected.empty();

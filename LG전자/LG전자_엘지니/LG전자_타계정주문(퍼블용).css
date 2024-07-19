@@ -6147,6 +6147,8 @@ p.people-box .people-list b {
   padding: 13px 0;
   color: #2c2c2c;
   font-size: 14px;
+    display: flex;
+    justify-content: space-between;
 }
 .plugins .input-form .data-wrap p {
   margin: 0;
@@ -7033,7 +7035,8 @@ background: #F5F5F5 !important;
   margin-left: 0;
 
   /* [퍼블 수정 및 추가] - max-width: calc(100% - 30px);, display: inline-block; 추가 */
-  max-width: calc(100% - 30px);
+  /*max-width: calc(100% - 30px); */
+  width:100%; 
   display: inline-block;
 }
 .plugins .add-order .selected-order .order-info {
