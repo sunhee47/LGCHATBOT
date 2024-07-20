@@ -7081,7 +7081,8 @@ background: #F5F5F5 !important;
 
 .plugins .add-order .disable-searchIcon {
   background-color: #F5F5F5;
-  border: none;
+  /* border: none; */ 
+  padding-left: 10px;
 }
 
 .plugins .add-order .selected-order .place-info {
@@ -7126,6 +7127,7 @@ background: #F5F5F5 !important;
 
 .plugins .input-box .input-form input[type=text]:disabled {
   background-color: #F5F5F5;
+  border:none;
 }
 
 .stepper-wrap li .model-list {
@@ -7199,4 +7201,12 @@ background: #F5F5F5 !important;
 }
 .stepper-wrap .model-list ul li:hover {
   background-color: #F5F5F5;
+}
+.disable-searchIcon {
+  padding-left: 44px !important;
+  padding-right: 13px !important;
+  background: url('https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/search-input.png') #F5F5F5 !important;
+  background-repeat: no-repeat !important;
+  background-size: 24px !important;
+  background-position: 12px center !important;
 }
