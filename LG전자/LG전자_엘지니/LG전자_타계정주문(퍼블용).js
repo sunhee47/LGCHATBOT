@@ -1600,6 +1600,8 @@ const setAutocompleteTeamMember = function(input) {
       
       if(e.keyCode == 13) { 
           
+          LoadingWithMask();
+          
         var requestParam = {
             query: {
               "event": "teamRequestorInquiryEvent"
@@ -1633,6 +1635,8 @@ const setAutocompleteTeamMember = function(input) {
             }
             
             $(input).focus();
+            
+            closeLoadingWithMask();
           });
          
       }     // end if(e.code == 'Enter' || e.keyCode == 13) {   
@@ -10686,22 +10690,25 @@ function anotherAccountOrderSecond(orderdata) {
         var reasonNameVal = '';     //$('.reason-name').val();
 
         console.log('reasonCodeVal : '+reasonCodeVal);
-        orderdata.step = 3;        
-        orderdata.orderType = orderTypeVal;
-        orderdata.reasonCode = reasonCodeVal;
-        orderdata.reasonName = reasonNameVal;
         
-        delete orderdata.action;    
-
-        pluginForm.removeClass('show');
-        pluginForm.remove();
-        
-        anotherAccountOrderThird(orderdata);
-        $('.plugin-contents').append(anotherAccountOrderForm);
-
-        
-        closeLoadingWithMask();
-        console.log('2단계 닫기.');
+        setTimeout(function() {
+            orderdata.step = 3;        
+            orderdata.orderType = orderTypeVal;
+            orderdata.reasonCode = reasonCodeVal;
+            orderdata.reasonName = reasonNameVal;
+            
+            delete orderdata.action;    
+    
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+            
+            anotherAccountOrderThird(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+    
+            
+            closeLoadingWithMask();
+            console.log('2단계 닫기.');
+        }, 500);
     });
     
     // back버튼
@@ -10853,19 +10860,19 @@ function anotherAccountOrderThird(orderdata) {
     var placeholderToday = moment().format('YYYY.MM.DD');
 
     //orderdata.reasonCode = "DON";              // 임시
-    //var selReceiverName = (orderdata.receiverName == null)? '홍길동':orderdata.receiverName;
-    //var selZipno = (orderdata.zipno == null)? '99999':orderdata.zipno;
-    //var selAddress1 = (orderdata.address1 == null)? '서울시 강서구 마곡동':orderdata.address1;
-    //var selAddress2 = (orderdata.address2 == null)? 'LG사이언스파크':orderdata.address2;
-    //var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '024692154':orderdata.receiverPhoneNo;
-    //var selRedidenceType = (orderdata.redidenceType == null)? 'E2':orderdata.redidenceType;
+    var selReceiverName = (orderdata.receiverName == null)? '홍길동':orderdata.receiverName;
+    var selZipno = (orderdata.zipno == null)? '99999':orderdata.zipno;
+    var selAddress1 = (orderdata.address1 == null)? '서울시 강서구 마곡동':orderdata.address1;
+    var selAddress2 = (orderdata.address2 == null)? 'LG사이언스파크':orderdata.address2;
+    var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '024692154':orderdata.receiverPhoneNo;
+    var selRedidenceType = (orderdata.redidenceType == null)? 'E2':orderdata.redidenceType;
     
-    var selReceiverName = (orderdata.receiverName == null)? '':orderdata.receiverName;
+    /*var selReceiverName = (orderdata.receiverName == null)? '':orderdata.receiverName;
     var selZipno = (orderdata.zipno == null)? '':orderdata.zipno;
     var selAddress1 = (orderdata.address1 == null)? '':orderdata.address1;
     var selAddress2 = (orderdata.address2 == null)? '':orderdata.address2;
     var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '':orderdata.receiverPhoneNo;
-    var selRedidenceType = (orderdata.redidenceType == null)? '':orderdata.redidenceType;
+    var selRedidenceType = (orderdata.redidenceType == null)? '':orderdata.redidenceType;*/
     var selDonationCode = (orderdata.donationCode == null)? '':orderdata.donationCode;
     var selDonationName = (orderdata.donationName == null)? '':orderdata.donationName;
     var selDonationDate = (orderdata.donationDate == null)? placeholderToday:orderdata.donationDate;
@@ -10997,6 +11004,9 @@ function anotherAccountOrderThird(orderdata) {
                 showSmallDialog("기부처 검색은 3글자 이상 입력해야 합니다.");
                 return;
             }
+            
+            LoadingWithMask();
+            
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             $('.order-select').addClass('focus');
                 
@@ -11021,7 +11031,7 @@ function anotherAccountOrderThird(orderdata) {
                   var orderLi = $('<li class="no-res">조건에 맞는 기부처가 없습니다. 다시 검색해 보세요.</li>');
                   orderUl.append(orderLi);
                   donationListCont.append(orderUl);
-                  return false;
+                  //return false;
             }
             donationCompanyList = result.resultList;
             
@@ -11097,6 +11107,7 @@ function anotherAccountOrderThird(orderdata) {
               donationListCont.append(orderUl);
             }
             
+            closeLoadingWithMask();
           });
         
         //////        
@@ -11113,7 +11124,8 @@ function anotherAccountOrderThird(orderdata) {
     }
     
     // 지정된 장소 삭제 버튼 클릭
-    $(document).on('click', '.data-wrap .btn-delete', function(){
+    $(document).on('click', '.form-third .data-wrap .btn-delete', function(){
+        console.log('기부처...');
         $(this).closest(".data-wrap").remove();
         $('#donation-input').attr('placeholder', '기부처를 검색해 주세요.');
         // $('.place-list').css('top', '82px');
@@ -11192,26 +11204,28 @@ function anotherAccountOrderThird(orderdata) {
         var donation_code = $('#donation-code').val();
         var donation_name = $('#donation-name').val();
 
-        orderdata.step = 4;        
-        orderdata.receiverName = receiver_name;
-        orderdata.zipno = zipno;
-        orderdata.address1 = address1;
-        orderdata.address2 = address2;
-        orderdata.receiverPhoneNo = receiver_phone_no;
-        orderdata.redidenceType = redidence_type;
-        orderdata.donationDate = donation_data;
-        
-        orderdata.donationCode = donation_code;
-        orderdata.donationName = donation_name;
-        
-        delete orderdata.action;    
-        
-        pluginForm.removeClass('show');
-        pluginForm.remove();
-        anotherAccountOrderFourth(orderdata);
-        $('.plugin-contents').append(anotherAccountOrderForm);
-        
-        closeLoadingWithMask();
+        setTimeout(function() {
+            orderdata.step = 4;        
+            orderdata.receiverName = receiver_name;
+            orderdata.zipno = zipno;
+            orderdata.address1 = address1;
+            orderdata.address2 = address2;
+            orderdata.receiverPhoneNo = receiver_phone_no;
+            orderdata.redidenceType = redidence_type;
+            orderdata.donationDate = donation_data;
+            
+            orderdata.donationCode = donation_code;
+            orderdata.donationName = donation_name;
+            
+            delete orderdata.action;    
+            
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+            anotherAccountOrderFourth(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+            
+            closeLoadingWithMask();
+        }, 500);
     });
     var inputVal = false;
     function nextBtnEvent(target) {
@@ -11454,7 +11468,8 @@ function anotherAccountOrderFourth(orderdata) {
                 
                 console.log('orderdata set : ', orderdata);
                 setOrderdata(orderdata);
-                /*
+                
+                // 광고판촉비 조회 Not Push Start
                 var apmsList = '';
                 var regSuccessYn = '';
                 var errorMessage = '';
@@ -11530,22 +11545,25 @@ function anotherAccountOrderFourth(orderdata) {
                 }
                 
                 closeLoadingWithMask();
-                */
+                // 광고판촉비 조회 Not Push End
+                
             });
             
         }
         else{
+            setTimeout(function() {
             
-            delete orderdata.action;    
-
-            pluginForm.removeClass('show');
-            pluginForm.remove();
+                delete orderdata.action;    
+    
+                pluginForm.removeClass('show');
+                pluginForm.remove();
+                
+                anotherAccountOrderFifth(orderdata);
+                $('.plugin-contents').append(anotherAccountOrderForm);
             
-            anotherAccountOrderFifth(orderdata);
-            $('.plugin-contents').append(anotherAccountOrderForm);
-            
-            closeLoadingWithMask();
-            
+                closeLoadingWithMask();
+                
+            }, 500);
         }
         
     });
@@ -11643,6 +11661,8 @@ function anotherAccountOrderFifth(orderdata) {
     var selMajorCategory = (orderdata.major_category == null)? '':orderdata.major_category;
     var selMinorCategory = (orderdata.minor_category == null)? '':orderdata.minor_category;
     
+    console.log('orderType : '+selOrderType+', '+selApmsYN);
+    
 /*    var selAuCode = (orderdata.au_code == null)? 'DMZ':orderdata.au_code;
     var selAuName = (orderdata.au_name == null)? 'CAC AU':orderdata.au_name;
     var selDeptCode = (orderdata.department_code == null)? '77009':orderdata.department_code;
@@ -11711,6 +11731,8 @@ function anotherAccountOrderFifth(orderdata) {
                 return;
             }            
         
+            LoadingWithMask();
+            
             inputTextContent1.addClass('focus');
                 
             costAuListCont.addClass('show');
@@ -11760,16 +11782,6 @@ function anotherAccountOrderFifth(orderdata) {
                     orderLi1.on('click', function() {
                         
                         var coastAUInfo = $(
-                            /*'<div class="place-info">'
-                                + '['+costAU.au_code+'] ' + costAU.au_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                                + '<button type="button" class="btn btn-delete">' 
-                                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                    + '</svg>'
-                                + '</button>'
-                                  + '<input type="hidden" value="'+ costAU.au_code +'" id="au_code"/>'
-                                  + '<input type="hidden" value="'+ costAU.au_name +'" id="au_name"/>'
-                            +'</div>'*/
                             '<div class="data-wrap">'
                                  +'<p>['+costAU.au_code+'] ' + costAU.au_name 
                                  + '</p>'
@@ -11781,9 +11793,12 @@ function anotherAccountOrderFifth(orderdata) {
                             +'</div>'
                         );
                         
-                        inputBox1.val('');
-                        inputBox1.empty();
-                        costAuSelected.empty();
+                        //inputBox1.val('');
+                        //inputBox1.empty();
+                        //costAuSelected.empty();
+                        
+                        initBoxAction(inputBox1, costAuSelected);
+                        
                         costAuSelected.css('width', '100%');
                         costAuSelected.append(coastAUInfo);
                         
@@ -11805,16 +11820,11 @@ function anotherAccountOrderFifth(orderdata) {
                         selectBoxAction(inputBox2, inputTextContent2, 'enabled');
                         //nextBtn.find('button').attr('disabled', false);
                         
-                        inputBox2.val('');
-                        inputBox3.val('');
-                        inputBox4.val('');
-                        inputBox5.val('');
-                        costDeptSelected.empty();
-                        costAccountSelected.empty();
-                        projectCodeSelected.empty();
-                        
-                        activityCodeSelected.empty();
-    
+                        initBoxAction(inputBox2, costDeptSelected, "코드 입력 후 'Enter'로 검색");
+                        initBoxAction(inputBox3, costAccountSelected, "비용처리 계정을 선택하세요.");
+                        initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+                        initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+
                         nextBtnEvent($(this));
     
                     });
@@ -11824,6 +11834,7 @@ function anotherAccountOrderFifth(orderdata) {
                   costAuListCont.append(orderUl1);
                 }
                 
+                closeLoadingWithMask();
               });
 
         //////        
@@ -11838,19 +11849,36 @@ function anotherAccountOrderFifth(orderdata) {
     //    +'</div>');
     inputBoxText1.append(inputTextContent1);
     pluginForm.append(inputBoxText1);
-
-    $(document).on('click', '.data-wrap .btn-delete', function(){
+    
+    const placeHolderMap = new Map([
+        ['costau-name', '코드 입력 후 \'Enter\'로 검색'], 
+        ['costdept-name', '코드 입력 후 \'Enter\'로 검색'], 
+        ['costaccount-name', '비용처리 계정을 선택하세요.'], 
+        ['project-name', 'Project Code를 선택하세요.'], 
+        ['activity-name', 'Activity Code를 선택하세요.']
+    ]);
+    
+    $(document).on('click', '.form-fifth .data-wrap .btn-delete', function(){
+        console.log('delete....');
         var content = $(this).parents(".order-select");
         var selected = $(this).parents(".order-select").find('.selected-order');
-        var input = $(this).parents(".order-select").find('input');
+        var input = $(this).parents(".order-select").find('input[type=text]');
+        var label = $(this).parents(".input-box").find('label');
+        
+        var inputId = input.attr('id');
+        var plageHoderMsg = placeHolderMap.get(inputId);
+        
+        //console.log(input.attr('id')+' / '+plageHoderMsg);
 
-        input.attr('placeholder', "코드 입력 후 'Enter'로 검색");
+        input.attr('placeholder', plageHoderMsg);
         content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
         $(this).closest(".data-wrap").remove();
         selected.css('width', '0px');
-        scheduleorderWidth(content, selected, input);
         
+        scheduleorderWidth(content, selected, input);
+
         nextBtnEvent();
+
         //btnValueCheck();
     });
 
@@ -11875,7 +11903,7 @@ function anotherAccountOrderFifth(orderdata) {
     $(document).on('click', function(e) {
         if ($('.order-select').has(e.target).length === 0) {
             $('.order-list').removeClass('show');
-            
+    
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             $('.order-select').removeClass('focus');
         }
@@ -11898,6 +11926,14 @@ function anotherAccountOrderFifth(orderdata) {
             $inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
             //$inputContent.removeClass('addValue');
         }
+    }
+    
+    function initBoxAction($input, $costSelected, hloderMsg) {
+        
+        $costSelected.empty();
+        $input.val('');
+        if(hloderMsg)        $input.attr('placeholder', hloderMsg);
+        $input.css('display', 'block');
     }
     
     /* ###[ 비용 처리 부서 ]### */
@@ -11946,6 +11982,8 @@ function anotherAccountOrderFifth(orderdata) {
                 return;
             }            
 
+            LoadingWithMask();
+            
             inputTextContent2.addClass('focus');
                 
             costDeptListCont.addClass('show');
@@ -11985,16 +12023,6 @@ function anotherAccountOrderFifth(orderdata) {
                     orderLi2.on('click', function() {
                         
                         var coastDeptInfo = $(
-                            /*'<div class="place-info">'
-                                + '['+costDept.department_code+']' + costDept.department_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                                + '<button type="button" class="btn btn-delete">' 
-                                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                    + '</svg>'
-                                + '</button>'
-                                  + '<input type="hidden" value="'+ costDept.department_code +'" id="costdept_code"/>'
-                                  + '<input type="hidden" value="'+ costDept.department_name +'" id="costdept_name"/>'
-                            +'</div>'*/
                             '<div class="data-wrap">'
                                  +'<p>['+costDept.department_code+']' + costDept.department_name 
                                  + '</p>'
@@ -12006,9 +12034,11 @@ function anotherAccountOrderFifth(orderdata) {
                             +'</div>'
                         );
                         
-                        inputBox2.empty();
-                        inputBox2.val('');
-                        costDeptSelected.empty();
+                        //inputBox2.empty();
+                        //inputBox2.val('');
+                        //costDeptSelected.empty();
+                        initBoxAction(inputBox2, costDeptSelected, "코드 입력 후 'Enter'로 검색");
+
                         costDeptSelected.css('width', '100%');
                         costDeptSelected.append(coastDeptInfo);
                         
@@ -12029,6 +12059,10 @@ function anotherAccountOrderFifth(orderdata) {
                         selectBoxAction(inputBox3, inputTextContent3, 'enabled');
                         //nextBtn.find('button').attr('disabled', false);
     
+                        initBoxAction(inputBox3, costAccountSelected, "비용처리 계정을 선택하세요.");
+                        initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+                        initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+
                         nextBtnEvent($(this));
     
                     });
@@ -12038,6 +12072,7 @@ function anotherAccountOrderFifth(orderdata) {
                   costDeptListCont.append(orderUl2);
                 }
                 
+                closeLoadingWithMask();
               });
         
         //////        
@@ -12114,13 +12149,99 @@ function anotherAccountOrderFifth(orderdata) {
             payload: {
                 "auCode": $("#au_code").val()
                 , "departmentCode": $("#costdept_code").val()
+                , "orderType": selOrderType
                 , "keyword": ''
             }
           };
 
           sendChatApi(requestParam, null, function(payload){
             //console.log('payload > ', payload);
+
+            // 비용처리 계정 조회 Not Push Start            
+            var result = JSON.parse(payload.queryResult.messages[0].response);
+            console.log('result', result);
+            costAccountList = result.resultList;
             
+            if(costAccountList.length == 0) {
+              var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
+              orderUl3.append(orderLi3);
+              costAccountListCont.append(orderUl3);
+            } else {
+              costAccountList.map(costAccount => {
+                  
+                var orderLi3 = $(
+                    '<li>'
+                        +'<p>['+costAccount.account_code+']'+ costAccount.account_name // + '()' 
+                        +'</p>'
+                    +'</li>'
+                );
+                
+                // 비용처리 계정 목록 리스트 클릭
+                orderLi3.on('click', function() {
+                    
+                    var coastAccountInfo = $(
+                            '<div class="data-wrap">'
+                                 +'<p>['+costAccount.account_code+']' + costAccount.account_name 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
+                              + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
+                            +'</div>'
+                    );
+                    
+                    //inputBox3.empty();
+                    //inputBox3.val('');
+                    //costAccountSelected.empty();
+                    
+                    initBoxAction(inputBox3, costAccountSelected, "비용처리 계정을 선택하세요.");
+                    
+                    costAccountSelected.css('width', '100%');
+                    costAccountSelected.append(coastAccountInfo);
+                    
+                    //orderInput.val(orderInfo.html());
+                    
+                    // [퍼블 수정 및 추가]
+                    var targetHeight = costAccountSelected.height();
+                    inputTextContent3.removeClass('focus');
+                    console.log(targetHeight);
+            
+                    costAccountListCont.removeClass('show');
+                    // $('.order-list').css('top', '82px');
+                    costAccountListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+                    $('#costaccount-name').attr('placeholder', '');
+                    //scheduleorderWidth($('#costdept-name'));
+                    scheduleorderWidth(inputTextContent3, costAccountSelected, $('#costaccount-name'));
+                    
+                    selectBoxAction(inputBox4, inputTextContent4, 'enabled');
+                    selectBoxAction(inputBox5, inputTextContent5, 'enabled');
+                    //nextBtn.find('button').attr('disabled', false);
+
+                    //inputBox4.val('');
+                    //inputBox5.val('');
+                    
+                    initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+                    initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+
+                    //projectCodeSelected.empty();
+                    //activityCodeSelected.empty();
+                    
+                    //inputBox4.attr('placeholder', 'Project Code를 선택하세요.');
+                    //inputBox5.attr('placeholder', 'Activity Code를 선택하세요.');
+
+                    nextBtnEvent($(this));
+
+                });
+                
+                orderUl3.append(orderLi3);
+              });
+              costAccountListCont.append(orderUl3);
+            }
+            
+            closeLoadingWithMask();
+            // 비용처리 계정 조회 Not Push End            
+
           });
         
         //////        
@@ -12192,6 +12313,8 @@ function anotherAccountOrderFifth(orderdata) {
         projectCodeListCont.addClass('show');
         orderUl4.empty();
         
+        LoadingWithMask();
+        
         console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
     
         var requestParam = {
@@ -12202,6 +12325,7 @@ function anotherAccountOrderFifth(orderdata) {
                 "auCode": $("#au_code").val()
                 , "departmentCode": $("#costdept_code").val()
                 , "accountCode": $("#costaccount_code").val()
+                , "orderType": selOrderType
             }
           };
 
@@ -12214,6 +12338,9 @@ function anotherAccountOrderFifth(orderdata) {
               var orderLi4 = $('<li class="no-res">조회시 에러가 발생했습니다. 다시 조회하세요.</li>');
               orderUl4.append(orderLi4);
               projectCodeListCont.append(orderUl4);
+              closeLoadingWithMask();
+              
+              return;
             }
             
             projectCodeList = result.resultList;
@@ -12239,16 +12366,6 @@ function anotherAccountOrderFifth(orderdata) {
                 orderLi4.on('click', function() {
                     
                     var projectCodeInfo = $(
-                        /*'<div class="place-info">'
-                            + '['+projectCode.project_code+'] ' + projectCode.project_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                            + '<button type="button" class="btn btn-delete">' 
-                                + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                    + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                + '</svg>'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ projectCode.project_code +'" id="project_code"/>'
-                              + '<input type="hidden" value="'+ projectCode.project_name +'" id="project_name"/>'
-                        +'</div>'*/
                             '<div class="data-wrap">'
                                  +'<p>['+projectCode.project_code+'] ' + projectCode.project_name 
                                  + '</p>'
@@ -12260,9 +12377,12 @@ function anotherAccountOrderFifth(orderdata) {
                             +'</div>'
                     );
                     
-                    inputBox4.empty();
-                    inputBox4.val('');
-                    projectCodeSelected.empty();
+                    //inputBox4.empty();
+                    //inputBox4.val('');
+                    //projectCodeSelected.empty();
+                    
+                    initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+                    
                     projectCodeSelected.css('width', '100%');   
                     projectCodeSelected.append(projectCodeInfo);
                     
@@ -12298,6 +12418,7 @@ function anotherAccountOrderFifth(orderdata) {
               projectCodeListCont.append(orderUl4);
             }
             
+            closeLoadingWithMask();
           });
         
         //////        
@@ -12347,6 +12468,8 @@ function anotherAccountOrderFifth(orderdata) {
         activityCodeListCont.addClass('show');
         orderUl5.empty();
         
+        LoadingWithMask();
+        
         console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
     
         var requestParam = {
@@ -12382,16 +12505,6 @@ function anotherAccountOrderFifth(orderdata) {
                 orderLi5.on('click', function() {
                     
                     var activityCodeInfo = $(
-                        /*'<div class="place-info">'
-                            + '['+activityCode.activity_code+']' + activityCode.activity_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                            + '<button type="button" class="btn btn-delete">' 
-                                + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                    + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                + '</svg>'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ activityCode.activity_code +'" id="activity_code"/>'
-                              + '<input type="hidden" value="'+ activityCode.activity_name +'" id="activity_name"/>'
-                        +'</div>'*/
                             '<div class="data-wrap">'
                                  +'<p>['+activityCode.activity_code+']' + activityCode.activity_name 
                                  + '</p>'
@@ -12403,9 +12516,12 @@ function anotherAccountOrderFifth(orderdata) {
                             +'</div>'
                     );
                     
-                    inputBox5.empty();
-                    inputBox5.val('');
-                    activityCodeSelected.empty();
+                    //inputBox5.empty();
+                    //inputBox5.val('');
+                    //activityCodeSelected.empty();
+                    
+                    initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+                    
                     activityCodeSelected.css('width', '100%');
                     activityCodeSelected.append(activityCodeInfo);
                     
@@ -12440,6 +12556,8 @@ function anotherAccountOrderFifth(orderdata) {
               });
               activityCodeListCont.append(orderUl5);
             }
+            
+            closeLoadingWithMask();
             
           });
         
@@ -12543,6 +12661,8 @@ function anotherAccountOrderFifth(orderdata) {
         minorCategoryListCont.addClass('show');
         orderUl7.empty();
         
+        LoadingWithMask();
+        
         console.log('major_category : '+$("#major_category").val() );
         
         var requestParam = {
@@ -12581,15 +12701,6 @@ function anotherAccountOrderFifth(orderdata) {
                 orderLi7.on('click', function() {
                     
                     var minorCategoryInfo = $(
-                        /*'<div class="place-info">'
-                            + minorCategory.minor_category //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                            + '<button type="button" class="btn btn-delete">' 
-                                + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                    + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                + '</svg>'
-                            + '</button>'
-                            + '<input type="hidden" value="'+ minorCategory.minor_category +'" id="minor_category"/>'
-                        +'</div>'*/
                             '<div class="data-wrap">'
                                  +'<p>'+minorCategory.minor_category 
                                  + '</p>'
@@ -12630,6 +12741,8 @@ function anotherAccountOrderFifth(orderdata) {
               });
               minorCategoryListCont.append(orderUl7);
             }
+            
+            closeLoadingWithMask();
             
           });
         
@@ -12686,9 +12799,12 @@ function anotherAccountOrderFifth(orderdata) {
              });
         }          
         else{
-            setNextData();
-            
-            closeLoadingWithMask();
+            setTimeout(function() {
+                setNextData();
+                
+                closeLoadingWithMask();
+                }, 500);
+                
         }
         
     });
@@ -12837,6 +12953,7 @@ function anotherAccountOrderFifth(orderdata) {
     
     var deleteStyle = "";
     var deleteBtn = '';
+    
     if(selApmsYN == 'YES') {            // 광고판촉비 예산이면. 
         deleteStyle = "display:none;";
         //selectBoxAction(inputBox1, inputTextContent1, 'disabled');
@@ -13208,6 +13325,8 @@ function anotherAccountOrderSixth(orderdata) {
                 $this.parents('li').find('.model-list').addClass('show');
                 modleUl.empty();
                 
+                LoadingWithMask();
+                
                 var requestParam = {
                     query: {
                       "event": "searchModelInquiryEvent"
@@ -13230,6 +13349,7 @@ function anotherAccountOrderSixth(orderdata) {
                             showSmallDialog('모델 목록이 없습니다. '); // [퍼블 수정 및 추가] - 텍스트 수정
                         }, 100);
                         
+                        closeLoadingWithMask();
                         return;
                         
                     } else {
@@ -13262,7 +13382,9 @@ function anotherAccountOrderSixth(orderdata) {
                         modleUl.append(modelLi);
                       });
                         
-                      txtThis.parents('li').find('.model-list').append(modleUl);      
+                      txtThis.parents('li').find('.model-list').append(modleUl); 
+                      
+                      closeLoadingWithMask();
                     }
                  });
                 
@@ -13281,40 +13403,43 @@ function anotherAccountOrderSixth(orderdata) {
         
         LoadingWithMask();
         
-        orderdata.step = 7; 
-        
-        //if(selApmsYN == 'NO') {
-            apmsModelList = new Array();                // 초기화. 
-            var orderModelList = $('.stepper-wrap').find('li');
+        setTimeout(function() {
+            orderdata.step = 7; 
             
-            for(var m=0; m<orderModelList.length; m++) {
-                let orderModelText = orderModelList[m];
+            //if(selApmsYN == 'NO') {
+                apmsModelList = new Array();                // 초기화. 
+                var orderModelList = $('.stepper-wrap').find('li');
                 
-                let textVal = $(orderModelText).find('textarea').val();
-                let textArr = textVal.split('] ');
-                let counter = $(orderModelText).find('.stepper').find('.count').text();
-                
-                var data = new Object();
-                
-                data.model_code = textArr[0].replace('[', '');
-                data.model_name = textArr[1];
-                data.model_number = counter;
-                
-                apmsModelList.push(data);
-            }
-        //}        
-        console.log('apmsModelList : ', apmsModelList);
-        
-        orderdata.apmsModelList = apmsModelList;
-        
-        delete orderdata.action;    
-        
-        pluginForm.removeClass('show');
-        pluginForm.remove();
-        anotherAccountOrderSeventh(orderdata);
-        $('.plugin-contents').append(anotherAccountOrderForm);
-        
-        closeLoadingWithMask();
+                for(var m=0; m<orderModelList.length; m++) {
+                    let orderModelText = orderModelList[m];
+                    
+                    let textVal = $(orderModelText).find('textarea').val();
+                    let textArr = textVal.split('] ');
+                    let counter = $(orderModelText).find('.stepper').find('.count').text();
+                    
+                    var data = new Object();
+                    
+                    data.model_code = textArr[0].replace('[', '');
+                    data.model_name = textArr[1];
+                    data.model_number = counter;
+                    
+                    apmsModelList.push(data);
+                }
+            //}        
+            console.log('apmsModelList : ', apmsModelList);
+            
+            orderdata.apmsModelList = apmsModelList;
+            
+            delete orderdata.action;    
+            
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+            anotherAccountOrderSeventh(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+            
+            closeLoadingWithMask();
+            
+        }, 500);            
     });
     var textareaVal = false;
     function nextBtnEvent(target) {
@@ -13756,20 +13881,23 @@ function anotherAccountOrderSeventh(orderdata) {
         
         LoadingWithMask();
         
-        orderdata.step = 8; 
+        setTimeout(function() {
+            orderdata.step = 8; 
+            
+            orderdata.delivery_type = $('[name="delivery_type"]:checked').val();   
+            orderdata.install_type = $('#install_type').val();
+            orderdata.arrival_date = dateStartInput.val();
+            
+            delete orderdata.action;    
+    
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+            anotherAccountOrderEighth(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+            
+            closeLoadingWithMask();
+        }, 500);
         
-        orderdata.delivery_type = $('[name="delivery_type"]:checked').val();   
-        orderdata.install_type = $('#install_type').val();
-        orderdata.arrival_date = dateStartInput.val();
-        
-        delete orderdata.action;    
-
-        pluginForm.removeClass('show');
-        pluginForm.remove();
-        anotherAccountOrderEighth(orderdata);
-        $('.plugin-contents').append(anotherAccountOrderForm);
-        
-        closeLoadingWithMask();
     });
     function nextBtnEvent(target) {
         if (radioWrap.find('input[type="radio"]:checked').val() == 'TL') {
@@ -14294,6 +14422,8 @@ function gbmsPopupOpen(data) {
             //donationList.addClass('show');
             orderUl1.empty();
             
+            LoadingWithMask(); 
+            
             var requestParam = {
                 query: {
                   "event": "costAUInquiryEvent"
@@ -14312,6 +14442,7 @@ function gbmsPopupOpen(data) {
                   var orderLi1 = $('<li class="no-res">Cost AU 정보가 없습니다.</li>');
                   orderUl1.append(orderLi1);
                   costAuListCont.append(orderUl1);
+                  
                 }
                 
                 costAUList = result.resultList;
@@ -14349,9 +14480,12 @@ function gbmsPopupOpen(data) {
                             +'</div>'
                         );
                         
-                        inputBox1.val('');
-                        inputBox1.empty();
-                        costAuSelected.empty();
+                        //inputBox1.val('');
+                        //inputBox1.empty();
+                        //costAuSelected.empty();
+                        
+                        initBoxAction(inputBox1, costAuSelected);
+                        
                         costAuSelected.css('width', '100%');        // 0717 추가 
                         costAuSelected.append(coastAUInfo);
                         
@@ -14374,9 +14508,11 @@ function gbmsPopupOpen(data) {
                         
                         selectBoxAction(inputBox2, inputTextContent2, 'enabled');
                         
-                        inputBox2.val('');
-                        costDeptSelected.empty();
+                        //inputBox2.val('');
+                        //costDeptSelected.empty();
     
+                        initBoxAction(inputBox2, costDeptSelected, "코드 입력 후 'Enter'로 검색");
+                        
                         btnValueCheck();
                     });
                     
@@ -14385,6 +14521,8 @@ function gbmsPopupOpen(data) {
                   costAuListCont.append(orderUl1);
                 }
                 
+                closeLoadingWithMask();
+
               });
 
          }   // end if 
@@ -14396,6 +14534,7 @@ function gbmsPopupOpen(data) {
     pluginForm.append(inputBoxText1);
 
     $(document).on('click', '.data-wrap .btn-delete', function(){
+        console.log('예산조회...');
         var content = $(this).parents(".order-select");
         var selected = $(this).parents(".order-select").find('.selected-order');
         var input = $(this).parents(".order-select").find('input');
@@ -14463,6 +14602,14 @@ function gbmsPopupOpen(data) {
             //$inputContent.removeClass('addValue');
         }
     }    
+    
+    function initBoxAction($input, $costSelected, hloderMsg) {
+        
+        $costSelected.empty();
+        $input.val('');
+        if(hloderMsg)        $input.attr('placeholder', hloderMsg);
+        $input.css('display', 'block');
+    }    
 ////////////////////////////////////////////////////////////////
 
     /* ###[ 비용 처리 부서 ]### */
@@ -14519,6 +14666,8 @@ function gbmsPopupOpen(data) {
             
             orderUl2.empty();
     
+            LoadingWithMask();
+            
             var requestParam = {
                 query: {
                   "event": "costDeptInquiryEvent"
@@ -14574,9 +14723,12 @@ function gbmsPopupOpen(data) {
                             +'</div>'
                         );
                         
-                        inputBox2.empty();
-                        inputBox2.val('');
-                        costDeptSelected.empty();
+                        //inputBox2.empty();
+                        //inputBox2.val('');
+                        //costDeptSelected.empty();
+                        
+                        initBoxAction(inputBox2, costDeptSelected);
+                        
                         costDeptSelected.css('width', '100%');        // 0717 추가 
                         costDeptSelected.append(coastDeptInfo);
                         
@@ -14602,6 +14754,8 @@ function gbmsPopupOpen(data) {
                   costDeptListCont.append(orderUl2);
                 }
                 
+                closeLoadingWithMask();
+
               });
               
         }   // end if
@@ -15020,6 +15174,84 @@ function apmsPopupOpen(data) {
         sendChatApi(requestParam, userId, function(payload) {
             console.log('타계정 광고판촉비(APMS) 조회 결과 : ', payload);
             
+            // 광고판촉비 조회 Not Push Start            
+            var apmsInfo = '';
+            var regSuccessYn = '';
+            var errorMessage = '';
+            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                var apmsResponse = JSON.parse(payload.queryResult.messages[0].response);
+                console.log(apmsResponse["successYn"]);
+                
+                if (apmsResponse["successYn"] == 'N') {
+                    console.log('errorMessage : '+apmsResponse["errorMessage"]);
+                    regSuccessYn = 'N';
+                    errorMessage = apmsResponse["errorMessage"];               // 에러메시지.
+                } else {
+                    regSuccessYn = 'Y';
+                    if (apmsResponse.template && apmsResponse.template.outputs.length > 0 && apmsResponse.template.outputs[0] && apmsResponse.template.outputs[0].resultItem) {
+                        
+                        apmsInfo = apmsResponse.template.outputs[0].resultItem;
+                    }
+                }
+                
+            }
+            else {
+                regSuccessYn = 'N';
+            }
+            
+            if(regSuccessYn == 'N') {
+                
+                console.log('광고판촉비 조회 실패 : ');
+                
+                thisPluginClose();
+                
+                var anotherApmsResult = '<div class="message simple-text">'
+                                 +'<p>'
+                                    +'시스템 오류로 인해 조회되지 않았어요.<br><br>'
+                                    +'아래 버튼을 눌러 광고판촉비를 다시 조회해 보세요.'
+                                 +'</p>'
+                                +'<div class="btn">'
+                                    +'<button type="button" class="btn btn-default btn-big reload-apms">다시 조회하기</button>'
+                                +'</div>'
+                                + '</div>'; 
+                                
+                appendChatbotText(anotherApmsResult);
+                
+                $('.reload-apms').on('click', function() {
+                    apmsPopupOpen(reviewParam);
+                });
+                
+            }   
+            else{
+            
+                console.log('광고판촉비 조회 완료 : ', apmsInfo);
+                
+                var msgApmsResult = '<div class="message simple-text">'
+                                 +'<p>'
+                                    +'<b>광고판촉비(APMS)</b>를 확인해 보세요. '
+                                 +'</p>'
+                                + '</div>'; 
+                
+                var anotherApmsResult = '';
+                if(apmsInfo.length == 1) {                // 광고판촉비 조회 단건
+                    thisPluginClose();
+                    //var anotherApmsResult = msgApmsResult + apmsResult(apmsInfo);
+                    var anotherApmsResult = apmsResult(apmsInfo);
+                    appendChatbotText(anotherApmsResult);
+                }
+                else{
+                    console.log('광고판촉비 조회 : 0건.');
+                    
+                    setTimeout(function() {
+                        showSmallHtmlDialog('품의번호가 조회되지 않았습니다. </br>확인 후 다시 입력해 주세요.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                    }, 100);                          
+                }
+                
+            }            
+            
+            closeLoadingWithMask();
+            // 광고판촉비 조회 Not Push End            
+
         });
         
     });
@@ -15789,8 +16021,8 @@ function apmsResult(apmsInfo) {
     messageWrap.append(msgApmsResult);
     messageWrap.append(messageBox);
     
-    return messageWrap;
-    //return messageWrap.html();
+    //return messageWrap;
+    return messageWrap.html();
 }
 
 // 타계정 주문 입력 결과 메세지
