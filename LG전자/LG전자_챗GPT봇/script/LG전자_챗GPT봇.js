@@ -862,12 +862,29 @@ function loadScript(src, callback) {
     document.head.appendChild(script);
 }
 
-// 발화내용 중 특수문자 포함된 경우 html 코드로 치환.
-
+// 발화내용 중 sql 관련 단어 포함된 경우 html 코드로 치환.
 function replaceSqlCodeForChar(val){
-    let chgVal = val.replace(/select/gi, "&#115;&#101;&#108;&#101;&#99;&#116;");
+    let chgVal = val.replace(/select/gi, "&#115;&#101;&#108;&#101;&#99;&#116;")
+                .replace(/from/gi, "&#102;&#111;&#111;&#109;")
+                .replace(/where/gi, "&#119;&#104;&#101;&#114;&#101;")
+                .replace(/insert/gi, "&#105;&#110;&#115;&#101;&#114;&#116;")
+                .replace(/update/gi, "&#117;&#112;&#100;&#97;&#116;&#101;")
+                .replace(/delete/gi, "&#100;&#101;&#108;&#101;&#116;&#101;")
+                .replace(/create/gi, "&#99;&#114;&#101;&#112;&#101;&#116;&#101;")
+                .replace(/alter/gi, "&#97;&#108;&#116;&#101;&#114;")
+                .replace(/drop/gi, "&#100;&#114;&#111;&#112;")
+                .replace(/table/gi, "&#116;&#97;&#98;&#108;&#101;")
+                .replace(/database/gi, "&#100;&#97;&#116;&#97;&#98;&#101;&#115;&#101;")
+                .replace(/describe/gi, "&#100;&#101;&#115;&#99;&#114;&#105;&#112;&#101;")
+                .replace(/values/gi, "&#118;&#97;&#108;&#117;&#101;&#115;")
+                .replace(/exists/gi, "&#101;&#120;&#105;&#115;&#116;&#115;")
+                .replace(/primary/gi, "&#112;&#114;&#105;&#109;&#97;&#114;&#121;")
+                .replace(/foreign/gi, "&#102;&#111;&#114;&#101;&#105;&#103;&#110;")
+                .replace(/key/gi, "&#107;&#101;&#121;");
+                
     return chgVal;
 }
+// 발화내용 중 특수문자 포함된 경우 html 코드로 치환.
 function replaceHtmlCodeForChar(val) {
     let chgVal = val.replace(/\&/g,"&amp;")              // &#38; 
                 .replace(/\#/g,"&#35;")           // 치환한 html 문자에 포함되어 있어서 제일 먼저 치환함. 
