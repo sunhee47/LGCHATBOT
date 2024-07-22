@@ -3928,7 +3928,7 @@ function openWindows(link, userInfo) {
         var paramForm = $('#menu_form');
         
         var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
-        window.open("", "LGenieWin", "");
+        window.open("", "LGenieWin", "width=1200,height=900", "_blank");
         
         $(paramForm).attr('action', url);
         $(paramForm).attr('target', "LGenieWin");
@@ -3939,7 +3939,7 @@ function openWindows(link, userInfo) {
     else{
         var paramForm = document.createElement("form");
         var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
-        window.open("", "LGenieWin", "");
+        window.open("", "LGenieWin", "width=1200,height=900", "_blank");
         
         $(paramForm).attr('id', "menu_form");
         $(paramForm).attr('action', url);
@@ -4021,7 +4021,7 @@ function buttonLink(lastLeftMessage) {
                     linkBtn.after(addBtn);
                     linkBtn.remove();
                
-                    //console.log('button_data > ', button_data);
+                    console.log('button_data > ', button_data.value);
                     addBtn.on('click', function(){
                         openWindows('https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do', button_data.value);
                     });     
@@ -8895,7 +8895,9 @@ function addBudgetPopupOpen(data) {
     var projectInputBox = $('<div class="input-box"><label>프로젝트 코드</label></div>');
     
     var formProjectText = $(
-        '<input type="text" id="projectCode" placeholder="미 입력시 \'0000\' 기준으로 검색됩니다. " />'
+        '<b style="color: #F94B50">*필요시 프로젝트 코드 13자리를 입력해 주세요.</b>'
+        + '<input type="text" id="projectCode" value="0000000000000" placeholder="프로젝트 코드 13자리를 입력해 주세요." />'
+        // + '<input type="text" id="projectCode" value="0000000000000"/>'
     );
     addBudgetForm.append(projectInputBox);
     projectInputBox.append(formProjectText);
@@ -9092,7 +9094,7 @@ function budgetResult(data) {
     var budgetMessageResultContent = $(
         '<div class="budget-content">'
         + '<div class="budget-content-header">'
-        + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<svg width="17" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
         + '<path fill="#898989" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>'
         + '<path fill="#898989" d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"></path>'
         + '</svg>'
@@ -9107,6 +9109,11 @@ function budgetResult(data) {
         + '<h4>계정 정보</h4>'
         // + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
         + '<div class="budget-user"><span>'+data.accountName+'</span></div>'
+        + '</li>'
+        + '<li>'
+        + '<h4>PJT Code</h4>'
+        // + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
+        + '<div class="budget-project"><span>'+data.projectCode+'</span></div>'
         + '</li>'
         + '<li>'
         + '<h4>기준 일시</h4>'
