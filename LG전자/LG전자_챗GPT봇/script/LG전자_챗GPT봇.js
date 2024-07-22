@@ -765,6 +765,7 @@ chatui.onLoad = function(){
 
                   org_chgVal = replaceHtmlCodeForChar(orgVal);
                   chgVal = replaceHtmlCodeForChar(val);
+                  chgVal = replaceSqlCodeForChar(chgVal);
                   //chgVal = he.encode(val);
                   //chgVal = chgVal.replace(/\(/g,"&#40;").replace(/\)/g,"&#41;");
                   console.log('chgVal : '+chgVal);
@@ -842,6 +843,8 @@ chatui.onLoad = function(){
 
     loadScript(hlscriptSrc, function() {
         // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+        
+        hljs.highlightAll();
     });
 
     //loadScript(htmlentitiesSrc, function() {
@@ -860,6 +863,11 @@ function loadScript(src, callback) {
 }
 
 // 발화내용 중 특수문자 포함된 경우 html 코드로 치환.
+
+function replaceSqlCodeForChar(val){
+    let chgVal = val.replace(/select/gi, "&#115;&#101;&#108;&#101;&#99;&#116;");
+    return chgVal;
+}
 function replaceHtmlCodeForChar(val) {
     let chgVal = val.replace(/\&/g,"&amp;")              // &#38; 
                 .replace(/\#/g,"&#35;")           // 치환한 html 문자에 포함되어 있어서 제일 먼저 치환함. 
@@ -1638,7 +1646,7 @@ function highlightCodeBlock($customMessage) {
 
     $answerText.find('pre > code').each(function() {
         var codehtml = $(this).text();
-        //console.log('codeHtml : '+codehtml);
+        console.log('codeHtml : '+codehtml);
         
         let codeLang = $(this).attr('class');
         //console.log('codeLang : '+codeLang);
@@ -1646,10 +1654,10 @@ function highlightCodeBlock($customMessage) {
             codeLang = "language-xml";
             $(this).addClass(codeLang);
         }
-        //console.log('codeLang : '+codeLang);
+        console.log('codeLang : '+codeLang);
         
         let realLang = isIncludeLanguage(codeLang);
-        //console.log('realLang : '+realLang);
+        console.log('realLang : '+realLang);
         
         $(this).empty();
         $(this).attr('data-highlighted', 'yes').addClass('hljs');
@@ -1662,6 +1670,8 @@ function highlightCodeBlock($customMessage) {
         else{
             $(this).append(hljs.highlight(codehtml, { language: realLang }).value);
         }
+        
+        //hljs.highlightAll();
     });
 }
 
@@ -1687,10 +1697,12 @@ const languageMap = new Map([
   ["BASH", "BASH"],  
   ["-sh", "SH"],  
   ["-SH", "SH"],  
+  ["cpp", "C++"],  
+  ["CPP", "C++"],   
+  ["C", "C"],  
+  ["c", "C"],   
   ["C++", "C++"],  
-  ["c++", "C++"],  
-  ["C언어", "C"],  
-  ["c언어", "C"]  
+  ["c++", "C++"]  
   //,["C", "c"],  
   //,["c", "c"] 
 ]);
