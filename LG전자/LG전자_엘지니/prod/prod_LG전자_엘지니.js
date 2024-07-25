@@ -8786,7 +8786,11 @@ function addBudgetPopupOpen(data) {
     var formAddHiddenText = $(
         '<input type="hidden" id="accountType" value=""/>'    
         +'<input type="hidden" id="accountCode" value=""/>'    
-        +'<input type="hidden" id="accountName" value=""/>'    
+        +'<input type="hidden" id="accountName" value=""/>'  
+        +'<input type="hidden" id="deptExtraCode" value="'+data.deptExtraCode+'"/>'
+        +'<input type="hidden" id="deptKorName" value="'+data.deptKorName+'"/>'
+        +'<input type="hidden" id="deptAccountUnit" value="'+data.deptAccountUnit+'"/>'
+        +'<input type="hidden" id="corpId" value="'+data.corpId+'"/>'
     );
     addBudgetForm.append(formAddHiddenText);
     addBudgetForm.append(addBudgetComent);
@@ -8800,16 +8804,24 @@ function addBudgetPopupOpen(data) {
         var accountCd = $('#accountCode').val();
         var accountNm = $('#accountName').val();
         var accountType = $('#accountType').val();
-        console.log('data.userId >>> '+data.userId);
+        
+        var deptExtraCode = $('#deptExtraCode').val();
+        var deptKorName = $('#deptKorName').val();
+        var deptAccountUnit = $('#deptAccountUnit').val();
+        var corpId = $('#corpId').val();
+
         
         var param = {
-            "deptId": data.deptId, 
             "userId": data.userId, 
-            "expenseType": data.expenseType,  
             "accountType": accountType, 
             "accountCode": accountCd, 
-            "accountName": accountNm 
+            "accountName": accountNm,
+            "deptKorName": deptKorName,
+            "deptExtraCode" : deptExtraCode,
+            "deptAccountUnit" : deptAccountUnit,
+            "corpId": corpId
         }
+
         
         chatui.sendEventMessage("searchBudgetResult", param);
     });
@@ -8906,8 +8918,8 @@ function addBudgetPopupOpen(data) {
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
-            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
-            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
         }
     }
 }
@@ -8933,7 +8945,7 @@ function budgetResult(data) {
         + '<path fill="#898989" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>'
         + '<path fill="#898989" d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"></path>'
         + '</svg>'
-        + '<h3>'+data.deptName+'</h3>'
+        + '<h3>'+data.deptKorName+'</h3>'
         + '</div>'
         + '<ul class="budget-list-wrap">'
         + '<li>'
@@ -8942,7 +8954,8 @@ function budgetResult(data) {
         + '</li>'
         + '<li>'
         + '<h4>계정 정보</h4>'
-        + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
+        // + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
+        + '<div class="budget-user"><span>'+data.accountName+'</span></div>'
         + '</li>'
         + '<li>'
         + '<h4>기준 일시</h4>'
@@ -8950,16 +8963,16 @@ function budgetResult(data) {
         + '</li>'
         + '<li>'
         + '<h4>예산 잔액</h4>'
-        + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].BALANCE)+'</span>원</div>'
+        + '<div class="budget-remain"><span>'+getAmountComma(data.totalBudget)+'</span>원</div>'
         + '</li>'
         + '</ul>'
-        + '<div class="btn">'
-        + '<button type="button" class="btn btn-default move_n-erp">N-ERP Portal'
-        + '<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
-        + '<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
-        + '</svg>'
-        + '</button>'
-        + '</div>'
+        // + '<div class="btn">'
+        // + '<button type="button" class="btn btn-default move_n-erp">N-ERP Portal'
+        // + '<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        // + '<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
+        // + '</svg>'
+        // + '</button>'
+        // + '</div>'
         + '</div>'
     );
     budgetMessageResultWarp.append(budgetMessageResultContent);
