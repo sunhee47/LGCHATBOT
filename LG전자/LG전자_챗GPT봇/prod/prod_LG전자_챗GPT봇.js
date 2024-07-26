@@ -1645,7 +1645,13 @@ function highlightCodeBlock($customMessage) {
         $(this).attr('data-highlighted', 'yes').addClass('hljs');
             
         $(this).before('<div class="code-language" style="text-align: right; padding-right: 10px;"><small class="code-language-text" style="font-weight: bold;"><span class="sr-only">Language:</span>'+realLang+'</small></div>');
-        $(this).append(hljs.highlight(codehtml, { language: realLang }).value);
+        
+        if(realLang == '') {
+            $(this).append(hljs.highlight(codehtml, { language: 'sh' }).value);         // 선언된 language 가 없으면 기본 : sh
+        }
+        else{
+            $(this).append(hljs.highlight(codehtml, { language: realLang }).value);
+        }
     });
 }
 
@@ -1667,6 +1673,10 @@ const languageMap = new Map([
   ["xml", "XML"], 
   ["SQL", "SQL"], 
   ["sql", "SQL"], 
+  ["bash", "BASH"],  
+  ["BASH", "BASH"],  
+  ["-sh", "SH"],  
+  ["-SH", "SH"],  
   ["C++", "C++"],  
   ["c++", "C++"],  
   ["C언어", "C"],  
@@ -1687,6 +1697,8 @@ function isIncludeLanguage(cont) {
       return value;
     }    
   }
+  
+  return retVal;
 }
 
 // 2023.11.27 반응형 UI Start
