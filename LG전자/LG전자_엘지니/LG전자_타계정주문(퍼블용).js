@@ -3439,8 +3439,6 @@ jQuery(document).ready(function(e){
       }
   });
 
-
-  
 //   var key = chatui.getSetting("userId") ? chatui.getSetting("userId").replace(/=/gi, "") : "";
 //   var lastAccessDate = localStorage.getItem(key + "_lastAccessDate");
 //       if(lastAccessDate == null) { lastAccessDate=''; };
@@ -3537,6 +3535,15 @@ jQuery(document).ready(function(e){
 
     loadScript(postcodeSrc, function() {
         // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+    });
+
+    //var daterangepickerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-date-range-picker/0.14.2/jquery.daterangepicker.min.js';
+
+    loadScript('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', function() {
+        // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+        
+        window.daterangepicker = setDaterangepicker();
+
     });
     
 });
@@ -4148,6 +4155,7 @@ const setDatepicker = function() {
       $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
     }
 
+    console.log('$initEl : ', $initEl);
     if (target) {
       $input = $(target);
     } else {
@@ -4275,6 +4283,189 @@ const setDatepicker = function() {
 };
 
 window.datepicker = setDatepicker();
+
+//Datepicker Module
+const setDaterangepicker = function() {
+  var $initEl;
+  var callbackfunc;
+
+  // 날짜 한글 변환
+  function fullDate(val, target) {
+    var today;
+    var strWeek = ["일요일","월요일","화요일", "수요일","목요일","금요일","토요일"]
+    var fullDate;
+
+    if (target) {
+      today = new Date($(target).val());
+    } else {
+      today = new Date(val);
+    }
+
+    fullDate = today.getFullYear() +'년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 ' + strWeek[today.getDay()]
+    return fullDate;
+  }
+
+  // open
+  function dpOpen(btn, target, callback){
+    var $input;
+    
+
+    if ($(btn).closest(".schedule-input-wrap").length > 0) {
+      $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
+      $(".datepicker-chem:visible").not($initEl).fadeOut('fast', function(){
+        $(this).removeClass("show");
+      });
+    } else {
+      $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
+    }
+    
+    console.log('$initEl : ', $initEl);
+
+    if (target) {
+      $input = $(target);
+    } else {
+      if ($(btn).closest(".schedule-wrap")) {
+        $input = $(btn).closest(".schedule-input-wrap").find(".input-schedule-date");
+      } else {
+        $input = $(btn).prev("input[type=text]");
+      }
+    }
+
+    var minDate = '';
+
+    if($(btn).hasClass('startdate')) {
+      minDate = $(btn).val();
+    }
+
+    if($(btn).hasClass('enddate')) {
+      minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
+    }
+
+    if ($initEl.is(':visible')) {
+      dpClose();
+    } else {
+      $initEl.datepicker({
+        formatDate: "ATOM",
+        minDate: minDate,
+        dateFormat: "yy.mm.dd",
+        defaultDate: $input.val(),
+        showOn: "",
+        buttonImageOnly: true,
+        showMonthAfterYear: true,
+        monthNames: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+        monthNamesShort: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+        dayNamesMin: ['일','월','화','수','목','금','토'], 
+        altField: target,
+        showButtonPanel: true,
+        closeText: "close",
+        beforeShow: function() {
+        },
+        onChangeMonthYear: function() {
+
+        },
+        onSelect: function() {
+
+          //console.log('active date : '+$initEl.find('.ui-state-active').text())
+          var prevday = $initEl.find('.ui-state-active').text();
+          var prevDate = moment("202407"+prevday).format('YYYY.MM.DD');
+            
+          //console.log('prevday : '+prevday);
+            
+          //console.log('date_rows > ', date_rows);
+          
+          //$initEl.datepicker("setDate", prevDate);
+          
+          $initEl.find('.selected-date').text(this.value);
+          $(btn).val(this.value);
+          var endDt = moment($('.enddate').val()).format('YYYYMMDD');
+          var startDt = moment($('.startdate').val()).format('YYYYMMDD');
+          if(endDt < startDt) {
+            $('.enddate').val($('.startdate').val());
+          }
+          checkScheduleRequire();
+
+          ////////
+          ////////
+
+          // dpClose();
+
+          if (callback){
+            //eval(callback);
+            //callback();
+            //console.log('callback...');
+            callbackfunc = callback;
+            
+            //callbackfunc();
+          }
+        },
+        onClose: function() {
+            console.log('close111');
+            $(btn).focus();
+        }
+    });
+
+         
+    if(!$initEl.find('.dp-header').text()) {
+      $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>날짜를 선택해주세요<b>*</b></p></div>');
+    }
+           
+    if($initEl.find('.plugin-select-dim').length == 0) {
+      $initEl.prepend('<div class="plugin-select-dim"></div>');
+    }
+
+    if($initEl.find('.selected-date').length == 0) {
+      var selectedDate = new Date();
+      $initEl.find('.dp-header').append('<div class="selected-date">' + moment(selectedDate).format('YYYY.MM.DD') + '</div>');
+    }
+        
+    if($initEl.find('.dtpicker-refresh').length == 0) {
+      $initEl.find('.dp-header').append('<div class="dtpicker-refresh">초기화</div>');
+    }
+
+    $('.dtpicker-refresh').on('click', function(){
+      var newDt = new Date();
+      var selectedDate = moment(newDt).format('YYYY.MM.DD');
+      $initEl.datepicker("setDate", selectedDate);
+      $initEl.find('.selected-date').text(selectedDate);
+      $(btn).val(selectedDate);
+    });
+
+    if($initEl.find('.btn-datepicker').length == 0) {
+      $initEl.append('<button type="button" class="btn-plugin btn-datepicker" onclick="daterangepicker.close();">확인</button>');  
+    }
+        
+
+    $initEl.fadeIn('fast', function(){  
+      $(this).find('.plugin-select-dim').addClass('show');
+      $(this).addClass("show");
+    });
+        
+  }
+  }
+
+
+  function dpClose() {
+    $(".datepicker-chem").fadeOut('fast', function(){
+      $(this).removeClass("show");
+      //console.log('close2222');
+      
+      if(callbackfunc) {
+          //console.log('callbackfunc ');
+          callbackfunc();
+      }
+      
+      callbackfunc = null;
+    })
+  }
+
+  return {
+    open: dpOpen,
+    close: dpClose,
+    fulldate: fullDate
+  }
+};
+
+window.daterangepicker = setDaterangepicker();
 
 function setTimePicker(timeinput) {
   
@@ -8283,6 +8474,9 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'orderInquiryInput') {                    // 타계정 주문 현황 조회
           messageCard = makeCardAALV(message.data);
     	}
+        else if(message.type == 'calendarInput') {                    // 타계정 주문 현황 조회
+          messageCard = makeCalendarInput(message.data);
+    	}
         else {
           console.log(message.type);
         }
@@ -10294,8 +10488,8 @@ function anotherAccountPopupOpen(orderdata) {
 
     /* #########[ popup_content_wrap ]######### */
     var pluginContents = $('<div class="plugin-contents"></div>');
-    var anotherForm = anotherAccountOrderFirst(orderdata);
-    //var anotherForm = anotherAccountOrderFifth(orderdata);
+    //var anotherForm = anotherAccountOrderFirst(orderdata);
+    var anotherForm = anotherAccountOrderThird(orderdata);
     pluginContents.append(anotherForm);
     //pluginContents.append(anotherAccountOrderForm);
     addPlugin.append(pluginContents);
@@ -10859,7 +11053,7 @@ function anotherAccountOrderThird(orderdata) {
 
     var placeholderToday = moment().format('YYYY.MM.DD');
 
-    //orderdata.reasonCode = "DON";              // 임시
+    orderdata.reasonCode = "DON";              // 임시
     var selReceiverName = (orderdata.receiverName == null)? '홍길동':orderdata.receiverName;
     var selZipno = (orderdata.zipno == null)? '99999':orderdata.zipno;
     var selAddress1 = (orderdata.address1 == null)? '서울시 강서구 마곡동':orderdata.address1;
@@ -16245,4 +16439,190 @@ function memberCheck() {
       $('#attendees').attr('placeholder', '직원명을 입력해 주세요.');
       $('#attendees').css('display', 'block');
   }
+}
+
+// 달력 입력 확인
+function makeCalendarInput(data) {
+    var messageWrap = $('<div class="custom-message"></div>');
+    var messageBox = $('<div class="message"></div>');
+    var messageTextWrap = $('<div class="message simple-text"></div>');
+    var messageTextContent = $(
+         '<p>'
+            +'달력 입력'
+         +'</p>'
+    );
+    var loadBtn = $(
+        '<div class="btn">'
+            +'<button type="button" class="btn btn-emphasis btn-big">달력 입력</button>'
+        +'</div>'
+    );
+    loadBtn.on('click', function() {
+        calendarPopupOpen(data);
+    });
+    messageTextWrap.append(messageTextContent);
+    messageTextWrap.append(loadBtn);
+    
+    if(checkChatHistory == false) {
+        calendarPopupOpen(data);
+    }
+    
+    //messageBox.append(messageTextWrap);
+    //messageWrap.append(messageBox);
+    //return messageWrap; 
+    return messageTextWrap;
+}
+
+function dateRange() {
+    
+         var prevday = '22';
+          var date_table = $('.datepicker-chem').find('.ui-datepicker').find('.ui-datepicker-calendar').find('tbody');  
+          var date_rows = date_table.find('tr');
+
+          //console.log('length : '+ date_rows);
+          for(var i=0; i<date_rows.length; i++) {
+              let date_cols = $(date_rows[i]).find('td');
+              
+              //console.log('date_cols > ', date_cols);
+              for(var j=0; j<date_cols.length; j++) {
+                  let date_col = $(date_cols[j]); 
+                  let date_link = date_col.find('a');
+                  
+                  //console.log('td > ', date_col);
+                  if(date_link.length > 0) {
+                      let date_no = date_link.text();
+                      
+                      if(date_no == prevday) {
+                          //console.log('date_no : '+date_no);
+                          //console.log('add...');
+                          date_col.addClass('.ui-datepicker-current-day');
+                          date_link.addClass('.ui-state-active');
+                          //date_col.find('a').css('background-color', '#E0205C').css('color', 'white');
+                          
+                          //console.log('td > ', date_link);
+                      }
+                  }
+                  
+                    
+              } 
+          }
+    
+}
+
+function calendarPopupOpen(data) {
+    console.log('data : ', data);
+    var userId = data.userId;
+    
+    /* #########[ popup_wrap_start ]######### */
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addPlugin = $('<div class="plugins" id="calendarPopup"></div>');
+
+    /* #########[ popup_header ]######### */
+    var pluginHeader = $('<div class="plugin-header"><h1>달력 조회</h1></div>');
+    var pluginClose = $('<span class="close-plugin">' + iconPopupClose + '</span>');
+    pluginClose.on('click', function() {
+        thisPluginClose();
+    })
+    pluginHeader.append(pluginClose);
+    addPlugin.append(pluginHeader);
+    function thisPluginClose() {
+        $('#calendarPopup').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#calendarPopup').remove();
+        }, 300);
+    }
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var pluginContents = $('<div class="plugin-contents" style="height:500px;"></div>');
+    var pluginForm = $('<form class="form-calendar"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ 광고 판촉비(APMS) 폼의 번호 ]### */
+    
+    /* ###[ 기부 일자 ]### */
+    var inputTimeBox = $('<div class="input-box"><label>기간 입력<b>*</b></label></div>');
+    var dateTimeWrap = $('<div class="schedule-wrap"></div>');
+    var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
+    var dateStartInput = $('<input type="text" class="input-schedule-date" placeholder="YYYY.MM.DD - YYYY.MM.DD" id="date_input" onclick="daterangepicker.open(this, null, function() { dateRange(); })"/>');
+    dateTimeStartBox.append(dateStartInput);
+    
+    /*  #########[ datepicker ]#########  */
+    var datepicker = $('<div class="datepicker-chem"></div>');
+    dateTimeStartBox.append(datepicker);
+    
+    dateTimeWrap.append(dateTimeStartBox);
+    inputTimeBox.append(dateTimeWrap);
+    
+    pluginForm.append(inputTimeBox);
+    //dateStartInput.val(selDonationDate);
+    
+    //inputBoxTextcalendarNum.on('keyup', function(e) {
+    //    hblInput = e.target.value;
+    //    btnValueCheck();
+    //});
+
+/*
+$(function () {
+            $('.input-schedule-date').daterangepicker({
+                "locale": {
+                    "format": "YYYY-MM-DD",
+                    "separator": " ~ ",
+                    "applyLabel": "확인",
+                    "cancelLabel": "취소",
+                    "fromLabel": "From",
+                    "toLabel": "To",
+                    "customRangeLabel": "Custom",
+                    "weekLabel": "W",
+                    "daysOfWeek": ["월", "화", "수", "목", "금", "토", "일"],
+                    "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+                    "firstDay": 1
+                },
+                "startDate": "2024-07-21",
+                "endDate": "2024-07-23",
+                "drops": "down"
+            }, function (start, end, label) {
+                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            });
+        });    
+*/        
+    /*  ###[ etc ]### */
+    // 조회버튼
+    var submitBtn = $('<button disabled type="button" class="btn btn-plugin btn-apply" id="btn-calendar">조회</button>');
+    pluginForm.append(submitBtn);
+    submitBtn.on('click', function() {
+        //thisPluginClose();
+        //$('.chat-message.left').last().append(apmsResult()); // 결과 메세지 (임시 확인용)
+        
+
+    });
+
+    /* #########[ popup_content_wrap_end ]######### */
+    pluginContents.append(pluginForm);
+    addPlugin.append(pluginContents);
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addPlugin);
+    $('.plugin-dim').css('display', 'block');
+    $('#calendarPopup').css('display', 'block');
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#calendarPopup').addClass('show');
+    }, 100);
+
+    /* #########[ 기타 ]######### */
+    // 조회버튼 활성화 체크
+    function btnValueCheck() {
+        function btnActive() {submitBtn.removeClass('btn-disabled');submitBtn.attr('disabled', false);}
+        function btnDisabled() {submitBtn.addClass('btn-disabled');submitBtn.attr('disabled', true);}
+
+        if (inputBoxTextcalendarNum.find('input').val()) {
+            btnActive();
+        } else {
+            btnDisabled();
+        };
+    };
+    //btnValueCheck();
+    
 }
