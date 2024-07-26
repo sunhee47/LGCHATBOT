@@ -8683,14 +8683,14 @@ function addBudgetPopupOpen(data) {
         gAccountList = data.account;
     }
     var accountList = gAccountList;                 // expense type에 맞는 계정목록.
-    console.log('accountList length : '+accountList.length);
+    //console.log('accountList length : '+accountList.length);
 
     let accTypeList = [];                                   // expense type에 맞는 계정유형목록
     accountList.filter((origin, index) => {
         if(!accTypeList.find((_retData, _retIndex) => origin.group === _retData.group && index !== _retIndex)) accTypeList.push(origin);
     }); 
             
-    console.log('typeList length : '+accTypeList.length);
+    //console.log('typeList length : '+accTypeList.length);
     
     var accountTypeText = '예산 유형을 선택해 주세요.';
     
@@ -8781,7 +8781,23 @@ function addBudgetPopupOpen(data) {
 
     /*  ###[ etc ]###  */
     // 코멘트
-    var addBudgetComent = $('<p class="small coment-b">※ 현재 시간 기준으로 조회합니다.</p>');
+    var addBudgetComent = $('<p class="small coment-b" style="margin-top: 20%;">※ 현재 시간 기준으로 조회합니다.</p>');
+    
+    // var formAddHiddenText = $(
+    //     '<input type="hidden" id="accountType" value=""/>'    
+    //     +'<input type="hidden" id="accountCode" value=""/>'    
+    //     +'<input type="hidden" id="accountName" value=""/>'    
+    // );
+    
+    var projectInputBox = $('<div class="input-box"><label>프로젝트 코드</label></div>');
+    
+    var formProjectText = $(
+        '<b style="color: #F94B50">*필요시 프로젝트 코드 13자리를 입력해 주세요.</b>'
+        + '<input type="text" id="projectCode" value="0000000000000" placeholder="프로젝트 코드 13자리를 입력해 주세요." />'
+        // + '<input type="text" id="projectCode" value="0000000000000"/>'
+    );
+    addBudgetForm.append(projectInputBox);
+    projectInputBox.append(formProjectText);
     
     var formAddHiddenText = $(
         '<input type="hidden" id="accountType" value=""/>'    
@@ -8792,6 +8808,7 @@ function addBudgetPopupOpen(data) {
         +'<input type="hidden" id="deptAccountUnit" value="'+data.deptAccountUnit+'"/>'
         +'<input type="hidden" id="corpId" value="'+data.corpId+'"/>'
     );
+    
     addBudgetForm.append(formAddHiddenText);
     addBudgetForm.append(addBudgetComent);
 
@@ -8799,7 +8816,6 @@ function addBudgetPopupOpen(data) {
     var addBudgetSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-budget">조회</button>');
     addBudgetForm.append(addBudgetSubmit);
     addBudgetSubmit.on('click', function() {
-        addBudgetPopupClose();
         
         var accountCd = $('#accountCode').val();
         var accountNm = $('#accountName').val();
@@ -8809,8 +8825,25 @@ function addBudgetPopupOpen(data) {
         var deptKorName = $('#deptKorName').val();
         var deptAccountUnit = $('#deptAccountUnit').val();
         var corpId = $('#corpId').val();
-
+        var projectCode = $('#projectCode').val().trim();
         
+        if(projectCode.length != 13) {
+            showSmallDialog("프로젝트 코드 13자리를 다시 한번 확인해 주세요. ");
+            $('#projectCode').focus();
+            return;
+        }
+
+        //console.log(':'+projectCode+':');
+        // var param = {
+        //     "deptId": data.deptId, 
+        //     "userId": data.userId, 
+        //     "expenseType": data.expenseType,  
+        //     "accountType": accountType, 
+        //     "accountCode": accountCd, 
+        //     "accountName": accountNm,
+        //     "deptCode" : deptCode,
+        //     "actUnitCode" : actUnitCode
+        // }
         var param = {
             "userId": data.userId, 
             "accountType": accountType, 
@@ -8819,9 +8852,11 @@ function addBudgetPopupOpen(data) {
             "deptKorName": deptKorName,
             "deptExtraCode" : deptExtraCode,
             "deptAccountUnit" : deptAccountUnit,
-            "corpId": corpId
+            "corpId": corpId,
+            "projectCode": projectCode
         }
-
+        
+        addBudgetPopupClose();
         
         chatui.sendEventMessage("searchBudgetResult", param);
     });
@@ -8844,6 +8879,21 @@ function addBudgetPopupOpen(data) {
 
     /*  #########[ dropdown ]#########  */
     
+    // dropdown box 열려 있으면 닫기. 
+    $(document).on('click', function(e) {
+        
+        //console.log('length : '+$('.dropdown-box').has(e.target).length+' / '+$('.dropdown-box').length+' / ', e.target);
+        for(var i=0; i<$('.dropdown-box').length; i++) {
+            let dropdownBox = $('.dropdown-box')[i];
+            
+            if($(dropdownBox).has(e.target).length === 0) {
+                if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
+                    dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
+                }
+            }            
+        }
+    });
+
     function reloadPopup() {
         $('.budget-tooltip').fadeOut(1);
         $('.dropdown-budget .btn-dropdown').removeClass('accent');
@@ -8941,7 +8991,7 @@ function budgetResult(data) {
     var budgetMessageResultContent = $(
         '<div class="budget-content">'
         + '<div class="budget-content-header">'
-        + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<svg width="17" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
         + '<path fill="#898989" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>'
         + '<path fill="#898989" d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"></path>'
         + '</svg>'
@@ -8958,12 +9008,19 @@ function budgetResult(data) {
         + '<div class="budget-user"><span>'+data.accountName+'</span></div>'
         + '</li>'
         + '<li>'
+        + '<h4>PJT Code</h4>'
+        // + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
+        + '<div class="budget-project"><span>'+data.projectCode+'</span></div>'
+        + '</li>'
+        + '<li>'
         + '<h4>기준 일시</h4>'
         + '<div class="budget-date"><span>'+data.budgetDate+'</span><span>'+data.budgetTime+'</span></div>'
         + '</li>'
         + '<li>'
         + '<h4>예산 잔액</h4>'
-        + '<div class="budget-remain"><span>'+getAmountComma(data.totalBudget)+'</span>원</div>'
+        // + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].BALANCE)+'</span>원</div>'
+        + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].P_BALANCED_BUDGET_AMOUNT)+'</span>원</div>'
+        // + '<div class="budget-remain"><span>'+getAmountComma(data.totalBudget)+'</span>원</div>'
         + '</li>'
         + '</ul>'
         // + '<div class="btn">'
@@ -8995,6 +9052,8 @@ function budgetResultError(data) {
     
     var budgetResultErrorMessage = $(
          '<p>시스템 오류로 인해 조회되지 않았어요. 아래 버튼을 눌러 잔여 예산을 다시 조회해 보세요.</p>'
+         + '<p>'+data.errorMsg+'</p>'
+         
     );
     
     var budgetResultReloadBtn = $(
@@ -9005,7 +9064,6 @@ function budgetResultError(data) {
     //appendChatbotText2(budgetResultErrorMessage);
     
     budgetResultReloadBtn.on('click', function() {
-        console.log('aaaaa');
         addBudgetPopupOpen(data);
 
         ////////////     
@@ -9024,6 +9082,8 @@ function budgetResultError(data) {
 }
 
 function reloadSearchBudget(data) {
+    console.log('data : ', data);
+    
     $('.budget-tooltip').fadeOut(1);
     $('.dropdown-budget .btn-dropdown').removeClass('accent');
     
@@ -9048,10 +9108,13 @@ function reloadSearchBudget(data) {
         var nameTag = $(listAccount[i]).find('a');
         var codeTag = $(listAccount[i]).find('span');
         
-        if(codeTag.text() == data.accountItem[0].ACCOUNT_CODE) {
+        //console.log('tag : '+codeTag.text()+' / '+nameTag.text());
+        if(codeTag.text() == data.accountItem[0].P_ACCOUNT_CODE) {
             nameTag.trigger('click');
         }
     }
+    
+    $('#projectCode').val(data.projectCode);
 }
 
 function getAmountComma(price) {
