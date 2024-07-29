@@ -765,6 +765,8 @@ chatui.onLoad = function(){
 
                   org_chgVal = replaceHtmlCodeForChar(orgVal);
                   chgVal = replaceHtmlCodeForChar(val);
+                  chgVal = replaceSqlCodeForChar(chgVal);
+                  chgVal = replaceLinuxCodeForChar(chgVal);
                   console.log('chgVal : '+chgVal);
                   secBtnDisable();
                   appendQueryText(org_chgVal);
@@ -798,6 +800,8 @@ chatui.onLoad = function(){
                   var keyWord = '';  //chkSecureText(val);       // 보안키워드 체크 제외.
                   
                   chgVal = replaceHtmlCodeForChar(val);
+                  chgVal = replaceSqlCodeForChar(chgVal);
+                  chgVal = replaceLinuxCodeForChar(chgVal);
                   console.log('chgVal : '+chgVal);                  
                   secBtnDisable();
                   appendQueryText(chgVal);
@@ -848,6 +852,49 @@ function loadScript(src, callback) {
     script.onload = () => callback(script);
     
     document.head.appendChild(script);
+}
+
+// 발화내용 중 sql 관련 단어 포함된 경우 html 코드로 치환.
+function replaceSqlCodeForChar(val){
+    let chgVal = val.replace(/select/gi, "&#115;&#101;&#108;&#101;&#99;&#116;")
+                .replace(/from/gi, "&#102;&#111;&#111;&#109;")
+                .replace(/where/gi, "&#119;&#104;&#101;&#114;&#101;")
+                .replace(/insert/gi, "&#105;&#110;&#115;&#101;&#114;&#116;")
+                .replace(/update/gi, "&#117;&#112;&#100;&#97;&#116;&#101;")
+                .replace(/delete/gi, "&#100;&#101;&#108;&#101;&#116;&#101;")
+                .replace(/create/gi, "&#99;&#114;&#101;&#112;&#101;&#116;&#101;")
+                .replace(/alter/gi, "&#97;&#108;&#116;&#101;&#114;")
+                .replace(/drop/gi, "&#100;&#114;&#111;&#112;")
+                .replace(/table/gi, "&#116;&#97;&#98;&#108;&#101;")
+                .replace(/database/gi, "&#100;&#97;&#116;&#97;&#98;&#101;&#115;&#101;")
+                .replace(/describe/gi, "&#100;&#101;&#115;&#99;&#114;&#105;&#112;&#101;")
+                .replace(/values/gi, "&#118;&#97;&#108;&#117;&#101;&#115;")
+                .replace(/exists/gi, "&#101;&#120;&#105;&#115;&#116;&#115;")
+                .replace(/primary/gi, "&#112;&#114;&#105;&#109;&#97;&#114;&#121;")
+                .replace(/foreign/gi, "&#102;&#111;&#114;&#101;&#105;&#103;&#110;")
+                .replace(/key/gi, "&#107;&#101;&#121;");
+                
+    return chgVal;
+}
+
+// 발화내용 중 linux 관련 단어 포함된 경우 html 코드로 치환.
+function replaceLinuxCodeForChar(val){
+    let chgVal = val.replace(/shutdown/gi, "&#115;&#104;&#117;&#116;&#100;&#111;&#119;&#110;")
+                .replace(/reboot/gi, "&#114;&#101;&#98;&#111;&#111;&#116;")
+                .replace(/halt/gi, "&#104;&#97;&#108;&#116;")
+                .replace(/useradd/gi, "&#117;&#115;&#101;&#114;&#97;&#100;&#100;")
+                .replace(/adduser/gi, "&#97;&#100;&#100;&#117;&#115;&#101;&#114;")
+                .replace(/userdel/gi, "&#117;&#115;&#101;&#114;&#100;&#101;&#108;")
+                .replace(/ifconfig/gi, "&#105;&#102;&#99;&#111;&#110;&#102;&#105;&#103;")
+                .replace(/ipconfig/gi, "&#105;&#112;&#99;&#111;&#110;&#102;&#105;&#103;")
+                .replace(/netstat/gi, "&#110;&#101;&#116;&#115;&#116;&#97;&#116;")
+                .replace(/fdisk/gi, "&#102;&#100;&#105;&#115;&#107;")
+                .replace(/rm/gi, "&#114;&#109;")
+                .replace(/chmod/gi, "&#99;&#104;&#109;&#111;&#100;")
+                .replace(/chown/gi, "&#99;&#104;&#111;&#119;&#110;")
+                .replace(/route/gi, "&#114;&#111;&#117;&#116;&#101;");
+                 
+    return chgVal;
 }
 
 // 발화내용 중 특수문자 포함된 경우 html 코드로 치환.
@@ -1662,7 +1709,8 @@ const languageMap = new Map([
   ["javascript", "JAVASCRIPT"], 
   ["자바스크립트", "JAVASCRIPT"], 
   ["JavaScript", "JAVASCRIPT"], 
-  ["js", "JAVASCRIPT"], 
+  ["typescript", "TYPESCRIPT"], 
+  //["js", "JAVASCRIPT"], 
   ["java", "JAVA"], 
   ["자바", "JAVA"], 
   ["json", "JSON"], 
@@ -1673,14 +1721,31 @@ const languageMap = new Map([
   ["xml", "XML"], 
   ["SQL", "SQL"], 
   ["sql", "SQL"], 
+  ["php", "PHP"],  
+  ["toml", "toml"],  
+  ["rust", "rust"],  
+  ["swift", "Swift"],  
+  ["yaml", "YAML"],  
+  ["perl", "Perl"],  
+  ["ruby", "Ruby"],  
+//  ["aidl", "aidl"],  
   ["bash", "BASH"],  
   ["BASH", "BASH"],  
+  ["makefile", "makefile"], 
+  ["markdown", "markdown"], 
+//  ["dockerfile", "dockerfile"], 
+//  ["Dockerfile", "dockerfile"], 
+  ["kotlin", "kotlin"], 
+  ["KOTLIN", "kotlin"], 
+  ["go", "GO"],  
   ["-sh", "SH"],  
   ["-SH", "SH"],  
+  ["cpp", "C++"],  
+  ["CPP", "C++"],   
+  ["C", "C"],  
+  ["c", "C"],   
   ["C++", "C++"],  
-  ["c++", "C++"],  
-  ["C언어", "C"],  
-  ["c언어", "C"]  
+  ["c++", "C++"] 
   //,["C", "c"],  
   //,["c", "c"] 
 ]);
