@@ -3037,9 +3037,10 @@ jQuery(document).ready(function(e){
   +     '<div class="btns">'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">번역</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 등록</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">화상회의 등록</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">월마감</button>'
+  //+         '<button type="button" class="btn-s btn-text btn-sendtext">화상회의 등록</button>'
+  //+         '<button type="button" class="btn-s btn-text btn-sendtext">월마감</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">예산 조회</button>'
   +     '</div>'
   +     '<h2>주요 메뉴</h2>'
   +     '<div class="btns">'
@@ -9118,6 +9119,7 @@ function reloadSearchBudget(data) {
 }
 
 function getAmountComma(price) {
+    console.log(price);
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
