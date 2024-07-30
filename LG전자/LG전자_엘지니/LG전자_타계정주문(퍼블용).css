@@ -7213,3 +7213,51 @@ background: #F5F5F5 !important;
   background-size: 24px !important;
   background-position: 12px center !important;
 }
+
+
+/* 물품 청구 */ 
+
+.plugins .plugin-contents .input-box.top-list {
+  margin-bottom: 20px;
+  padding-bottom: 0;
+  
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    row-gap: 0px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    align-self: stretch;
+    flex-shrink: 0;
+    position: relative;
+    /*overflow: hidden;*/  
+}
+.plugins .plugin-contents .input-box.top-list .label {
+    color: var(--color-gray-900, #2c2c2c);
+    text-align: left;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    position: relative;
+}
+.plugins .plugin-contents .input-box.top-list .cont {
+color: var(--color-gray-900, #2c2c2c);
+    text-align: right;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    position: relative;
+    flex: 1;
+}
+.plugins .plugin-contents .input-box.line {
+      /*display: flex;
+      padding-bottom: 10px; */ 
+ }
+  
+.divder {
+    background: var(--color-gray-100, #e8e8e8);
+    align-self: stretch;
+    flex-shrink: 0;
+    height: 2px;
+    position: relative;
+}

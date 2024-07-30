@@ -8477,6 +8477,9 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'calendarInput') {                    // 타계정 주문 현황 조회
           messageCard = makeCalendarInput(message.data);
     	}
+        else if(message.type == 'requestItemsInput') {                    // 타계정 주문 현황 조회
+          messageCard = makeRequestItemsInput(message.data);
+    	}
         else {
           console.log(message.type);
         }
@@ -16624,5 +16627,243 @@ $(function () {
         };
     };
     //btnValueCheck();
+    
+}
+
+/* #################### [ 물품 청구 신청] #################### */
+// 물품 청구 신청 메세지
+function makeRequestItemsInput(requestdata) {
+    var messageWrap = $('<div class="custom-message"></div>');
+    var messageBox = $('<div class="message"></div>');
+    var messageTextWrap = $('<div class="message simple-text"></div>');
+    var messageTextContent = $(
+         '<p>'
+            +'엘지니에서는  한 번에 <b>최대 10개</b>의 물품을 청구할 수 있어요. 아래 버튼을 눌러 물품 청구에 필요한 정보를 입력해 주세요.'
+         +'</p>'
+    );
+    var loadBtn = $(
+        '<div class="btn">'
+            +'<button type="button" class="btn btn-emphasis btn-big">물품 청구하기</button>'
+        +'</div>'
+    );
+    loadBtn.on('click', function() {
+        requestdata.step = 1;
+        requestItemsPopupOpen(requestdata);
+    });
+    messageTextWrap.append(messageTextContent);
+    messageTextWrap.append(loadBtn);
+    
+    if(checkChatHistory == false) {
+        requestItemsPopupOpen(requestdata);
+    }
+    
+    //messageBox.append(messageTextWrap);
+    //messageWrap.append(messageBox);
+    //return messageWrap;
+    return messageTextWrap;
+}
+
+// [ 물품 청구 신청 입력 팝업 ]
+var requestItemsInputForm;
+function requestItemsPopupOpen(requestdata) {
+    /* #########[ popup_wrap_start ]######### */
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addPlugin = $('<div class="plugins another-account-order" id="request-items"></div>');
+
+    /* #########[ popup_header ]######### */
+    var pluginHeader = $('<div class="plugin-header"><h1>물품 청구 ('+ '1' + '/' + '3' +')</h1></div>');
+    var pluginClose = $('<span class="close-plugin">' + iconPopupClose + '</span>');
+    pluginClose.on('click', function() {
+        thisPluginClose();
+    })
+    pluginHeader.append(pluginClose);
+    addPlugin.append(pluginHeader);
+    function thisPluginClose() {
+        $('#request-items').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#request-items').remove();
+        }, 300);
+    }
+
+    /* #########[ popup_content_wrap ]######### */
+    var pluginContents = $('<div class="plugin-contents"></div>');
+    //var requestForm = requestItemsInputFirst(requestdata);
+    var requestForm = requestItemsInputSecond(requestdata);
+    pluginContents.append(requestForm);
+    addPlugin.append(pluginContents);
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addPlugin);
+    $('.plugin-dim').css('display', 'block');
+    $('#request-items').css('display', 'block');
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#request-items').addClass('show');
+    }, 100);
+}
+
+// 물품 청구 신청 입력 팝업 컨텐츠 1
+function requestItemsInputFirst(requestdata) {
+    console.log('requestdata : ', requestdata);
+    //console.log('anotherAccountOrderForm : ', anotherAccountOrderForm);
+    
+    userId = chatui.getSetting("userId"); 
+
+    //$('.plugin-contents').css('overflow-y', 'auto');
+    var pluginHeader = $('.plugin-header');
+    pluginHeader.find('h1').text('물품 청구 ('+ '1' + '/' + '3' +')');
+    pluginHeader.find('.backBtn').remove();
+    setTimeout(function() {
+        $('.plugin-contents').css('overflow-y', 'auto');
+    },1);
+
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var pluginForm = $('<form class="form-first" onsubmit="return false;"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ Department ]  ]### */
+    var inputBoxText1 = $('<div class="input-box add-order"><label>Department<b>*</b></label></div>');
+    // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
+    var inputTextContent1 = $('<div class="input-form order-select searchIcon" id="input_content1"></div>');
+    var costAuSelected = $('<div class="selected-order" id="input_selected1"></div>');
+    var inputBox1 = $('<input type="text" placeholder="Department를 입력해 주세요." max-length="50" id="costau-name" />');
+    
+    inputTextContent1.append(costAuSelected);
+    inputTextContent1.append(inputBox1);
+    //inputTextContent1.append(costAuListCont);
+    
+    var orderUl1 = $('<ul></ul>');
+    
+    inputBoxText1.append(inputTextContent1);
+    pluginForm.append(inputBoxText1);
+    
+
+    /* ###[ Plant ]### */
+    var inputBoxText2 = $('<div class="input-box add-order"><label>Plant<b>*</b></label></div>');
+    var inputTextContent2 = $('<div class="input-form order-select disable-searchIcon"></div>');
+    var costDeptSelected = $('<div class="selected-order"></div>');
+    var inputBox2 = $('<input type="text" placeholder="Plant를 입력해 주세요." max-length="50" id="costdept-name" disabled/>');
+    
+
+    inputTextContent2.append(costDeptSelected);
+    inputTextContent2.append(inputBox2);
+    //inputTextContent2.append(costDeptListCont);
+    
+    var orderUl2 = $('<ul></ul>');
+    
+    inputBoxText2.append(inputTextContent2);
+    pluginForm.append(inputBoxText2);
+
+
+    /* ###[ Project ]### */
+    var inputBoxText3 = $('<div class="input-box add-order"><label>Project</label></div>');
+    var inputTextContent3 = $('<div class="input-form order-select disable-searchIcon cost_accnt_input"></div>');
+    var costAccountSelected = $('<div class="selected-order cost_accnt_selected"></div>');
+    var inputBox3 = $('<input type="text" placeholder="Project를 입력해 주세요." max-length="50" id="costaccount-name" readonly disabled/>');
+    
+    inputTextContent3.append(costAccountSelected);
+    inputTextContent3.append(inputBox3);
+    //inputTextContent3.append(costAccountListCont);
+    
+    var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
+    
+    inputBoxText3.append(inputTextContent3);
+    pluginForm.append(inputBoxText3);
+
+    /* ###[ 계정 ]### */
+    var inputBoxText4 = $('<div class="input-box add-order"><label>계정<b>*</b></label></div>');
+    var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon cost_accnt_input"></div>');
+    var accountSelected = $('<div class="selected-order cost_accnt_selected"></div>');
+    var inputBox4 = $('<input type="text" placeholder="계정을 입력해 주세요." max-length="50" id="costaccount-name" readonly disabled/>');
+    
+    inputTextContent4.append(accountSelected);
+    inputTextContent4.append(inputBox4);
+    //inputTextContent3.append(costAccountListCont);
+    
+    var orderUl4 = $('<ul class="cost_accnt_ul"></ul>');
+    
+    inputBoxText4.append(inputTextContent4);
+    pluginForm.append(inputBoxText4);
+    
+    /*  ###[ etc ]### */
+    // 다음버튼
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>')
+    pluginForm.append(nextBtn);
+    pluginForm.children('.btn').find('button').on('click', function() {
+        
+
+        requestdata.step = 2;        
+
+        pluginForm.removeClass('show');
+        pluginForm.remove();
+        
+        requestItemsInputSecond(requestdata);
+        $('.plugin-contents').append(requestItemsInputForm);
+
+        //console.log('2단계 닫기.');
+
+    });
+    
+    // back버튼
+/*    pluginHeader.find('.backBtn').off('click').on('click', function() {
+        
+        orderdata.step = 1;
+        orderdata.action = 'back';
+
+        delete orderdata.orderType;
+        delete orderdata.reasonCode;
+        delete orderdata.reasonName;
+        delete orderdata.orderTypeList;
+
+        pluginForm.removeClass('show');
+        pluginForm.remove();
+        anotherAccountOrderFirst(orderdata);
+        $('.plugin-contents').append(anotherAccountOrderForm);
+    });
+*/     
+    /* #########[ popup_content_form_end ]######### */
+    requestItemsInputForm = pluginForm;
+    return pluginForm;
+}
+
+// 물품 청구 신청 입력 팝업 컨텐츠 2
+function requestItemsInputSecond(requestdata) {
+    console.log('2단계 requestdata  : ', requestdata);
+
+    $('.plugin-contents').css('overflow-y', 'auto');
+    var pluginHeader = $('.plugin-header');
+    var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
+    pluginHeader.find('h1').text('물품 청구 ('+ '2' + '/' + '3' +')');
+    pluginHeader.find('.backBtn').remove();
+    pluginHeader.prepend(backBtn);
+    
+    $('.plugin-contents').focus();
+ 
+    /* #########[ popup_content_wrap_start ]######### */
+    var pluginForm = $('<form class="form-second" onsubmit="return false;"></form>');
+    
+    /* #########[ popup_content ]######### */
+    var inputBoxTopList = $('<div class="input-box top-list"></div>');
+    var inputBoxTopTitle = $('<span class="label">Department 예산 잔액</span>');
+    var inputBoxTopContent = $('<span class="cont">1,000,000,000원</span>');
+    inputBoxTopList.append(inputBoxTopTitle);
+    inputBoxTopList.append(inputBoxTopContent);
+    //inputBoxTopList.append(divderLine);
+    
+    pluginForm.append(inputBoxTopList);
+    
+    var inputBoxDivder = $('<div class="input-box line"></div>');
+    var divderLine = $('<div class="divder"></div>');
+    inputBoxDivder.append(divderLine);
+    pluginForm.append(inputBoxDivder);
+    
+    
+    /* #########[ popup_content_form_end ]######### */
+    requestItemsInputForm = pluginForm;
+    return pluginForm;
     
 }
