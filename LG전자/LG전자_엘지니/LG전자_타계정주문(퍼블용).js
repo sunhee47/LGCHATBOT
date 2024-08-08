@@ -1584,10 +1584,11 @@ const setAutocompleteJoinMember = function(input) {
   })
 };
 
-const setAutocompleteTeamMember = function(input) {
+const setAutocompleteTeamMember = function(input, empNo) {
   // Test Item
   var keyword = [];   
 
+  console.log('auto empNo : '+empNo);
   //var $autocompleteWrap;
   $(input).on('keyup', function(e) {
       
@@ -1607,7 +1608,8 @@ const setAutocompleteTeamMember = function(input) {
               "event": "teamRequestorInquiryEvent"
             },
             payload: {
-                searchName : inputVal
+                searchName : inputVal, 
+                empNo: empNo
             }
           };
 
@@ -1620,6 +1622,13 @@ const setAutocompleteTeamMember = function(input) {
             //console.log('teamMemberList : ', teamMemberList);
             
             if(teamMemberList) {
+                if(teamMemberList.length == 0) {
+                    closeLoadingWithMask();
+                    setTimeout(function() {
+                        showSmallDialog('검색된 임직원이 없습니다. 다시 검색해 주세요.'); 
+                    },300);
+                    return;
+                }
                  $.each(teamMemberList, function(index) {
                    var teamMember = teamMemberList[index];
                    var userKorName = teamMember.employee_name;
@@ -1633,7 +1642,7 @@ const setAutocompleteTeamMember = function(input) {
                 
                 //$(this).data("uiAutocomplete").search($(this).val());
             }
-            
+
             $(input).focus();
             
             closeLoadingWithMask();
@@ -3557,12 +3566,15 @@ function LoadingWithMask() {
     
     var _left = Math.ceil(maskWidth/2);
     var _top = Math.ceil(maskHeight/2);
+    
+    var imgWidth = Math.ceil(151/2);
 
     //화면에 출력할 마스크를 설정해줍니다.
-    var mask = "<div id='mask' style='position:absolute; z-index:9000; background-color:#000000; display:block; left:0; top:0;'></div>";
+    var mask = "<div id='mask' style='position:absolute; z-index:9000; background-color:#ffffff; display:block; left:0; top:0;'></div>";
     var loadingImg = '';
     loadingImg += "<div id='loadingImg' style='position:absolute;left:0; top:0;z-index:9010;'>";
     loadingImg += " <img src='https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/048bc84c-e99a-4a1f-8573-26b4128d9256/images/loading-1.gif' style='position: relative; display: block; margin: 0px auto;'/>";
+    loadingImg += " <img src='https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/048bc84c-e99a-4a1f-8573-26b4128d9256/images/loading_message-1.png' style='position: relative; display: block; margin: 0px auto;'/>";
     loadingImg += "</div>";
     
     //화면에 레이어 추가
@@ -3574,13 +3586,13 @@ function LoadingWithMask() {
     $('#mask').css({
         'width' : maskWidth
         , 'height': maskHeight
-        , 'opacity' : '0.3'
+        , 'opacity' : '0.2'
         
     }); 
     
     $('#loadingImg').css({
         'top' : _top
-        , 'left' : _left
+        , 'left' : _left-imgWidth
         });
         
     //마스크 표시
@@ -3728,7 +3740,7 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       return;
     }
 
-    if(resp.response.queryResult.intent.name == '0.기능_타계정주문_메뉴') {
+    if(resp.response.queryResult.intent.name == '기능_타계정주문_메뉴') {
         makeAnotherAccountOrderCard();
         
         return;
@@ -4153,9 +4165,9 @@ const setDatepicker = function() {
       });
     } else {
       $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
+      
     }
-
-    console.log('$initEl : ', $initEl);
+    
     if (target) {
       $input = $(target);
     } else {
@@ -4196,7 +4208,6 @@ const setDatepicker = function() {
         beforeShow: function() {
         },
         onChangeMonthYear: function() {
-
         },
         onSelect: function() {
           $initEl.find('.selected-date').text(this.value);
@@ -4220,9 +4231,9 @@ const setDatepicker = function() {
             console.log('close111');
             $(btn).focus();
         }
+        
     });
 
-         
     if(!$initEl.find('.dp-header').text()) {
       $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>날짜를 선택해주세요<b>*</b></p></div>');
     }
@@ -4258,6 +4269,18 @@ const setDatepicker = function() {
       $(this).addClass("show");
     });
         
+    console.log('children : ',$initEl.find('.dp-header').length);         
+    /*
+    if($initEl.find('.ui-datepicker').length > 0) {
+        $initEl.find('.ui-datepicker').css('height', '593px');
+    }
+    if($initEl.find('.dp-header').length > 0) {
+        $initEl.find('.dp-header').css('bottom', '470px');
+    }
+    if($initEl.find('.ui-datepicker-calendar').length > 0) {
+        $initEl.find('.ui-datepicker-calendar').css('border-width', '20px 24px 40px 24px');
+    }
+    */
   }
   }
 
@@ -10491,8 +10514,16 @@ function anotherAccountPopupOpen(orderdata) {
 
     /* #########[ popup_content_wrap ]######### */
     var pluginContents = $('<div class="plugin-contents"></div>');
+    console.log('orderdata.step >>> '+orderdata.step);
+    
+    if(orderdata.step == 8) {
+        var anotherForm = anotherAccountOrderEighth(orderdata);
+    }
+    else{
+        var anotherForm = anotherAccountOrderFirst(orderdata);
+        //var anotherForm = anotherAccountOrderSixth(orderdata);
+    }
     //var anotherForm = anotherAccountOrderFirst(orderdata);
-    var anotherForm = anotherAccountOrderThird(orderdata);
     pluginContents.append(anotherForm);
     //pluginContents.append(anotherAccountOrderForm);
     addPlugin.append(pluginContents);
@@ -10506,6 +10537,30 @@ function anotherAccountPopupOpen(orderdata) {
         $('.plugin-dim').addClass('show');
         $('#another-account-order').addClass('show');
     }, 100);
+    
+    if(orderdata.step == 8) {
+        var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
+        pluginHeader.find('h1').text('타계정 주문 입력 ('+ '8' + '/' + '8' +')');
+        pluginHeader.find('.backBtn').remove();
+        pluginHeader.prepend(backBtn);
+        
+        //var pluginForm = $('<form class="form-eighth"></form>');
+        
+        pluginHeader.find('.backBtn').off('click').on('click', function() {
+            
+            orderdata.step = 7;
+            orderdata.action = 'back';
+            
+            delete orderdata.remark; 
+            
+            $('.form-eighth').removeClass('show');
+            $('.form-eighth').remove();
+            anotherAccountOrderSeventh(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+        });
+        
+    }
+    
 }
 
 // 타계정 주문 입력 팝업 컨텐츠 1
@@ -10564,7 +10619,7 @@ function anotherAccountOrderFirst(orderdata) {
     memberList.append(autocompleteMember);
     var memberInput = $('<input type="text" placeholder="직원명을 입력해 주세요" id="attendees" class="search-input" />');
                       //  $('<input type="text" placeholder="대리 주문자를 선택하세요." max-length="50" id="deputy-name" onkeyup="return false;"/>'); 
-    setAutocompleteTeamMember(memberInput);
+    setAutocompleteTeamMember(memberInput, orderdata.empNo);
     memberList.append(memberInput);
     
     inputBoxText1.append('<input type="text" style="display:none;">');          // 의미없는 태그.
@@ -10768,7 +10823,7 @@ function anotherAccountOrderSecond(orderdata) {
     // 2차
     var inputBoxRadio = $('<div class="input-box"><label>주문 목적<b>*</b></label>');
 
-    var radioContentList = ['예산','자사'];
+    var radioContentList = ['예산','자사에서 사용'];
     var radioValueList = ['OTHERS_OUT_NO RETURN_OMD','OTHERS_OUT_FA_OMD'];
     
     var radioWrap = $('<div class="radio-wrap"></div>');
@@ -10792,7 +10847,7 @@ function anotherAccountOrderSecond(orderdata) {
     /* ###[ 상세 주문 목적  ]### */
     
     var dropdownBox = $('<div class="dropdown-box dropdown-housing"><label>상세 주문 목적<b>*</b></label></div>');
-    var titleNote = $('<small class="note">※ 주문 목적에 따라 Order Type, Reason Code가 자동 입력됩니다.</small>');
+    var titleNote = $('<small class="note" style="font-size: 12px;">※ 주문 목적에 따라 Order Type, Reason Code가 자동 입력됩니다.</small>');
     
     var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>주문 목적을 선택해 주세요.</span></button>');
     var dropdownArrow = $(
@@ -11022,6 +11077,8 @@ function execDaumPostcode() {
             } else { // 지번 주소를 선택
                 addr = data.jibunAddress;
             }
+            
+            console.log('data : ', data);
     
             if(data.userSelectedType === 'R'){
                 if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
@@ -11034,7 +11091,8 @@ function execDaumPostcode() {
                     extraAddr = ' (' + extraAddr + ')';
                 }
             } else {
-                document.getElementById("UserAdd1").value = '';
+                //document.getElementById("UserAdd1").value = '';
+                extraAddr = ''; 
             }
     	
             // 선택된 우편번호와 주소 정보를 input 박스에 넣는다.
@@ -11056,20 +11114,20 @@ function anotherAccountOrderThird(orderdata) {
 
     var placeholderToday = moment().format('YYYY.MM.DD');
 
-    orderdata.reasonCode = "DON";              // 임시
-    var selReceiverName = (orderdata.receiverName == null)? '홍길동':orderdata.receiverName;
-    var selZipno = (orderdata.zipno == null)? '99999':orderdata.zipno;
-    var selAddress1 = (orderdata.address1 == null)? '서울시 강서구 마곡동':orderdata.address1;
-    var selAddress2 = (orderdata.address2 == null)? 'LG사이언스파크':orderdata.address2;
-    var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '024692154':orderdata.receiverPhoneNo;
-    var selRedidenceType = (orderdata.redidenceType == null)? 'E2':orderdata.redidenceType;
+    //orderdata.reasonCode = "DON";              // 임시
+    //var selReceiverName = (orderdata.receiverName == null)? '홍길동':orderdata.receiverName;
+    //var selZipno = (orderdata.zipno == null)? '99999':orderdata.zipno;
+    //var selAddress1 = (orderdata.address1 == null)? '서울시 강서구 마곡동':orderdata.address1;
+    //var selAddress2 = (orderdata.address2 == null)? 'LG사이언스파크':orderdata.address2;
+    //var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '024692154':orderdata.receiverPhoneNo;
+    //var selRedidenceType = (orderdata.redidenceType == null)? 'E2':orderdata.redidenceType;
     
-    /*var selReceiverName = (orderdata.receiverName == null)? '':orderdata.receiverName;
+    var selReceiverName = (orderdata.receiverName == null)? '':orderdata.receiverName;
     var selZipno = (orderdata.zipno == null)? '':orderdata.zipno;
     var selAddress1 = (orderdata.address1 == null)? '':orderdata.address1;
     var selAddress2 = (orderdata.address2 == null)? '':orderdata.address2;
     var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '':orderdata.receiverPhoneNo;
-    var selRedidenceType = (orderdata.redidenceType == null)? '':orderdata.redidenceType;*/
+    var selRedidenceType = (orderdata.redidenceType == null)? '':orderdata.redidenceType;
     var selDonationCode = (orderdata.donationCode == null)? '':orderdata.donationCode;
     var selDonationName = (orderdata.donationName == null)? '':orderdata.donationName;
     var selDonationDate = (orderdata.donationDate == null)? placeholderToday:orderdata.donationDate;
@@ -11173,8 +11231,8 @@ function anotherAccountOrderThird(orderdata) {
     /* ###[ 기부처 ]### */
     var inputBoxText = $('<div class="input-box add-order"><label>기부처<b>*</b></label></div>');
     var inputTextContent = $('<div class="input-form order-select searchIcon"></div>');
-    var donationSelected = $('<div class="selected-order"></div>');
-    var inputBox = $('<input type="text" placeholder="기부처를 검색하세요." max-length="50" id="donation-input"/>');
+    var donationSelected = $('<div class="selected-order" style="width:0px;"></div>');
+    var inputBox = $('<input type="text" placeholder="키워드 입력 후 \'Enter\'로 검색" max-length="50" id="donation-input"/>');
     
     var donationListCont = $('<div class="order-list"></div>');
 
@@ -11316,19 +11374,22 @@ function anotherAccountOrderThird(orderdata) {
     });
     
     inputBoxText.append(inputTextContent);
+    var isDonation = false;
     if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') { 
         pluginForm.append(inputBoxText);
+        isDonation = true;
     }
     
     // 지정된 장소 삭제 버튼 클릭
     $(document).on('click', '.form-third .data-wrap .btn-delete', function(){
         console.log('기부처...');
         $(this).closest(".data-wrap").remove();
-        $('#donation-input').attr('placeholder', '기부처를 검색해 주세요.');
+        $('#donation-input').attr('placeholder', '키워드 입력 후 \'Enter\'로 검색');
         // $('.place-list').css('top', '82px');
         $('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
         $('.selected-order').css('width', '0px');                   // 0717 추가
         scheduleorderWidth();
+        nextBtnEvent();
     });
 
     // place-select 제외 클릭
@@ -11350,6 +11411,8 @@ function anotherAccountOrderThird(orderdata) {
         let orderSelectWidth = inputTextContent.width();
         let selectedorderWidth = donationSelected.width();
         let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        
+        console.log('scheduleorderWidth : '+selectedorderWidth);
         $('#donation-input').css('width', scheduleorderWidth + "px");
         if ($('#donation-input').width() === 0) {
             $('#donation-input').attr('style', '');
@@ -11427,7 +11490,9 @@ function anotherAccountOrderThird(orderdata) {
     var inputVal = false;
     function nextBtnEvent(target) {
         var inputObj = pluginForm.find('input').not('#donation-input');
-
+        var donationval = donationSelected.find('.data-wrap').text();
+        
+        console.log('donationval : '+donationval);
          //console.log('length : '+inputObj.length);
         for ( let i = 0; i <= (inputObj.length)-1; i++ ) {
             
@@ -11443,12 +11508,23 @@ function anotherAccountOrderThird(orderdata) {
                 else if (inputVal == false || pluginForm.find('.btn-dropdown').hasClass('select') == false) {
                     nextBtn.find('button').attr('disabled', true);
                 }
+                
             } else {
                 nextBtn.find('button').attr('disabled', true);
                 inputVal = false;
                 return;
             };
         };
+
+        if(isDonation) {
+            if(donationval) {
+                nextBtn.find('button').attr('disabled', false);
+            }
+            else{
+                nextBtn.find('button').attr('disabled', true);
+            }
+        }        
+
     };
 
     // input
@@ -11696,7 +11772,7 @@ function anotherAccountOrderFourth(orderdata) {
                     console.log('광고판촉비 조회 실패 : '+errorMessage);
                     
                     setTimeout(function() {
-                        showSmallDialog('광고판촉비 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        showSmallHtmlDialog('APMS 품의 번호가 조회되지 않네요. </br>품의 번호를 다시 확인해 주세요.'); // [퍼블 수정 및 추가] - 텍스트 수정
                     }, 500);
                 }   
                 else{
@@ -11849,8 +11925,8 @@ function anotherAccountOrderFifth(orderdata) {
     var selDeptName = (orderdata.department_name == null)? '':orderdata.department_name;
     var selAccountCode = (orderdata.account_code == null)? '':orderdata.account_code;
     var selAccountName = (orderdata.account_name == null)? '':orderdata.account_name;
-    var selPojectCode = (orderdata.project_code == null)? '':orderdata.project_code;
-    var selProjectName = (orderdata.project_name == null)? '':orderdata.project_name;
+    var selPojectCode = (orderdata.project_code == null)? '0000000000000':orderdata.project_code;
+    var selProjectName = (orderdata.project_name == null)? '공통프로젝트':orderdata.project_name;
     var selActivityCode = (orderdata.activity_code == null)? '':orderdata.activity_code;
     var selActivityName = (orderdata.activity_name == null)? '':orderdata.activity_name;
 
@@ -11858,7 +11934,7 @@ function anotherAccountOrderFifth(orderdata) {
     var selMajorCategory = (orderdata.major_category == null)? '':orderdata.major_category;
     var selMinorCategory = (orderdata.minor_category == null)? '':orderdata.minor_category;
     
-    console.log('orderType : '+selOrderType+', '+selApmsYN);
+    console.log('orderType : '+selOrderType+', '+selPojectCode);
     
 /*    var selAuCode = (orderdata.au_code == null)? 'DMZ':orderdata.au_code;
     var selAuName = (orderdata.au_name == null)? 'CAC AU':orderdata.au_name;
@@ -11890,7 +11966,7 @@ function anotherAccountOrderFifth(orderdata) {
     /* #########[ popup_content ]######### */
     /* ###[ 예산/비용의 계정 정보를 입력해 주세요. ]### */
     var inputBoxText = $('<div class="input-box top-note"><label>예산/비용의 계정 정보를 입력해 주세요.<b>*</b></label></div>');
-    var titleNote = $('<small class="note">※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</small>');
+    var titleNote = $('<small class="note" style="font-size:12px;">※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</small>');
     inputBoxText.append(titleNote);
     pluginForm.append(inputBoxText);
 
@@ -12018,9 +12094,9 @@ function anotherAccountOrderFifth(orderdata) {
                         //nextBtn.find('button').attr('disabled', false);
                         
                         initBoxAction(inputBox2, costDeptSelected, "코드 입력 후 'Enter'로 검색");
-                        initBoxAction(inputBox3, costAccountSelected, "비용처리 계정을 선택하세요.");
-                        initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
-                        initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+                        initBoxAction(inputBox3, costAccountSelected, "코드 입력 후 \'Enter\'로 검색");
+                        //initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+                        initBoxAction(inputBox5, activityCodeSelected, "코드 입력 후 \'Enter\'로 검색");
 
                         nextBtnEvent($(this));
     
@@ -12050,9 +12126,9 @@ function anotherAccountOrderFifth(orderdata) {
     const placeHolderMap = new Map([
         ['costau-name', '코드 입력 후 \'Enter\'로 검색'], 
         ['costdept-name', '코드 입력 후 \'Enter\'로 검색'], 
-        ['costaccount-name', '비용처리 계정을 선택하세요.'], 
-        ['project-name', 'Project Code를 선택하세요.'], 
-        ['activity-name', 'Activity Code를 선택하세요.']
+        ['costaccount-name', '코드 입력 후 \'Enter\'로 검색'], 
+        ['project-name', '코드 입력 후 \'Enter\'로 검색'], 
+        ['activity-name', '코드 입력 후 \'Enter\'로 검색']
     ]);
     
     $(document).on('click', '.form-fifth .data-wrap .btn-delete', function(){
@@ -12107,7 +12183,7 @@ function anotherAccountOrderFifth(orderdata) {
     });
 
     $(window).resize(function() {
-        scheduleorderWidth();
+        //scheduleorderWidth();
     });
     
     // 입력/선택 box enabled/disabled 
@@ -12256,9 +12332,9 @@ function anotherAccountOrderFifth(orderdata) {
                         selectBoxAction(inputBox3, inputTextContent3, 'enabled');
                         //nextBtn.find('button').attr('disabled', false);
     
-                        initBoxAction(inputBox3, costAccountSelected, "비용처리 계정을 선택하세요.");
-                        initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
-                        initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+                        initBoxAction(inputBox3, costAccountSelected, "코드 입력 후 \'Enter\'로 검색");
+                        //initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+                        initBoxAction(inputBox5, activityCodeSelected, "코드 입력 후 \'Enter\'로 검색");
 
                         nextBtnEvent($(this));
     
@@ -12289,7 +12365,7 @@ function anotherAccountOrderFifth(orderdata) {
     var inputBoxText3 = $('<div class="input-box add-order"><label>비용 처리 계정<b>*</b></label></div>');
     var inputTextContent3 = $('<div class="input-form order-select disable-searchIcon cost_accnt_input"></div>');
     var costAccountSelected = $('<div class="selected-order cost_accnt_selected"></div>');
-    var inputBox3 = $('<input type="text" placeholder="비용처리 계정을 선택하세요." max-length="50" id="costaccount-name" readonly disabled/>');
+    var inputBox3 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="costaccount-name" disabled/>');
     
     var costAccountListCont = $('<div class="order-list cost_accnt_list"></div>');
     
@@ -12307,11 +12383,6 @@ function anotherAccountOrderFifth(orderdata) {
     var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
     
     inputBox3.on('click', function() {
-    //orderSelectBox.on('click', function() {
-        // [퍼블 수정 및 추가] - order-select 스타일 변경
-        //$('.order-select').addClass('focus');
-        inputTextContent3.addClass('focus');
-            
         console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val());
             
         if(isNull($("#au_code").val())) {
@@ -12330,14 +12401,29 @@ function anotherAccountOrderFifth(orderdata) {
             
             return;
         }
+        
+    });
+    
+    inputBox3.on('keyup', function(e) {    
+        var inval = $(this).val();
+        console.log('key : '+inval);
+        
+        if(e.keyCode == 13) {
+            
+            if(inval.length < 3) {
+                showSmallDialog("비용처리 계정 검색은 3글자 이상 입력해야 합니다.");
+                return;
+            }      
+            
+            LoadingWithMask();
 
-        costAccountListCont.find('ul').remove();
-        //$('.order-list').addClass('show');
-        costAccountListCont.addClass('show');
-        orderUl3.empty();
+            inputTextContent3.addClass('focus');
 
+            costAccountListCont.find('ul').remove();
+            //$('.order-list').addClass('show');
+            costAccountListCont.addClass('show');
+            orderUl3.empty();
 
-        LoadingWithMask();
         
         var requestParam = {
             query: {
@@ -12347,12 +12433,12 @@ function anotherAccountOrderFifth(orderdata) {
                 "auCode": $("#au_code").val()
                 , "departmentCode": $("#costdept_code").val()
                 , "orderType": selOrderType
-                , "keyword": ''
+                , "keyword": inval
             }
           };
 
           sendChatApi(requestParam, null, function(payload){
-            //console.log('payload > ', payload);
+            console.log('payload > ', payload);
 
             // 비용처리 계정 조회 Not Push Start            
             var result = JSON.parse(payload.queryResult.messages[0].response);
@@ -12392,7 +12478,7 @@ function anotherAccountOrderFifth(orderdata) {
                     //inputBox3.val('');
                     //costAccountSelected.empty();
                     
-                    initBoxAction(inputBox3, costAccountSelected, "비용처리 계정을 선택하세요.");
+                    initBoxAction(inputBox3, costAccountSelected, "코드 입력 후 \'Enter\'로 검색");
                     
                     costAccountSelected.css('width', '100%');
                     costAccountSelected.append(coastAccountInfo);
@@ -12418,8 +12504,8 @@ function anotherAccountOrderFifth(orderdata) {
                     //inputBox4.val('');
                     //inputBox5.val('');
                     
-                    initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
-                    initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+                    //initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+                    //initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
 
                     //projectCodeSelected.empty();
                     //activityCodeSelected.empty();
@@ -12441,7 +12527,8 @@ function anotherAccountOrderFifth(orderdata) {
 
           });
         
-        //////        
+        //////
+        }
     });
     
     // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
@@ -12457,7 +12544,7 @@ function anotherAccountOrderFifth(orderdata) {
     var inputBoxText4 = $('<div class="input-box add-order"><label>Project Code</label></div>');
     var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon project_input"></div>');
     var projectCodeSelected = $('<div class="selected-order project_selected"></div>');
-    var inputBox4 = $('<input type="text" placeholder="Project Code를 선택하세요." max-length="50" id="project-name" readonly disabled/>');
+    var inputBox4 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="project-name" disabled/>');
     
     var projectCodeListCont = $('<div class="order-list"></div>');
     
@@ -12475,11 +12562,6 @@ function anotherAccountOrderFifth(orderdata) {
     var orderUl4 = $('<ul></ul>');
     
     inputBox4.on('click', function() {
-    //orderSelectBox.on('click', function() {
-        // [퍼블 수정 및 추가] - order-select 스타일 변경
-        //$('.order-select').addClass('focus');
-        inputTextContent4.addClass('focus');
-           
         if(isNull($("#au_code").val())) {
             
             setTimeout(function() {
@@ -12505,13 +12587,32 @@ function anotherAccountOrderFifth(orderdata) {
             
             return;
         }
+        
+    });
+    
+    inputBox4.on('keyup', function(e) {
+    //orderSelectBox.on('click', function() {
+        // [퍼블 수정 및 추가] - order-select 스타일 변경
+        //$('.order-select').addClass('focus');
+        
+        var inval = $(this).val();
+        console.log('key : '+inval);
+        
+        if(e.keyCode == 13) {
+            
+            if(inval.length < 3) {
+                showSmallDialog("Project Code 검색은 3글자 이상 입력해야 합니다.");
+                return;
+            }            
 
+        LoadingWithMask();
+        
+        inputTextContent4.addClass('focus');
+           
         //$('.order-list').addClass('show');
         projectCodeListCont.addClass('show');
         orderUl4.empty();
-        
-        LoadingWithMask();
-        
+
         console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
     
         var requestParam = {
@@ -12523,6 +12624,7 @@ function anotherAccountOrderFifth(orderdata) {
                 , "departmentCode": $("#costdept_code").val()
                 , "accountCode": $("#costaccount_code").val()
                 , "orderType": selOrderType
+                , "keyword": inval
             }
           };
 
@@ -12578,7 +12680,7 @@ function anotherAccountOrderFifth(orderdata) {
                     //inputBox4.val('');
                     //projectCodeSelected.empty();
                     
-                    initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+                    initBoxAction(inputBox4, projectCodeSelected, "코드 입력 후 \'Enter\'로 검색");
                     
                     projectCodeSelected.css('width', '100%');   
                     projectCodeSelected.append(projectCodeInfo);
@@ -12618,7 +12720,8 @@ function anotherAccountOrderFifth(orderdata) {
             closeLoadingWithMask();
           });
         
-        //////        
+        //////     
+        }   // end if
     });
     
     //var inputTextContent = $('<div class="input-form"><input class="searchIcon" type="text" placeholder="Project Code를 입력해 주세요." max-length="50" disabled/></div>');
@@ -12629,7 +12732,7 @@ function anotherAccountOrderFifth(orderdata) {
     var inputBoxText5 = $('<div class="input-box add-order"><label>Activity Code<b>*</b></label></div>');
     var inputTextContent5 = $('<div class="input-form order-select disable-searchIcon activity_input"></div>');
     var activityCodeSelected = $('<div class="selected-order activity_selected"></div>');
-    var inputBox5 = $('<input type="text" placeholder="Activity Code를 선택하세요." max-length="50" id="activity-name" readonly disabled/>');
+    var inputBox5 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="activity-name" disabled/>');
     
     var activityCodeListCont = $('<div class="order-list"></div>');
     
@@ -12647,11 +12750,6 @@ function anotherAccountOrderFifth(orderdata) {
     var orderUl5 = $('<ul></ul>');
     
     inputBox5.on('click', function() {
-    //orderSelectBox.on('click', function() {
-        // [퍼블 수정 및 추가] - order-select 스타일 변경
-        //$('.order-select').addClass('focus');
-        inputTextContent5.addClass('focus');
-            
         if(isNull($("#costaccount_code").val())) {
             
             setTimeout(function() {
@@ -12661,11 +12759,31 @@ function anotherAccountOrderFifth(orderdata) {
             return;
         }
             
+        
+    });
+    
+    inputBox5.on('keyup', function(e) {
+    //orderSelectBox.on('click', function() {
+        // [퍼블 수정 및 추가] - order-select 스타일 변경
+        //$('.order-select').addClass('focus');
+        
+        var inval = $(this).val();
+        console.log('key : '+inval);
+        
+        if(e.keyCode == 13) {
+            
+            if(inval.length < 3) {
+                showSmallDialog("Activity Code 검색은 3글자 이상 입력해야 합니다.");
+                return;
+            }            
+
+        LoadingWithMask();
+        
+        inputTextContent5.addClass('focus');
+            
         //$('.order-list').addClass('show');
         activityCodeListCont.addClass('show');
         orderUl5.empty();
-        
-        LoadingWithMask();
         
         console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
     
@@ -12675,6 +12793,7 @@ function anotherAccountOrderFifth(orderdata) {
             },
             payload: {
                 "accountCode": $("#costaccount_code").val()
+                , "keyword": inval
             }
           };
 
@@ -12717,7 +12836,7 @@ function anotherAccountOrderFifth(orderdata) {
                     //inputBox5.val('');
                     //activityCodeSelected.empty();
                     
-                    initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+                    initBoxAction(inputBox5, activityCodeSelected, "코드 입력 후 \'Enter\'로 검색");
                     
                     activityCodeSelected.css('width', '100%');
                     activityCodeSelected.append(activityCodeInfo);
@@ -12758,7 +12877,8 @@ function anotherAccountOrderFifth(orderdata) {
             
           });
         
-        //////        
+        //////    
+        }   // end if
     });
     
     
@@ -13019,8 +13139,8 @@ function anotherAccountOrderFifth(orderdata) {
         orderdata.account_code = $('#costaccount_code').val();
         orderdata.account_name = $('#costaccount_name').val();
         
-        orderdata.project_code = $('#project_code').val();
-        orderdata.project_name = $('#project_name').val();
+        orderdata.project_code = ($('#project_code').val() == '' || $('#project_code').val() == null)? '0000000000000':$('#project_code').val();
+        orderdata.project_name = ($('#project_name').val() == '' || $('#project_name').val() == null)? '공통프로젝트':$('#project_name').val();
         
         orderdata.activity_code = $('#activity_code').val();
         orderdata.activity_name = $('#activity_name').val();
@@ -13050,7 +13170,8 @@ function anotherAccountOrderFifth(orderdata) {
         //console.log('costval : '+costval + ', deptval : '+deptval + ', accountval : '+accountval + ', projectval : '+projectval);
         //console.log('activityval : '+activityval + ', assetName : '+assetName + ', majorval : '+majorval + ', minorval : '+minorval);
         
-        if (costval && deptval && accountval && projectval && activityval) {
+        //if (costval && deptval && accountval && projectval && activityval) {
+        if (costval && deptval && accountval && activityval) {
 
             nextBtn.find('button').attr('disabled', false);
             
@@ -13267,7 +13388,10 @@ function anotherAccountOrderFifth(orderdata) {
             '<div class="data-wrap">'
                  +'<p>['+selPojectCode+']' + selProjectName 
                  + '</p>'
-                 + deleteBtn
+                 //+ deleteBtn
+                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                 + '</button>'                 
                 +'<input type="hidden" value="'+ selPojectCode +'" id="project_code"/>'
                 +'<input type="hidden" value="'+ selProjectName +'" id="project_name"/>'
             +'</div>'
@@ -13280,12 +13404,12 @@ function anotherAccountOrderFifth(orderdata) {
         //inputBox4.css('width', '0px');
         inputBox4.css('display', 'none'); 
         
-        if(selApmsYN == 'YES') {
-            selectBoxAction(inputBox4, inputTextContent4, 'disabled');
-        }
-        else{
+        //if(selApmsYN == 'YES') {
+        //    selectBoxAction(inputBox4, inputTextContent4, 'disabled');
+        //}
+        //else{
             selectBoxAction(inputBox4, inputTextContent4, 'enabled');
-        }
+        //}
         
         //scheduleorderWidth(inputTextContent4, projectCodeSelected, inputBox4);
         
@@ -13396,7 +13520,7 @@ function anotherAccountOrderSixth(orderdata) {
     /* #########[ popup_content ]######### */
     /* ###[ 주문 모델 ]### */
     var inputBoxText = $('<div class="input-box"><label>주문 모델<b>*</b></label></div>');
-    var titleNote = $('<small class="note">※ 광고판촉비(APMS) 품의 번호 입력 시, 모델 및 수량이 자동 입력됩니다.</small>');
+    var titleNote = $('<small class="note" style="font-size:12px;">※ 광고판촉비(APMS) 품의 번호 입력 시, 모델 및 수량이 자동 입력됩니다.</small>');
     inputBoxText.append(titleNote);
     var stepperWrap = $('<ul class="stepper-wrap"></ul>');
     
@@ -13414,7 +13538,7 @@ function anotherAccountOrderSixth(orderdata) {
                     '<li>'
                         +'<div class="steppe-box">'
                             +'<div class="input-form">'
-                                +'<textarea class="searchIcon" placeholder="모델을 입력해 주세요." rows="1" style="height: auto;" disabled>'
+                                +'<textarea class="searchIcon" placeholder="코드 입력 후 \'Enter\'로 검색" rows="1" style="height: auto;" disabled>'
                                 + '[' + apmsModel.model_code + '] ' + apmsModel.model_name
                                 +'</textarea>'
                                // + '<input type="hidden" value="'+ apmsModel.model_code +'" id="model_code"/>'
@@ -13439,7 +13563,7 @@ function anotherAccountOrderSixth(orderdata) {
             '<li>'
                 +'<div class="steppe-box">'
                     +'<div class="input-form">'
-                        +'<textarea class="searchIcon textStep" placeholder="모델을 입력해 주세요." rows="1" style="height: auto;" id="txtStep">'       // onKeyDown="if(event.keyCode == 13) return false;"
+                        +'<textarea class="searchIcon textStep" placeholder="코드 입력 후 \'Enter\'로 검색" rows="1" style="height: auto;" id="txtStep">'       // onKeyDown="if(event.keyCode == 13) return false;"
                         //+'abcd'
                         +'</textarea>'
                         //+ '<input type="text" class="searchIcon textStep" placeholder="모델을 입력해 주세요." max-length="50" id="txtStep"/>'
@@ -13468,7 +13592,7 @@ function anotherAccountOrderSixth(orderdata) {
                 '<li>'
                     +'<div class="steppe-box">'
                         +'<div class="input-form">'
-                            +'<textarea class="searchIcon" placeholder="모델을 입력해 주세요." rows="1" style="height: auto;" disabled>'
+                            +'<textarea class="searchIcon" placeholder="코드 입력 후 \'Enter\'로 검색" rows="1" style="height: auto;" disabled>'
                             + '[' + apmsModel.model_code + '] ' + apmsModel.model_name
                             +'</textarea>'
                             //+ '<input type="hidden" value="'+ apmsModel.model_code +'" id="model_code"/>'
@@ -13512,12 +13636,19 @@ function anotherAccountOrderSixth(orderdata) {
         var txtThis = $this;
         console.log('textarea : '+ival);               
         //console.log('textarea : '+ival.length);
-        
-        if(ival.length > 3) {
-           if(event.code == 'Enter' || event.keyCode == 13) {
-                ival = ival.replace(/\n/g, "");
-                //$this.val(ival);
+
+       if(event.code == 'Enter' || event.keyCode == 13) {
+
+                ival = ival.replace(/(?:\r\n|\r|\n)/g, ''); //ival.replace(/\n/g, "");
                 
+                console.log('textarea enter : '+ival);               
+                $this.val(ival);
+                
+                if(ival.length < 3) {
+                    showSmallDialog("모델 검색은 3글자 이상 입력해야 합니다.");
+                    return;
+                }            
+
                 //$this.parents('.steppe-box').find('.model-list').addClass('show');
                 $this.parents('li').find('.model-list').addClass('show');
                 modleUl.empty();
@@ -13541,9 +13672,10 @@ function anotherAccountOrderSixth(orderdata) {
                     
                     if(modelList.length == 0) {
                         console.log('modelList.length : '+modelList.length);
-                        
+
+                        txtThis.parents('li').find('.model-list').removeClass('show');                        
                         setTimeout(function() {
-                            showSmallDialog('모델 목록이 없습니다. '); // [퍼블 수정 및 추가] - 텍스트 수정
+                            showSmallDialog('검색된 모델이 없습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                         }, 100);
                         
                         closeLoadingWithMask();
@@ -13586,8 +13718,7 @@ function anotherAccountOrderSixth(orderdata) {
                  });
                 
            }
-        }
-        
+
     }
     
     /////////////////////////////////////////
@@ -13607,20 +13738,27 @@ function anotherAccountOrderSixth(orderdata) {
                 apmsModelList = new Array();                // 초기화. 
                 var orderModelList = $('.stepper-wrap').find('li');
                 
+                //console.log('length : '+orderModelList.length);
                 for(var m=0; m<orderModelList.length; m++) {
                     let orderModelText = orderModelList[m];
                     
                     let textVal = $(orderModelText).find('textarea').val();
-                    let textArr = textVal.split('] ');
-                    let counter = $(orderModelText).find('.stepper').find('.count').text();
                     
-                    var data = new Object();
-                    
-                    data.model_code = textArr[0].replace('[', '');
-                    data.model_name = textArr[1];
-                    data.model_number = counter;
-                    
-                    apmsModelList.push(data);
+                    //console.log('textVal : '+textVal);
+                    let textArr = new Array();
+                    if(textVal.indexOf('] ') > -1) {
+                        textArr = textVal.split('] ');
+                        
+                        var data = new Object();
+                        
+                        data.model_code = textArr[0].replace('[', '');
+                        data.model_name = textArr[1];
+                        let counter = $(orderModelText).find('.stepper').find('.count').text();
+                        
+                        data.model_number = counter;
+                        
+                        apmsModelList.push(data);
+                    }
                 }
             //}        
             console.log('apmsModelList : ', apmsModelList);
@@ -13664,6 +13802,19 @@ function anotherAccountOrderSixth(orderdata) {
         nextBtnEvent($(this));
     });
     
+    // model-list 제외 클릭
+    $(document).on('click', function(e) {
+        //console.log('click > ', e.target);
+        //console.log('click : '+$('.model-list').length);
+        if ($('.input-form').has(e.target).length === 0) {
+            $('.model-list').removeClass('show');
+            $('.model-list').html('<span>모델 목록</span>');
+    
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            $('.input-form').removeClass('focus');
+        }
+    });
+
     // back버튼
     pluginHeader.find('.backBtn').off('click').on('click', function() {
         
@@ -13686,7 +13837,7 @@ function anotherAccountOrderSixth(orderdata) {
             '<li>'
                 +'<div class="steppe-box">'
                     +'<div class="input-form">'
-                        +'<textarea class="searchIcon textStep" placeholder="모델을 입력해 주세요." rows="1" style="height: auto;"></textarea>'
+                        +'<textarea class="searchIcon textStep" placeholder="코드 입력 후 \'Enter\'로 검색" rows="1" style="height: auto;"></textarea>'
                     +'</div>'
                     +'<div class="stepper">'
                         +'<button class="minus" type="button" disabled>' + minusIcon + '</button>'
@@ -13842,8 +13993,9 @@ function anotherAccountOrderSixth(orderdata) {
             console.log('result', result);
             
             if(result == null) {        // 에러 발생.
-                $('.note').text('※ 가능한 도착날짜 조회시 문제가 발생했습니다. 관리자에게 문의하세요.');
-                $('.note').css('display', 'block');
+                $('.e-msg').text('※ 가능한 도착날짜 조회시 문제가 발생했습니다. 관리자에게 문의하세요.');
+                $('.e-msg').css('display', 'block');
+                $('.btn-next').find('button').attr('disabled', true);
                 closeLoadingWithMask();   
             }
             
@@ -13857,12 +14009,16 @@ function anotherAccountOrderSixth(orderdata) {
                 $('.btn-quick-reply').find('button').text(api_date);
                 if(api_date != request_date) {
                     $('.btn-quick-reply').css('display', 'block');
-                    $('.note').css('display', 'block');
+                    $('.e-msg').css('display', 'block');
+                    
+                    $('.input-schedule-date').css('border-color', 'orange');
                 }
+                
             }
             else{
-                $('.note').text('※ 가능한 도착날짜가 없습니다. 확인하세요. ');
-                $('.note').css('display', 'block');
+                $('.e-msg').text('※ 가능한 도착날짜가 없습니다. 확인하세요. ');
+                $('.e-msg').css('display', 'block');
+                $('.btn-next').find('button').attr('disabled', true);
             }
             
             setTimeout(function() {
@@ -13950,7 +14106,7 @@ function anotherAccountOrderSeventh(orderdata) {
     /* #########[ popup_content ]######### */
     /* ###[ 배송 유형 ]### */
     var inputBoxRadio = $('<div class="input-box"><label>배송 유형<b>*</b></label>');
-    var titleNote = $('<small class="note">※ 택배는 청소기 액세서리, 프라엘 등 소물만 가능합니다.</small>');
+    var titleNote = $('<small class="note" style="font-size:12px;">※ 택배는 청소기 액세서리, 프라엘 등 소물만 가능합니다.</small>');
     var radioContentList = ['배송 및 설치','택배'];
     var radioDeliverTypeCode = ['TL', 'LTL'];
     var radioWrap = $('<div class="radio-wrap"></div>');
@@ -14037,7 +14193,7 @@ function anotherAccountOrderSeventh(orderdata) {
     dateTimeWrap.append(dateTimeStartBox);
     inputTimeBox.append(dateTimeWrap);
     
-    var titleNote = $('<small class="note" style="display:none;">※ 선택한 날짜는 설치가 불가합니다. 선택한 날짜와 가장 가까운 날짜를 알려드립니다.</small>');
+    var titleNote = $('<small class="note e-msg" style="font-size:12px;display:none;">※ 선택한 날짜는 설치가 불가합니다. 선택한 날짜와 가장 가까운 날짜를 알려드립니다.</small>');
     inputTimeBox.append(titleNote);
 
     /* ###[ 가까운 날짜 ]### */
@@ -14051,6 +14207,12 @@ function anotherAccountOrderSeventh(orderdata) {
         var btnText = $(this).text();
         dateStartInput.val(btnText);
         nextBtnEvent($(this));
+        
+        $('.btn-quick-reply').css('display', 'none');
+        $('.e-msg').css('display', 'none');
+                    
+        $('.input-schedule-date').css('border-color', '');
+        
     });
     pluginForm.append(inputTimeBox);
     
@@ -14058,7 +14220,7 @@ function anotherAccountOrderSeventh(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn btn-next"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     
     pluginForm.children('.btn').find('button').on('click', function() {
@@ -14113,6 +14275,13 @@ function anotherAccountOrderSeventh(orderdata) {
             //else {
             //    nextBtn.find('button').attr('disabled', true);
             //}
+        }
+        let api_date = $('.btn-quick-reply').find('button').text();
+        if(dateStartInput.val() != api_date) {
+            nextBtn.find('button').attr('disabled', true);
+        }
+        else{
+            nextBtn.find('button').attr('disabled', false);
         }
     };
 
@@ -14201,10 +14370,11 @@ function anotherAccountOrderSeventh(orderdata) {
 function anotherAccountOrderEighth(orderdata) {
     console.log('orderdata : ', orderdata);      
     
-    var selRemark = (orderdata.remark == null)? ' 승인 바람.':orderdata.remark;
+    var selRemark = (orderdata.remark == null)? '':orderdata.remark;
     
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
+    console.log('header : ', pluginHeader);
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
     pluginHeader.find('h1').text('타계정 주문 입력 ('+ '8' + '/' + '8' +')');
     pluginHeader.find('.backBtn').remove();
@@ -14216,7 +14386,7 @@ function anotherAccountOrderEighth(orderdata) {
     /* #########[ popup_content ]######### */
     /* ###[ 승인 요청 ]### */
     var inputBoxText = $('<div class="input-box"><label>승인 요청<b>*</b></label></div>');
-    var titleNote = $('<small class="note">※ 타의 경우 고자 하는 비용 부서의 부서장 승인이 필요합니다. 승인 요청에 필요한 문구를 입력해 주세요.</small>');
+    var titleNote = $('<small class="note" style="font-size:12px;">※ 타계정 주문의 경우 사용하고자 하는 비용 부서의 부서장 승인이 필요합니다. 승인 요청에 필요한 문구를 입력해 주세요.</small>');
     inputBoxText.append(titleNote);
     var textareaContent = $('<div class="input-form"><textarea placeholder="내용을 입력해주세요." id="remark">'+selRemark+'</textarea></div>');
     inputBoxText.append(textareaContent);
@@ -14426,7 +14596,7 @@ function anotherAccountOrderEighth(orderdata) {
                 appendChatbotText(anotherGbmsResult); 
                 
                 $('.reload-order').on('click', function() {
-                    
+                    orderdata.step = 8;
                     anotherAccountPopupOpen(orderdata);
                 });
             }
@@ -14445,7 +14615,7 @@ function anotherAccountOrderEighth(orderdata) {
                 appendChatbotText(anotherGbmsResult); 
                 
                 $('.reload-order').on('click', function() {
-                    
+                    orderdata.step = 8;
                     anotherAccountPopupOpen(orderdata);
                 });
                 
@@ -15489,7 +15659,7 @@ function anotherAccountListViewPopupOpen(data) {
     var userId = data.userId;
     
     // 재주문 파라미터.
-    var empNumber = (data.re_employee_number == null)? '302863':data.re_employee_number;
+    var empNumber = (data.re_employee_number == null)? '':data.re_employee_number;
     var orderNumber = (data.re_order_number == null)? '':data.re_order_number;
     var registNumber = (data.re_regist_number == null)? '':data.re_regist_number;
     var searchGubun = (data.re_order_gubun == null)? '':data.re_order_gubun;
@@ -15906,7 +16076,7 @@ function makeCardAnotherAccountOrder(orderdata) {
         +'</div>'
     );
     loadBtn.on('click', function() {
-        orderdata.step = 1;
+        //orderdata.step = 8;
         anotherAccountPopupOpen(orderdata);
     });
     messageTextWrap.append(messageTextContent);
@@ -16016,7 +16186,7 @@ function anotherAccountOrderResultError(orderdata) {
     var messageTextWrap = $('<div class="message simple-text"></div>');
     var messageTextContent = $(
          '<p>'
-            +'시스템 오류로 인해 주문 되지 않았어요.<br><br>'
+            +'주문이 정상적으로 접수되지 않았어요<br><br>'
             +'아래 버튼을 눌러 타계정 주문을 완료해 보세요.'
          +'</p>'
     );
@@ -16027,6 +16197,7 @@ function anotherAccountOrderResultError(orderdata) {
     );
     reloadBtn.on('click', function() {
         console.log('aaaaaaa');
+        orderdata.step = 8;
         anotherAccountPopupOpen(orderdata);
     });
     messageTextWrap.append(messageTextContent);
@@ -16119,9 +16290,11 @@ function gbmsResultMultiple(budgetInfo) {
     messageWrap.append(messageHeader);
 
     var contentListWrap = $('<ul class="noLink"></ul>');
+    var page_size = 5;
     // if (리스트 instanceof Array && 리스트.length > 0) {
         budgetInfo.forEach( function ( budgetInfo, index ) {
-            var display = (index >= 4)? "none":"block";
+            //var display = (index >= 4)? "none":"block";
+            var display = (index >= page_size)? "none":"block";
             
             var month = budgetInfo.yyyymm.substr(4);
 
@@ -16138,6 +16311,7 @@ function gbmsResultMultiple(budgetInfo) {
                         +'</li>'
                         +'<li>'
                             +'<h4>조회 월</h4>'
+                            //+'<span class="list-info-value text">' + month + '월('+index+')</span>'
                             +'<span class="list-info-value text">' + month + '월</span>'
                         +'</li>'
                         +'<li>'
@@ -16167,8 +16341,30 @@ function gbmsResultMultiple(budgetInfo) {
             +'</div>'
         );
         seeMoreBtn.click(function() {
-            $(this).parents('.content-list-message').find(".list-box").css("display","block");
-            $(this).css({"display":"none"});
+            //$(this).parents('.content-list-message').find(".list-box").css("display","block");
+            //$(this).css({"display":"none"});
+            
+            let list = $(this).parents('.content-list-message').find(".list-box");
+            let none_cnt = 0;
+            let isAdd = false;
+            for(var i=0; i<list.length; i++) {
+                let data = list[i];
+
+                if($(data).css('display') == 'none') {
+                    none_cnt++
+                    //console.log('data1 : '+i+', '+$(data).css('display'));
+                    if(none_cnt <= page_size) {
+                        $(data).css('display', 'block');
+                    }
+                }
+                
+            }
+            
+            //console.log('none_cnt : '+none_cnt);
+            if(none_cnt <= page_size) {
+                $(this).css({"display":"none"});
+            }
+            
         });
         messageWrap.append(seeMoreBtn);
     }
@@ -16279,25 +16475,19 @@ function aalvResult(result) {
     var messageHeader = $('<div class="content-list-header">' + listHeaderIcon2 + '<p class="list-header-title" style="font-weight: bold;">타계정 주문 내역</p></div>');
     messageWrap.append(messageHeader);
 
-    // 테스트용 데이터
-    var testData = [
-        { 'orderStat':'주문완료', 'orderNo':'5205522155DD', 'bmp':'생산 중', 'user':'홍길동', 'userClass':'책임' },
-        { 'orderStat':'접수중', 'orderNo':'0000000000CC', 'bmp':'입고', 'user':'홍길동', 'userClass':'선임' },
-        { 'orderStat':'접수완료', 'orderNo':'1111111111BB', 'bmp':'완료', 'user':'홍길동', 'userClass':'책임' },
-        { 'orderStat':'배송중', 'orderNo':'3333333333AA', 'bmp':'출고', 'user':'홍길동', 'userClass':'선임' },
-        { 'orderStat':'주문완료', 'orderNo':'5205522155DD', 'bmp':'생산 중', 'user':'홍길동', 'userClass':'책임' },
-        { 'orderStat':'접수중', 'orderNo':'0000000000CC', 'bmp':'입고', 'user':'홍길동', 'userClass':'선임' },
-        { 'orderStat':'접수완료', 'orderNo':'1111111111BB', 'bmp':'완료', 'user':'홍길동', 'userClass':'책임' },
-        { 'orderStat':'배송중', 'orderNo':'3333333333AA', 'bmp':'출고', 'user':'홍길동', 'userClass':'선임' }
-    ]
-
     var contentListWrap = $('<ul class="noLink"></ul>');
     var page_size = 5;
     // if (리스트 instanceof Array && 리스트.length > 0) {
+    try{
         result.forEach( function ( result, index ) {
+            
             var display = (index >= page_size)? "none":"block";
 
-            //if(index > 10)      return true;
+            //if(index > 19)      return false;
+            if(index > 19)   throw new Error('stop loop');          // 목록이 20건 이상이면 break;
+            
+            //console.log('list index : '+index);
+
             var oderStatus = '' ; //'<span class="status-item orderCL">' + result.order_status + '</span>';
             if ( result.order_status == 'BOOKED' ) { oderStatus = '<span class="status-item applicationCL">' + '예약완료' + '</span>' }
             else if ( result.order_status == 'CANCELLED' ) { oderStatus = '<span class="status-item orderCL">' + '취소완료' + '</span>' }
@@ -16377,6 +16567,10 @@ function aalvResult(result) {
             contentListWrap.append(contentList);
         });
     // }
+    }
+    catch(e) {
+        
+    }
     messageWrap.append(contentListWrap);
 
     // if (아이템.length > 4) {
