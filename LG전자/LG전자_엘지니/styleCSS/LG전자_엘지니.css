@@ -3188,7 +3188,7 @@ body {
   font-weight: 700;
 }
 .datepicker-chem .ui-datepicker, .datepicker-chem .ui-widget.ui-widget-content {
-  position: absolute;
+  position: fixed;
   width: 100% !important;
   bottom: 0px !important;
   left: 0px !important;
@@ -3196,7 +3196,7 @@ body {
   margin-left: 0 !important;
   margin-right: 0 !important;
   border: 0 !important;
-  height: 643px !important;
+  height: 643px;
   max-height: unset !important;
   top: unset !important;
   padding-top: 108px;
@@ -5209,6 +5209,9 @@ body {
 .dropdown-box .btn-dropdown.accent {
     border-color: #F55D8D;
 }
+.dropdown-box .btn-dropdown.disabled {
+      background-color: #F5F5F5;
+}
 .dropdown-box .dropdown-menu {
     width: 100%;
     max-height: 158px;
@@ -5225,6 +5228,7 @@ body {
     padding: 0;
     display: flex;
     background-color: transparent;
+    white-space: normal;
 }
 .dropdown-box .dropdown-item a {
     width: 100%;
@@ -6146,6 +6150,8 @@ p.people-box .people-list b {
   padding: 13px 0;
   color: #2c2c2c;
   font-size: 14px;
+    display: flex;
+    justify-content: space-between;
 }
 .plugins .input-form .data-wrap p {
   margin: 0;
@@ -6327,3 +6333,910 @@ background: #F5F5F5 !important;
 .test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .custom-quick-reply .btn-custom-reply.blue:active {
   background-color: #c8daff;
 }
+
+/* ########### 타계정 추가 ########### */
+/* 타계정 팝업 */
+.another-account-order.plugins .plugin-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.another-account-order.plugins .plugin-header h1 {
+  line-height: 28px;
+}
+.another-account-order.plugins .plugin-header .close-plugin {
+  top: 16px;
+}
+.another-account-order.plugins .plugin-contents .input-radio {
+  padding-left: 30px;
+  padding-right: 10px;
+  cursor: pointer;
+}
+.another-account-order.plugins .plugin-contents .autocomplete-member .ui-widget.ui-widget-content.ui-autocomplete {
+  top: auto !important;
+  bottom: 4px !important;
+}
+
+/* 타계정 팝업(타계정 주문 입력) */
+.dropdown-box.dropdown-housing .dropdown-menu,
+.dropdown-box.dropdown-majorCategory .dropdown-menu {
+  max-height: 248px;
+}
+.test-panel .btn.btn-quick-reply.btn-addModel {
+  border-top: 1px solid #E8E8E8;
+  margin: 0;
+  padding-top: 14px;
+  padding-bottom: 24px;
+  cursor: default;
+}
+
+/* stepper */
+.stepper-wrap li {
+  padding-top: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #E8E8E8;
+}
+.stepper-wrap li:last-child {
+  border-bottom: 0;
+}
+.steppe-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.stepper-wrap .input-form {
+  width: 100%;
+}
+.stepper-wrap .input-form textarea {
+  padding-left: 38px !important;
+  padding-right: 0 !important;
+  border: 0 !important;
+  box-sizing: border-box;
+}
+.stepper-wrap .input-form textarea::-webkit-scrollbar {
+  width: 0 !important;
+}
+.stepper-wrap .input-form input.searchIcon {
+  background-position: 0px center !important;
+}
+.stepper-wrap .input-form textarea.searchIcon {
+  background-position: 0px center !important;
+  background-repeat: no-repeat !important;
+}
+.stepper {
+  border: 1px solid #bebebe;
+  border-radius: 3px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+.stepper .count {
+  padding: 0 8px;
+  color: #2c2c2c;
+  font-size: 14px;
+}
+.stepper button {
+  min-width: 40px;
+  height: 40px;
+  border: 1px solid #bebebe;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stepper button:hover path {
+  fill: #E0205C;
+}
+.stepper button:disabled path,
+.stepper button:hover:disabled path {
+  fill: #BEBEBE;
+}
+.stepper button.plus {
+  border: 0;
+  border-left: 1px solid #bebebe;
+}
+.stepper button.minus {
+  border: 0;
+  border-right: 1px solid #bebebe;
+}
+.stepper-del-Btn {
+  display: flex;
+  justify-content: flex-end;
+}
+.stepper-del-Btn button {
+  padding: 4px;
+  border: 0;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stepper-del-Btn button:disabled {
+  display: none;
+}
+.stepper-del-Btn button:hover path {
+  fill: #2c2c2c;
+}
+
+/* 타계정 팝업(타계정 주문 현황 조회) */
+.dropdown-box.dropdown-aalv .dropdown-menu {
+  max-height: 202px;
+}
+
+/* 타계정 결과 메세지(부서예산, 광고판촉비, 주문입력) */
+.message .content-wrap {
+  width: 280px;
+}
+.message .content-wrap .content-wrap-header {
+  border-radius: 16px 16px 0 0;
+  background-color: #424242;
+  display: flex;
+  gap: 5px;
+  padding: 6px 12px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .content-wrap .content-wrap-header h2 {
+  margin-bottom: 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .content-wrap .content-wrap-header svg {
+  min-width: 16px;
+  margin-top: 4px;
+}
+.test-panel .panel-wrapper .chat-panel .chat-discussion .chat-message.left .message .content-wrap .content-wrap-header path {
+  fill: #fff;
+}
+.message .content-wrap .content-box {
+  padding: 12px;
+}
+.message .content-wrap .content-box .content-box-header {
+  display: flex;
+  gap: 5px;
+  padding: 4px 0;
+  padding-bottom: 8px;
+}
+.message .content-wrap .content-box .content-box-header svg {
+  min-width: 16px;
+}
+.message .content-wrap .content-box .content-box-header h3 {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.message .content-wrap .content-box .content-list-wrap {
+  margin: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.message .content-wrap .content-box .content-list-wrap li {
+  display: flex;
+  line-height: 1.4;
+}
+.test-panel .chat-message.left .message .content-wrap .content-box .content-list-wrap h4 {
+  min-width: 80px;
+  color: #898989;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.message .content-wrap .content-box .content-list-wrap .content-list-val.date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.message .content-wrap .content-box > .btn {
+  margin-top: 16px;
+  padding: 0 !important;
+}
+.message .content-wrap .content-box .btn button {
+  margin-top: 0 !important;
+}
+
+
+/* 타계정 결과 메세지(타계정 주문 내역_profile-list 리뉴얼) */
+.test-panel .chat-message .content-list-message {
+  width: 280px;
+  overflow: hidden;
+}
+.test-panel .chat-message .content-list-message .content-list-header {
+  padding: 9px 12px;
+  border-bottom: 1px solid #DADADA;
+  display: flex;
+  gap: 4px;
+  color: #2C2C2C;
+  font-size: 15px;
+  font-weight: 500;
+}
+.test-panel .chat-message .content-list-message .content-list-header .list-header-title {
+  display: inline-block;
+  color: #2c2c2c !important;
+  font-size: 14px;
+  line-height: 1.4 !important;
+  word-break: break-all;
+}
+.test-panel .chat-message .content-list-message .content-list-header .list-header-title .search-name {
+  display: inline;
+  line-height: inherit;
+  text-overflow: unset;
+  overflow: unset;
+  white-space: unset;
+  vertical-align: unset;
+}
+.test-panel .chat-message .content-list-message .content-list-header svg {
+  width: 16px;
+  min-width: 16px;
+  margin-top: 2px;
+  display: inline-block;
+}
+.test-panel .chat-message .content-list-message .content-list-header span {
+  width: 225px;
+  height: 24px;
+  display: inline-block;
+  line-height: 24px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.test-panel .chat-message .content-list-message .content-list-header span b {
+  color: #E0205C;
+  font-weight: 700;
+}
+.test-panel .chat-message .content-list-message ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.test-panel .chat-message .content-list-message > ul.noLink li:hover {
+  background-color: transparent;
+}
+.test-panel .chat-message .content-list-message li.list-box {
+  padding: 8px 12px;
+  position: relative;
+}
+.test-panel .chat-message .content-list-message li.list-box:hover {
+  background-color: #E8E8E8;
+}
+.test-panel .chat-message .content-list-message li.list-box.mobile {
+  cursor: default;
+}
+.test-panel .chat-message .content-list-message li.list-box.mobile:hover {
+  background-color: transparent;
+}
+.test-panel .chat-message .content-list-message li.list-box.no-result {
+  padding: 18px;
+  font-weight: bold;
+  text-align: center;
+  cursor: default;
+}
+.test-panel .chat-message .content-list-message li.list-box.no-result:hover {
+  background-color: transparent;
+}
+.test-panel .chat-message .content-list-message li.list-box.action {
+  cursor: pointer;
+}
+.test-panel .chat-message .content-list-message li.list-box.disp-none {
+  display: none;
+}
+.test-panel .chat-message .content-list-message li.list-box::before {
+  content: '';
+  width: calc(100% - 24px);
+  height: 1px;
+  display: block;
+  background-color: #DADADA;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: hidden;
+}
+.test-panel .chat-message .content-list-message li.list-box:first-child::before {
+  display: none !important;
+}
+.test-panel .chat-message .content-list-message li.list-box .arrow {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  right: 12px;
+}
+.test-panel .chat-message .content-list-message li.list-box .arrow svg {
+  width: 24px;
+  min-width: 24px;
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.test-panel .chat-message .content-list-message li.list-box .arrow svg path {
+  stroke: #A5A5A5;
+}
+.test-panel .chat-message .content-list-message li.list-box:hover .arrow svg path {
+  stroke: #2C2C2C;
+}
+.test-panel .chat-message .content-list-message li.list-box .profile-img {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  margin: 0;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+.test-panel .chat-message .content-list-message li.list-box .profile-img img {
+  width: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.test-panel .chat-message .content-list-message li.list-box h3 {
+  margin-bottom: 0;
+  padding: 0;
+  display: inline-block;
+  line-height: 1.4;
+  word-break: break-all;
+}
+.test-panel .chat-message .content-list-message li.list-box h3 .tag {
+  margin-left: 4px;
+  margin-right: 0;
+  padding: 1px 5px 2px 5px;
+  display: inline-block;
+  font-weight: 400 !important;
+}
+.test-panel .chat-message .content-list-message li.list-box p {
+  margin: 0;
+  padding: 4px 8px;
+}
+.test-panel .chat-message .content-list-message li.list-box p span {
+  display: block;
+  color: #6B6B6B;
+}
+.test-panel .chat-message .content-list-message li.list-box .list-title {
+  margin-right: 18px;
+  margin-bottom: 10px;
+  display: block;
+}
+.test-panel .chat-message .content-list-message li.list-box .position {
+  height: 22px;
+  margin-left: 4px;
+  padding: 2px 5px;
+  border: 1px solid #6B6B6B;
+  border-radius: 27px;
+  display: inline-block;
+  color: #6B6B6B;
+  font-size: 11px;
+  line-height: 15px;
+}
+.test-panel .chat-message .content-list-message .list-info {
+  display: block;
+  margin-left: 0;
+}
+.test-panel .chat-message .content-list-message .list-info li {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: flex-start;
+  color: #2C2C2C;
+  font-size: 12px;
+  line-height: 18px;
+}
+.test-panel .chat-message .content-list-message .list-info li h4 {
+  min-width: 60px;
+  margin: 0;
+  color: #898989 !important;
+  font-size: 14px !important;
+  font-weight: 400;
+}
+.test-panel .chat-message .content-list-message .list-info li span {
+  font-size: 14px;
+  word-break: break-all;
+}
+.test-panel .chat-message .content-list-message .list-info li .list-info-value.date {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.test-panel .chat-message .content-list-message .list-info li .profile-icon {
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  margin-right: 4px;
+  position: relative;
+}
+.test-panel .chat-message .content-list-message .list-info li .profile-icon svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.test-panel .chat-message .content-list-message .see-more {
+  height: 44px;
+  padding: 12px;
+  border-top: 1px solid #E8E8E8;
+  border-radius: 0 0 16px 16px;
+  color: #2C2C2C;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.test-panel .chat-message .content-list-message .see-more:hover {
+  background-color: #E8E8E8;
+}
+.test-panel .chat-message .content-list-message .see-more svg {
+  margin-top: 3px;
+  margin-right: 5px;
+  vertical-align: top;
+}
+.test-panel .chat-message .content-list-message .btns {
+  padding: 8px 12px 0 12px;
+  border-top: 1px solid #E8E8E8;
+}
+.test-panel .chat-message .content-list-message .btns .btn {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* 타계정 주문 내역_order-status */
+.test-panel .chat-message .content-list-message li.list-box .list-title.order-status {
+  display: flex;
+  margin: 0;
+  margin-bottom: 8px;
+}
+.test-panel .chat-message .content-list-message li.list-box .list-title.order-status h3 {
+  margin: 0;
+  min-width: 60px;
+}
+.test-panel .chat-message .content-list-message li.list-box .order-status .order-status-box {
+  min-width: 60px;
+  max-width: 60px;
+  display: inline-block;
+}
+.test-panel .chat-message .content-list-message li.list-box .order-status .status-item {
+  padding: 2px 5px;
+  border: 1px solid #2c2c2c;
+  border-radius: 50px;
+  display: inline-block;
+  color: #2c2c2c;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.test-panel .chat-message .content-list-message li.list-box .order-status .status-item:not(.orderCL, .receipt, .applicationCL, .delivery) {
+  display: none;
+}
+.test-panel .chat-message .content-list-message li.list-box .order-status .status-item.orderCL {
+  border-color: #E0205C;
+  color: #E0205C;
+}
+.test-panel .chat-message .content-list-message li.list-box .order-status .status-item.receipt {
+  border-color: #C25CA7;
+  color: #C25CA7;
+}
+.test-panel .chat-message .content-list-message li.list-box .order-status .status-item.applicationCL {
+  border-color: #FFAA00;
+  color: #FFAA00;
+}
+.test-panel .chat-message .content-list-message li.list-box .order-status .status-item.delivery {
+  border-color: #46BF90;
+  color: #46BF90;
+}
+
+/* (시스템-list-box) */
+.test-panel .chat-message .content-list-message.system li.list-box:hover {
+  background-color: #F2F2F2;
+}
+.test-panel .chat-message .content-list-message.system li.list-box.list-system {
+  cursor: pointer;
+}
+.test-panel .chat-message .content-list-message.system li.list-box.list-system:hover {
+  background-color: #E8E8E8;
+}
+.test-panel .chat-message .content-list-message.system li.list-box .list-title {
+  margin-right: 0;
+}
+.test-panel .chat-message .content-list-message li.list-box .list-info.system {
+  margin-left: 0;
+}
+.test-panel .chat-message .content-list-message li.list-box h3.system {
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+/* (수입화물-list-box) */
+.test-panel .chat-message .content-list-message.import-cargo .list-info li {
+  width: 100%;
+  justify-content: space-between;
+}
+.test-panel .chat-message .content-list-message.import-cargo .list-info li h4 {
+  min-width: 90px;
+}
+/* (기타-list-box) */
+.test-panel .chat-message .content-list-message.employee li.list-box {
+  gap: 10px;
+}
+.test-panel .chat-message .content-list-message.holyday li.list-box {
+  padding: 8px 0;
+}
+.test-panel .chat-message .content-list-message.holyday li.list-box:hover {
+  background-color: transparent;
+}
+.test-panel .chat-message .content-list-message.holyday li.list-box p {
+  padding: 4px 12px;
+  color: #2C2C2C;
+  font-size: 12px;
+  line-height: 18px;
+}
+.test-panel .chat-message .content-list-message.holyday li.list-box p span {
+  margin-left: 4px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.test-panel .chat-message .content-list-message.anniversary {
+  margin-top: 8px;
+  background-color: #F2F2F2;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.test-panel .chat-message .content-list-message.anniversary li {
+  cursor: pointer;
+}
+
+/* 시나리오 변경으로 인한 디자인 변경 by sunny */
+
+.plugins .add-order .order-select {
+  border: 1px solid #BEBEBE; 
+  border-radius: 3px;
+  /*background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/location.png"); */
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+  background-position: 11px 12px;
+  
+  /* [퍼블 수정 및 추가] - display 값 변경 (block -> flex) */
+  display: flex;
+  
+  /* [퍼블 수정 및 추가] - flex-wrap: wrap; , padding-left: 44px;, position: relative; 추가 */
+  flex-wrap: wrap;
+  /*padding-left: 44px */ 
+  position: relative;
+}
+.plugins .add-order .order-select:hover > .order-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease-in-out;
+}
+.plugins .add-order input[type=text]#schedule-order {
+  border: 0 !important;
+  background-color: transparent !important;
+}
+.plugins .add-order .order-tooltip {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  min-width: 207px;
+  text-align: center;
+  background: #424952;
+  border-radius: 4px;
+  padding: 7px 12px;
+  color: white;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.11));
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease-in-out;
+
+  /* [퍼블 수정 및 추가] - top 값 수정 ( -30px -> -44px ) */
+  top: -44px;
+}
+.plugins .add-order .order-tooltip::after {
+  content: "";
+  background-image: url("https://storage.googleapis.com/singlex-ai-chatbot-contents/1e3c14bd-679f-4a93-9ff6-e9a3d45c3c0a/triangle.png");
+  width: 13px;
+  background-size: contain;
+  height: 7px;
+  display: block;
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.plugins .add-order .order-list {
+  position: absolute;
+  background: white;
+  border: 1px solid #BEBEBE;
+  border-radius: 3px;
+  padding: 8px;
+  z-index: 100;
+  display: none;
+  overflow-y: auto;
+
+  /* [퍼블 수정 및 추가] - width 값 수정 ( 100% -> calc(100% + 2px) ), max-height 값 수정 ( 215px -> 230px ), top 값 수정 ( 82px -> 50px ) */
+  width: calc(100% + 2px);
+  max-height: 230px;
+  top: 50px;
+
+  /* [퍼블 수정 및 추가] - left: -1px; 추가 */
+  left: -1px;
+}
+.plugins .add-order .order-list.show {
+  display: block;
+}
+.plugins .add-order .order-list span {
+  font-size: 12px;
+  line-height: 18px;
+  display: block;
+  color: #E0205C;
+  padding: 10px 8px;
+}
+.plugins .add-order .order-list .order-text {
+  padding: 10px 8px;
+  border-bottom: 1px solid #DADADA;
+  display: none;
+  cursor: pointer;
+}
+.plugins .add-order .order-list .order-text.show {
+  display: block;
+}
+.plugins .add-order .order-list .order-text:hover {
+  background-color: #F5F5F5;
+}
+.plugins .add-order .order-list p {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  margin: 0;
+  
+  /* [퍼블 수정 및 추가] - word-break: break-all; 추가 */
+  word-break: break-all;
+}
+.plugins .add-order .order-list p.small {
+  font-size: 12px;
+  line-height: 18px;
+  color: #565656;
+}
+.plugins .add-order .order-list .no-res {
+  padding: 10px 8px;
+  font-weight: 500;
+  color: #898989;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-left: 0;
+  border-right: 0;
+  cursor: default;
+}
+.plugins .add-order .order-list .no-res:hover {
+  background-color: transparent;
+}
+.plugins .add-order .order-list ul {
+  max-height: 120px;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+
+  /* [퍼블 수정 및 추가] - overflow-y 값 변경 (scroll -> auto) */
+  overflow-y: auto;
+}
+.plugins .add-order .order-list ul li {
+  padding: 10px 8px;
+  cursor: pointer;
+}
+.plugins .add-order .order-list ul li:hover {
+  background-color: #F5F5F5;
+}
+.plugins .add-order .order-list .add-order {
+  font-size: 14px;
+  line-height: 20px;
+}
+.plugins .add-order .order-list .add-order a {
+  padding: 10px 8px;
+  display: block;
+  color: #6B6B6B;
+}
+.plugins .add-order .selected-order {
+  /* [퍼블 수정 및 추가] - margin-left 값 변경 (44px -> 0) */
+  margin-left: 0;
+
+  /* [퍼블 수정 및 추가] - max-width: calc(100% - 30px);, display: inline-block; 추가 */
+  /*max-width: calc(100% - 30px); */
+  width:100%; 
+  display: inline-block;
+}
+.plugins .add-order .selected-order .order-info {
+  background-color: #E8E8E8;
+  border-radius: 15px;
+  margin-right: 4px;
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 12px;
+  color: #565656;
+  margin-top: 8px;
+
+  /* [퍼블 수정 및 추가] - padding 값 수정 ( 5px 8px -> 6px 10px ), line-height 값 수정 ( 1.5 -> 1.4 ) */
+  padding: 6px 10px;
+  line-height: 1.4;
+
+  /* [퍼블 수정 및 추가] - padding-right: 26px; position: relative;, word-break: break-all; 추가 */
+  padding-right: 26px;
+  position: relative;
+  word-break: break-all;
+}
+.plugins .add-order .selected-order .order-info .btn-delete {
+  /* [퍼블 수정 및 추가] - position 값 수정 ( relative -> absolute ), margin-left 값 수정 ( 4px -> 0 ) */
+  position: absolute;
+  margin-left: 0;
+
+  /* [퍼블 수정 및 추가] - padding: 0;, top: 8px;, right: 8px; 추가 */
+  padding: 0;
+  top: 8px;
+  right: 8px;
+}
+.plugins .add-order .selected-order .order-info .btn-delete svg {
+  display: block;
+  
+  /* [퍼블 수정 및 추가] - position, left, top, transform 제거  */
+  /* position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); */
+}
+
+.plugins .add-order .disable-searchIcon {
+  background-color: #F5F5F5;
+  /* border: none; */ 
+  padding-left: 10px;
+}
+
+.plugins .add-order .selected-order .place-info {
+  background-color: #E8E8E8;
+  border-radius: 15px;
+  margin-right: 4px;
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 12px;
+  color: #565656;
+  margin-top: 8px;
+
+  /* [퍼블 수정 및 추가] - padding 값 수정 ( 5px 8px -> 6px 10px ), line-height 값 수정 ( 1.5 -> 1.4 ) */
+  padding: 6px 10px;
+  line-height: 1.4;
+
+  /* [퍼블 수정 및 추가] - padding-right: 26px; position: relative;, word-break: break-all; 추가 */
+  padding-right: 26px;
+  position: relative;
+  word-break: break-all;
+}
+.plugins .add-order .selected-order .place-info .btn-delete {
+  /* [퍼블 수정 및 추가] - position 값 수정 ( relative -> absolute ), margin-left 값 수정 ( 4px -> 0 ) */
+  position: absolute;
+  margin-left: 0;
+
+  /* [퍼블 수정 및 추가] - padding: 0;, top: 8px;, right: 8px; 추가 */
+  padding: 0;
+  top: 8px;
+  right: 8px;
+}
+.plugins .add-order .selected-order .place-info .btn-delete svg {
+  display: block;
+  
+  /* [퍼블 수정 및 추가] - position, left, top, transform 제거  */
+  /* position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); */
+}
+
+.plugins .input-box .input-form input[type=text]:disabled {
+  background-color: #F5F5F5;
+  border:none;
+}
+
+.stepper-wrap li .model-list {
+  /*position: absolute; */ 
+  background: white;
+  border: 1px solid #BEBEBE;
+  border-radius: 3px;
+  padding: 8px;
+  z-index: 100;
+  display: none;
+  overflow-y: auto;
+
+  /* [퍼블 수정 및 추가] - width 값 수정 ( 100% -> calc(100% + 2px) ), max-height 값 수정 ( 215px -> 230px ), top 값 수정 ( 82px -> 50px ) */
+  width: calc(100% - 30px);
+  max-height: 230px;
+  /*top: 200px;*/
+
+  /* [퍼블 수정 및 추가] - left: -1px; 추가 */
+  /*left: -1px; */ 
+}
+.stepper-wrap .model-list.show {
+  display: block;
+}
+.stepper-wrap .model-list span {
+  font-size: 12px;
+  line-height: 18px;
+  display: block;
+  color: #E0205C;
+  padding: 10px 8px;
+}
+.stepper-wrap .model-list p {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  margin: 0;
+  
+  /* [퍼블 수정 및 추가] - word-break: break-all; 추가 */
+  word-break: break-all;
+}
+.stepper-wrap .model-list p.small {
+  font-size: 12px;
+  line-height: 18px;
+  color: #565656;
+}
+.stepper-wrap .model-list .no-res {
+  padding: 10px 8px;
+  font-weight: 500;
+  color: #898989;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-left: 0;
+  border-right: 0;
+  cursor: default;
+}
+.stepper-wrap .model-list .no-res:hover {
+  background-color: transparent;
+}
+.stepper-wrap .model-list ul {
+  max-height: 120px;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+
+  /* [퍼블 수정 및 추가] - overflow-y 값 변경 (scroll -> auto) */
+  overflow-y: auto;
+}
+.stepper-wrap .model-list ul li {
+  padding: 10px 8px;
+  cursor: pointer;
+}
+.stepper-wrap .model-list ul li:hover {
+  background-color: #F5F5F5;
+}
+.disable-searchIcon {
+  padding-left: 44px !important;
+  padding-right: 13px !important;
+  background: url('https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/82e39380-f0ac-4e31-a0e4-25c27aec8175/images/search-input.png') #F5F5F5 !important;
+  background-repeat: no-repeat !important;
+  background-size: 24px !important;
+  background-position: 12px center !important;
+}
+
+/* 달력 창 사이즈 변경.  */
+.datepicker-chem .ui-datepicker, .datepicker-chem .ui-widget.ui-widget-content {
+	 height: 593px !important; 
+}
+
+.datepicker-chem .dp-header
+{
+	bottom: 470px;			
+}
+
+.datepicker-chem .ui-datepicker .ui-datepicker-calendar, .datepicker-chem .ui-widget.ui-widget-content .ui-datepicker-calendar {
+	border-width: 20px 24px 40px 24px;			
+}
+
+/* 달력 창 사이즈 변경.  */
