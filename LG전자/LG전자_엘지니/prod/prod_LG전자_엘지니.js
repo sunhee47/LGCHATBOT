@@ -8938,6 +8938,8 @@ function addBudgetPopupOpen(data) {
             $('#accountType').val(targetText);
             $('#btn-account').html('<span>계정 정보를 선택해 주세요.</span>');
             
+            $('#btn-account').append(userInfoDropdownArrow);				
+            
             for(var i=0; i<accountList.length; i++) {
                 var account = accountList[i];
                 if(account.group == targetText) {
