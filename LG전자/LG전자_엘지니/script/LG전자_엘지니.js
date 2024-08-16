@@ -9076,6 +9076,8 @@ function addBudgetPopupOpen(data) {
             $('#accountType').val(targetText);
             $('#btn-account').html('<span>계정 정보를 선택해 주세요.</span>');
             
+            $('#btn-account').append(userInfoDropdownArrow);
+            
             for(var i=0; i<accountList.length; i++) {
                 var account = accountList[i];
                 if(account.group == targetText) {
@@ -13147,6 +13149,16 @@ function anotherAccountOrderFifth(orderdata) {
                 //console.log('payload > ', payload);
                 var result = JSON.parse(payload.queryResult.messages[0].response);
                 console.log('result', result);
+                
+                if(result == null) {
+                  var orderLi2 = $('<li class="no-res">조회시 에러가 발생했습니다. 다시 조회하세요.</li>');
+                  orderUl2.append(orderLi2);
+                  costDeptListCont.append(orderUl2);
+                  closeLoadingWithMask();
+                  
+                  return;
+                }
+                
                 costDeptList = result.resultList;
                 
                 if(costDeptList.length == 0) {
@@ -13314,6 +13326,16 @@ function anotherAccountOrderFifth(orderdata) {
             // 비용처리 계정 조회 Not Push Start            
             var result = JSON.parse(payload.queryResult.messages[0].response);
             console.log('result', result);
+
+            if(result == null) {
+              var orderLi3 = $('<li class="no-res">조회시 에러가 발생했습니다. 다시 조회하세요.</li>');
+              orderUl3.append(orderLi3);
+              costAccountListCont.append(orderUl3);
+              closeLoadingWithMask();
+              
+              return;
+            }
+            
             costAccountList = result.resultList;
             
             if(costAccountList.length == 0) {
@@ -13672,6 +13694,16 @@ function anotherAccountOrderFifth(orderdata) {
             //console.log('payload > ', payload);
             var result = JSON.parse(payload.queryResult.messages[0].response);
             console.log('result', result);
+            
+            if(result == null) {
+              var orderLi5 = $('<li class="no-res">조회시 에러가 발생했습니다. 다시 조회하세요.</li>');
+              orderUl5.append(orderLi5);
+              activityCodeListCont.append(orderUl5);
+              closeLoadingWithMask();
+              
+              return;
+            }
+            
             activityCodeList = result.resultList;
             
             if(activityCodeList.length == 0) {
@@ -15328,7 +15360,7 @@ function anotherAccountOrderEighth(orderdata) {
                 'p_department_code': orderdata.department_code,
                 'p_account_code': orderdata.account_code,
                 'p_project_code': orderdata.project_code,
-                'p_activity_id': orderdata.activity_id,
+                'p_activity_code': orderdata.activity_code,
                 'p_asset_name': (orderdata.asset_name==null)?'':orderdata.asset_name,
                 'p_major_category_code': (orderdata.major_category==null)?'':orderdata.major_category,
                 'p_minor_category_code': (orderdata.minor_category==null)?'':orderdata.minor_category,
