@@ -7216,8 +7216,23 @@ background: #F5F5F5 !important;
 }
 
 
-/* 물품 청구 */ 
+/* 달력 창 사이즈 변경.  */
+.datepicker-chem .ui-datepicker, .datepicker-chem .ui-widget.ui-widget-content {
+	 height: 593px !important; 
+}
 
+.datepicker-chem .dp-header
+{
+	bottom: 470px;			
+}
+
+.datepicker-chem .ui-datepicker .ui-datepicker-calendar, .datepicker-chem .ui-widget.ui-widget-content .ui-datepicker-calendar {
+	border-width: 20px 24px 40px 24px;			
+}
+
+/* 달력 창 사이즈 변경.  */
+
+/* 물품 청구 */ 
 .plugins .plugin-contents .input-box.top-list {
   margin-bottom: 20px;
   padding-bottom: 0;
@@ -7233,7 +7248,7 @@ background: #F5F5F5 !important;
     position: relative;
     /*overflow: hidden;*/  
 }
-.plugins .plugin-contents .input-box.top-list .label {
+.plugins .plugin-contents .input-box .label {
     color: var(--color-gray-900, #2c2c2c);
     text-align: left;
     font-size: 14px;
@@ -7241,7 +7256,7 @@ background: #F5F5F5 !important;
     font-weight: 500;
     position: relative;
 }
-.plugins .plugin-contents .input-box.top-list .cont {
+.plugins .plugin-contents .input-box .cont {
 color: var(--color-gray-900, #2c2c2c);
     text-align: right;
     font-size: 14px;
@@ -7262,19 +7277,219 @@ color: var(--color-gray-900, #2c2c2c);
     height: 2px;
     position: relative;
 }
+/*
+.plugins .plugin-contents .input-box.small-note {
+    color: var(--color-status-error, #f94b50);
+    text-align: left;
+    font-size: 10.5px;
+    line-height: 18px;
+    font-weight: 400;
+    position: relative;
+    width: 368px;
+}*/ 
 
-/* 달력 창 사이즈 변경.  */
-.datepicker-chem .ui-datepicker, .datepicker-chem .ui-widget.ui-widget-content {
-	 height: 593px !important; 
+.plugins .plugin-contents .input-box.tab {
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    align-items: center;
+    justify-content: flex-start;
+    align-self: stretch;
+    flex-shrink: 0;
+    position: relative;
 }
 
-.datepicker-chem .dp-header
-{
-	bottom: 470px;			
+.plugins .plugin-contents .input-box.tab .tab-item {
+    opacity: 0.4;
+    padding: 13px 0px 0px 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    /* row-gap: 0px; */
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    width: 74px;
+    position: relative;
+}    
+
+.plugins .plugin-contents .input-box.tab .tab-item .item-name {
+    color: #6c6c6c;
+    text-align: center;
+    font-size: var(--ds-text-body1-m-font-size, 14px);
+    line-height: var(--ds-text-body1-m-line-height, 21px);
+    letter-spacing: var(--ds-text-body1-m-letter-spacing, 0.05px);
+    font-weight: var(--ds-text-body1-m-font-weight, 400);
+    position: relative;
+}
+.plugins .plugin-contents .input-box.tab .tab-item .bar {
+    background: #b8b8b8;
+    align-self: stretch;
+    flex-shrink: 0;
+    height: 1px;
+    position: relative;
+}    
+
+.plugins .plugin-contents .input-box.tab .tab-item.selected {
+    opacity: 1;
+}    
+.plugins .plugin-contents .input-box.tab .tab-item.selected .item-name {
+    color: var(--color-primary-500, #e0205c);
+}    
+.plugins .plugin-contents .input-box.tab .tab-item.selected .bar {
+    background: var(--color-primary-500, #e0205c);
+    height: 2px;
+}    
+
+.plugins .plugin-contents .input-box.tab .tab-item-add{
+  opacity: 0.2;
+  padding: 0px 0px 0px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* row-gap: 0px; */ 
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
 }
 
-.datepicker-chem .ui-datepicker .ui-datepicker-calendar, .datepicker-chem .ui-widget.ui-widget-content .ui-datepicker-calendar {
-	border-width: 20px 24px 40px 24px;			
+.plugins .plugin-contents .input-box.tab .tab-item-add .add-img {
+  border-radius: 66.67px;
+  border-style: solid;
+  border-color: var(--color-primary-300, #f55d8d);
+  border-width: 2px;
+  padding: 5.33px 9px 5.33px 9px;
+  display: flex;
+  flex-direction: row;
+  gap: 1.33px;
+  /* row-gap: 0px; */ 
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  height: 24px;
+  position: relative;
 }
 
-/* 달력 창 사이즈 변경.  */
+.plugins .plugin-contents .input-box.tab .tab-item-add.active {
+  opacity: 1;
+}
+
+.plugins .plugin-contents .input-box.tab .tab-item-add.active .add-img {
+  border-color: var(--color-primary-500, #e0205c);
+}
+
+.plugins .plugin-contents .input-box.tab-contents {
+  padding: 0px 16px 20px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  row-gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .tab-content.show {
+  padding: 10px 0px 0px 0px;
+  /*display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: flex-start;*/
+  flex-shrink: 0;
+  width: 100%;
+  position: relative;
+  display:block;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .tab-content {
+  padding: 10px 0px 0px 0px;
+  /*display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: flex-start;*/
+  flex-shrink: 0;
+  width: 100%;
+  position: relative;
+  display:none;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .item-btn {
+  padding: 10px 0px 20px 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  row-gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /*width: 368px; */
+  position: relative;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .item-btn .btn {
+  border: 1px solid #111;
+  border-radius: 4px;
+  background-color: #fff;
+  flex: 1;
+  height: 40px;
+  position: relative;
+  font-size: 14px;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .item-btn .btn.btn-del {
+  border-color: #F55D8D;
+  color: #E0205C;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .item-btn .btn.btn-input {
+  border-color: #F55D8D;
+  color: #fff;
+  background-color: #E0205C;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .amount-list {
+  background: #f7f7f7;
+  border-radius: 10px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 1px;
+  padding: 20px 10px 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  row-gap: 0px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+  display:none;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .amount-list.show {
+    display:block;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .amount-list .amount-item {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  row-gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  padding: 5px 5px 5px 5px;
+}
+
+.plugins .plugin-contents .input-box.tab-contents .amount-list .amount-item.total span {
+    color:#E0205C;
+}
