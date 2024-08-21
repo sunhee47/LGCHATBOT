@@ -7240,3 +7240,27 @@ background: #F5F5F5 !important;
 }
 
 /* 달력 창 사이즈 변경.  */
+
+/* 신규 추가 (HSCode 관련)*/
+.plugins .plugin-contents .input-box .hsCode-orgId {
+    display: flex;
+    justify-content: space-between;
+}
+
+.plugins .plugin-contents .input-box small.hsCode-orgId {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 19px;
+    color: #828282;
+    display: none;
+}
+.plugins .plugin-contents .input-box small.hsCode-orgId.show {
+    display: block;
+}
+
+.test-panel .chat-message.left .message .importCargo-wrap .importCargo-content .hsCodeResult-list-wrap h4 {
+    width: 105px;
+    color: #898989;
+    font-size: 14px;
+    font-weight: 400;
+}
