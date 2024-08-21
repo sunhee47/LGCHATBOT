@@ -2811,6 +2811,7 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">회사일반</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">도움말</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">홍보자료</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구 신청</button>'
   +     '</div>'
   +     '<h2>IT 관련 문의가 있으신가요?</h2>'
   +     '<div class="btns">'
@@ -8222,7 +8223,7 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'calendarInput') {                    // 타계정 주문 현황 조회
           messageCard = makeCalendarInput(message.data);
     	}
-        else if(message.type == 'requestItemsInput') {                    // 타계정 주문 현황 조회
+        else if(message.type == 'requestItemsInput') {                    // 물품 청구 신청
           messageCard = makeRequestItemsInput(message.data);
     	}
         else {
@@ -16903,11 +16904,52 @@ var tabAddBtn =  '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xm
                 + '<path d="M0 5L10 5" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"/>'
                 + '</svg>';
 
+var tabMoveBtn = (
+    '<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">'
+        +'<path fill="#2C2C2C" fill-rule="evenodd" clip-rule="evenodd" d="M7.64014 9.86913C7.41171 9.61214 7.41171 9.22488 7.64014 8.96789L13.0016 2.93619C13.1676 2.74954 13.1508 2.46373 12.9641 2.29782C12.7774 2.1319 12.4916 2.14871 12.3257 2.33537L6.96421 8.36706C6.4312 8.9667 6.4312 9.87032 6.96421 10.47L12.3257 16.5017C12.4916 16.6883 12.7774 16.7051 12.9641 16.5392C13.1508 16.3733 13.1676 16.0875 13.0016 15.9008L7.64014 9.86913Z"/>'
+    +'</svg>'
+);
+var badgeConfirm = (
+    '<span class="badge-confirm">'
+        +'<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">'
+            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10 5C10 7.76142 7.76142 10 5 10C2.23858 10 0 7.76142 0 5C0 2.23858 2.23858 0 5 0C7.76142 0 10 2.23858 10 5ZM7.21346 4.21086C7.33062 4.0937 7.33062 3.90376 7.21346 3.7866C7.09631 3.66944 6.90636 3.66944 6.7892 3.7866L4.5013 6.0745L3.2129 4.78656C3.09572 4.66942 2.90577 4.66946 2.78864 4.78664C2.6715 4.90381 2.67153 5.09376 2.78871 5.2109L4.28924 6.7109C4.4064 6.82802 4.59632 6.828 4.71346 6.71086L7.21346 4.21086Z" fill="#04B395"/>'
+        +'</svg>'
+        +'Confirm'
+    +'</span>'
+);
+var badgeOver = (
+    '<span class="badge-over">'
+        +'<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">'
+            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M11.3166 6.00008C11.3166 8.95032 8.92493 11.342 5.97469 11.342C3.02445 11.342 0.632812 8.95032 0.632812 6.00008C0.632812 3.04984 3.02445 0.658203 5.97469 0.658203C8.92493 0.658203 11.3166 3.04984 11.3166 6.00008ZM4.5995 4.17161C4.47433 4.04644 4.27139 4.04644 4.14622 4.17161C4.02105 4.29678 4.02105 4.49972 4.14622 4.62489L5.52215 6.00081L4.14622 7.37674C4.02105 7.50191 4.02105 7.70485 4.14622 7.83001C4.27139 7.95518 4.47433 7.95518 4.5995 7.83001L5.97542 6.45409L7.35135 7.83001C7.47652 7.95518 7.67946 7.95518 7.80462 7.83001C7.92979 7.70485 7.92979 7.50191 7.80462 7.37674L6.4287 6.00081L7.80462 4.62489C7.92979 4.49972 7.92979 4.29678 7.80462 4.17161C7.67946 4.04644 7.47652 4.04644 7.35135 4.17161L5.97542 5.54754L4.5995 4.17161Z" fill="#F94B50"/>'
+        +'</svg>'
+        +'Over'
+    +'</span>'
+);
+var iconEdit = (
+    '<svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">'
+        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.48738 14.1424L15.7338 3.896C16.0951 3.53467 16.6809 3.53467 17.0422 3.89598L20.3545 7.20806C20.7159 7.5694 20.7159 8.15527 20.3545 8.51661L10.1082 18.763C9.98563 18.8856 9.83107 18.9713 9.66217 19.0103L6.07678 19.8383C5.07726 20.0692 4.18136 19.1733 4.41218 18.1737L5.24011 14.5885C5.27912 14.4196 5.3648 14.265 5.48738 14.1424ZM5.63013 18.455L6.43711 14.9605L16.388 5.00951L19.241 7.86236L9.29015 17.8133L5.79549 18.6204C5.69623 18.6433 5.60718 18.5544 5.63013 18.455Z" fill="#A5A5A5"/>'
+        +'<path d="M4.79199 21.1248C4.44681 21.1248 4.16699 21.4046 4.16699 21.7498C4.16699 22.095 4.44681 22.3748 4.79199 22.3748H20.2087C20.5538 22.3748 20.8337 22.095 20.8337 21.7498C20.8337 21.4046 20.5538 21.1248 20.2087 21.1248H4.79199Z" fill="#A5A5A5"/>'
+    +'</svg>'
+);
+var iconTrash = (
+    '<svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">'
+        +'<path d="M10.4169 9.77138C10.7621 9.77138 11.0419 10.0512 11.0419 10.3964V18.2089C11.0419 18.5541 10.7621 18.8339 10.4169 18.8339C10.0717 18.8339 9.79189 18.5541 9.79189 18.2089L9.79189 10.3964C9.79189 10.0512 10.0717 9.77138 10.4169 9.77138Z" fill="#A5A5A5"/>'
+        +'<path d="M15.2086 10.3964C15.2086 10.0512 14.9287 9.77138 14.5836 9.77138C14.2384 9.77138 13.9586 10.0512 13.9586 10.3964V18.2089C13.9586 18.5541 14.2384 18.8339 14.5836 18.8339C14.9287 18.8339 15.2086 18.5541 15.2086 18.2089L15.2086 10.3964Z" fill="#A5A5A5"/>'
+        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.85449 4.14648C8.85449 3.28354 9.55405 2.58398 10.417 2.58398H14.5837C15.4466 2.58398 16.1462 3.28354 16.1462 4.14648V5.5007L20.2087 5.5007C20.5538 5.5007 20.8337 5.78052 20.8337 6.1257C20.8337 6.47088 20.5538 6.7507 20.2087 6.7507H19.792V20.084C19.792 21.8099 18.3929 23.209 16.667 23.209H8.33366C6.60777 23.209 5.20866 21.8099 5.20866 20.084V6.7507H4.79199C4.44681 6.7507 4.16699 6.47088 4.16699 6.1257C4.16699 5.78052 4.44681 5.5007 4.79199 5.5007H8.85449V4.14648ZM10.417 3.83398H14.5837C14.7562 3.83398 14.8962 3.9739 14.8962 4.14648V5.50065H10.1045V4.14648C10.1045 3.9739 10.2444 3.83398 10.417 3.83398ZM6.45866 6.7507H18.542V20.084C18.542 21.1196 17.7025 21.959 16.667 21.959H8.33366C7.29813 21.959 6.45866 21.1196 6.45866 20.084V6.7507Z" fill="#A5A5A5"/>'
+    +'</svg>'
+);
+var iconLink = (
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">'
+        +'<path d="M9.53353 2.06602C9.53353 1.8451 9.71261 1.66602 9.93353 1.66602H12.9335C13.7067 1.66602 14.3335 2.29282 14.3335 3.06602V6.06602C14.3335 6.28693 14.1544 6.46602 13.9335 6.46602C13.7126 6.46602 13.5335 6.28693 13.5335 6.06602V3.06602C13.5335 3.05481 13.5332 3.04367 13.5326 3.03262L7.94977 8.61546C7.79356 8.77167 7.54029 8.77167 7.38408 8.61546C7.22787 8.45925 7.22787 8.20598 7.38408 8.04977L12.9669 2.46693C12.9559 2.46632 12.9447 2.46602 12.9335 2.46602H9.93353C9.71261 2.46602 9.53353 2.28693 9.53353 2.06602Z" fill="#2C2C2C"/>'
+        +'<path d="M3.66699 3.13268C3.00425 3.13268 2.46699 3.66994 2.46699 4.33268V12.3327C2.46699 12.9954 3.00425 13.5327 3.66699 13.5327H11.667C12.3297 13.5327 12.867 12.9954 12.867 12.3327V8.99928C12.867 8.77837 13.0461 8.59928 13.267 8.59928C13.4879 8.59928 13.667 8.77837 13.667 8.99928V12.3327C13.667 13.4373 12.7716 14.3327 11.667 14.3327H3.66699C2.56242 14.3327 1.66699 13.4373 1.66699 12.3327V4.33268C1.66699 3.22811 2.56242 2.33268 3.66699 2.33268H7.00032C7.22124 2.33268 7.40032 2.51177 7.40032 2.73268C7.40032 2.9536 7.22124 3.13268 7.00032 3.13268H3.66699Z" fill="#2C2C2C"/>'
+    +'</svg>'
+);
 var maxItemCount = 10;
 // 물품 청구 신청 메세지
 function makeRequestItemsInput(requestdata) {
     var messageWrap = $('<div class="custom-message"></div>');
-    var messageBox = $('<div class="message"></div>');
+    //var messageWrap = $('<div class=""></div>');
+    
     var messageTextWrap = $('<div class="message simple-text"></div>');
     var messageTextContent = $(
          '<p>'
@@ -16926,14 +16968,32 @@ function makeRequestItemsInput(requestdata) {
     messageTextWrap.append(messageTextContent);
     messageTextWrap.append(loadBtn);
     
+    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
+    var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
+    var guide = $('<button type="button" class="btn-quick-reply btn-basic">물품 청구 가이드</button>');
+    var history = $('<button type="button" class="btn-quick-reply btn-basic">물품 청구 내역</button>');
+    quickBtnBox.append(guide);
+    quickBtnBox.append(history);
+    messageTextWrap2.append(quickBtnBox);
+    
+    guide.on('click', function() {
+        console.log('물품 청구 가이드');
+    });
+    history.on('click', function() {
+        console.log('물품 청구 내역');
+    });
+    
     if(checkChatHistory == false) {
-        requestItemsPopupOpen(requestdata);
+        requestItemsPopupOpen(quickBtnBox);
     }
     
+    messageWrap.append(messageTextWrap);
+    messageWrap.append(messageTextWrap2);
+
     //messageBox.append(messageTextWrap);
     //messageWrap.append(messageBox);
-    //return messageWrap;
-    return messageTextWrap;
+    return messageWrap;
+    //return messageTextWrap;
 }
 
 // [ 물품 청구 신청 입력 팝업 ]
@@ -16941,7 +17001,8 @@ var requestItemsInputForm;
 function requestItemsPopupOpen(requestdata) {
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
-    var addPlugin = $('<div class="plugins another-account-order" id="request-items"></div>');
+    //var addPlugin = $('<div class="plugins another-account-order" id="request-items"></div>');
+    var addPlugin = $('<div class="plugins products-bill" id="products-bill"></div>');
 
     /* #########[ popup_header ]######### */
     var pluginHeader = $('<div class="plugin-header"><h1>물품 청구 ('+ '1' + '/' + '3' +')</h1></div>');
@@ -16952,16 +17013,16 @@ function requestItemsPopupOpen(requestdata) {
     pluginHeader.append(pluginClose);
     addPlugin.append(pluginHeader);
     function thisPluginClose() {
-        $('#request-items').removeClass('show');
+        $('#products-bill').removeClass('show');
         $('.plugin-dim').removeClass('show');
         setTimeout(function() {
             $('.plugin-dim').remove();
-            $('#request-items').remove();
+            $('#products-bill').remove();
         }, 300);
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents"></div>');
+    var pluginContents = $('<div class="plugin-contents" id="item-content"></div>');
     var requestForm = requestItemsInputFirst(requestdata);
     //var requestForm = requestItemsInputSecond(requestdata);
     pluginContents.append(requestForm);
@@ -16971,10 +17032,10 @@ function requestItemsPopupOpen(requestdata) {
     $('.test-panel').append(pulginDim);
     $('.test-panel').append(addPlugin);
     $('.plugin-dim').css('display', 'block');
-    $('#request-items').css('display', 'block');
+    $('#products-bill').css('display', 'block');
     setTimeout(function() {
         $('.plugin-dim').addClass('show');
-        $('#request-items').addClass('show');
+        $('#products-bill').addClass('show');
     }, 100);
 }
 
@@ -17045,6 +17106,10 @@ function requestItemsInputFirst(requestdata) {
     var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
     
     inputBoxText3.append(inputTextContent3);
+    
+    var note = $('<span class="input-box-note">Project 입력 시, Project로 비용이 청구됩니다.</span>');
+    inputBoxText3.append(note);
+    
     pluginForm.append(inputBoxText3);
 
     /* ###[ 계정 ]### */
@@ -17125,39 +17190,50 @@ function requestItemsInputSecond(requestdata) {
     var smallNote = $('<small class="note" style="font-size:12px;">※ 물품 작성 중 Plant ID 변경 시 작성하신 물품 내용이 모두 초기화됩니다.</small>');
     pluginForm.append(smallNote);
     
-    var inputBoxTopList = $('<div class="input-box top-list"></div>');
-    var inputBoxTopTitle = $('<span class="label">Department 예산 잔액</span>');
-    var inputBoxTopContent = $('<span class="cont">1,000,000,000원</span>');
+    var inputBoxTopList = $('<h3 class="balance-box"></h3>');
+    var inputBoxTopTitle = $('<span>Department 예산 잔액</span>');
+    var inputBoxTopContent = $('<span class="balance">1,000,000,000원</span>');
     inputBoxTopList.append(inputBoxTopTitle);
     inputBoxTopList.append(inputBoxTopContent);
     //inputBoxTopList.append(divderLine);
     
     pluginForm.append(inputBoxTopList);
     
-    var inputBoxDivder = $('<div class="input-box line"></div>');
-    var divderLine = $('<div class="divder"></div>');
-    inputBoxDivder.append(divderLine);
+    var inputBoxDivder = $('<hr class="mgY10 mgT20">');
+    //var divderLine = $('<div class="divder"></div>');
+    //inputBoxDivder.append(divderLine);
     pluginForm.append(inputBoxDivder);
     
     /*  ###[ tab 목록 ]### */
-    var inputBoxTabList = $('<div class="input-box tab"></div>');
+    var inputBoxTabList = $('<div class="tabBtn-wrap"></div>');     // $('<div class="input-box tab"></div>');
+    var tabBtnBox = $('<div class="tabBtn-box"></div>');
     
     for(var t=0; t<itemCnt; t++) {
         
         let tabNo = t+1;
-        let showClass = (t==0)? ' selected':'';
+        let activeClass = (t==0)? ' active':'';
         
-        var tabItem = $('<div class="tab-item'+showClass+'"></div>');
+        //var tabItem = $('<div class="tab-item'+showClass+'"></div>');
         var tabItemHidden = $('<input type="hidden" value="'+tabNo+'" id="item_no" />');
-        var tabItemName = $('<span class="item-name">물품'+tabNo+'</span>');
-        var tabItemBar = $('<span class="bar"></span>');
+        var tabItemButton = $('<button class="tabBtn'+activeClass+'" type="button"><span class="prod_name">물품'+tabNo+'</span></button>');
+        //var tabItemBar = $('<span class="bar"></span>');
         
-        tabItem.append(tabItemHidden);
-        tabItem.append(tabItemName);
-        tabItem.append(tabItemBar);
+        tabItemButton.append(tabItemHidden);
+        tabBtnBox.append(tabItemButton);
+        //tabBtnBox.append(tabItemHidden);
 
-        inputBoxTabList.append(tabItem);
     }
+
+    var tabMoveBtnBox = $(
+        '<div class="tabBtn-move">'
+            +'<button class="tabBtn-move-prev" type="button" disabled>' + tabMoveBtn + '</button>'
+            +'<button class="tabBtn-move-next" type="button" disabled>' + tabMoveBtn + '</button>'
+        +'</div>'
+    );
+    inputBoxTabList.append(tabMoveBtnBox);
+    
+    inputBoxTabList.append(tabBtnBox);  
+    
 
 //    var tabItem2 = $('<div class="tab-item"></div>');
 //    var tablItem2Name = $('<span class="item-name">물품2</span>');
@@ -17168,11 +17244,15 @@ function requestItemsInputSecond(requestdata) {
     
     //inputBoxTabList.append(tabItem2);
     
-    var tabItemAddBtn = $('<div class="tab-item-add"></div>');              // active
-    var tabItemAddImg = $('<div class="add-img">'+tabAddBtn+'</div>');
+    // tab 추가 버튼 
+    var tabItemAddBtn = $('<button class="tabBtn-add" type="button" disabled></button>');    
+    tabBtnBox.append(tabItemAddBtn);
     
-    tabItemAddBtn.append(tabItemAddImg);
-    inputBoxTabList.append(tabItemAddBtn);
+    //var tabItemAddBtn = $('<div class="tab-item-add"></div>');              // active
+    //var tabItemAddImg = $('<div class="add-img">'+tabAddBtn+'</div>');
+    
+    //tabItemAddBtn.append(tabItemAddImg);
+    //inputBoxTabList.append(tabItemAddBtn);
     
     pluginForm.append(inputBoxTabList);
     
@@ -17183,19 +17263,22 @@ function requestItemsInputSecond(requestdata) {
         
         let tabNo = t+1;
         let showClass = (t==0)? ' show':'';
+        let delBtnShow = (itemCnt == 1)? 'disabled':''
         
         var tabContent1 = $('<div class="tab-content'+showClass+'"></div>');
         
-        var itemIDText = $('<div class="input-box"><label>물품'+tabNo+' ID <b>*</b></label></div>');
+        var itemIDText = $('<div class="input-box"><label><span class="prod_name">물품'+tabNo+'</span> ID <b>*</b></label></div>');
         var itemIDBox = $('<div class="input-form"></div>');
         var itemIDInput = $('<input type="text" placeholder="물품 ID를 입력해 주세요." max-length="50" id="item_id" value="abcd12" autocomplete="off"/>');
+        var helpMSG = $('<span class="help-message">' + 'Switch,' + 'Tack' +'</span>');
         
         itemIDBox.append(itemIDInput);
         itemIDText.append(itemIDBox);
+        itemIDText.append(helpMSG);
         
         tabContent1.append(itemIDText);
     
-        var itemQtyText = $('<div class="input-box"><label>물품'+tabNo+' 수량 <b>*</b></label></div>');
+        var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+tabNo+'</span> 수량 <b>*</b></label></div>');
         var itemQtyBox = $('<div class="input-form"></div>');
         var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" id="item_qty" value="60" autocomplete="off"/>');
     
@@ -17215,27 +17298,43 @@ function requestItemsInputSecond(requestdata) {
         
         tabContent1.append(itemDateText);
     
-        var buttonBox = $('<div class="item-btn"></div>');
-        var delButton = $('<button type="button" class="btn btn-del" disabled>물품'+tabNo+' 삭제</button>');
-        var inputButton = $('<button type="button" class="btn btn-input" disabled>물품'+tabNo+' 입력</button>');
+        var buttonBox = $('<div class="btn amount-btn mgT0"></div>');
+        var delButton = $('<button type="button" class="btn btn-default btn-big btn-del" '+delBtnShow+'><span class="prod_name">물품'+tabNo+'</span> 삭제</button>');
+        var inputButton = $('<button type="button" class="btn btn-emphasis2 btn-big btn-input" disabled><span class="prod_name">물품'+tabNo+'</span> 입력</button>');
         
         buttonBox.append(delButton);
         buttonBox.append(inputButton);
         tabContent1.append(buttonBox);
-    
-        var amountListWrap = $('<div class="input-box amount-list"></div>');
-        var amountItemText = $('<div class="amount-item item"><span class="label"><b>물품'+tabNo+' Amount</b></span></div>');
-        var amountItemCont = $('<span class="cont"><b>100,000원</b></span>');
-        amountItemText.append(amountItemCont);
-        amountListWrap.append(amountItemText);
 
-        var amountTotolText = $('<div class="amount-item total"><span class="label"><b>Total Amount</b></span></div>');
-        var amountTotolCont = $('<span class="cont"><b>100,000원</b></span>');
+        var productAmount  = 5000000;
+        var amountBox = $('<div class="amount-box" style="display:none;"></div>');
+        var amountItem = $(
+            '<div class="amount-item item">'
+                +'<h4>' + '<span class="prod_name">물품'+tabNo + '</span> Amount</h4>'
+                +'<div class="amount">'
+                    +'<span class="amount-formula">('
+                    + '5000000'.toLocaleString() + '*' + '1000'.toLocaleString()
+                    +')</span>'
+                    +'<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
+                +'</div>'
+            +'</div>'
+        );
+        amountBox.append(amountItem);
+
+        var amountTotalBox = $(
+            '<div class="amount-item total">'
+                +'<h4>Total Amount</h4>'
+                +'<div class="amount">'
+                    +badgeConfirm + '<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
+                +'</div>'
+            +'</div>'
+        );
         
-        amountTotolText.append(amountTotolCont);
-        amountListWrap.append(amountTotolText);
-
-        tabContent1.append(amountListWrap);
+        if(tabNo > 1) {
+            amountBox.append(amountTotalBox);
+        }
+        
+        tabContent1.append(amountBox);
         
         tabContentList.append(tabContent1);
         
@@ -17296,8 +17395,6 @@ function requestItemsInputSecond(requestdata) {
         //var inputObj = find('input')
     }
     
-    inputBtnEvent();
-    
     // 물품 입력 버튼 클릭시. 
     $(document).on('click','.form-second .tab-content.show .btn-input', function(e) {
     //pluginForm.find('.tab-content.show').find('.btn-input').on('click', function(e){
@@ -17305,27 +17402,89 @@ function requestItemsInputSecond(requestdata) {
         
         //itemAmountCalculate(this);
         
-        var unit = 1000;                // 나중에 api로 단가를 가지고 와야 함. 
-        var amount_list = $(this).parents().find('.amount-list');   // 물품금액 list
+        var unit = 5000000;                // 나중에 api로 단가를 가지고 와야 함. 
         var tab_content = $(this).parents().find('.tab-content.show');   
+        var amount_box = tab_content.find('.amount-box');   // 물품금액 list
         var item_qty =  tab_content.find('#item_qty').val();        // 입력한 물품 수량.
         
-        var amount_label = $(this).text().replace('입력', 'Amount');    
-        var amount_cont = item_qty*unit;
-        console.log('button text : '+$(this).text());
+        //var amount_label = $(this).text().replace('입력', 'Amount');    
+        var amount_value = item_qty*unit;
+        var amount_formula = '('+ unit.toLocaleString() + '*' + item_qty.toLocaleString() +')';
+        //console.log('button text : '+$(this).text());
         
         //amount_list.find('.item').find('.label > b').text(amount_label);                    // 물품 Amount label
-        amount_list.find('.item').find('.cont > b').text(formatAmount(amount_cont)+'원');   // 물품 Amount 계산 
+        amount_box.find('.item').find('.amount-value').text(amount_value.toLocaleString()+'원');   // 물품 Amount 계산 
+        amount_box.find('.item').find('.amount-formula').text(amount_formula);
 
         if(itemCnt < maxItemCount) { 
-            $(this).parents().find('.tab-item-add').addClass('active');                     // tab 추가 버튼 활성화.
-            $(this).parents().find('.tab-item-add').find('.add-img').wrap('<a href="#"></a>');
+            $(this).parents().find('.tabBtn-add').attr('disabled', false);                 // tab 추가 버튼 활성화.
         }
-        amount_list.addClass('show');                                                   // 물품금액 list 활성화.
+        amount_box.css('display', 'block');                                                   // 물품금액 list 활성화.
         $(this).attr('disabled', true);                                                 // 물품 입력 버튼 disabled.
 
         // tab 조회 기능 확인.    
-        tabMove(true);
+        tabClick(true);
+    });
+    
+    // 물품 삭제 버튼 클릭시. 
+    $(document).on('click','.form-second .tab-content.show .btn-del', function(e) {
+        
+        // 탭 물품명 재정리. 
+        let delTab = $('.tabBtn-box').find('.tabBtn.active');
+        let delItemNo = $(delTab).find('#item_no').val();
+        let delContent = $('.tab-contents').find('.tab-content.show');
+        
+        var items = $('.tabBtn-box').find('.tabBtn');
+        let itemCnt = items.length;
+
+        var newIdx = 0;
+        for(var t=0; t<itemCnt; t++) {
+            let item = items[t];
+            
+            if($(item).hasClass('active') == false) {
+                newIdx = newIdx + 1;
+                
+                $(item).find('.prod_name').text('물품'+newIdx);
+                $(item).find('#item_no').val(newIdx);
+            }
+        }
+        
+        var contents = $('.tab-contents').find('.tab-content');
+        let contentCnt = contents.length;
+
+        var newIdx = 0;
+        for(var t=0; t<contentCnt; t++) {
+            let content = contents[t];
+            
+            if($(content).hasClass('show') == false) {
+                newIdx = newIdx + 1;
+                
+                //prod_name
+                $(content).find('.prod_name').text('물품'+newIdx);
+            }
+        }        
+        
+        // 탭삭제 
+        $(delTab).remove();
+        
+        // content 삭제 
+        $(delContent).remove();
+        
+        console.log('items length : '+items.length);
+        //
+        actItemNo = (delItemNo == 1)? 1:delItemNo-1;
+        $(items[actItemNo-1]).addClass('active');
+        $(contents[actItemNo-1]).addClass('show');
+        
+        itemCnt--;
+        
+        setTimeout(function() {
+            showSmallDialog('물품'+delItemNo+' 삭제했습니다. '); // [퍼블 수정 및 추가] - 텍스트 수정
+            ascendScroll();
+        }, 100);  
+
+        // 삭제 버튼 able/disable 
+
     });
     
     // input
@@ -17337,64 +17496,93 @@ function requestItemsInputSecond(requestdata) {
     });    
     
     // 탭 추가 버튼 클릭시. 
-    $(document).on('click','.form-second .tab-item-add > a', function(e) {      
+    $(document).on('click','.form-second .tabBtn-add', function(e) {      
     //pluginForm.find('.tab-item-add > a').on('click', function(e){
     //pluginForm.find('.add-img').on('click', function(e){
         console.log('clcik.'+itemCnt);
         
-        itemCnt = tabAdd(inputBoxTabList);
+        itemCnt = tabAdd();
         
         tabContentAdd(tabContentList);
         
-        $(this).parent().removeClass('active');         // 탭 추가 버튼 비활성화. 
-        $(this).parents().find('.amount-list').removeClass('show');                         // 물품금액 list 감추기
+        //$(this).parent().removeClass('active');         // 탭 추가 버튼 비활성화. 
+        //$(this).parents().find('.amount-list').removeClass('show');                         // 물품금액 list 감추기 (outter 에 있을 때 )
 
-        $(this).find('.add-img').unwrap();
-        tabMove(false);         // 다른 탭 링크 삭제.
+        $(this).attr('disabled', true);                     // 탭 추가 버튼 비활성화. 
+        $('.btn-del').attr('disabled', false);              // 물품 삭제 버튼 able.
+
+        //$(this).find('.add-img').unwrap();
+        tabClick(false);         // 다른 탭 링크 삭제.
         inputBtnEvent();
+         
     });
     
     // 탭 클릭시. 
-    $(document).on('click','.form-second .tab-item > a', function(e) {    
+    $(document).on('click','.form-second .tabBtn', function(e) {    
     //pluginForm.find('.tab-item > a').on('click', function(e){
-        let tab_no = $(this).parent().find('#item_no').val();
+        let tab_no = $(this).find('#item_no').val();
         console.log('tab click..'+tab_no);
         
         viewItemData(tab_no);
-        tabMove(true);
+        tabClick(true);
     });
     
+    tabClick(true);  
+    inputBtnEvent();
+
     
     /* #########[ popup_content_form_end ]######### */
     function itemAmountCalculate(tabObj) {
     }
     
+    function tabClick(istabLink) {
+        var items = pluginForm.find('.tabBtn-box').find('.tabBtn');
+        let itemCnt = items.length;
+
+        console.log('itemCnt : '+itemCnt);
+        for(var t=0; t<itemCnt; t++) {
+            let item = items[t];
+            
+            console.log('tab click : '+$(item).hasClass('active'));
+            if($(item).hasClass('active') == false) {
+                if(istabLink) {
+                    $(item).attr('disabled', false);    
+                    $(item).attr('cursor', 'hand');
+                }
+                else{
+                    $(item).attr('disabled', true);    
+                    $(item).attr('cursor', 'pointer');
+                }
+            }
+            else{
+                $(item).attr('disabled', true);    
+            }
+        }
+        
+    }
+    
     // tab 추가 함수.
-    function tabAdd(tabList) {
+    function tabAdd() {
         
-        console.log('tab cnt : '+tabList.find('.tab-item').length);
+        console.log('tab cnt : '+$('.tabBtn-box').find('.tabBtn').length);
         
-        var items = tabList.find('.tab-item');
+        var items = $('.tabBtn-box').find('.tabBtn');
         let itemCnt = items.length;
         let addItemCnt = itemCnt+1;
         
         for(var t=0; t<itemCnt; t++) {
             let item = items[t];
             
-            $(item).removeClass('selected');
+            $(item).removeClass('active');
         }
         
-        let tabItem = $('<div class="tab-item selected"></div>');
+        let tabItemHidden = $('<input type="hidden" value="'+addItemCnt+'" id="item_no" />');
+        let tabItemButton = $('<button class="tabBtn active" type="button"><span class="prod_name">물품'+addItemCnt+'</span></button>');
         
-        var tabItemHidden = $('<input type="hidden" value="'+addItemCnt+'" id="item_no" />');
-        var tabItemName = $('<span class="item-name">물품'+addItemCnt+'</span>');
-        let tabItemBar = $('<span class="bar"></span>');
+        tabItemButton.append(tabItemHidden);
         
-        tabItem.append(tabItemHidden);
-        tabItem.append(tabItemName);
-        tabItem.append(tabItemBar);
-
-        tabList.find('.tab-item-add').before(tabItem);
+        $('.tabBtn-box').find('.tabBtn-add').before(tabItemButton);
+        //$('.tabBtn-box').find('.tabBtn-add').before(tabItemHidden);
         
         return addItemCnt;
     }
@@ -17402,7 +17590,7 @@ function requestItemsInputSecond(requestdata) {
     // tab 화면 추가 함수.
     function tabContentAdd(contentList) {
         
-        console.log('tab cnt : '+contentList.find('.tab-content').length);
+        console.log('tab content cnt : '+contentList.find('.tab-content').length);
         
         var contents = contentList.find('.tab-content');
         let contentCnt = contents.length;
@@ -17416,16 +17604,18 @@ function requestItemsInputSecond(requestdata) {
         
         var tabContent = $('<div class="tab-content show"></div>');
         
-        var itemIDText = $('<div class="input-box"><label>물품'+addContentCnt+' ID <b>*</b></label></div>');
+        var itemIDText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> ID <b>*</b></label></div>');
         var itemIDBox = $('<div class="input-form"></div>');
         var itemIDInput = $('<input type="text" placeholder="물품 ID를 입력해 주세요." max-length="50" id="item_id" value="abcd12" autocomplete="off"/>');
+        var helpMSG = $('<span class="help-message">' + 'Switch,' + 'Tack' +'</span>');
         
         itemIDBox.append(itemIDInput);
         itemIDText.append(itemIDBox);
+        itemIDText.append(helpMSG);
         
         tabContent.append(itemIDText);
-    
-        var itemQtyText = $('<div class="input-box"><label>물품'+addContentCnt+' 수량 <b>*</b></label></div>');
+        
+        var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> 수량 <b>*</b></label></div>');
         var itemQtyBox = $('<div class="input-form"></div>');
         var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" id="item_qty" value="60" autocomplete="off"/>');
     
@@ -17433,7 +17623,7 @@ function requestItemsInputSecond(requestdata) {
         itemQtyText.append(itemQtyBox);
         
         tabContent.append(itemQtyText);
-    
+        
         var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
         var itemDateWrap = $('<div class="schedule-wrap"></div>');
         var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
@@ -17444,45 +17634,58 @@ function requestItemsInputSecond(requestdata) {
         itemDateText.append(itemDateWrap);
         
         tabContent.append(itemDateText);
-    
-        var buttonBox = $('<div class="item-btn"></div>');
-        var delButton = $('<button type="button" class="btn btn-del">물품'+addContentCnt+' 삭제</button>');
-        var inputButton = $('<button type="button" class="btn btn-input" disabled>물품'+addContentCnt+' 입력</button>');
+        
+        var buttonBox = $('<div class="btn amount-btn mgT0"></div>');
+        var delButton = $('<button type="button" class="btn btn-default btn-big btn-del"><span class="prod_name">물품'+addContentCnt+'</span> 삭제</button>');
+        var inputButton = $('<button type="button" class="btn btn-emphasis2 btn-big btn-input" disabled><span class="prod_name">물품'+addContentCnt+'</span> 입력</button>');
         
         buttonBox.append(delButton);
         buttonBox.append(inputButton);
         tabContent.append(buttonBox);
-    
-        var amountListWrap = $('<div class="input-box amount-list"></div>');
-        var amountItemText = $('<div class="amount-item item"><span class="label"><b>물품'+addContentCnt+' Amount</b></span></div>');
-        var amountItemCont = $('<span class="cont"><b>100,000원</b></span>');
-        amountItemText.append(amountItemCont);
-        amountListWrap.append(amountItemText);
-
-        var amountTotolText = $('<div class="amount-item total"><span class="label"><b>Total Amount</b></span></div>');
-        var amountTotolCont = $('<span class="cont"><b>100,000원</b></span>');
         
-        amountTotolText.append(amountTotolCont);
-        amountListWrap.append(amountTotolText);
+        var productAmount  = 5000000;
+        var amountBox = $('<div class="amount-box" style="display:none;"></div>');
+        var amountItem = $(
+            '<div class="amount-item item">'
+                +'<h4>' + '<span class="prod_name">물품'+addContentCnt + '</span> Amount</h4>'
+                +'<div class="amount">'
+                    +'<span class="amount-formula">('
+                    + '5000000'.toLocaleString() + '*' + '1000'.toLocaleString()
+                    +')</span>'
+                    +'<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
+                +'</div>'
+            +'</div>'
+        );
+        amountBox.append(amountItem);
 
-        tabContent.append(amountListWrap);
-    
+        var amountTotalBox = $(
+            '<div class="amount-item total">'
+                +'<h4>Total Amount</h4>'
+                +'<div class="amount">'
+                    +badgeConfirm + '<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
+                +'</div>'
+            +'</div>'
+        );
+        amountBox.append(amountTotalBox);
+
+        tabContent.append(amountBox);
+
         contentList.append(tabContent); 
     }
     
     // 클릭한 탭의 내용을 조회하는 합수.
     function viewItemData(tabNo) {
         
-        var items = $('.tab').find('.tab-item');
+        var items = $('.tabBtn-box').find('.tabBtn');
         let itemCnt = items.length;
-        
+
         for(var t=0; t<itemCnt; t++) {
             let item = items[t];
             
-            $(item).removeClass('selected');
+            $(item).removeClass('active');
         }
-
-        $(items[tabNo-1]).addClass('selected');                
+        
+        $(items[tabNo-1]).addClass('active');   
         
         ////////////
         var contents = $('.tab-contents').find('.tab-content');
@@ -17528,4 +17731,12 @@ function requestItemsInputSecond(requestdata) {
      requestItemsInputForm = pluginForm;
     return pluginForm;
     
+}
+
+function ascendScroll() {
+	setTimeout(function() {
+        var e = document.getElementById("item-content");
+        e.scrollTop = 0;
+        
+    }, 50)
 }
