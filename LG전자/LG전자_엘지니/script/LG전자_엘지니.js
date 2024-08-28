@@ -2294,7 +2294,10 @@ function welcomeAppend(welcomeMessage) {
   //var characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/hello_big.gif" /></div>');
   var welcomeMessage = "";
   if(alarmInfo.openMessage == "Y") {
-     userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, 반가워요!<br />new 엘지니와 대화해 보세요.</h1>');
+      console.log('positionNm : '+userInfo.positionNm);
+      var userTitle = (userInfo.positionNm != null)? userInfo.userKorName + ' ' + userInfo.jobTitle + '/' + userInfo.positionNm : userInfo.userKorName + ' ' + userInfo.jobTitle;
+
+     userName = $('<h1>' + userTitle +'님, <br />오늘도 멋진 하루 보내세요!</h1>');
      //characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/welcome.gif" /></div>');
      
      welcomeMessage = $(
@@ -6547,7 +6550,10 @@ function connectMessenger(userId, targetId){
 	// name
 	var textBox = $('<div class="text-box"></div>');
   var nameWrap = $('<div class="name"></div>');
-  var title = $('<h1>'+ data.userNm + ' ' + data.titleNm + isBirthdayToday(data.birth) + '</h1>');
+  
+    var userTitle = (data.positionNm != '' && data.positionNm != null)?  data.userNm + ' ' + data.titleNm + '/' + data.positionNm : data.userNm + ' ' + data.titleNm;
+  
+  var title = $('<h1>'+ userTitle + isBirthdayToday(data.birth) + '</h1>');
 
   nameWrap.append(title);
   textBox.append(nameWrap);
@@ -6787,6 +6793,8 @@ function makeEmployeeListCard(data,isHistory){
 			var userId = empMail[0];
 			var display = (index > 4)? "none":"flex";
 			
+			var userTitle = (item.positionNm != null)? item.userNm + ' ' + item.titleNm + '/' + item.positionNm : item.userNm + ' ' + item.titleNm;
+			
 			var liHtml = '<li class="list-box" style="display:'+display+'" onclick="intentEvent(this , \''+ type +'\', \''+ userId +'\')">';
 			
 			if(data.group == 'Y'){
@@ -6796,7 +6804,7 @@ function makeEmployeeListCard(data,isHistory){
 				liHtml += 	(item.profilePicture ? '<div class="profile-img">' + `<img src="' + item.profilePicture + '" onerror="this.src='` + pAlternative + `';"></div>` : '<div class="profile-img"><img class="img-circle" src="'+ pAlternative +'"></div>');
 				liHtml += 	'<div class="text-box">';
         liHtml +=	'<div class="name">'
-                    + '<h1>' + item.userNm + ' ' + item.titleNm +'</h1>'
+                    + '<h1>' + userTitle +'</h1>'
                     +'</div">';
 
         liHtml += '</div>';
@@ -11308,7 +11316,7 @@ function closeLoadingWithMask() {
 
 function appendChatbotHtml(message, isTime) {
   var chatMessage = $('<div class="chat-message left"></div');
-  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>');         // /images/chem-profile.png
   var time = $('<span class="message-date">' + moment().format("a h:mm") + '</span>');
   //+'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>'
   //+ message
@@ -15707,7 +15715,7 @@ function gbmsPopupOpen(data) {
     // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
     var inputTextContent1 = $('<div class="input-form order-select searchIcon"></div>');
     var costAuSelected = $('<div class="selected-order"></div>');
-    var inputBox1 = $('<input type="text" placeholder="Cost AU를 선택하세요." max-length="50" id="costau-name" autocomplete="off"/>');
+    var inputBox1 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="costau-name" autocomplete="off"/>');
     
     var costAuListCont = $('<div class="order-list"></div>');
     
@@ -15938,7 +15946,7 @@ function gbmsPopupOpen(data) {
     var inputBoxText2 = $('<div class="input-box add-order"><label>비용 처리 부서<b>*</b></label></div>');
     var inputTextContent2 = $('<div class="input-form order-select disable-searchIcon"></div>');
     var costDeptSelected = $('<div class="selected-order"></div>');
-    var inputBox2 = $('<input type="text" placeholder="비용처리 부서를 선택하세요." max-length="50" id="costdept-name" autocomplete="off" disabled/>');
+    var inputBox2 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="costdept-name" autocomplete="off" disabled/>');
     
     var costDeptListCont = $('<div class="order-list"></div>');
     
@@ -17267,6 +17275,10 @@ function gbmsResultMultiple(budgetInfo) {
                         +'<li>'
                             +'<h4>계정이름</h4>'
                             +'<span class="list-info-value text">' + budgetInfo.account_name + '</span>'
+                        +'</li>'
+                        +'<li>'
+                            +'<h4 style="letter-spacing:-1px;">PJT.Code</h4>'
+                            +'<span class="list-info-value text">' + budgetInfo.project_code + '</span>'
                         +'</li>'
                         +'<li>'
                             +'<h4>조회 월</h4>'
