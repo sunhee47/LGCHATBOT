@@ -14822,7 +14822,7 @@ function gbmsPopupOpen(data) {
     // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
     var inputTextContent1 = $('<div class="input-form order-select searchIcon"></div>');
     var costAuSelected = $('<div class="selected-order"></div>');
-    var inputBox1 = $('<input type="text" placeholder="Cost AU를 선택하세요." max-length="50" id="costau-name" autocomplete="off"/>');
+    var inputBox1 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="costau-name" autocomplete="off"/>');
     
     var costAuListCont = $('<div class="order-list"></div>');
     
@@ -15053,7 +15053,7 @@ function gbmsPopupOpen(data) {
     var inputBoxText2 = $('<div class="input-box add-order"><label>비용 처리 부서<b>*</b></label></div>');
     var inputTextContent2 = $('<div class="input-form order-select disable-searchIcon"></div>');
     var costDeptSelected = $('<div class="selected-order"></div>');
-    var inputBox2 = $('<input type="text" placeholder="비용처리 부서를 선택하세요." max-length="50" id="costdept-name" autocomplete="off" disabled/>');
+    var inputBox2 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="costdept-name" autocomplete="off" disabled/>');
     
     var costDeptListCont = $('<div class="order-list"></div>');
     
@@ -16384,6 +16384,10 @@ function gbmsResultMultiple(budgetInfo) {
                             +'<span class="list-info-value text">' + budgetInfo.account_name + '</span>'
                         +'</li>'
                         +'<li>'
+                            +'<h4 style="letter-spacing:-1px;">PJT.Code</h4>'
+                            +'<span class="list-info-value text">' + budgetInfo.project_code + '</span>'
+                        +'</li>'
+                        +'<li>'
                             +'<h4>조회 월</h4>'
                             //+'<span class="list-info-value text">' + month + '월('+index+')</span>'
                             +'<span class="list-info-value text">' + month + '월</span>'
@@ -16694,6 +16698,9 @@ function aalvResult(result) {
 }
 
 function formatAmount(amt) {
+    if(amt < 3) {
+        return amt;
+    } 
     return amt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')    
 }
 
@@ -17045,6 +17052,18 @@ function requestItemsInputFirst(requestdata) {
     //console.log('anotherAccountOrderForm : ', anotherAccountOrderForm);
     
     userId = chatui.getSetting("userId"); 
+    
+    var selDeptCode = (requestdata.department_code == null)? '':requestdata.department_code;
+    var selDeptName = (requestdata.department_name == null)? '':requestdata.department_name;
+    
+    var selPlantCode = (requestdata.plant_code == null)? '':requestdata.plant_code;
+    var selPlantName = (requestdata.plant_name == null)? '':requestdata.plant_name;
+    
+    var selProjectCode = (requestdata.project_code == null)? '':requestdata.project_code;
+    var selProjectName = (requestdata.project_name == null)? '':requestdata.project_name;
+    
+    var selAccountCode = (requestdata.account_code == null)? '':requestdata.account_code;
+    var selAccountName = (requestdata.account_name == null)? '':requestdata.account_name;
 
     //$('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
@@ -17063,31 +17082,321 @@ function requestItemsInputFirst(requestdata) {
     var inputBoxText1 = $('<div class="input-box add-order"><label>Department<b>*</b></label></div>');
     // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
     var inputTextContent1 = $('<div class="input-form order-select searchIcon" id="input_content1"></div>');
-    var costAuSelected = $('<div class="selected-order" id="input_selected1"></div>');
-    var inputBox1 = $('<input type="text" placeholder="Department를 입력해 주세요." max-length="50" id="costau-name" />');
+    var departmentSelected = $('<div class="selected-order" id="input_selected1"></div>');
+    var inputBox1 = $('<input type="text" placeholder="Department를 입력해 주세요." max-length="50" id="department-name"  autocomplete="off"/>');
+    var departmentListCont = $('<div class="order-list"></div>');
     
-    inputTextContent1.append(costAuSelected);
+    var departmentListTitle = $('<span>Department 목록</span>');
+    departmentListCont.append(departmentListTitle);
+    //inputBox.append('<input type="text" value="" id="costau-code"/>');
+    
+    inputTextContent1.append(departmentSelected);
     inputTextContent1.append(inputBox1);
-    //inputTextContent1.append(costAuListCont);
+    inputTextContent1.append(departmentListCont);
     
     var orderUl1 = $('<ul></ul>');
+    
+    inputBox1.on('keyup', function(e) {        
+
+        var inval = inputBox1.val();
+        console.log('key : '+inval);
+        
+        if(e.keyCode == 13) {
+            
+            if(inval.length < 2) {
+                showSmallDialog("Department 검색은 2글자 이상 입력해야 합니다.");
+                return;
+            }            
+            
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            inputTextContent1.addClass('focus');
+                
+            departmentListCont.addClass('show');
+
+            orderUl1.empty();
+            
+            //LoadingWithMask(); 
+            
+            var requestParam = {
+                query: {
+                  "event": "reqItemsDepartmentSearchEvent"
+                },
+                payload: {
+                    BNAME: chatui.getSetting("userId"), 
+                    ZORGNAME: inval
+                }
+              };
+
+              sendChatApi(requestParam, null, function(payload){
+                //console.log('payload > ', payload);
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                
+                if(result == null) {
+                  var orderLi1 = $('<li class="no-res">Department 정보가 없습니다.</li>');
+                  orderUl1.append(orderLi1);
+                  departmentListCont.append(orderUl1);
+                  
+                }
+                
+                departmentList = result.resultList;
+                
+                if(departmentList.length == 0) {
+                  var orderLi1 = $('<li class="no-res">Department 정보가 없습니다.</li>');
+                  orderUl1.append(orderLi1);
+                  departmentListCont.append(orderUl1);
+                } else {
+                  departmentList.map(department => {
+                      
+                    var orderLi1 = $(
+                        '<li>'
+                            +'<p>['+department.ZORGID+'] '+ department.ZORGNAME // + '()' 
+                            +'</p>'
+                        +'</li>'
+                    );
+                    
+                    // Cost AU 목록 리스트 클릭
+                    orderLi1.on('click', function() {
+                        
+                        var departmentInfo = $(
+                            '<div class="data-wrap">'
+                                 +'<p>['+department.ZORGID+']' + department.ZORGNAME 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ department.ZORGID +'" id="department_code"/>'
+                              + '<input type="hidden" value="'+ department.ZORGNAME +'" id="department_name"/>'
+                            +'</div>'
+                        );
+                        
+                        departmentSelected.css('width', '100%');        // 0717 추가 
+                        departmentSelected.append(departmentInfo);
+
+                        // [퍼블 수정 및 추가]
+                        var targetHeight = departmentSelected.height();
+                        inputTextContent1.removeClass('focus');
+                        console.log(targetHeight);
+                
+                        departmentListCont.removeClass('show');
+                        departmentListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+
+                        inputBox1.val('');
+                        scheduleorderWidth(inputTextContent1, departmentSelected, inputBox1);
+                        
+                        selectBoxAction(inputBox4, inputTextContent4, accountSelected);
+                        
+                        nextBtnEvent();  
+                    });
+                    
+                    orderUl1.append(orderLi1);
+                  });
+                  departmentListCont.append(orderUl1);
+                }
+                
+                //closeLoadingWithMask();
+
+              });
+
+         }   // end if 
+        //////        
+    });
     
     inputBoxText1.append(inputTextContent1);
     pluginForm.append(inputBoxText1);
     
+    function selectBoxAction($input, $inputContent, $costSelected) {
+        var deptval = departmentSelected.find('.data-wrap').text();
+        var plantval = plantSelected.find('.data-wrap').text();
+        
+        if(deptval && plantval) {
+            $input.attr('disabled', false);
+            $inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
+        }
+        else{
+            // 계정 정보 초기화. 
+            $input.val('');
+            $costSelected.empty();
+            $input.css('display', 'block');
+        
+            $input.attr('disabled', true);
+            $inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
+        }
+    }
+    
+    function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
+        let orderSelectWidth = $inputTextContent.width();
+        let selectedorderWidth = $costSelected.width();
+        
+        //console.log('inputTextContent width : '+orderSelectWidth+', selected width : '+selectedorderWidth);
+        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        $inputId.css('width', scheduleorderWidth + "px");
+        if ($inputId.width() === 0) {
+            $inputId.attr('style', '');
+        }
+        
+        if(selectedorderWidth == 0) {
+            $inputId.css('display', 'block');
+        }
+        else{
+            $inputId.css('display', 'none');
+        }
+    };
+    
+    $(document).off("click").on('click', '.data-wrap .btn-delete', function(){
+        console.log('delete....');
+        var content = $(this).parents(".order-select");
+        var selected = $(this).parents(".order-select").find('.selected-order');
+        var input = $(this).parents(".order-select").find('input[type=text]');
+        var label = $(this).parents(".input-box").find('label');
+        
+        console.log('label : ', label.text());
+        //input.attr('placeholder', plageHoderMsg);
+        content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
+        $(this).closest(".data-wrap").remove();
+        selected.css('width', '0px');
+        
+        scheduleorderWidth(content, selected, input);
 
+        // department, plant 값을 삭제한 경우. 
+        if(label.text() == 'Department*' || label.text() == 'Plant*') {
+            selectBoxAction(inputBox4, inputTextContent4, accountSelected);
+        }
+        
+        nextBtnEvent();  
+    });
+    
+    // order-select 제외 클릭
+    $(document).on('click', function(e) {
+        if ($('.order-select').has(e.target).length === 0) {
+            $('.order-list').removeClass('show');
+    
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            $('.order-select').removeClass('focus');
+        }
+    });
+    
     /* ###[ Plant ]### */
     var inputBoxText2 = $('<div class="input-box add-order"><label>Plant<b>*</b></label></div>');
-    var inputTextContent2 = $('<div class="input-form order-select disable-searchIcon"></div>');
-    var costDeptSelected = $('<div class="selected-order"></div>');
-    var inputBox2 = $('<input type="text" placeholder="Plant를 입력해 주세요." max-length="50" id="costdept-name" disabled/>');
-    
+    var inputTextContent2 = $('<div class="input-form order-select searchIcon"></div>');
+    var plantSelected = $('<div class="selected-order"></div>');
+    var inputBox2 = $('<input type="text" placeholder="Plant를 입력해 주세요." max-length="50" id="plant-name" autocomplete="off"/>');
+    var plantListCont = $('<div class="order-list"></div>');
 
-    inputTextContent2.append(costDeptSelected);
+    inputTextContent2.append(plantSelected);
     inputTextContent2.append(inputBox2);
-    //inputTextContent2.append(costDeptListCont);
+    inputTextContent2.append(plantListCont);
     
     var orderUl2 = $('<ul></ul>');
+    
+    inputBox2.on('keyup', function(e) {        
+
+        var inval = inputBox2.val();
+        console.log('key : '+inval);
+        
+        if(e.keyCode == 13) {
+            
+            if(inval.length < 2) {
+                showSmallDialog("Plant ID 검색은 2글자 이상 입력해야 합니다.");
+                return;
+            }            
+            
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            inputTextContent2.addClass('focus');
+                
+            plantListCont.addClass('show');
+            orderUl2.empty();
+            
+            //LoadingWithMask(); 
+
+            var deptCode = ($('#department_code').val() == null)? '':$('#department_code').val();
+            //console.log('deptCode : '+deptCode);
+            
+            var requestParam = {
+                query: {
+                  "event": "reqItemsPlantSearchEvent"
+                },
+                payload: {
+                    BNAME: chatui.getSetting("userId"), 
+                    ZORGID: deptCode, 
+                    WERKS: inval
+                }
+              };
+
+              sendChatApi(requestParam, null, function(payload){
+                //console.log('payload > ', payload);
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                
+                if(result == null) {
+                  var orderLi2 = $('<li class="no-res">Plant 정보가 없습니다.</li>');
+                  orderUl2.append(orderLi2);
+                  plantListCont.append(orderUl2);
+                  
+                }
+                
+                plantList = result.resultList;
+                
+                if(plantList.length == 0) {
+                  var orderLi2 = $('<li class="no-res">Plant 정보가 없습니다.</li>');
+                  orderUl2.append(orderLi2);
+                  plantListCont.append(orderUl2);
+                } else {
+                  plantList.map(plant => {
+                      
+                    var orderLi2 = $(
+                        '<li>'
+                            +'<p>['+plant.WERKS+'] '+ plant.NAME1 // + '()' 
+                            +'</p>'
+                        +'</li>'
+                    );
+                    
+                    // Cost AU 목록 리스트 클릭
+                    orderLi2.on('click', function() {
+                        
+                        var plantInfo = $(
+                            '<div class="data-wrap">'
+                                 +'<p>['+plant.WERKS+']' + plant.NAME1 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ plant.WERKS +'" id="plant_code"/>'
+                              + '<input type="hidden" value="'+ plant.NAME1 +'" id="plant_name"/>'
+                            +'</div>'
+                        );
+                        
+                        plantSelected.css('width', '100%');        // 0717 추가 
+                        plantSelected.append(plantInfo);
+                        
+                        // [퍼블 수정 및 추가]
+                        var targetHeight = plantSelected.height();
+                        inputTextContent2.removeClass('focus');
+                        console.log(targetHeight);
+                
+                        plantListCont.removeClass('show');
+                        plantListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+
+                        inputBox2.val('');
+                        scheduleorderWidth(inputTextContent2, plantSelected, inputBox2);
+                        
+                        selectBoxAction(inputBox4, inputTextContent4, accountSelected);
+
+                        nextBtnEvent();  
+                    });
+                    
+                    orderUl2.append(orderLi2);
+                  });
+                  plantListCont.append(orderUl2);
+                }
+                
+                //closeLoadingWithMask();
+
+              });
+
+         }   // end if 
+        //////        
+    });
     
     inputBoxText2.append(inputTextContent2);
     pluginForm.append(inputBoxText2);
@@ -17095,15 +17404,117 @@ function requestItemsInputFirst(requestdata) {
 
     /* ###[ Project ]### */
     var inputBoxText3 = $('<div class="input-box add-order"><label>Project</label></div>');
-    var inputTextContent3 = $('<div class="input-form order-select disable-searchIcon cost_accnt_input"></div>');
-    var costAccountSelected = $('<div class="selected-order cost_accnt_selected"></div>');
-    var inputBox3 = $('<input type="text" placeholder="Project를 입력해 주세요." max-length="50" id="costaccount-name" readonly disabled/>');
+    var inputTextContent3 = $('<div class="input-form order-select searchIcon"></div>');
+    var projectSelected = $('<div class="selected-order"></div>');
+    var inputBox3 = $('<input type="text" placeholder="Project를 입력해 주세요." max-length="50" id="project-name" autocomplete="off" />');
+    var projectListCont = $('<div class="order-list"></div>');
     
-    inputTextContent3.append(costAccountSelected);
+    inputTextContent3.append(projectSelected);
     inputTextContent3.append(inputBox3);
-    //inputTextContent3.append(costAccountListCont);
+    inputTextContent3.append(projectListCont);
     
-    var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
+    var orderUl3 = $('<ul></ul>');
+
+    inputBox3.on('keyup', function(e) {        
+
+        var inval = inputBox3.val();
+        console.log('key : '+inval);
+        
+        if(e.keyCode == 13) {
+            
+            if(inval.length < 2) {
+                showSmallDialog("Project 검색은 2글자 이상 입력해야 합니다.");
+                return;
+            }            
+            
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            inputTextContent3.addClass('focus');
+                
+            projectListCont.addClass('show');
+            orderUl3.empty();
+            
+            //LoadingWithMask(); 
+
+            var requestParam = {
+                query: {
+                  "event": "reqItemsProjectSearchEvent"
+                },
+                payload: {
+                    BNAME: chatui.getSetting("userId"), 
+                    POST1: inval
+                }
+              };
+
+              sendChatApi(requestParam, null, function(payload){
+                //console.log('payload > ', payload);
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                
+                if(result == null) {
+                  var orderLi3 = $('<li class="no-res">Project 정보가 없습니다.</li>');
+                  orderUl3.append(orderLi3);
+                  projectListCont.append(orderUl3);
+                }
+                
+                projectList = result.resultList;
+                
+                if(projectList.length == 0) {
+                  var orderLi3 = $('<li class="no-res">Project 정보가 없습니다.</li>');
+                  orderUl3.append(orderLi3);
+                  projectListCont.append(orderUl3);
+                } else {
+                  projectList.map(project => {
+                      
+                    var orderLi3 = $(
+                        '<li>'
+                            +'<p>['+project.POSID+'] '+ project.POST1 // + '()' 
+                            +'</p>'
+                        +'</li>'
+                    );
+                    
+                    // Cost AU 목록 리스트 클릭
+                    orderLi3.on('click', function() {
+                        
+                        var projectInfo = $(
+                            '<div class="data-wrap">'
+                                 +'<p>['+project.POSID+']' + project.POST1 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ project.POSID +'" id="project_code"/>'
+                              + '<input type="hidden" value="'+ project.POST1 +'" id="project_name"/>'
+                            +'</div>'
+                        );
+                        
+                        projectSelected.css('width', '100%');        // 0717 추가 
+                        projectSelected.append(projectInfo);
+                        
+                        // [퍼블 수정 및 추가]
+                        var targetHeight = projectSelected.height();
+                        inputTextContent3.removeClass('focus');
+                        console.log(targetHeight);
+                
+                        projectListCont.removeClass('show');
+                        projectListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+
+                        inputBox3.val('');
+                        scheduleorderWidth(inputTextContent3, projectSelected, inputBox3);
+                        
+                    });
+                    
+                    orderUl3.append(orderLi3);
+                  });
+                  projectListCont.append(orderUl3);
+                }
+                
+                //closeLoadingWithMask();
+
+              });
+
+         }   // end if 
+        //////        
+    });
     
     inputBoxText3.append(inputTextContent3);
     
@@ -17114,55 +17525,334 @@ function requestItemsInputFirst(requestdata) {
 
     /* ###[ 계정 ]### */
     var inputBoxText4 = $('<div class="input-box add-order"><label>계정<b>*</b></label></div>');
-    var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon cost_accnt_input"></div>');
-    var accountSelected = $('<div class="selected-order cost_accnt_selected"></div>');
-    var inputBox4 = $('<input type="text" placeholder="계정을 입력해 주세요." max-length="50" id="costaccount-name" readonly disabled/>');
+    var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon"></div>');
+    var accountSelected = $('<div class="selected-order"></div>');
+    var inputBox4 = $('<input type="text" placeholder="계정을 입력해 주세요." max-length="50" id="account-name" autocomplete="off" readonly disabled/>');
+    var accountListCont = $('<div class="order-list"></div>');
+    
+    var accountListTitle = $('<span>계정 목록</span>');
+    accountListCont.append(accountListTitle);
     
     inputTextContent4.append(accountSelected);
     inputTextContent4.append(inputBox4);
-    //inputTextContent3.append(costAccountListCont);
+    inputTextContent4.append(accountListCont);
     
-    var orderUl4 = $('<ul class="cost_accnt_ul"></ul>');
+    var orderUl4 = $('<ul></ul>');
     
+    inputBox4.on('click', function(e) {        
+
+        // [퍼블 수정 및 추가] - order-select 스타일 변경
+        inputTextContent4.addClass('focus');
+                
+        // 목록을 위로 펼치기 위해서 스타일 변경.         
+        accountListCont.css('top', 'auto').css('bottom', 'calc(100% + 2px)');       
+        
+        accountListCont.addClass('show');
+        orderUl4.empty();
+            
+        if(isNull($('#department_code').val())) {
+            
+            setTimeout(function() {
+                showSmallDialog('Department를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+            }, 100);
+            
+            return;
+        }
+        if(isNull($('#plant_code').val())) {
+            
+            setTimeout(function() {
+                showSmallDialog('Plant를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+            }, 100);
+            
+            return;
+        }
+
+        LoadingWithMask(); 
+        var requestParam = {
+            query: {
+              "event": "reqItemsAccountSearchEvent"
+            },
+            payload: {
+                BNAME: chatui.getSetting("userId"), 
+                ZORGID: $('#department_code').val(), 
+                WERKS: $('#plant_code').val()
+            }
+          };
+
+          sendChatApi(requestParam, null, function(payload){
+                //console.log('payload > ', payload);
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                
+                if(result == null) {
+                  var orderLi4 = $('<li class="no-res">계정 정보가 없습니다.</li>');
+                  orderUl4.append(orderLi4);
+                  accountListCont.append(orderUl4);
+                }
+                
+                accountList = result.resultList;
+                
+                if(accountList.length == 0) {
+                  var orderLi4 = $('<li class="no-res">계정 정보가 없습니다.</li>');
+                  orderUl4.append(orderLi4);
+                  accountListCont.append(orderUl4);
+                } else {
+                  accountList.map(account => {
+                      
+                    var orderLi4 = $(
+                        '<li>'
+                            +'<p>['+account.ZCLSCODE+'] '+ account.ZCLCDTEXT // + '()' 
+                            +'</p>'
+                        +'</li>'
+                    );
+                    
+                    // 목록 리스트 클릭
+                    orderLi4.on('click', function() {
+                        
+                        var accountInfo = $(
+                            '<div class="data-wrap">'
+                                 +'<p>['+account.ZCLSCODE+']' + account.ZCLCDTEXT 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ account.ZCLSCODE +'" id="account_code"/>'
+                              + '<input type="hidden" value="'+ account.ZCLCDTEXT +'" id="account_name"/>'
+                            +'</div>'
+                        );
+                        
+                        accountSelected.css('width', '100%');        // 0717 추가 
+                        accountSelected.append(accountInfo);
+                        
+                        // [퍼블 수정 및 추가]
+                        var targetHeight = accountSelected.height();
+                        inputTextContent4.removeClass('focus');
+                        console.log(targetHeight);
+                
+                        accountListCont.removeClass('show');
+                        accountListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+
+                        inputBox4.val('');
+                        scheduleorderWidth(inputTextContent4, accountSelected, inputBox4);
+
+                        nextBtnEvent();                        
+                    });
+                    
+                    orderUl4.append(orderLi4);
+                  });
+                  accountListCont.append(orderUl4);
+                }
+                
+                closeLoadingWithMask();
+
+              });
+
+        //////        
+    });
+
     inputBoxText4.append(inputTextContent4);
     pluginForm.append(inputBoxText4);
     
+    function nextBtnEvent() {
+        var deptval = departmentSelected.find('.data-wrap').text();
+        var plantval = plantSelected.find('.data-wrap').text();
+        var accountval = accountSelected.find('.data-wrap').text();
+
+        if (deptval && plantval && accountval) {
+            nextBtn.find('button').attr('disabled', false);
+        }
+        else{
+            nextBtn.find('button').attr('disabled', true);
+        }
+        
+    };
+    
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>')
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
         
+        let department_code = $('#department_code').val();
+        let department_name = $('#department_name').val();
 
-        requestdata.step = 2;        
+        let plant_code = $('#plant_code').val();
+        let plant_name = $('#plant_name').val();
 
-        pluginForm.removeClass('show');
-        pluginForm.remove();
+        let project_code = $('#project_code').val();
+        let project_name = $('#project_name').val();
+
+        let account_code = $('#account_code').val();
+        let account_name = $('#account_name').val();
+
+        // 물품 청구 예산 조회.        
+        var requestParam = {
+            query: {
+                "event": "reqItemsBudgetInquiryEvent"
+            },
+            payload: {
+                BNAME: chatui.getSetting("userId"), 
+                ZORGID: department_code, 
+                POSID: (project_code == null)? '':project_code, 
+                ZCLSCODE: account_code
+            }
+        };        
+            
+        console.log('requestParam > ', requestParam);
+            
+        LoadingWithMask(); 
         
-        requestItemsInputSecond(requestdata);
-        $('.plugin-contents').append(requestItemsInputForm);
+        sendChatApi(requestParam, userId, function(payload) {
+            console.log('물품 청구 예산 조회 결과 : ', payload);
+            
+            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                var budgetInfo = result.resultList;
+                
+                if(budgetInfo.length == 0) {
+                      console.log('예산 결과 : 0건');
+                      
+                } else {
+                    console.log('예산  조회 완료 : ', budgetInfo);
+                    
+                    requestdata.valid_budget_amount = budgetInfo[0].ZREQUEST_BDJ_D;
+                    
+                    requestdata.step = 2;
 
+                    requestdata.department_code = department_code;
+                    requestdata.department_name = department_name;
+            
+                    requestdata.plant_code = plant_code;
+                    requestdata.plant_name = plant_name;
+            
+                    requestdata.project_code = project_code;
+                    requestdata.project_name = project_name;
+            
+                    requestdata.account_code = account_code;
+                    requestdata.account_name = account_name;
+            
+                    pluginForm.removeClass('show');
+                    pluginForm.remove();
+                    
+                    requestItemsInputSecond(requestdata);
+                    $('.plugin-contents').append(requestItemsInputForm);
+
+                }
+                
+                
+            }
+            else {
+                console.log('예산 조회 에러.');
+                
+                setTimeout(function() {
+                    showSmallDialog('물품 청구 예산 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                }, 500);
+                
+            }    
+            
+            closeLoadingWithMask();
+            
+        });
+        
+        
         //console.log('2단계 닫기.');
 
     });
     
-    // back버튼
-/*    pluginHeader.find('.backBtn').off('click').on('click', function() {
+    if (selDeptCode != '') {
+
+        var hiddenInfo = $(
+            '<div class="data-wrap">'
+                 +'<p>['+selDeptCode+']' + selDeptName 
+                 + '</p>'
+                 //+ deleteBtn
+                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                 + '</button>'                 
+                +'<input type="hidden" value="'+ selDeptCode +'" id="department_code"/>'
+                +'<input type="hidden" value="'+ selDeptName +'" id="department_name"/>'
+            +'</div>'
+        );
+                    
+        departmentSelected.empty();
+        departmentSelected.append(hiddenInfo);
+
+        //inputBox4.attr('placeholder', '');  
+        //inputBox4.css('width', '0px');
+        inputBox1.css('display', 'none'); 
         
-        orderdata.step = 1;
-        orderdata.action = 'back';
+    }
 
-        delete orderdata.orderType;
-        delete orderdata.reasonCode;
-        delete orderdata.reasonName;
-        delete orderdata.orderTypeList;
+    if (selPlantCode != '') {
 
-        pluginForm.removeClass('show');
-        pluginForm.remove();
-        anotherAccountOrderFirst(orderdata);
-        $('.plugin-contents').append(anotherAccountOrderForm);
-    });
-*/     
+        var hiddenInfo = $(
+            '<div class="data-wrap">'
+                 +'<p>['+selPlantCode+']' + selPlantName 
+                 + '</p>'
+                 //+ deleteBtn
+                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                 + '</button>'                 
+                +'<input type="hidden" value="'+ selPlantCode +'" id="plant_code"/>'
+                +'<input type="hidden" value="'+ selPlantName +'" id="plant_name"/>'
+            +'</div>'
+        );
+                    
+        plantSelected.empty();
+        plantSelected.append(hiddenInfo);
+
+        inputBox2.css('display', 'none'); 
+        
+    }
+
+    if (selProjectCode != '') {
+
+        var hiddenInfo = $(
+            '<div class="data-wrap">'
+                 +'<p>['+selProjectCode+']' + selProjectName 
+                 + '</p>'
+                 //+ deleteBtn
+                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                 + '</button>'                 
+                +'<input type="hidden" value="'+ selProjectCode +'" id="project_code"/>'
+                +'<input type="hidden" value="'+ selProjectName +'" id="project_name"/>'
+            +'</div>'
+        );
+                    
+        projectSelected.empty();
+        projectSelected.append(hiddenInfo);
+
+        inputBox3.css('display', 'none'); 
+        
+    }
+
+    if (selAccountCode != '') {
+
+        var hiddenInfo = $(
+            '<div class="data-wrap">'
+                 +'<p>['+selAccountCode+']' + selAccountName 
+                 + '</p>'
+                 //+ deleteBtn
+                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                 + '</button>'                 
+                +'<input type="hidden" value="'+ selAccountCode +'" id="account_code"/>'
+                +'<input type="hidden" value="'+ selAccountName +'" id="account_name"/>'
+            +'</div>'
+        );
+                    
+        accountSelected.empty();
+        accountSelected.append(hiddenInfo);
+
+        inputBox4.css('display', 'none'); 
+        
+    }
+
+    selectBoxAction(inputBox4, inputTextContent4, accountSelected);
+    nextBtnEvent();
+    
     /* #########[ popup_content_form_end ]######### */
     requestItemsInputForm = pluginForm;
     return pluginForm;
@@ -17173,6 +17863,11 @@ function requestItemsInputSecond(requestdata) {
     console.log('2단계 requestdata  : ', requestdata);
 
     var itemCnt = (requestdata.itemCnt == null)? '1':requestdata.itemCnt;
+    
+    var budgetAmount = (requestdata.valid_budget_amount == null)? '0':requestdata.valid_budget_amount;
+
+    var selPlantCode = (requestdata.plant_code == null)? '':requestdata.plant_code;
+    var selPlantName = (requestdata.plant_name == null)? '':requestdata.plant_name;
 
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
@@ -17192,7 +17887,7 @@ function requestItemsInputSecond(requestdata) {
     
     var inputBoxTopList = $('<h3 class="balance-box"></h3>');
     var inputBoxTopTitle = $('<span>Department 예산 잔액</span>');
-    var inputBoxTopContent = $('<span class="balance">1,000,000,000원</span>');
+    var inputBoxTopContent = $('<span class="balance">'+formatAmount(budgetAmount)+'원</span>');          // 
     inputBoxTopList.append(inputBoxTopTitle);
     inputBoxTopList.append(inputBoxTopContent);
     //inputBoxTopList.append(divderLine);
@@ -17307,7 +18002,7 @@ function requestItemsInputSecond(requestdata) {
         tabContent1.append(buttonBox);
 
         var productAmount  = 5000000;
-        var amountBox = $('<div class="amount-box" style="display:none;"></div>');
+        var amountBox = $('<div class="amount-box"></div>');
         var amountItem = $(
             '<div class="amount-item item">'
                 +'<h4>' + '<span class="prod_name">물품'+tabNo + '</span> Amount</h4>'
@@ -17367,7 +18062,7 @@ function requestItemsInputSecond(requestdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
 
 
@@ -17395,35 +18090,82 @@ function requestItemsInputSecond(requestdata) {
         //var inputObj = find('input')
     }
     
+    function nextBtnEvent() {
+        var tabContents = pluginForm.find('.tab-content');
+
+        nextBtn.find('button').attr('disabled', false);
+        
+        for ( let i = 0; i <= (tabContents.length)-1; i++ ) {
+            let tabContent = tabContents[i];
+            if ($(tabContent).find('.amount-box').hasClass('show')) {
+                console.log(i+' : show. ');
+            }
+            else{
+                nextBtn.find('button').attr('disabled', true);
+                console.log(i+' : hide. ');
+            }
+        }
+
+    }
+    
     // 물품 입력 버튼 클릭시. 
     $(document).on('click','.form-second .tab-content.show .btn-input', function(e) {
     //pluginForm.find('.tab-content.show').find('.btn-input').on('click', function(e){
         //console.log('input ...', $(this).parents().find('.amount-list'));
         
+        var inputBtn = $(this);
         //itemAmountCalculate(this);
         
-        var unit = 5000000;                // 나중에 api로 단가를 가지고 와야 함. 
-        var tab_content = $(this).parents().find('.tab-content.show');   
-        var amount_box = tab_content.find('.amount-box');   // 물품금액 list
-        var item_qty =  tab_content.find('#item_qty').val();        // 입력한 물품 수량.
-        
-        //var amount_label = $(this).text().replace('입력', 'Amount');    
-        var amount_value = item_qty*unit;
-        var amount_formula = '('+ unit.toLocaleString() + '*' + item_qty.toLocaleString() +')';
-        //console.log('button text : '+$(this).text());
-        
-        //amount_list.find('.item').find('.label > b').text(amount_label);                    // 물품 Amount label
-        amount_box.find('.item').find('.amount-value').text(amount_value.toLocaleString()+'원');   // 물품 Amount 계산 
-        amount_box.find('.item').find('.amount-formula').text(amount_formula);
+        // 물품 청구 품목 조회.        
+        var requestParam = {
+            query: {
+              "event": "reqItemsMeterialInquiryEvent"
+            },
+            payload: {
+                BNAME: chatui.getSetting("userId"), 
+                WERKS: selPlantCode, 
+                MATNR: $('#item_id').val() 
+            }
+          };
 
-        if(itemCnt < maxItemCount) { 
-            $(this).parents().find('.tabBtn-add').attr('disabled', false);                 // tab 추가 버튼 활성화.
-        }
-        amount_box.css('display', 'block');                                                   // 물품금액 list 활성화.
-        $(this).attr('disabled', true);                                                 // 물품 입력 버튼 disabled.
-
-        // tab 조회 기능 확인.    
-        tabClick(true);
+        console.log('requestParam > ', requestParam);
+            
+        LoadingWithMask(); 
+        
+        sendChatApi(requestParam, userId, function(payload) {
+            console.log('물품 청구 품목조회 결과 : ', payload);
+            
+            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                var meterialInfo = result.resultList;
+                
+                if(meterialInfo.length == 0) {
+                      console.log('품목 결과 : 0건');
+                      
+                } else {
+                    console.log('품목  조회 완료 : ', meterialInfo);
+                    
+                    var itemUnit = meterialInfo[0].ZREQUEST_PR_D;
+                    
+                    itemAmountCalculate(itemUnit, inputBtn);
+                    nextBtnEvent();
+                }
+            }
+            else {
+                console.log('품목 조회 에러.');
+                
+                setTimeout(function() {
+                    showSmallDialog('품목 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                }, 500);
+                
+            }    
+            
+            closeLoadingWithMask();
+            
+        });
+        
+        
     });
     
     // 물품 삭제 버튼 클릭시. 
@@ -17464,17 +18206,36 @@ function requestItemsInputSecond(requestdata) {
             }
         }        
         
+        items = $('.tabBtn-box').find('.tabBtn');
+        contents = $('.tab-contents').find('.tab-content');
+
+        //console.log('items length : '+items.length);
+        var isMove = isTabMoveBtn();
+        var nextBtn = $('.tabBtn-wrap').find('.tabBtn-move-next');
+        var prevBtn = $('.tabBtn-wrap').find('.tabBtn-move-prev');
+        console.log('prevBtn', prevBtn);
+
+        if(delItemNo == 1) {
+            tabBtnNext(nextBtn, isMove);
+        }
+        else{
+            tabBtnPrev(prevBtn, isMove);
+        }
+
         // 탭삭제 
         $(delTab).remove();
         
         // content 삭제 
         $(delContent).remove();
+
+        totalAmountCalculate();
+
+        afterTabDelete();
         
-        console.log('items length : '+items.length);
-        //
-        actItemNo = (delItemNo == 1)? 1:delItemNo-1;
-        $(items[actItemNo-1]).addClass('active');
-        $(contents[actItemNo-1]).addClass('show');
+        //actItemNo = (delItemNo == 1)? 1:delItemNo-1;
+        //console.log('actItemNo : '+actItemNo);
+        //$(items[actItemNo-1]).addClass('active');
+        //$(contents[actItemNo-1]).addClass('show');
         
         itemCnt--;
         
@@ -17485,6 +18246,12 @@ function requestItemsInputSecond(requestdata) {
 
         // 삭제 버튼 able/disable 
 
+        //showTabMoveBtn();
+        if(itemCnt == 1) {
+            $('.btn-del').attr('disabled', true);              // 물품 삭제 버튼 disable.
+        }
+        
+        nextBtnEvent();
     });
     
     // input
@@ -17501,6 +18268,10 @@ function requestItemsInputSecond(requestdata) {
     //pluginForm.find('.add-img').on('click', function(e){
         console.log('clcik.'+itemCnt);
         
+        // 마지막 탭을 선택한 상태가 아닌 경우를 대비해서. 
+        $(this).parent().find('.tabBtn').removeClass('active');
+        $(this).parent().find('.tabBtn').last().addClass('active');
+
         itemCnt = tabAdd();
         
         tabContentAdd(tabContentList);
@@ -17512,27 +18283,206 @@ function requestItemsInputSecond(requestdata) {
         $('.btn-del').attr('disabled', false);              // 물품 삭제 버튼 able.
 
         //$(this).find('.add-img').unwrap();
-        tabClick(false);         // 다른 탭 링크 삭제.
+        
+        // 너비 계산해서 보여 주기 추가해야 함. 
+        var isMove = isTabMoveBtn();
+        var nextBtn = $(this).parents('.tabBtn-wrap').find('.tabBtn-move-next');
+        console.log('nextBtn', nextBtn);
+        if(nextBtn.length > 0) {
+            tabBtnNext(nextBtn, isMove);
+        }
+
+        //tabClick(false);         // 다른 탭 링크 삭제.
         inputBtnEvent();
-         
+        nextBtnEvent();
     });
     
     // 탭 클릭시. 
     $(document).on('click','.form-second .tabBtn', function(e) {    
     //pluginForm.find('.tab-item > a').on('click', function(e){
+        var showContent = $('.tab-content.show');
+        //console.log('amont box : '+showContent.find('.amount-box').hasClass('show'));
+        if (showContent.find('.amount-box').hasClass('show') == false) {
+            return;
+        }
         let tab_no = $(this).find('#item_no').val();
         console.log('tab click..'+tab_no);
         
+        var tabBtnBox = $(this).parent();     
+        tabBtnBox.find('.active').removeClass('active');
+        $(this).addClass('active').focus();
+        
+        console.log('prev : '+$(this).prev().hasClass('tabBtn'));
+        console.log('next : '+$(this).next().hasClass('tabBtn'));
+        
         viewItemData(tab_no);
-        tabClick(true);
+        //tabClick(true);
     });
     
-    tabClick(true);  
-    inputBtnEvent();
+    // 이전 탭
+    tabMoveBtnBox.find('.tabBtn-move-prev').on('click', function() {
+        var showContent = $('.tab-content.show');
+        //console.log('amont box : '+showContent.find('.amount-box').hasClass('show'));
+        if (showContent.find('.amount-box').hasClass('show')) {
+            tabBtnPrev($(this), true);
+        } else {
+            setTimeout(function() {
+                showSmallDialog('‘' + showContent.find('.btn-input').text() + '’을 먼저 누르세요.'); 
+            },100);
+        }
+    });
+    
+    // 다음 탭
+    tabMoveBtnBox.find('.tabBtn-move-next').on('click', function() {
+        var showContent = $('.tab-content.show');
+        //console.log('amont box : '+showContent.find('.amount-box').hasClass('show'));
+        if (showContent.find('.amount-box').hasClass('show')) {
+            tabBtnNext($(this), true);
+        } else {
+            setTimeout(function() {
+                showSmallDialog('‘' + showContent.find('.btn-input').text() + '’을 먼저 누르세요.'); 
+            },100);
+        }
+    });
+    
 
+    //tabClick(true);  
+    inputBtnEvent();
+    nextBtnEvent();
     
     /* #########[ popup_content_form_end ]######### */
-    function itemAmountCalculate(tabObj) {
+    function afterTabDelete() {
+        // tab 이동 버튼 제어. 
+        var tabBtnBox = pluginForm.find('.tabBtn-box');
+        var tabMoveBtnBox = pluginForm.find('.tabBtn-wrap').find('.tabBtn-move');
+        var isMove = isTabMoveBtn();
+
+        if(isMove == true && tabBtnBox.find('.active').prev().hasClass('tabBtn') == true) {
+            console.log('prev');
+            tabMoveBtnBox.find('.tabBtn-move-prev').attr('disabled', false);
+        }
+        else {
+            tabMoveBtnBox.find('.tabBtn-move-prev').attr('disabled', true);
+            
+        }
+        if(isMove == true && tabBtnBox.find('.active').next().hasClass('tabBtn') == true) {
+            console.log('next');
+            tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled', false);
+        }
+        else{
+            tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled', true);
+        }
+        
+    }
+    
+    function tabBtnPrev(target, isShow) {
+        var tabBtnBox = target.parents('.tabBtn-wrap').find('.tabBtn-box');
+        var activeBtnNum = 0;
+        if(isShow)  target.next().attr('disabled', false);
+        
+        if (tabBtnBox.find('.active').prev().hasClass('tabBtn')) {
+            tabBtnBox.find('.active').removeClass('active').prev().addClass('active').focus();
+            activeBtnNum = activeBtnNum + tabBtnBox.find('.tabBtn').index($('.active'));
+            let scrollMove = activeBtnNum * tabBtnBox.find('.tabBtn').width();
+            tabBtnBox.scrollLeft(scrollMove);
+            if (tabBtnBox.find('.active').prev().hasClass('tabBtn') == false) {
+                target.attr('disabled', true);
+            }
+            console.log('activeBtnNum : '+activeBtnNum);
+            viewItemData(activeBtnNum+1);
+        }
+    };
+    
+    function tabBtnNext(target, isShow) {
+        var tabBtnBox = target.parents('.tabBtn-wrap').find('.tabBtn-box');
+        var activeBtnNum = 0;
+        if(isShow)  target.prev().attr('disabled', false);
+        
+        if (tabBtnBox.find('.active').next().hasClass('tabBtn')) {
+            tabBtnBox.find('.active').removeClass('active').next().addClass('active').focus();
+            activeBtnNum = activeBtnNum + tabBtnBox.find('.tabBtn').index($('.active'));
+            let scrollMove = activeBtnNum * tabBtnBox.find('.tabBtn').width();
+            tabBtnBox.scrollLeft(scrollMove);
+            if (tabBtnBox.find('.active').next().hasClass('tabBtn') == false) {
+                target.attr('disabled', true);
+            }
+            console.log('activeBtnNum : '+activeBtnNum);
+            viewItemData(activeBtnNum+1);
+            
+        }
+    }
+    
+    function itemAmountCalculate(itemUnit, inputBtn) {
+
+        var unit = Number(itemUnit);                // 나중에 api로 단가를 가지고 와야 함. 
+        var tab_content = inputBtn.parents().find('.tab-content.show');   
+        var amount_box = tab_content.find('.amount-box');   // 물품금액 list
+        var item_qty =  Number(tab_content.find('#item_qty').val());        // 입력한 물품 수량.
+        
+        console.log('tab_content : ', tab_content);
+        
+        //var amount_label = $(this).text().replace('입력', 'Amount');    
+        var amount_value = item_qty*unit;
+        var amount_formula = '('+ unit.toLocaleString() + '*' + item_qty.toLocaleString() +')';
+
+        //amount_list.find('.item').find('.label > b').text(amount_label);                    // 물품 Amount label
+        amount_box.find('.item').find('.amount-value').text(amount_value.toLocaleString()+'원');   // 물품 Amount 계산 
+        amount_box.find('.item').find('.amount-formula').text(amount_formula.toLocaleString());
+
+        totalAmountCalculate();
+
+        if(itemCnt < maxItemCount) { 
+            inputBtn.parents().find('.tabBtn-add').attr('disabled', false);              // tab 추가 버튼 활성화.
+        }
+        amount_box.addClass('show'); //amount_box.css('display', 'block');              // 물품금액 list 활성화.
+        inputBtn.attr('disabled', true);                                                 // 물품 입력 버튼 disabled.
+
+        // tab 조회 기능 확인.    
+        //tabClick(true);
+    }
+    
+    function totalAmountCalculate() {
+        var amountList = $('.tab-content').find('.amount-box');
+        
+        var totalAmount = 0;
+        for(var a=0; a<amountList.length; a++) {
+            let amountValue = $(amountList[a]).find('.amount-item.item').find('.amount-value').text();
+            
+            totalAmount = totalAmount + toNumberAmount(amountValue);
+            console.log('amount : '+totalAmount);
+        }
+        
+        let totalAmountText = Number(totalAmount).toLocaleString()+'원';
+        amountList.find('.amount-item.total').find('.amount-value').text(totalAmountText);
+    }
+    
+    function toNumberAmount(amt) {
+        let replaceAmt = amt.replace(/,/g,'').replace('원', '');
+        
+        return Number(replaceAmt);
+    }
+    
+    // 추가된 탭의 크기에 따라서 move 버튼 보여 줄지 확인 
+    function isTabMoveBtn() {
+        var tabMoveBtnBox = pluginForm.find('.tabBtn-wrap').find('.tabBtn-move');
+        var isMove = false;
+        
+        var tabBtnBox = pluginForm.find('.tabBtn-box');
+        var items = tabBtnBox.find('.tabBtn');
+        var addBtn = tabBtnBox.find('.tabBtn-add');
+        let boxWidth = tabBtnBox.outerWidth();
+        let btnWidth = 0; //addBtn.outerWidth();
+        
+        console.log('box width : '+boxWidth);
+        
+        btnWidth = $(items[0]).outerWidth() * (items.length+1) ;
+        console.log('btnWidth : '+btnWidth);
+        
+        if(btnWidth > boxWidth) {
+            isMove = true;            
+        }
+        
+        return isMove;
     }
     
     function tabClick(istabLink) {
@@ -17573,11 +18523,11 @@ function requestItemsInputSecond(requestdata) {
         for(var t=0; t<itemCnt; t++) {
             let item = items[t];
             
-            $(item).removeClass('active');
+            //$(item).removeClass('active');
         }
         
         let tabItemHidden = $('<input type="hidden" value="'+addItemCnt+'" id="item_no" />');
-        let tabItemButton = $('<button class="tabBtn active" type="button"><span class="prod_name">물품'+addItemCnt+'</span></button>');
+        let tabItemButton = $('<button class="tabBtn" type="button"><span class="prod_name">물품'+addItemCnt+'</span></button>');
         
         tabItemButton.append(tabItemHidden);
         
@@ -17599,10 +18549,10 @@ function requestItemsInputSecond(requestdata) {
         for(var t=0; t<contentCnt; t++) {
             let content = contents[t];
             
-            $(content).removeClass('show');
+            //$(content).removeClass('show');
         }        
         
-        var tabContent = $('<div class="tab-content show"></div>');
+        var tabContent = $('<div class="tab-content"></div>');
         
         var itemIDText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> ID <b>*</b></label></div>');
         var itemIDBox = $('<div class="input-form"></div>');
@@ -17644,7 +18594,7 @@ function requestItemsInputSecond(requestdata) {
         tabContent.append(buttonBox);
         
         var productAmount  = 5000000;
-        var amountBox = $('<div class="amount-box" style="display:none;"></div>');
+        var amountBox = $('<div class="amount-box"></div>');
         var amountItem = $(
             '<div class="amount-item item">'
                 +'<h4>' + '<span class="prod_name">물품'+addContentCnt + '</span> Amount</h4>'
@@ -17676,7 +18626,7 @@ function requestItemsInputSecond(requestdata) {
     // 클릭한 탭의 내용을 조회하는 합수.
     function viewItemData(tabNo) {
         
-        var items = $('.tabBtn-box').find('.tabBtn');
+/*        var items = $('.tabBtn-box').find('.tabBtn');
         let itemCnt = items.length;
 
         for(var t=0; t<itemCnt; t++) {
@@ -17686,7 +18636,7 @@ function requestItemsInputSecond(requestdata) {
         }
         
         $(items[tabNo-1]).addClass('active');   
-        
+*/        
         ////////////
         var contents = $('.tab-contents').find('.tab-content');
         let contentCnt = contents.length;
@@ -17701,7 +18651,7 @@ function requestItemsInputSecond(requestdata) {
     }
     
     // 탭 클릭 링크를 추가할지 삭제할지 결정하는 함수. 
-    function tabMove(istabLink) {
+    /*function tabMove(istabLink) {
         var items = $('.tab').find('.tab-item');
         let itemCnt = items.length;
         
@@ -17726,7 +18676,23 @@ function requestItemsInputSecond(requestdata) {
             }
         }        
         
-    }
+    }*/ 
+    
+    // back버튼
+    pluginHeader.find('.backBtn').off('click').on('click', function() {
+        
+        requestdata.step = 1;
+        requestdata.action = 'back';
+
+        //delete requestdata.orderType;
+
+        pluginForm.removeClass('show');
+        pluginForm.remove();
+        requestItemsInputFirst(requestdata);
+        $('.plugin-contents').append(requestItemsInputForm);
+    });
+     
+    
     
      requestItemsInputForm = pluginForm;
     return pluginForm;
