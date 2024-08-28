@@ -2791,6 +2791,10 @@ jQuery(document).ready(function(e){
   +     '</div>'
   +   '</div>'
   +   '<div class="faq-body">'
+  +     '<h2>Check out this feature</h2>'
+  +     '<div class="btns">'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">AI Trans</button>'
+  +     '</div>'
   +     '<h2>Main Categories</h2>'
   +     '<div class="btns">'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">EIC</button>'
@@ -6596,7 +6600,7 @@ function makeGptBotModeCard(data) {
   var learingBotText = $('<p>'+data.text+'</p>');
   learningBotCard.append(learingBotText);
   var regBtnWrap = $('<div class="btn"></div>');
-  var regBtn = $('<button type="button" class="btn btn-emphasis add-schedule">GPT 모드</button>');
+  var regBtn = $('<button type="button" class="btn btn-emphasis add-schedule">GPT Mode</button>');
   regBtn.on('click', function() {
     activeGptBot("");
     
