@@ -16820,11 +16820,11 @@ function anotherAccountListViewPopupOpen(data) {
                 var msgSearchResult = '<div class="message simple-text">'
                                  +'<p>'
                                     +'타계정 주문 내역을 조회했어요.<br> '
-                                    +'<small class="note" style="color: #898989; font-size:12px;">나의 주문 건, 부서내 주문 건 조회시 </br>'
+                                    +'<small class="note" style="color: #898989; font-size:12px;">나의 주문 건, 부서 내 주문 건 조회시 </br>'
                                     +'오늘 기준 1개월 이내 주문 건만 조회 가능하며, </br>'
                                     +'주문 발행 일자를 기준으로 최근 20건을 보여 줍니다.</br>'
                                     +'</small></br>'
-                                    +'<small class="note" style="color: #898989; font-size:12px;">※ 오늘 기준 1개월 이내 주문건만  조회합니다 </small>'
+                                    +'<small class="note" style="color: #898989; font-size:12px;">※ 특정 주문 건 조회 시 주문 번호 또는 접수 번호로 조회해 주세요.</br>'
                                  +'</p>'
                                 + '</div>'; 
                 
@@ -17779,26 +17779,29 @@ function addHsCodePopupOpen(data) {
     var addHsCodeForm = $('<form class="form-hsCode"></form>');
     
     /* #########[ popup_content ]######### */
-    /* ###[ 사업부 코두 ]###  */
-    var orgIdInputBox = $(
-        '<div class="input-box">'
-            +'<div class="hsCode-orgId">'
-                +'<label>사업부 코드</label>'
-                //+'<a>사업부 코드 검색하기 ></a>'
-            +'</div>'
-        +'</div>'
+    /* ###[ 사업부 코드 ]###  */
+    var orgIdInputBox = $('<div class="input-box"><label>사업부 코드</label></div>');
+    var orgIdList = $('<div class="orgId-form"></div>');
+
+    var selectedOrg = $('<div class="selected-org fold"></div>');
+    orgIdList.append(selectedOrg);
+    var autocompleteOrg = $('<div class="autocomplete-member"></div>');
+    orgIdList.append(autocompleteOrg);
+
+    var orgIdInputForm = $('<div class="input-form"></div>');
+    var orgIdInput = $('<input type="text" placeholder="사업부 코드나 사업부 명을 검색해 주세요." id="hsCode_orgId" class="search-input"/>');
+    var orgDelButton = $('<span class="input-val-del">'
+        +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+        +'</svg>'
+        +'</span>'
     );
-    var orgIdInputForm = $(
-        '<div class="input-form">'
-            +'<input type="text" placeholder="사업부 코드를 입력해 주세요. (ex : CNZ)" name="hsCode_orgId" id="hsCode_orgId" max-length="358" />'
-            +'<span class="input-val-del">'
-                +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                    +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
-                +'</svg>'
-            +'</span>'
-        +'</div>'
-        +'<small class="hsCode-orgId show">사업부 코드 미입력 시 전체 사업부로 조회됩니다.</small>'
-    );
+    var orgIdSmall = $('<small class="hsCode-orgId show">사업부 코드 미입력 시 전체 사업부로 조회됩니다.</small>');
+    
+    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;"></ul>');
+
+    autocompleteOrg.append(orgUi);
+    
     orgIdInputForm.on('keyup', function(e) {
         var orgIdInput = e.target.value;
         checkHsCodeRequire(); //
@@ -17809,21 +17812,134 @@ function addHsCodePopupOpen(data) {
             $(this).find('.input-val-del').removeClass('show');
         };
     });
-    
-    orgIdInputForm.on('blur keyup', function(e) {
-        orgIdInput = e.target.value;
-        var check = /^[a-zA-Z0-9]*$/;
-        var btnHsCode = $('#btn-hsCode');
-        
-        if(!check.test(orgIdInput)){
-            showSmallDialog("영어,숫자만 입력해주세요.");
-            $('#hsCode_orgId').focus();
+
+    orgIdInput.on('keyup', function(e) {
+        var orgs = [];
+
+        if (window.event.keyCode == 13) {
+            var ul = $(this).closest('.orgId-form').find('ul');
+            ul.empty();
+
+            var inputVal = $(this).val().toUpperCase();
+            var inputLength = inputVal.length;
             
-            btnHsCode.addClass('btn-disabled');
+            if(inputLength > 1){
+                
+                data.orgItems.forEach(function(item){
+                    var org = {};
+        
+                    // 코드, 이름 like
+                    var orgName = item.ORGANIZATION_NAME.substr(0,inputLength).toUpperCase();
+                    var orgCode = item.ORGANIZATION_CODE.substr(0,inputLength);
+                    
+                    if (orgName.indexOf(inputVal) != -1||orgCode.indexOf(inputVal) != -1) {
+                        org.label = "";
+                        org.ATTRIBUTE2 = item.ATTRIBUTE2;
+                        org.ATTRIBUTE4 = item.ATTRIBUTE4;
+                        org.COMPANY_CODE = item.COMPANY_CODE;
+                        org.ORGANIZATION_CODE = item.ORGANIZATION_CODE;
+                        org.ORGANIZATION_NAME = item.ORGANIZATION_NAME;
+                        orgs.push(org);
+                    }
+                });
+
+                if(orgs.length == 0){
+                    var org = {};
+                    org.label = "검색 결과가 없습니다.";
+                    org.ATTRIBUTE2 = "";
+                    org.ATTRIBUTE4 = "";
+                    org.COMPANY_CODE = "";
+                    org.ORGANIZATION_CODE = "";
+                    org.ORGANIZATION_NAME = "";
+                    orgs.push(org);
+                }
+
+                orgs.map(org => {
+                    var li = $('<li class="ui-menu-item"></li>');
+                    var htmlStr = "";
+        
+                    if (org.label == "") {
+                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">'+ org.ORGANIZATION_CODE + ' <span>'+ org.ORGANIZATION_NAME +'</span>';
+                        htmlStr += '<input type="hidden" class="org-atr2" value="' + org.ATTRIBUTE2 + '"/>';
+                        htmlStr += '<input type="hidden" class="org-atr4" value="' + org.ATTRIBUTE4 + '"/>';
+                        htmlStr += '<input type="hidden" class="org-companyCode" value="' + org.COMPANY_CODE + '"/>';
+                        htmlStr += '<input type="hidden" class="org-orgCode" value="' + org.ORGANIZATION_CODE + '"/>';
+                        htmlStr += '<input type="hidden" class="org-orgName" value="' + org.ORGANIZATION_NAME + '"/>';
+                        htmlStr += '</div>';
+                    }else {
+                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">'+ org.label + '</div>';
+                        htmlStr += '<input type="hidden" class="org-atr2" value=""/>';
+                        htmlStr += '<input type="hidden" class="org-atr4" value=""/>';
+                        htmlStr += '<input type="hidden" class="org-companyCode" value=""/>';
+                        htmlStr += '<input type="hidden" class="org-orgCode" value=""/>';
+                        htmlStr += '<input type="hidden" class="org-orgName" value=""/>';
+                        htmlStr += '</div>';
+                    }
+        
+                    li.append(htmlStr);
+                    orgUi.append(li);
+        
+                    li.on('click', function() {
+                        var orgCode = $(this).find('.org-orgCode').val();
+                        var orgName = $(this).find('.org-orgName').val();
+                        var attr2 = $(this).find('.org-atr2').val();
+                        var attr4 = $(this).find('.org-atr4').val();
+                        var companyCode = $(this).find('.org-companyCode').val();
+                
+                        if(orgCode != ""){
+                            var orgInfo = $('<div class="sel-org-info" style="display: none;">'
+                              + '<input type="hidden" value="'+ attr2 +'" class="sel-org-atr2"/>'
+                              + '<input type="hidden" value="'+ attr4 +'" class="sel-org-atr4"/>'
+                              + '<input type="hidden" value="'+ companyCode +'" class="sel-org-companyCode"/>'
+                              + '<input type="hidden" value="'+ orgCode +'" class="sel-org-Code"/>'
+                              + '<input type="hidden" value="'+ orgName +'" class="sel-org-Name"/>'
+                              +'</div>'
+                            );
+                        
+                            selectedOrg.empty();
+                            selectedOrg.append(orgInfo);
+                            orgIdInput.val(orgCode);
+                        }
+                
+                        orgUi.css('display','none');
+                        
+                    });
+                })
+        
+                if(orgUi.length){
+                    orgUi.css('display','block');
+                }
+            }else{
+                showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
+                $(this).focus();
+            }
+        }
+
+    });
+    
+    $(document).on('click', function(e) {
+        if ($('.orgId-form').has(e.target).length === 0) {
+            orgUi.css('display','none');
+            if(selectedOrg.length == 0){
+                orgIdInput.val('');
+            }else{
+                if(orgIdInput.val()){
+                    var selecteVal = selectedOrg.find('.sel-org-Code').val();
+                    orgIdInput.val(selecteVal);
+                }else{
+                    orgIdInput.val('');
+                    selectedOrg.empty();
+                }
+            }
         }
     });
     
-    orgIdInputBox.append(orgIdInputForm);
+    orgIdInputForm.append(orgIdInput);
+    orgIdInputForm.append(orgDelButton);
+    orgIdList.append(orgIdInputForm);
+    orgIdList.append(orgIdSmall);
+
+    orgIdInputBox.append(orgIdList);
     addHsCodeForm.append(orgIdInputBox);
     
     /* ###[ Part/Model No. ]###  */
@@ -17874,7 +17990,7 @@ function addHsCodePopupOpen(data) {
     
     var selectedMembers = $('<div class="selected-members fold"></div>');
     memberList.append(selectedMembers);
-    var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-2" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
+    var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-4" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
     memberList.append(autocompleteMember);
     
     //var memberInput = $('<input type="text" placeholder="수출국을 영어로 입력해 주세요." id="attendees" class="search-input" />');
@@ -18004,6 +18120,9 @@ function addHsCodePopupOpen(data) {
                 partNoInput = $('#hsCode_partNo').val();
             }else if(inputKind == "attendees"){
                 $(this).closest('.country-form').find('.member-info').empty();
+            }else if(inputKind == "hsCode_orgId"){
+                selectedOrg.empty();
+                orgIdInput.val("");
             }
 
             checkHsCodeRequire();
@@ -18079,10 +18198,10 @@ const setAutocompleteCountry = function(input, items) {
      keyword = countrys;
      
     $(input).autocomplete("option", "source", keyword);
-    $(input).autocomplete("option", "appendTo", $(input).closest(".form-hsCode").find(".autocomplete-member"));
+    $(input).autocomplete("option", "appendTo", $(input).closest(".country-form").find(".autocomplete-member"));
 
   }).autocomplete({
-      appendTo: ".form-hsCode .autocomplete-member",
+      appendTo: ".country-form .autocomplete-member",
       autofocus: true,
       delay: 300,
       source: keyword,
@@ -18091,7 +18210,7 @@ const setAutocompleteCountry = function(input, items) {
         
       },
       open: function(event, ui) {
-          $('.form-hsCode .ui-autocomplete').scrollTop();
+          $('.country-form .ui-autocomplete').scrollTop();
           
       },
       focus: function(event, ui){
@@ -18109,7 +18228,7 @@ const setAutocompleteCountry = function(input, items) {
             return false;
         }
 
-        var $memList = $(this).closest(".form-hsCode").find(".country-form").find(".selected-members");
+        var $memList = $(this).closest(".country-form").find(".selected-members");
         var htmlStr;
 
         $(this).val(ui.item.label);
@@ -18171,12 +18290,20 @@ const setAutocompleteCountry = function(input, items) {
             }
 
             var countryInfo = $(this).closest('.country-form').find('.member-info').find('input');
+            var contryName = $(this).closest('.country-form').find('.member-info').find('.country-name').val();
             
             if(countryInfo.length == 0){
                 $(this).val('');
                 $(this).closest('.input-form').find('.input-val-del').removeClass('show');
             }else{
-                $(this).closest('.input-form').find('.input-val-del').addClass('show');
+                if($(this).val()){
+                    $(this).closest('.input-form').find('.input-val-del').addClass('show');
+                    $(this).val(contryName);
+                }else{
+                    $(this).val('');
+                    $(this).closest('.country-form').find('.member-info').empty()
+                    $(this).closest('.input-form').find('.input-val-del').removeClass('show');
+                }
             }
             
             hsCodeCountryCheck();
@@ -18229,6 +18356,16 @@ function hsCodeCountryCheck() {
   } else {
     $('#attendees').attr('placeholder', '수출국을 영어로 입력해 주세요.');
   }
+}
+
+function hsCodeOrgCheck() {
+    var orgInput = $('#hsCode_orgId');
+  
+    if(orgInput.val() != "") {  
+        orgInput.attr('placeholder', '');
+    } else {
+        orgInput.attr('placeholder', '사업부 코드나 사업부 명을 검색해 주세요.');
+    }
 }
 
 function showHtmlSmallDialog(msg) {
@@ -18480,8 +18617,6 @@ function addHsCodeSeachUserPopupOpen(data) {
         $('.plugin-dim').addClass('show');
         $('#addHsCode').addClass('show');
     }, 100);
-
-    
 }
 
 // HSCode 조회 결과 메세지 (없음)
@@ -18544,10 +18679,8 @@ function hsCodeResultError(data) {
     // simple Text button 추가
     var btnWrap = $('<div class=""btn-wrap"></div>');
     var customBtn1 = $('<div><button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color" data-slot="N"><span>HS Code 다시 물어보기</span></button></div>')
-    //var customBtn2 = $('<div><button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color" data-slot="담당자 문의하기"><span>담당자 문의하기</span></button></div>')
     
     btnWrap.append(customBtn1);
-    //btnWrap.append(customBtn2);
     msgCon.append(btnWrap);
     hsCodeResultError.append(msgCon);
     
@@ -18562,10 +18695,42 @@ function hsCodeResultError(data) {
         var countryNameEn = data.countryNameEn;
         var countryCdTrd = data.countryCdTrd;
         var isoNum = data.isoNum;
+        var orgItems = data.orgItems;
         
         if(orgId != ""){
-            $("#hsCode_orgId").val(orgId);
-
+            var $selectedOrg = $(".orgId-form").find(".selected-org");
+            var htmlStr;
+            
+            var attr2;
+            var attr4;
+            var companyCode;
+            var orgCode;
+            var orgName;
+            
+            orgItems.forEach(function(item){
+                if(item.ORGANIZATION_CODE == orgId){
+                    attr2 = item.ATTRIBUTE2
+                    attr4 = item.ATTRIBUTE4
+                    companyCode = item.COMPANY_CODE
+                    orgCode = item.ORGANIZATION_CODE
+                    orgName = item.ORGANIZATION_NAME
+                    return;
+                }
+            });
+            
+            htmlStr = '<div class="sel-org-info" style="display: none;">'
+                + '<input type="hidden" value="'+ attr2 +'" class="sel-org-atr2"/>'
+                + '<input type="hidden" value="'+ attr4 +'" class="sel-org-atr4"/>'
+                + '<input type="hidden" value="'+ companyCode +'" class="sel-org-companyCode"/>'
+                + '<input type="hidden" value="'+ orgCode +'" class="sel-org-Code"/>'
+                + '<input type="hidden" value="'+ orgName +'" class="sel-org-Name"/>'
+                +'</div>'
+            ;
+                
+            $selectedOrg.empty();
+            $selectedOrg.append(htmlStr);
+            
+            $("#hsCode_orgId").val(orgCode);
             $("#hsCode_orgId").closest('.input-form').find('.input-val-del').addClass('show');
         }
         
@@ -18594,8 +18759,7 @@ function hsCodeResultError(data) {
             $("#attendees").closest('.input-form').find('.input-val-del').addClass('show');
         }
     });
-    
-    
+
     // quickReplies 템플릿
     var quickReplies = $('<div class="custom-quick-reply"></div>');
     var systemBtn = $('<span class="btn-custom-reply">GPT에게 물어보기</span>');
