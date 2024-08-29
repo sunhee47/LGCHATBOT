@@ -14876,7 +14876,7 @@ function anotherAccountOrderSixth(orderdata) {
         LoadingWithMask();
         
         var delivery_type = $('[name="delivery_type"]:checked').val();   
-        var arrival_date = $('.input-schedule-date').val();
+        var arrival_date = $('.arrival-date').val();
         var model_codes = $('#model_codes').val();
         var model_qtys = $('#model_qtys').val();
         var install_type = $('#install_type').val();
@@ -14931,26 +14931,33 @@ function anotherAccountOrderSixth(orderdata) {
                 closeLoadingWithMask();   
             }
             
-            requestDate = result.resultList;
+            apiDate = result.resultList;
             
-            console.log('requestDate > '+requestDate);
+            console.log('apiDate > '+apiDate);
             
-            if(requestDate) {
-                let api_date = moment(requestDate).format('YYYY.MM.DD');
+            if(apiDate) {
+                let api_date = moment(apiDate).format('YYYY.MM.DD');
                 
                 $('.btn-quick-reply').find('button').text(api_date);
                 $('#hidden_date').val(api_date);
-                if(api_date != request_date) {
+                
+                console.log('request_date : '+request_date+', api_date : '+api_date);
+                if(apiDate != request_date) {
                     
                     //console.log('aaaaa'+$('#hidden_date').val());
                     $('.e-msg').text('※ 선택한 날짜는 설치가 불가합니다. 선택한 날짜와 가장 가까운 날짜를 알려드립니다.');
                     $('.btn-quick-reply').css('display', 'block');
                     $('.e-msg').css('display', 'block');
                     
-                    $('.input-schedule-date').css('border-color', '#F94B50');
+                    $('.arrival-date').css('border-color', '#F94B50');
                     $('.btn-next').find('button').attr('disabled', true);
+
                 }
-                
+                else{
+                    $('.btn-next').find('button').attr('disabled', false);
+                }
+
+
             }
             else{
                 $('.e-msg').text('※ 가능한 도착날짜가 없습니다. 확인하세요. ');
@@ -14965,7 +14972,7 @@ function anotherAccountOrderSixth(orderdata) {
         
      
     }
-    
+
 // 타계정 주문 입력 팝업 컨텐츠 7
 function anotherAccountOrderSeventh(orderdata) {
     console.log('orderdata : ', orderdata);    
@@ -14974,13 +14981,16 @@ function anotherAccountOrderSeventh(orderdata) {
     
     var selDeliveryType = (orderdata.delivery_type == null)? 'TL':orderdata.delivery_type;
     var selInstallType = (orderdata.install_type == null)? '':orderdata.install_type;
-    var selArrivalDate = (orderdata.arrival_date == null)? '':orderdata.arrival_date;
+    var selArrivalDate = (orderdata.arrival_date == null)? placeholderToday:orderdata.arrival_date;
     
+    var selApiDate = (orderdata.api_date == null)? '':orderdata.api_date;
+
     var selPostalCode = (orderdata.zipno == null)? '':orderdata.zipno;
     
     var apmsModelList = orderdata.apmsModelList;
     
-    /* 테스트용 
+     //테스트용 
+    /*
     var apmsModelList = [
         {
             "model_code": "A",
@@ -14993,8 +15003,7 @@ function anotherAccountOrderSeventh(orderdata) {
             "model_number": "3"
         }
     ];                     // 
-    */
-    /*
+
     var apmsModelList = [
 			{
 				"model_code": "W10EGN.AKOR",
@@ -15012,7 +15021,7 @@ function anotherAccountOrderSeventh(orderdata) {
 				"model_number": 1
 			}
 		];
-    */
+    */    
     
     var apmsModelStr = '';
     var apmsModelNum = '';
@@ -15111,18 +15120,35 @@ function anotherAccountOrderSeventh(orderdata) {
     dropdownMenuListWrap.append(dropdownListItem);
     dropdownBox.append(dropdownMenuListWrap);
 
-    dropdownBox.append('<input type="hidden" value="" id="install_type"/>');	
+    var hiddenInstallType = $('<input type="hidden" value="" id="install_type"/>');
+    dropdownBox.append(hiddenInstallType);	
 
     /* ###[ 도착 날짜 ]### */
     var inputTimeBox = $('<div class="input-box"><label>도착 날짜<b>*</b></label></div>');
     var dateTimeWrap = $('<div class="schedule-wrap"></div>');
     var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-    var dateStartInput = $('<input type="text" class="input-schedule-date" placeholder="YYYY.MM.DD" onclick="datepicker.open(this, null, function() { checkRequestDate(); })" autocomplete="off"/>');
+    var dateTodayInput = $('<input type="hidden" class="input-schedule-date startdate" placeholder="'+placeholderToday+'" />');
+    var dateStartInput = $('<input type="text" class="input-schedule-date enddate arrival-date" placeholder="'+placeholderToday+'" autocomplete="off"/>');
+    dateTimeStartBox.append(dateTodayInput);
     dateTimeStartBox.append(dateStartInput);
 
-    //dateStartInput.on('change', function() {
-    //    console.log('change');
-    //});
+    dateTodayInput.val(placeholderToday);
+    dateStartInput.on('click', function() {
+        //console.log('click....');
+        
+        var delivery_type = $('[name="delivery_type"]:checked').val();
+        
+        if('TL' == delivery_type) {
+            if(hiddenInstallType.val() == '') {
+                showSmallDialog('설치 유형을 먼저 선택해 주세요. '); 
+                dropdownMainBtn.focus();
+                return;
+            }
+        }
+        
+        //window.datepicker.fulldate('20240831');
+        window.datepicker.open(this, null, function() { checkRequestDate(); });
+    });
 
     /*  #########[ datepicker ]#########  */
     var datepicker = $('<div class="datepicker-chem"></div>');
@@ -15131,8 +15157,11 @@ function anotherAccountOrderSeventh(orderdata) {
     dateTimeWrap.append(dateTimeStartBox);
     inputTimeBox.append(dateTimeWrap);
     
-    var hiddenInput = $('<input type="hidden" value="" id="hidden_date"/>');
+    var hiddenInput = $('<input type="hidden" value="'+selApiDate+'" id="hidden_date"/>');
     inputTimeBox.append(hiddenInput);
+    
+    //hiddenInput.val(selApiDate);
+    
     var titleNote = $('<small class="note e-msg" style="font-size:12px;display:none;">※ 선택한 날짜는 설치가 불가합니다. 선택한 날짜와 가장 가까운 날짜를 알려드립니다.</small>');
     inputTimeBox.append(titleNote);
 
@@ -15151,7 +15180,7 @@ function anotherAccountOrderSeventh(orderdata) {
         $('.btn-quick-reply').css('display', 'none');
         $('.e-msg').css('display', 'none');
                     
-        $('.input-schedule-date').css('border-color', '');
+        $('.arrival-date').css('border-color', '');
         
     });
     pluginForm.append(inputTimeBox);
@@ -15186,6 +15215,7 @@ function anotherAccountOrderSeventh(orderdata) {
             orderdata.delivery_type = $('[name="delivery_type"]:checked').val();   
             orderdata.install_type = $('#install_type').val();
             orderdata.arrival_date = dateStartInput.val();
+            orderdata.api_date = api_date;
             
             delete orderdata.action;    
     
@@ -15218,7 +15248,7 @@ function anotherAccountOrderSeventh(orderdata) {
             //    nextBtn.find('button').attr('disabled', true);
             //}
         }
-        let api_date = $('#hidden_date').val(); //$('.btn-quick-reply').find('button').text();
+        let api_date = hiddenInput.val();   //$('#hidden_date').val(); //$('.btn-quick-reply').find('button').text();
         console.log('api_date : '+api_date);
         
         if(dateStartInput.val() != '') {
@@ -15280,7 +15310,8 @@ function anotherAccountOrderSeventh(orderdata) {
         let targetText = $(target).text();
         
         let install_type = $(target).parents('.dropdown-item').find('.install_type').text();        
-        $('#install_type').val(install_type);
+        //$('#install_type').val(install_type);
+        hiddenInstallType.val(install_type);
         
         dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
         dropmenu.stop().slideUp().removeClass('show');
@@ -15309,13 +15340,13 @@ function anotherAccountOrderSeventh(orderdata) {
         selectedType.trigger('click');
     }
 
-    console.log('action : '+orderdata.action);
-    if(orderdata.action == 'back') {
-        console.log('action : '+orderdata.action);
-        dateStartInput.css('border-color', '#F94B50');
-        titleNote.text('※  도착 날짜를 다시 조회해 주세요.');
-        titleNote.css('display', 'block');
-    }    
+    //console.log('action : '+orderdata.action);
+    //if(orderdata.action == 'back') {
+    //    console.log('action : '+orderdata.action);
+    //    dateStartInput.css('border-color', '#F94B50');
+    //    titleNote.text('※  도착 날짜를 다시 조회해 주세요.');
+    //    titleNote.css('display', 'block');
+    //}    
 
     nextBtnEvent();
     /* #########[ popup_content_form_end ]######### */
