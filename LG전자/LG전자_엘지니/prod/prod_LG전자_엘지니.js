@@ -2277,7 +2277,9 @@ function welcomeAppend(welcomeMessage) {
   //var characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/hello_big.gif" /></div>');
   var welcomeMessage = "";
   if(alarmInfo.openMessage == "Y") {
-     userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, 반가워요!<br />new 엘지니와 대화해 보세요.</h1>');
+     var userTitle = (userInfo.positionNm != null)? userInfo.userKorName + ' ' + userInfo.jobTitle + '/' + userInfo.positionNm : userInfo.userKorName + ' ' + userInfo.jobTitle;
+
+     userName = $('<h1>' + userTitle +'님, <br />오늘도 멋진 하루 보내세요!</h1>');
      //characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/welcome.gif" /></div>');
      
      welcomeMessage = $(
@@ -6422,7 +6424,9 @@ function connectMessenger(userId, targetId){
 	// name
 	var textBox = $('<div class="text-box"></div>');
   var nameWrap = $('<div class="name"></div>');
-  var title = $('<h1>'+ data.userNm + ' ' + data.titleNm + isBirthdayToday(data.birth) + '</h1>');
+  
+  var userTitle = (data.positionNm != '' && data.positionNm != null)?  data.userNm + ' ' + data.titleNm + '/' + data.positionNm : data.userNm + ' ' + data.titleNm;
+  var title = $('<h1>'+ userTitle + isBirthdayToday(data.birth) + '</h1>');
 
   nameWrap.append(title);
   textBox.append(nameWrap);
@@ -6661,6 +6665,8 @@ function makeEmployeeListCard(data,isHistory){
 			var userId = empMail[0];
 			var display = (index > 4)? "none":"flex";
 			
+			var userTitle = (item.positionNm != null)? item.userNm + ' ' + item.titleNm + '/' + item.positionNm : item.userNm + ' ' + item.titleNm;
+			
 			var liHtml = '<li class="list-box" style="display:'+display+'" onclick="intentEvent(this , \''+ type +'\', \''+ userId +'\')">';
 			
 			if(data.group == 'Y'){
@@ -6670,7 +6676,7 @@ function makeEmployeeListCard(data,isHistory){
 				liHtml += 	(item.profilePicture ? '<div class="profile-img">' + `<img src="' + item.profilePicture + '" onerror="this.src='` + pAlternative + `';"></div>` : '<div class="profile-img"><img class="img-circle" src="'+ pAlternative +'"></div>');
 				liHtml += 	'<div class="text-box">';
         liHtml +=	'<div class="name">'
-                    + '<h1>' + item.userNm + ' ' + item.titleNm +'</h1>'
+                    + '<h1>' + userTitle +'</h1>'
                     +'</div">';
 
         liHtml += '</div>';
