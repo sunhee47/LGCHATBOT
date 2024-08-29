@@ -3873,7 +3873,6 @@ const setDatepicker = function() {
       today = new Date(val);
     }
 
-    console.log('val : '+today);
     fullDate = today.getFullYear() +'년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 ' + strWeek[today.getDay()]
     return fullDate;
   }
@@ -3903,7 +3902,6 @@ const setDatepicker = function() {
       }
     }
 
-    console.log('$input : '+$input.val());
     var minDate = '';
 
     if($(btn).hasClass('startdate')) {
@@ -3921,7 +3919,7 @@ const setDatepicker = function() {
         formatDate: "ATOM",
         minDate: minDate,
         dateFormat: "yy.mm.dd",
-        defaultDate: "2024.08.30",
+        defaultDate: $input.val(),
         showOn: "",
         buttonImageOnly: true,
         showMonthAfterYear: true,
@@ -3969,8 +3967,7 @@ const setDatepicker = function() {
     }
 
     if($initEl.find('.selected-date').length == 0) {
-        console.log('val ::: '+$(btn).val());
-      var selectedDate = new Date($(btn).val());
+      var selectedDate = new Date();
       $initEl.find('.dp-header').append('<div class="selected-date">' + moment(selectedDate).format('YYYY.MM.DD') + '</div>');
     }
         
@@ -3996,7 +3993,6 @@ const setDatepicker = function() {
       $(this).addClass("show");
     });
         
-    console.log('children : ',$initEl.find('.dp-header').length);         
     /*
     if($initEl.find('.ui-datepicker').length > 0) {
         $initEl.find('.ui-datepicker').css('height', '593px');
@@ -10534,8 +10530,8 @@ function anotherAccountPopupOpen(orderdata) {
         var anotherForm = anotherAccountOrderEighth(orderdata);
     }
     else{
-        //var anotherForm = anotherAccountOrderFirst(orderdata);
-        var anotherForm = anotherAccountOrderSeventh(orderdata);
+        var anotherForm = anotherAccountOrderFirst(orderdata);
+        //var anotherForm = anotherAccountOrderSeventh(orderdata);
     }
     //var anotherForm = anotherAccountOrderFirst(orderdata);
     pluginContents.append(anotherForm);
@@ -10656,7 +10652,7 @@ function anotherAccountOrderFirst(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-   var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>');
+   var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step1">다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
         
@@ -10804,6 +10800,14 @@ function anotherAccountOrderFirst(orderdata) {
 
     }
     
+    $(document).off('keyup').on('keyup', function(e) {
+            console.log('event.... ');
+        if (e.keyCode == 13) {
+            console.log('form enter key. ');
+            $('#btn_step1').click();
+        }
+    });    
+    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
@@ -10945,11 +10949,9 @@ function anotherAccountOrderSecond(orderdata) {
 
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step2" disabled>다음</button></div>')
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
-        
-        LoadingWithMask(); 
         
         var orderTypeVal = $('#order_type').val();
         var reasonCodeVal = $('#reason_code').val();
@@ -10957,6 +10959,14 @@ function anotherAccountOrderSecond(orderdata) {
 
         console.log('reasonCodeVal : '+reasonCodeVal);
         
+        if(reasonCodeVal == '') {
+            showSmallDialog("상세 주문 목적을 선택하세요. ");
+            dropdownMainBtn.focus();
+            return;
+        }
+        
+        LoadingWithMask(); 
+
         setTimeout(function() {
             orderdata.step = 3;        
             orderdata.orderType = orderTypeVal;
@@ -11072,6 +11082,14 @@ function anotherAccountOrderSecond(orderdata) {
         dropdownMenuListWrap.css('height', listH);
         inputTextContent.find('#order_type_desc').val('['+selOrderType+'] '+selReasonCode);       
     }
+
+    $(document).off('keyup').on('keyup', function(e) {
+        console.log('event.... ');
+        if (e.keyCode == 13) {
+            console.log('step2 ');
+            $('#btn_step2').click();
+        }
+    });    
 
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -11641,6 +11659,8 @@ function anotherAccountOrderThird(orderdata) {
         
     }
 
+    $(document).off('keyup'); 
+    
     nextBtnEvent();
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -14045,8 +14065,6 @@ function anotherAccountOrderSixth(orderdata) {
             
             apiDate = result.resultList;
             
-            apiDate = '20240830';       // 삭제 예정. 
-            
             console.log('apiDate > '+apiDate);
             
             if(apiDate) {
@@ -14101,7 +14119,7 @@ function anotherAccountOrderSeventh(orderdata) {
 
     var selPostalCode = (orderdata.zipno == null)? '':orderdata.zipno;
     
-    //var apmsModelList = orderdata.apmsModelList;
+    var apmsModelList = orderdata.apmsModelList;
     
      //테스트용 
     /*
@@ -14117,14 +14135,13 @@ function anotherAccountOrderSeventh(orderdata) {
             "model_number": "3"
         }
     ];                     // 
-    */
     
     var apmsModelList = [
-	/*		{
+			{
 				"model_code": "W10EGN.AKOR",
 				"model_name": "Clothes Stacked Washer Dryer",
 				"model_number": 1
-			},*/
+			},
 			{
 				"model_code": "FL25EJUE.AKOR",
 				"model_name": "Clothes Stacked Washer Dryer_Washer",
@@ -14136,7 +14153,7 @@ function anotherAccountOrderSeventh(orderdata) {
 				"model_number": 1
 			}
 		];
-    
+    */
     
     var apmsModelStr = '';
     var apmsModelNum = '';
@@ -14304,7 +14321,7 @@ function anotherAccountOrderSeventh(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn btn-next"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn btn-next"><button type="button" class="btn btn-emphasis btn-big" id="btn_step7" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     
     pluginForm.children('.btn').find('button').on('click', function() {
@@ -14759,6 +14776,8 @@ function anotherAccountOrderEighth(orderdata) {
 
             closeLoadingWithMask();
           });
+
+        descendScroll();
 
         //////        
           
@@ -16654,7 +16673,7 @@ function aalvResult(result) {
                             //+'</li>'
                             +'<li>'
                                 +'<h4>주문자</h4>'
-                                +'<span class="list-info-value text">' + result.employee_name + '('+index+')' + '</span>'
+                                +'<span class="list-info-value text">' + result.employee_name  + '</span>'
                             +'</li>'
                             +'<li>'
                                 +'<h4>접수번호</h4>'
@@ -17606,7 +17625,7 @@ function requestItemsInputFirst(requestdata) {
             return;
         }
 
-        LoadingWithMask(); 
+        //LoadingWithMask(); 
         var requestParam = {
             query: {
               "event": "reqItemsAccountSearchEvent"
@@ -17682,7 +17701,7 @@ function requestItemsInputFirst(requestdata) {
                   accountListCont.append(orderUl4);
                 }
                 
-                closeLoadingWithMask();
+                //closeLoadingWithMask();
 
               });
 
@@ -17906,7 +17925,9 @@ function requestItemsInputFirst(requestdata) {
 function requestItemsInputSecond(requestdata) {
     console.log('2단계 requestdata  : ', requestdata);
 
+    var placeholderToday = moment().format('YYYY.MM.DD');
     var itemCnt = (requestdata.item_cnt == null)? '1':requestdata.item_cnt;
+    var itemNo = (requestdata.item_no == null)? '1':requestdata.item_no;
     
     var itemList = null;
     if(requestdata.item_list == null){
@@ -17914,10 +17935,10 @@ function requestItemsInputSecond(requestdata) {
 
         var item = new Object();
         
-        item.item_id = 'abcd12';
-        item.item_qty = '50';
-        item.due_date = '2024.08.23';
-        item.item_name = '품목1';
+        item.item_id = '';
+        item.item_qty = '';
+        item.due_date = placeholderToday;
+        item.item_name = '';
         item.item_unit = 0;
 
         itemList.push(item);
@@ -17968,7 +17989,8 @@ function requestItemsInputSecond(requestdata) {
     for(var t=0; t<itemCnt; t++) {
         
         let tabNo = t+1;
-        let activeClass = (t==0)? ' active':'';
+        //let activeClass = (t==0)? ' active':'';
+        let activeClass = (tabNo==itemNo)? ' active':'';
         
         //var tabItem = $('<div class="tab-item'+showClass+'"></div>');
         var tabItemHidden = $('<input type="hidden" value="'+tabNo+'" id="item_no" />');
@@ -18021,8 +18043,8 @@ function requestItemsInputSecond(requestdata) {
         var item = itemList[t];
         
         let tabNo = t+1;
-        let showClass = (t==0)? ' show':'';
-        let delBtnShow = (itemCnt == 1)? 'disabled':''
+        let showClass = (tabNo==itemNo)? ' show':'';
+        let delBtnShow = (itemCnt == 1)? 'disabled':'';
         
         //let itemAmount = (item.item_qty == '')? Number(item.item_unit) * Number(item.item_qty);
         
@@ -18053,7 +18075,7 @@ function requestItemsInputSecond(requestdata) {
         var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
         var itemDateWrap = $('<div class="schedule-wrap"></div>');
         var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date" placeholder="YYYY.MM.DD" id="due_date" onclick="datepicker.open(this)" value="'+item.due_date+'" autocomplete="off"/>');
+        var itemDateInput = $('<input type="text" class="input-schedule-date" placeholder="'+item.due_date+'" id="due_date" onclick="datepicker.open(this)" value="'+item.due_date+'" autocomplete="off"/>');
     
         itemDateBox.append(itemDateInput);
         
@@ -18134,6 +18156,11 @@ function requestItemsInputSecond(requestdata) {
     amountListWrap.append(amountTotolText);
     
 //    pluginForm.append(amountListWrap);
+    
+    if(requestdata.item_list != null) {
+        totalAmountCalculate();
+        $(document).off('click').off('keyup');   
+    }
     
     /*  ###[ etc ]### */
     // 다음버튼
@@ -18733,8 +18760,8 @@ function requestItemsInputSecond(requestdata) {
         
         var itemIDText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> ID <b>*</b></label></div>');
         var itemIDBox = $('<div class="input-form"></div>');
-        var itemIDInput = $('<input type="text" placeholder="물품 ID를 입력해 주세요." max-length="50" id="item_id" value="abcd12" autocomplete="off"/>');
-        var helpMSG = $('<span class="help-message">' + 'Switch,' + 'Tack' +'</span>');
+        var itemIDInput = $('<input type="text" placeholder="물품 ID를 입력해 주세요." max-length="50" id="item_id" value="" autocomplete="off"/>');
+        var helpMSG = $('<span class="help-message">' + '' +'</span>');
         
         itemIDBox.append(itemIDInput);
         itemIDText.append(itemIDBox);
@@ -18744,7 +18771,7 @@ function requestItemsInputSecond(requestdata) {
         
         var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> 수량 <b>*</b></label></div>');
         var itemQtyBox = $('<div class="input-form"></div>');
-        var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" id="item_qty" value="60" autocomplete="off"/>');
+        var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" id="item_qty" value="" autocomplete="off"/>');
         var itemQtyHidden = $('<input type="hidden" id="item_unit" value="0"/>');
     
         itemQtyBox.append(itemQtyInput);
@@ -18756,7 +18783,7 @@ function requestItemsInputSecond(requestdata) {
         var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
         var itemDateWrap = $('<div class="schedule-wrap"></div>');
         var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date" placeholder="YYYY.MM.DD" id="due_date" onclick="datepicker.open(this)" value="2024.08.20" autocomplete="off"/>');
+        var itemDateInput = $('<input type="text" class="input-schedule-date" placeholder="'+placeholderToday+'" id="due_date" onclick="datepicker.open(this)" value="'+placeholderToday+'" autocomplete="off"/>');
     
         itemDateBox.append(itemDateInput);
         
@@ -18930,7 +18957,7 @@ function requestItemsInputThird(requestdata) {
     var totalAmount = 0;
     for (var i = 1; itemCnt >= i; i++) {
         let item = itemList[i-1];
-        
+
         totalAmount += Number(item.item_unit) * Number(item.item_qty);
         
         var productsList = $('<li class="list-item"></li>');
@@ -18953,6 +18980,11 @@ function requestItemsInputThird(requestdata) {
         var itemDate = $('<div class="item-date"><h6>Due date</h6><span>' + item.due_date + '</span></div>');
         productsInfor.append(itemDate);
         productsList.append(productsInfor);
+        
+        var hiddenItemNo = $('<input type="hidden" value="'+i+'" id="item_no"/>');
+        var hiddenItemUnit = $('<input type="hidden" value="'+item.item_unit+'" id="item_unit"/>');
+        productsList.append(hiddenItemNo);
+        productsList.append(hiddenItemUnit);
 
         productsListWrap.append(productsList);
         
@@ -18960,10 +18992,24 @@ function requestItemsInputThird(requestdata) {
             btnEditEvent($(this));
         });
         function btnEditEvent(target) {
+            let item_no = $(target).parents('.list-item').find('#item_no').val();
+            
+            console.log('item_no : '+item_no);
+
+            requestdata.step = 2;
+            requestdata.action = 'edit';
+    
+            requestdata.item_no = item_no;
+            
+            let itemList = toArrayAllItem();
+            
+            requestdata.item_list = itemList;
+            requestdata.item_cnt = itemList.length;
+            
             pluginForm.removeClass('show');
             pluginForm.remove();
-            productsBillSecond();
-            $('.plugin-contents').append(productsBillForm);
+            requestItemsInputSecond(requestdata);
+            $('.plugin-contents').append(requestItemsInputForm);
         };
     
         btnDelete.on('click', function() {
@@ -18971,13 +19017,22 @@ function requestItemsInputThird(requestdata) {
         });
         function btnDeleteEvent(target) {
             var listCount = productsListWrap.find('.list-item').length;
+            var totalAmtValue = toNumberAmount($('.total').find('.amount-value').text());
             if (listCount > 1) {
                 var dialogTabName = target.parents('.list-item').find('h4').text();
+                
+                var itemId = target.parents('.list-item').find('.item-id').text();
+                var itemCount = target.parents('.list-item').find('.item-count').find('span').text();
+                var itemUnit = target.parents('.list-item').find('#item_unit').val();
+                
+                let amount = Number(itemCount) * Number(itemUnit);
+                let afterTotalAmount = totalAmtValue - amount;
+                
                 setTimeout(function() {
                     showSmallDialog(
                         dialogTabName + ' 삭제했습니다.<br>'
-                        +'(물품ID : ' + '0CK102BK56A' + ',<br>'
-                        +'수량 : '+'500,000,000'+')'
+                        +'(물품ID : ' + itemId + ',<br>'
+                        +'수량 : '+itemCount+')'
                     );
                     var textRenew = $('.small-dialog').text().split('<br>');
                     $('.small-dialog').html(
@@ -18990,8 +19045,10 @@ function requestItemsInputThird(requestdata) {
                 target.parents('.list-item').remove();
                 for (var i = 0; listCount > i; i++) {
                     $(productsListWrap.find('.list-item')[i]).find('h4').text('물품' + (i + 1));
+                    $(productsListWrap.find('.list-item')[i]).find('#item_no').val((i + 1));            // item_no 재정립.
                 };
                 $('.totalCount').text((listCount - 1)+'건');
+                $('.total').find('.amount-value').text(afterTotalAmount.toLocaleString()+'원');
             } else {
                 setTimeout(function() {
                     showSmallDialog('신청할 물품은 1개 이상이어야합니다.');
@@ -19001,7 +19058,35 @@ function requestItemsInputThird(requestdata) {
     }
     pluginForm.append(productsListWrap);
     
+    function toArrayAllItem() {
+        let productList = productsListWrap.find('.list-item');
+        
+        let itemList = new Array();
+    
+        for ( let i = 0; i <= (productList.length)-1; i++ ) {
+            let product = productList[i];
+            
+            let item = new Object();
+            
+            item.item_id = $(product).find('.item-id').text();
+            item.item_qty = $(product).find('.item-count').find('span').text();
+            item.due_date = $(product).find('.item-date').find('span').text();
+            item.item_name = $(product).find('.item-name').find('span').text();
+            item.item_unit = $(product).find('#item_unit').val();
 
+            itemList.push(item);
+        }        
+    
+        console.log('itemList', itemList);   
+        return itemList;
+    };
+
+    function toNumberAmount(amt) {
+        let replaceAmt = amt.replace(/,/g,'').replace('원', '');
+        
+        return Number(replaceAmt);
+    }
+    
     /* ###[ 물품 Amount ]### */
     var amountWrap = $('<div class="amount-wrap"></div>');
 
@@ -19059,30 +19144,129 @@ function requestItemsInputThird(requestdata) {
     var submitBtn = $('<button disabled type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-">물품 청구 신청</button>');
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
-        // LoadingWithMask();
-        $('#products-bill').removeClass('show');
-        $('.plugin-dim').removeClass('show');
-        setTimeout(function() {
-            $('.plugin-dim').remove();
-            $('#products-bill').remove();
-        }, 300);
+
+        let itemList = toArrayAllItem();
         
-        // var msgOrderResult = '<div class="message simple-text">'
-        //                  +'<p>'
-        //                     +'GERP에 타계정 주문 발행을 요청했어요.</br>'
-        //                     +'주문 성공 여부는 타계정 주문 현황 조회에서 확인하실 수 있습니다.'
-        //                  +'</p>'
-        //                  +'<p>'
-        //                     +'<span style="color: #005aff;">[EP > Work > Request > 요청목록(결제중)]</span> 에서 상세 주문 현황을 확인해 보세요.'
-        //                  +'</p>'
-        //                  +'<p>'
-        //                     +'<span style="color: #898989; font-size: 12px;">※ 배치를 통해 순차적으로 주문을 발행하며, 주문 현황 조회까지 시간이 다소 소요될 수 있습니다.</span>'
-        //                  +'</p>'
-        //                 + '</div>'; 
-    
-        // appendChatbotHtml(msgOrderResult, false);
-        // $('.chat-message.left').last().append(anotherAccountResult(orderdata));
-        // $('.chat-message.left').last().append('<span class="message-date">' + moment().format("a h:mm") + '</span>');
+        let firstProductId = itemList[0].item_id;
+        let productCnt = itemList.length;
+
+         LoadingWithMask();
+
+        var requestParam = {
+            query: {
+              "event": "requestItemsCreateEvent"
+            },
+            payload: {
+                "itemList": ''      // 추후 추가 해야 함. 
+            }
+          };
+          
+          
+          sendChatApi(requestParam, null, function(payload){
+            console.log('물품 청구 신청 결과 : ', payload);
+            
+            var createInfo = '';
+            var createModelList = null;
+            var documentRefNo = '';
+            var regSuccessYn = '';
+            var errorMessage = '';
+            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                var createResponse = JSON.parse(payload.queryResult.messages[0].response);
+                console.log(createResponse["successYn"]);
+                
+                if (createResponse["successYn"] == 'N') {
+                    console.log('errorMessage : '+createResponse["errorMessage"]);
+                    regSuccessYn = 'N';
+                    errorMessage = createResponse["errorMessage"];               // 에러메시지.
+                } else {
+                    regSuccessYn = 'Y';
+                    //if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].orderInfo_1) {
+                        
+                    //    createInfo = createResponse.template.outputs[0].orderInfo_1;
+                    //}
+                    //if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].apmsModelList_1) {
+                        
+                    //    createModelList = createResponse.template.outputs[0].apmsModelList_1;
+                    //}
+                    if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].resultItem) {
+                        
+                        documentRefNo = createResponse.template.outputs[0].resultItem;
+                    }
+                }
+                
+            }
+            else{
+                regSuccessYn = 'E';
+            }
+
+            console.log('createInfo : ', createInfo);
+            console.log('createModelList : ', createModelList);
+            console.log('documentRefNo : ', documentRefNo);
+            
+            if(regSuccessYn == 'N') {
+                console.log('물품 청구 신청 실패 : '+errorMessage);
+                
+                $('#products-bill').removeClass('show');
+                $('.plugin-dim').removeClass('show');
+                setTimeout(function() {
+                    $('.plugin-dim').remove();
+                    $('#products-bill').remove();
+                }, 300);
+                
+                setTimeout(function() {
+                    showSmallHtmlDialog("물품청구 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                }, 400);
+                
+            }
+            else if(regSuccessYn == 'E') {          // 주문 생성 요청 에러. 
+                console.log('물품청구 신청 에러 : ');
+
+                $('#products-bill').removeClass('show');
+                $('.plugin-dim').removeClass('show');
+                setTimeout(function() {
+                    $('.plugin-dim').remove();
+                    $('#products-bill').remove();
+                }, 300);
+                
+                setTimeout(function() {
+                    showSmallHtmlDialog("물품청구 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                }, 400);
+                
+            }
+            else{
+                 console.log('물품청구 신청 완료 : ', documentRefNo);
+                 
+                 requestdata.documentRefNo = documentRefNo;
+                 requestdata.firstProductId = firstProductId;
+                 requestdata.productCnt = productCnt;
+
+                $('#products-bill').removeClass('show');
+                $('.plugin-dim').removeClass('show');
+                setTimeout(function() {
+                    $('.plugin-dim').remove();
+                    $('#products-bill').remove();
+                }, 300);
+                
+                var msgOrderResult = '<div class="message simple-text">'
+                                 +'<p>'
+                                    +'물품 청구 내용이 통합결제로 전송되었습니다. 물품 청구 승인을 요청하려면 '
+                                    +'<span style="color: #E0205C;"><b>통합결재</b></span> 에서 최종 완료를 해야 합니다. 아래 버튼을 눌러 통합결재로 이동해 주세요.'
+                                 +'</p>'
+                                + '</div>'; 
+            
+                appendChatbotHtml(msgOrderResult, false);    
+                $('.chat-message.left').last().append(productsBillResult(requestdata));
+                $('.chat-message.left').last().append('<span class="message-date">' + moment().format("a h:mm") + '</span>');
+                
+                //var anotherGbmsResult = msgOrderResult + anotherAccountResult(orderdata);      
+                //$('.chat-message.left').last().append(anotherAccountResult(orderdata)); // 결과 메세지 (임시 확인용)
+                //appendChatbotText(anotherGbmsResult); 
+            }
+
+            closeLoadingWithMask();
+            //descendScroll();
+          });
+          
     });
     
     // back버튼
@@ -19091,6 +19275,13 @@ function requestItemsInputThird(requestdata) {
         requestdata.step = 2;
         requestdata.action = 'back';
 
+        let itemList = toArrayAllItem();
+            
+        requestdata.item_list = itemList;
+        requestdata.item_cnt = itemList.length;
+        
+        requestdata.item_no = 1;
+            
         pluginForm.removeClass('show');
         pluginForm.remove();
         requestItemsInputSecond(requestdata);
@@ -19103,10 +19294,63 @@ function requestItemsInputThird(requestdata) {
     
 }
 
+// 물품 청구 결과 메세지
+function productsBillResult(requestdata) {
+    var messageWrap = $('<div class="custom-message"></div>');
+    var messageBox = $('<div class="message"></div>');
+    var contentWarp = $('<div class="content-wrap"></div>');
+    var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>물품 청구 신청</h2></div>');
+    contentWarp.append(contentHeader);
+    
+    var contentBox = $(
+        '<div class="content-box">'
+            +'<ul class="content-list-wrap">'
+                +'<li>'
+                    +'<h4>신청 번호</h4>'
+                    +'<div class="content-list-val text"><span>' + '5205522155DD' + '</span></div>'
+                +'</li>'
+                +'<li>'
+                   +'<h4>청구 물품</h4>'
+                   +'<div class="content-list-val text"><span>' + requestdata.firstProductId + ' 외 ' + (requestdata.productCnt-1) + '건</span></div>'
+                +'</li>'
+            +'</ul>'
+        +'</div>'
+    );
+
+    var contentBtn = $(
+        '<div class="btn">'
+            +'<button type="button" class="btn btn-default btn-big">통합결재 화면 ' + iconLink + '</button>'
+        +'</div>'
+    )
+    contentBtn.on('click', function() {
+        chatui.sendMessage("타계정 주문 현황 조회");   
+    });
+    contentBox.append(contentBtn);
+    contentWarp.append(contentBox);
+    messageBox.append(contentWarp);
+    messageWrap.append(messageBox);
+    
+    requestMsgScroll();
+    return messageWrap;
+}
+
 function ascendScroll() {
 	setTimeout(function() {
         var e = document.getElementById("item-content");
         e.scrollTop = 0;
         
     }, 50)
+}
+
+function requestMsgScroll() {
+    setTimeout(function() {
+        var sclTarget = $('#divScroll');
+        if (sclTarget.find('.chat-message').hasClass('right')) {
+            var sclHeight = sclTarget.prop('scrollHeight');
+            var lastLeftMsg = sclTarget.find('.chat-message.left').last().height();
+            var lastRightMsg = sclTarget.find('.chat-message.right').last().height();
+            console.log('스크롤', sclHeight, lastLeftMsg, lastRightMsg);
+            sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg - 230);
+        }
+    },100);    
 }

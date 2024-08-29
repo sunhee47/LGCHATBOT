@@ -7665,6 +7665,16 @@ color: var(--color-gray-900, #2c2c2c);
 .amount-wrap {
   display: flex;
 }
+.amount-box.show {
+  width: 100%;
+  padding: 20px 10px;
+  border-radius: 10px;
+  background-color: #f7f7f7;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
 .amount-box {
   width: 100%;
   padding: 20px 10px;
@@ -7674,6 +7684,7 @@ color: var(--color-gray-900, #2c2c2c);
   flex-direction: column;
   gap: 6px;
   font-size: 14px;
+  display:none;  
 }
 .amount-item {
   display: flex;
