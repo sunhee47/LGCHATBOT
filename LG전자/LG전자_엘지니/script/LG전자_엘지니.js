@@ -1455,6 +1455,7 @@ const autoSearchEmployees = function(inputVal) {
 };
 
 function sendWelcomeEvent() {
+    console.log(chatui.getParameter('corpId'));
   var key = chatui.getSetting("userId") ? chatui.getSetting("userId").replace(/=/gi, "") : "";
   var lastAccessDate = localStorage.getItem(key + "_lastAccessDate");
 //   if(lastAccessDate == null || welcomeClick === true) { lastAccessDate=''; };
@@ -2738,7 +2739,8 @@ jQuery(document).ready(function(e){
     
 //     ////////// 사용 제한 
     
-//     console.log('languageCode : '+chatui.getSetting("languageCode"));
+    console.log('languageCode : '+chatui.getSetting("languageCode"));
+    // chatui.setParameter('corpId', "LGEKR");
 //     if(chatui.getSetting("languageCode") !== "ko"){
 //         console.log("챗봇 이동")
 //         openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'));
@@ -3060,6 +3062,7 @@ jQuery(document).ready(function(e){
   
   +     '<h2>주요 메뉴</h2>'
   +     '<div class="btns">'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">날씨</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">통근 버스</button>'
@@ -17812,7 +17815,7 @@ function addHsCodePopupOpen(data) {
     /* #########[ popup_content ]######### */
     /* ###[ 사업부 코드 ]###  */
     var orgIdInputBox = $('<div class="input-box"><label>사업부 코드</label></div>');
-    var orgIdList = $('<div class="orgId-form"></div>');
+    var orgIdList = $('<div class="orgId-form scrollbar-able"></div>');
 
     var selectedOrg = $('<div class="selected-org fold"></div>');
     orgIdList.append(selectedOrg);
@@ -17820,7 +17823,7 @@ function addHsCodePopupOpen(data) {
     orgIdList.append(autocompleteOrg);
 
     var orgIdInputForm = $('<div class="input-form"></div>');
-    var orgIdInput = $('<input type="text" placeholder="사업부 코드나 사업부 명을 검색해 주세요." id="hsCode_orgId" class="search-input"/>');
+    var orgIdInput = $('<input type="text" placeholder="사업부 코드나 사업부 명 입력 후 \'Enter\'로 검색" id="hsCode_orgId" class="search-input" autocomplete="off"/>');
     var orgDelButton = $('<span class="input-val-del">'
         +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
         +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
@@ -17860,8 +17863,12 @@ function addHsCodePopupOpen(data) {
                     var org = {};
         
                     // 코드, 이름 like
+                    /* 
                     var orgName = item.ORGANIZATION_NAME.substr(0,inputLength).toUpperCase();
                     var orgCode = item.ORGANIZATION_CODE.substr(0,inputLength);
+                    */
+                    var orgName = item.ORGANIZATION_NAME.toUpperCase();
+                    var orgCode = item.ORGANIZATION_CODE;
                     
                     if (orgName.indexOf(inputVal) != -1||orgCode.indexOf(inputVal) != -1) {
                         org.label = "";
@@ -17930,6 +17937,9 @@ function addHsCodePopupOpen(data) {
                             selectedOrg.empty();
                             selectedOrg.append(orgInfo);
                             orgIdInput.val(orgCode);
+                        }else{
+                            orgIdInput.val("");
+                            selectedOrg.empty();
                         }
                 
                         orgUi.css('display','none');
@@ -17943,6 +17953,7 @@ function addHsCodePopupOpen(data) {
             }else{
                 showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
                 $(this).focus();
+                orgUi.css('display','none');
             }
         }
 
@@ -18017,7 +18028,7 @@ function addHsCodePopupOpen(data) {
     
     /*  ###[ 수출국 ]###  */
     var memberInputBox = $('<div class="input-box"><label>수출국</label></div>');
-    var memberList = $('<div class="country-form"></div>');
+    var memberList = $('<div class="country-form scrollbar-able"></div>');
     
     var selectedMembers = $('<div class="selected-members fold"></div>');
     memberList.append(selectedMembers);
@@ -18395,7 +18406,7 @@ function hsCodeOrgCheck() {
     if(orgInput.val() != "") {  
         orgInput.attr('placeholder', '');
     } else {
-        orgInput.attr('placeholder', '사업부 코드나 사업부 명을 검색해 주세요.');
+        orgInput.attr('placeholder', '사업부 코드나 사업부 명 입력 후 \'Enter\'로 검색');
     }
 }
 
@@ -18447,14 +18458,14 @@ function hsCodeResult(data) {
     
     if(item.rateList.length > 0){
         item.rateList.forEach(function(itemR){
-            hsCodeResultLiRate += '<li><h4>' + itemR.meaning + '</h4><div class="importCargo-user"><span>' + itemR.tariffRate + '</span></div></li>';
+            hsCodeResultLiRate += '<li><h4 class="hsCode-li-header">' + itemR.meaning + '</h4><div class="hsCode-li-content"><span>' + itemR.tariffRate + '</span></div></li>';
         });
     }
     
     var hsCodeResultLiUser = "";
     if(item.userList.length === 1){
         if(item.userList[0].userName !== ""){
-            hsCodeResultLiUser +='<li style="display: flex; align-items: baseline;"><h4>담당자</h4><div class="importCargo-type" style="width: 150px;"><span>' + item.userList[0].userName ;
+            hsCodeResultLiUser +='<li style="display: flex; align-items: baseline;"><h4 class="hsCode-li-header">담당자</h4><div class="hsCode-li-content"><span>' + item.userList[0].userName ;
             if(item.userList[0].userEmail !== ""){
                 hsCodeResultLiUser += '</br>(<a id="hscode_userEmail" href="#" style="text-decoration: underline; ">' + item.userList[0].userEmail + '</a>)';
             }
@@ -18464,13 +18475,16 @@ function hsCodeResult(data) {
     
     var hsCodeResultLiCountry = "";
     if(data.countryNameEn != ""){
-        hsCodeResultLiCountry = '<li><h4>수출국</h4><div class="importCargo-type"><span>' + data.countryNameEn + '</span></div></li>';
+        hsCodeResultLiCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수출국</h4><div class="hsCode-li-content"><span>' + data.countryNameEn + '</span></div></li>';
     }
    
     var hsCodeResultLiUserBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 및 담당자 조회</button></li>');
     
     var hsCodeResultContent = $('<div class="importCargo-content"></div>');
-    
+
+    var itemDesc;
+    var standardItemDesc;
+
     var hsCodeResultContentUi = $(
         '<ul class="importCargo-list-wrap hsCodeResult-list-wrap">' 
                 + hsCodeResultLiOrgName
@@ -18483,7 +18497,7 @@ function hsCodeResult(data) {
                 +'<li></li>'
                 +'<li>'
                     +'<h4>HS Code</h4>'
-                    +'<div class="importCargo-type"><span><h5>' + item.hsCode + '</h5></span></div>'
+                    +'<div class="hsCode-li-header"><span class="hsCode-li-content"><h5>' + item.hsCode + '</h5></span></div>'
                 +'</li>'
                 +hsCodeResultLiCountry
                 +hsCodeResultLiRate
@@ -18522,18 +18536,19 @@ function hsCodeResult(data) {
     var quickReplies = $('<div class="custom-quick-reply"></div>');
     var systemBtnHsCodeRe = $('<span class="btn-custom-reply">HS Code 다시 물어보기</span>');
     quickReplies.append(systemBtnHsCodeRe);
-    var systemBtnGPT = $('<span class="btn-custom-reply">GPT에게 물어보기</span>');
-    quickReplies.append(systemBtnGPT);
+    //var systemBtnGPT = $('<span class="btn-custom-reply">GPT에게 물어보기</span>');
+    //quickReplies.append(systemBtnGPT);
     hsCodeResult.append(quickReplies);
     
     systemBtnHsCodeRe.click(function(){
         chatui.sendMessage("HS Code 조회");    
     });
-    
+    /* 
     systemBtnGPT.click(function(){
         //chatui.sendMessage("GPT에게 물어보기");
         activeGptBot('');
     });
+    */
     
     hsCodeResultLiUserBtn.click(function(){
         addHsCodeSeachUserPopupOpen(item.userList);
@@ -18681,15 +18696,15 @@ function hsCodeResultError(data) {
                 +'<li></li>'
                 +'<li>'
                     +'<h4 style="width: 110px;">사업부 코드</h4>'
-                    +'<div class="importCargo-type"><span>' + data.orgId + '</span></div>'
+                    +'<div class="hsCode-li-content"><span>' + data.orgId + '</span></div>'
                 +'</li>'
                 +'<li>'
                     +'<h4 style="width: 110px;">Part/Model No.</h4>'
-                    +'<div class="importCargo-type"><span>' + data.partNo + '</span></div>'
+                    +'<div class="hsCode-li-content"><span>' + data.partNo + '</span></div>'
                 +'</li>'
-                +'<li>'
-                    +'<h4 style="width: 110px;">수출국</h4>'
-                    +'<div class="importCargo-user"><span>' + data.countryNameEn + '</span></div>'
+                +'<li style="align-items: flex-start;">'
+                    +'<h4 style="width: 110px; margin-top: 3px;">수출국</h4>'
+                    +'<div class="hsCode-li-content"><span>' + data.countryNameEn + '</span></div>'
                 +'</li>'
                 +'<li></li>'
             +'</ul>'
@@ -18792,6 +18807,7 @@ function hsCodeResultError(data) {
     });
 
     // quickReplies 템플릿
+    /* 
     var quickReplies = $('<div class="custom-quick-reply"></div>');
     var systemBtn = $('<span class="btn-custom-reply">GPT에게 물어보기</span>');
     quickReplies.append(systemBtn);
@@ -18801,6 +18817,7 @@ function hsCodeResultError(data) {
         //chatui.sendMessage("GPT에게 물어보기");    
         activeGptBot('');
     });
+    */
 
     return hsCodeResultError;
 }
@@ -18840,7 +18857,7 @@ function hsCodeResultList(data) {
             
             sysListCount++;
             
-            var listLi = $('<li class="list-box" id="listBox_' + sysListCount + '"></li>');
+            var listLi = $('<li class="list-box hsCode-List-box" id="listBox_' + sysListCount + '"></li>');
             listUl.append(listLi);
           
             var sysInfo = $('<div class="text-box"></div>');
