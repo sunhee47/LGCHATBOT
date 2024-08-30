@@ -10184,6 +10184,11 @@ const setAutocompleteTeamMember = function(input, empNo) {
       
       if(e.keyCode == 13) { 
           
+            if(inputVal.length < 2) {
+                showSmallDialog("대리 주문자 검색은 2글자 이상 입력해야 합니다.");
+                return;
+            }
+          
           LoadingWithMask();
           
         var requestParam = {
@@ -10512,6 +10517,8 @@ function anotherAccountPopupOpen(orderdata) {
     pluginHeader.append(pluginClose);
     addPlugin.append(pluginHeader);
     function thisPluginClose() {
+        $(document).off('keydown');
+        console.log('keydown off');
         $('#another-account-order').removeClass('show');
         $('.plugin-dim').removeClass('show');
         setTimeout(function() {
@@ -10523,7 +10530,7 @@ function anotherAccountPopupOpen(orderdata) {
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents"></div>');
+    var pluginContents = $('<div class="plugin-contents" tabindex="0"></div>');
     console.log('orderdata.step >>> '+orderdata.step);
     
     if(orderdata.step == 8) {
@@ -10531,7 +10538,7 @@ function anotherAccountPopupOpen(orderdata) {
     }
     else{
         var anotherForm = anotherAccountOrderFirst(orderdata);
-        //var anotherForm = anotherAccountOrderSeventh(orderdata);
+        //var anotherForm = anotherAccountOrderSixth(orderdata);
     }
     //var anotherForm = anotherAccountOrderFirst(orderdata);
     pluginContents.append(anotherForm);
@@ -10591,7 +10598,6 @@ function anotherAccountOrderFirst(orderdata) {
         $('.plugin-contents').css('overflow-y', 'auto');
     },1);
 
-
     /* #########[ popup_content_wrap_start ]######### */
     var pluginForm = $('<form class="form-first" onsubmit="return false;"></form>');
     
@@ -10616,8 +10622,12 @@ function anotherAccountOrderFirst(orderdata) {
         }
     });
     inputBoxRadio.append(radioWrap);
+    
+    var hiddenRadio = $('<input type="text" value="" />');
+    //inputBoxRadio.append(hiddenRadio);
+    
     pluginForm.append(inputBoxRadio);
-
+    
     /* ###[ 대리 주문자 ]### */
     var inputBoxText1 = $('<div class="input-box add-order"><label>대리 주문자<b>*</b></label></div>');
 
@@ -10667,7 +10677,8 @@ function anotherAccountOrderFirst(orderdata) {
 
         if(selfYN == 'NO' && deputyEmpNo == null) {
             showSmallDialog("대리 주문인 경우 대리 주문자를 입력하세요. ");
-            memberInput.focus();
+            //memberInput.focus();
+            textFocusStyle(memberList);
             return;
         }
         
@@ -10800,10 +10811,12 @@ function anotherAccountOrderFirst(orderdata) {
 
     }
     
-    $(document).off('keyup').on('keyup', function(e) {
-            console.log('event.... ');
+    $(document).off('keydown').on('keydown', function(e) {
+    //pluginForm.on('keyup', function(e) {
+        console.log('keydown on .... ');
         if (e.keyCode == 13) {
             console.log('form enter key. ');
+            if(e.target.id == 'attendees')  return;
             $('#btn_step1').click();
         }
     });    
@@ -10832,9 +10845,8 @@ function anotherAccountOrderSecond(orderdata) {
     pluginHeader.find('.backBtn').remove();
     pluginHeader.prepend(backBtn);
     
-    $('.plugin-contents').focus();
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-second"></form>');
+    var pluginForm = $('<form class="form-second" onsubmit="return false;"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 주문 목적 ]### */
@@ -10946,7 +10958,7 @@ function anotherAccountOrderSecond(orderdata) {
         dropdownMenuListWrap.css('height', listH);
         
     });
-
+    
     /*  ###[ etc ]### */
     // 다음버튼
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step2" disabled>다음</button></div>')
@@ -10961,7 +10973,9 @@ function anotherAccountOrderSecond(orderdata) {
         
         if(reasonCodeVal == '') {
             showSmallDialog("상세 주문 목적을 선택하세요. ");
-            dropdownMainBtn.focus();
+            //dropdownMainBtn.focus();
+            textFocusStyle(dropdownMainBtn);
+            //dropdownBox.focus();
             return;
         }
         
@@ -11083,10 +11097,10 @@ function anotherAccountOrderSecond(orderdata) {
         inputTextContent.find('#order_type_desc').val('['+selOrderType+'] '+selReasonCode);       
     }
 
-    $(document).off('keyup').on('keyup', function(e) {
-        console.log('event.... ');
+    dropdownBox.focus();
+    $(document).off('keydown').on('keydown', function(e) {
         if (e.keyCode == 13) {
-            console.log('step2 ');
+            console.log('step2 .');
             $('#btn_step2').click();
         }
     });    
@@ -11172,7 +11186,7 @@ function anotherAccountOrderThird(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-third"></form>');
+    var pluginForm = $('<form class="form-third" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ 주의 사항 ]### */
@@ -11479,11 +11493,9 @@ function anotherAccountOrderThird(orderdata) {
 
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled id="btn_step3">다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
-        
-        LoadingWithMask();
         
         var receiver_name = $('#receiver_name').val();
         var zipno = $('#zipno').val();
@@ -11495,6 +11507,51 @@ function anotherAccountOrderThird(orderdata) {
         
         var donation_code = $('#donation-code').val();
         var donation_name = $('#donation-name').val();
+
+        if(receiver_name == '') {
+            showSmallDialog("받는 사람을 입력하세요. ");
+            $('#receiver_name').focus();
+            return;
+        }
+        if(zipno == '') {
+            showSmallDialog("주소를 검색해 주세요.");
+            $('#address1').focus();
+            return;
+        }
+        if(address2 == '') {
+            showSmallDialog("상세 주소를 입력해 주세요.");
+            $('#address2').focus();
+            return;
+        }
+        if(receiver_phone_no == '') {
+            showSmallDialog("전화번호를 입력해 주세요.");
+            $('#receiver_phone_no').focus();
+            return;
+        }
+        if(orderdata.reasonCode != 'R&D') { 
+            if(redidence_type == '') {
+                showSmallDialog("주거형태를 선택해 주세요.");
+                //dropdownBox.focus();
+                textFocusStyle(dropdownMainBtn);
+                return;
+            }
+        }
+        if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') {     
+            if(donation_code == null || donation_code == '') {
+                showSmallDialog("기부처를 검색해 주세요.");
+                //$('#donation-input').focus();
+                textFocusStyle(inputTextContent);
+                //inputBoxText.focus();
+                return;
+            }
+            if(donation_data == '') {
+                showSmallDialog("기부일자를 입력해 주세요.");
+                dateStartInput.focus();
+                return;
+            }
+        }
+        
+        LoadingWithMask();
 
         setTimeout(function() {
             orderdata.step = 4;        
@@ -11524,7 +11581,7 @@ function anotherAccountOrderThird(orderdata) {
         var inputObj = pluginForm.find('input').not('#donation-input');
         var donationval = donationSelected.find('.data-wrap').text();
         
-        console.log('donationval : '+donationval);
+        //console.log('donationval : '+donationval);
          //console.log('length : '+inputObj.length);
         for ( let i = 0; i <= (inputObj.length)-1; i++ ) {
             
@@ -11659,8 +11716,15 @@ function anotherAccountOrderThird(orderdata) {
         
     }
 
-    $(document).off('keyup'); 
-    
+    inputBoxText.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step3 .');
+            if(e.target.id == 'donation-input')     return;
+            $('#btn_step3').click();
+        }
+    });    
+
     nextBtnEvent();
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -11694,7 +11758,7 @@ function anotherAccountOrderFourth(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-fourth"></form>');
+    var pluginForm = $('<form class="form-fourth" onsubmit="return false;"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 사용 예산이 광고판촉비(APMS)인가요? ]### */
@@ -11730,7 +11794,7 @@ function anotherAccountOrderFourth(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step4" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
         
@@ -11933,6 +11997,15 @@ function anotherAccountOrderFourth(orderdata) {
             nextBtn.find('button').attr('disabled', false);
         }
     //}    
+    
+    inputBoxText.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step4 .');
+            $('#btn_step4').click();
+        }
+    });    
+    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
@@ -11995,7 +12068,7 @@ function anotherAccountOrderFifth(orderdata) {
     pluginHeader.prepend(backBtn);
 
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-fifth"></form>');
+    var pluginForm = $('<form class="form-fifth" onsubmit="return false;"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 예산/비용의 계정 정보를 입력해 주세요. ]### */
@@ -13139,9 +13212,58 @@ function anotherAccountOrderFifth(orderdata) {
     }
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step5" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        
+        if($('#au_code').val() == null || $('#au_code').val() == '') {
+            showSmallDialog("Cost Au를 검색해 주세요.");
+            //$('#costau-name').focus();
+            //inputBoxText1.focus();
+            textFocusStyle(inputTextContent1);
+            return;
+        }
+        if($('#costdept_code').val() == null || $('#costdept_code').val() == '') {
+            showSmallDialog("비용 처리 부서를 검색해 주세요.");
+            //$('#costdept-name').focus();
+            //inputBoxText2.focus();
+            textFocusStyle(inputTextContent2);
+            return;
+        }
+        if($('#costaccount_code').val() == null || $('#costaccount_code').val() == '') {
+            showSmallDialog("비용 처리 계정을 검색해 주세요.");
+            //$('#costaccount-name').focus();
+            //inputBoxText3.focus();
+            textFocusStyle(inputTextContent3);
+            return;
+        }
+        if($('#activity_code').val() == null || $('#activity_code').val() == '') {
+            showSmallDialog("Activity Code를 검색해 주세요.");
+            //$('#activity-name').focus();
+            //inputBoxText5.focus();
+            textFocusStyle(inputTextContent5);
+            return;
+        }
+        if(selOrderType == 'OTHERS_OUT_FA_OMD')  {
+            if($('#Asset_name').val() == '') {
+                showSmallDialog("Activity Name을 입력해 주세요.");
+                $('#Asset_name-name').focus();
+                return;
+            }
+            if($('#major_category').val() == '') {
+                showSmallDialog("Major Category를 선택해 주세요.");
+                //dropdownBox.focus();
+                textFocusStyle(dropdownMainBtn);
+                return;
+            }
+            if($('#minor_category').val() == null || $('#minor_category').val() == '') {
+                showSmallDialog("Minor Category를 검색해 주세요.");
+                //$('#minor-category').focus();
+                //inputBoxText7.focus();
+                textFocusStyle(inputTextContent7);
+                return;
+            }
+        }
         
         LoadingWithMask();
         
@@ -13556,6 +13678,15 @@ function anotherAccountOrderFifth(orderdata) {
         //nextBtnEvent(inputBox7);
     }
 
+    inputBoxText.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step5 .'+ e.target.type);
+            if(e.target.type == 'text' && e.target.id != 'Asset_name')     return; 
+            $('#btn_step5').click();
+        }
+    });    
+
     nextBtnEvent();
 
     /* #########[ popup_content_form_end ]######### */
@@ -13579,7 +13710,7 @@ function anotherAccountOrderSixth(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-sixth"></form>');
+    var pluginForm = $('<form class="form-sixth" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ 주문 모델 ]### */
@@ -13789,11 +13920,9 @@ function anotherAccountOrderSixth(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step6" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
-        
-        LoadingWithMask();
         
         setTimeout(function() {
             orderdata.step = 7; 
@@ -13802,13 +13931,22 @@ function anotherAccountOrderSixth(orderdata) {
                 apmsModelList = new Array();                // 초기화. 
                 var orderModelList = $('.stepper-wrap').find('li');
                 
+                if(orderModelList.length == 1 && $(orderModelList[0]).find('textarea').val() == '') {
+                    showSmallDialog("주문 모델을 1개 이상 입력해 주세요.");
+                    //$('#donation-input').focus();
+                    textFocusStyle($(orderModelList[0]).find('textarea'));
+                    return;
+                }
+
+                LoadingWithMask();
+                
                 //console.log('length : '+orderModelList.length);
                 for(var m=0; m<orderModelList.length; m++) {
                     let orderModelText = orderModelList[m];
                     
                     let textVal = $(orderModelText).find('textarea').val();
                     
-                    //console.log('textVal : '+textVal);
+                    console.log('textVal : '+textVal);
                     let textArr = new Array();
                     if(textVal.indexOf('] ') > -1) {
                         textArr = textVal.split('] ');
@@ -13997,6 +14135,15 @@ function anotherAccountOrderSixth(orderdata) {
         eventKeyUp($(this), e);
     });
     
+    inputBoxText.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step6 .'+e.target.value);
+            if(e.target.value != null)  return;
+            $('#btn_step6').click();
+        }
+    });    
+    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
@@ -14180,7 +14327,7 @@ function anotherAccountOrderSeventh(orderdata) {
     pluginHeader.prepend(backBtn);
 
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-seventh"></form>');
+    var pluginForm = $('<form class="form-seventh" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ 배송 유형 ]### */
@@ -14330,12 +14477,14 @@ function anotherAccountOrderSeventh(orderdata) {
         
         if(dateStartInput.val() == '') {
             showSmallDialog('도착 날짜를 선택하세요. '); 
-            dateStartInput.focus();
+            //dateStartInput.focus();
+            textFocusStyle(dateStartInput);
             return;
         }
         
         if(dateStartInput.val() != api_date) {
             showSmallDialog('가능한 도착날짜가 반영되지 않았습니다.'); 
+            textFocusStyle(dateStartInput);
             return;
         }
         
@@ -14480,6 +14629,14 @@ function anotherAccountOrderSeventh(orderdata) {
     //    titleNote.css('display', 'block');
     //}    
 
+    inputTimeBox.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step7 .');
+            $('#btn_step7').click();
+        }
+    });    
+
     nextBtnEvent();
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -14501,7 +14658,7 @@ function anotherAccountOrderEighth(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-eighth"></form>');
+    var pluginForm = $('<form class="form-eighth" onsubmit="return false;"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 승인 요청 ]### */
@@ -14639,16 +14796,23 @@ function anotherAccountOrderEighth(orderdata) {
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
         
-        LoadingWithMask();
-        
         //orderdata.step = 9;
         orderdata.remark = $('#remark').val();
+        
+        if(orderdata.remark == '') {
+            showSmallDialog("승인 요청에 필요한 문구를 입력해 주세요.");
+            //$('#remark').focus();
+            textFocusStyle($('#remark'));
+            return;
+        }
         
         orderInfo.p_request_remark = $('#remark').val();
         
         let orderInfoStr = JSON.stringify(orderInfo);
         let apmsModelListStr = JSON.stringify(apmsModelList);
-        
+
+        LoadingWithMask();
+
         var requestParam = {
             query: {
               "event": "anotherOrderCreateEvent"
@@ -14814,6 +14978,14 @@ function anotherAccountOrderEighth(orderdata) {
     if(selRemark != '') {
         submitBtn.find('button').attr('disabled', false);
     }
+    
+    inputBoxText.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step8 .');
+            $('#btn-anotheAccountOrder').click();
+        }
+    });    
     
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -16776,6 +16948,16 @@ function memberCheck() {
       $('#attendees').css('display', 'block');
   }
 }
+
+function textFocusStyle(target) {
+    
+    $(target).css('border-color', '#2c2c2c');  // #F94B50 
+    setTimeout(function() {
+        $(target).css('border-color', '');
+    },2000);
+}
+
+/* #################### [ 타계정 주문 End ] #################### */
 
 // 달력 입력 확인
 function makeCalendarInput(data) {
