@@ -7129,6 +7129,18 @@ background: #F5F5F5 !important;
   transform: translate(-50%, -50%); */
 }
 
+.plugins .add-order div {
+    /*padding: 13px 0; */
+    color: #2c2c2c;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;    
+}
+.plugins .add-order div a {
+    color: #898989;
+    text-decoration-line: underline;
+}
+
 .plugins .input-box .input-form input[type=text]:disabled {
   background-color: #F5F5F5;
   border:none;
@@ -7536,15 +7548,27 @@ color: var(--color-gray-900, #2c2c2c);
   font-size: 14px;
   font-weight: 400;
   transition: all 0.2s ease-in-out;
-  cursor: default !important;
+  cursor: pointer !important;
+  border-width: 2px;  
 }
 .tabBtn.active {
   border-width: 2px;
   border-color: #E0205C;
   color: #E0205C;
   font-weight: 500;
+  cursor: default !important;
+}
+.tabBtn.disabled {
+  border-width: 2px;
+  border-color: #f5f5f5;
+  color: #bebebe;
+  font-weight: 300;
+  cursor: not-allowed !important;
 }
 
+.tabBtn:hover {
+    cursor: pointer; 
+}
 /* tabBtn-move */
 .tabBtn-move {
   width: 100%;
@@ -7581,6 +7605,10 @@ color: var(--color-gray-900, #2c2c2c);
   cursor: default;
   opacity: 0;
 }
+.tabBtn-move-prev.disabled,
+.tabBtn-move-next.disabled {
+  cursor: not-allowed;
+}
 
 /* tabBtn-add // tabBtn-remove */
 .tabBtn-add,
@@ -7599,6 +7627,7 @@ color: var(--color-gray-900, #2c2c2c);
 .tabBtn-add:disabled,
 .tabBtn-remove:disabled {
   filter: opacity(30%);
+  cursor: default;
 }
 .tabBtn-add:hover:not(:disabled),
 .tabBtn-remove:hover:not(:disabled) {

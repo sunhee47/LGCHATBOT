@@ -17231,7 +17231,7 @@ function makeRequestItemsInput(requestdata) {
     });
     
     if(checkChatHistory == false) {
-        requestItemsPopupOpen(quickBtnBox);
+        //requestItemsPopupOpen(quickBtnBox);
     }
     
     messageWrap.append(messageTextWrap);
@@ -17249,7 +17249,7 @@ function requestItemsPopupOpen(requestdata) {
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
     //var addPlugin = $('<div class="plugins another-account-order" id="request-items"></div>');
-    var addPlugin = $('<div class="plugins products-bill" id="products-bill"></div>');
+    var addPlugin = $('<div class="plugins products-bill" id="products-bill" style="height: 100%;max-height: calc(100% - 38px);"></div>');
 
     /* #########[ popup_header ]######### */
     var pluginHeader = $('<div class="plugin-header"><h1>물품 청구 ('+ '1' + '/' + '3' +')</h1></div>');
@@ -17269,7 +17269,7 @@ function requestItemsPopupOpen(requestdata) {
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents" id="item-content"></div>');
+    var pluginContents = $('<div class="plugin-contents" id="item-content" style="height: 100%; max-height: calc(100vh - 100px);"></div>');
     var requestForm = requestItemsInputFirst(requestdata);
     //var requestForm = requestItemsInputSecond(requestdata);
     pluginContents.append(requestForm);
@@ -17280,6 +17280,7 @@ function requestItemsPopupOpen(requestdata) {
     $('.test-panel').append(addPlugin);
     $('.plugin-dim').css('display', 'block');
     $('#products-bill').css('display', 'block');
+    //$('#products-bill').css('max-height', 'calc(100%-10px)');
     setTimeout(function() {
         $('.plugin-dim').addClass('show');
         $('#products-bill').addClass('show');
@@ -17323,7 +17324,7 @@ function requestItemsInputFirst(requestdata) {
     // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
     var inputTextContent1 = $('<div class="input-form order-select searchIcon" id="input_content1"></div>');
     var departmentSelected = $('<div class="selected-order" id="input_selected1"></div>');
-    var inputBox1 = $('<input type="text" placeholder="Department를 입력해 주세요." max-length="50" id="department-name"  autocomplete="off"/>');
+    var inputBox1 = $('<input type="text" placeholder="Department 입력 후 \'Enter\'로 검색" max-length="50" id="department-name"  autocomplete="off"/>');
     var departmentListCont = $('<div class="order-list"></div>');
     
     var departmentListTitle = $('<span>Department 목록</span>');
@@ -17344,14 +17345,15 @@ function requestItemsInputFirst(requestdata) {
         if(e.keyCode == 13) {
             
             if(inval.length < 2) {
-                showSmallDialog("Department 검색은 2글자 이상 입력해야 합니다.");
+                showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
                 return;
             }            
             
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             inputTextContent1.addClass('focus');
                 
-            departmentListCont.addClass('show');
+            //departmentListCont.addClass('show');      // 'department 목록' 같이 표시 
+            departmentListCont.removeClass('show');     // 'department 목록' 같이 표시 
 
             orderUl1.empty();
             
@@ -17377,6 +17379,7 @@ function requestItemsInputFirst(requestdata) {
                   orderUl1.append(orderLi1);
                   departmentListCont.append(orderUl1);
                   
+                  departmentListCont.addClass('show');      // 'department 목록' 같이 표시 
                 }
                 
                 departmentList = result.resultList;
@@ -17385,6 +17388,9 @@ function requestItemsInputFirst(requestdata) {
                   var orderLi1 = $('<li class="no-res">Department 정보가 없습니다.</li>');
                   orderUl1.append(orderLi1);
                   departmentListCont.append(orderUl1);
+                  
+                  departmentListCont.addClass('show');      // 'department 목록' 같이 표시 
+
                 } else {
                   departmentList.map(department => {
                       
@@ -17432,6 +17438,8 @@ function requestItemsInputFirst(requestdata) {
                     orderUl1.append(orderLi1);
                   });
                   departmentListCont.append(orderUl1);
+                  
+                  departmentListCont.addClass('show');              // 'department 목록' 같이 표시 
                 }
                 
                 //closeLoadingWithMask();
@@ -17520,8 +17528,11 @@ function requestItemsInputFirst(requestdata) {
     var inputBoxText2 = $('<div class="input-box add-order"><label>Plant<b>*</b></label></div>');
     var inputTextContent2 = $('<div class="input-form order-select searchIcon"></div>');
     var plantSelected = $('<div class="selected-order"></div>');
-    var inputBox2 = $('<input type="text" placeholder="Plant를 입력해 주세요." max-length="50" id="plant-name" autocomplete="off"/>');
+    var inputBox2 = $('<input type="text" placeholder="Plant ID 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
     var plantListCont = $('<div class="order-list"></div>');
+
+    var plantListTitle = $('<span>Plant 목록</span>');
+    plantListCont.append(plantListTitle);
 
     inputTextContent2.append(plantSelected);
     inputTextContent2.append(inputBox2);
@@ -17537,14 +17548,16 @@ function requestItemsInputFirst(requestdata) {
         if(e.keyCode == 13) {
             
             if(inval.length < 2) {
-                showSmallDialog("Plant ID 검색은 2글자 이상 입력해야 합니다.");
+                showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
                 return;
             }            
             
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             inputTextContent2.addClass('focus');
                 
-            plantListCont.addClass('show');
+            //plantListCont.addClass('show');
+            plantListCont.removeClass('show');
+            
             orderUl2.empty();
             
             //LoadingWithMask(); 
@@ -17569,10 +17582,10 @@ function requestItemsInputFirst(requestdata) {
                 console.log('result', result);
                 
                 if(result == null) {
-                  var orderLi2 = $('<li class="no-res">Plant 정보가 없습니다.</li>');
-                  orderUl2.append(orderLi2);
-                  plantListCont.append(orderUl2);
-                  
+                    var orderLi2 = $('<li class="no-res">Plant 정보가 없습니다.</li>');
+                    orderUl2.append(orderLi2);
+                    plantListCont.append(orderUl2);
+                    plantListCont.addClass('show');
                 }
                 
                 plantList = result.resultList;
@@ -17581,6 +17594,7 @@ function requestItemsInputFirst(requestdata) {
                   var orderLi2 = $('<li class="no-res">Plant 정보가 없습니다.</li>');
                   orderUl2.append(orderLi2);
                   plantListCont.append(orderUl2);
+                    plantListCont.addClass('show');
                 } else {
                   plantList.map(plant => {
                       
@@ -17628,6 +17642,8 @@ function requestItemsInputFirst(requestdata) {
                     orderUl2.append(orderLi2);
                   });
                   plantListCont.append(orderUl2);
+                  plantListCont.addClass('show');
+
                 }
                 
                 //closeLoadingWithMask();
@@ -17646,8 +17662,11 @@ function requestItemsInputFirst(requestdata) {
     var inputBoxText3 = $('<div class="input-box add-order"><label>Project</label></div>');
     var inputTextContent3 = $('<div class="input-form order-select searchIcon"></div>');
     var projectSelected = $('<div class="selected-order"></div>');
-    var inputBox3 = $('<input type="text" placeholder="Project를 입력해 주세요." max-length="50" id="project-name" autocomplete="off" />');
+    var inputBox3 = $('<input type="text" placeholder="Project 입력 후 \'Enter\'로 검색" max-length="50" id="project-name" autocomplete="off" />');
     var projectListCont = $('<div class="order-list"></div>');
+    
+    var projectListTitle = $('<span>Project 목록</span>');
+    projectListCont.append(projectListTitle);
     
     inputTextContent3.append(projectSelected);
     inputTextContent3.append(inputBox3);
@@ -17663,14 +17682,16 @@ function requestItemsInputFirst(requestdata) {
         if(e.keyCode == 13) {
             
             if(inval.length < 2) {
-                showSmallDialog("Project 검색은 2글자 이상 입력해야 합니다.");
+                showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
                 return;
             }            
             
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             inputTextContent3.addClass('focus');
                 
-            projectListCont.addClass('show');
+            //projectListCont.addClass('show');
+            projectListCont.removeClass('show');
+            
             orderUl3.empty();
             
             //LoadingWithMask(); 
@@ -17694,6 +17715,7 @@ function requestItemsInputFirst(requestdata) {
                   var orderLi3 = $('<li class="no-res">Project 정보가 없습니다.</li>');
                   orderUl3.append(orderLi3);
                   projectListCont.append(orderUl3);
+                  projectListCont.addClass('show');
                 }
                 
                 projectList = result.resultList;
@@ -17702,6 +17724,7 @@ function requestItemsInputFirst(requestdata) {
                   var orderLi3 = $('<li class="no-res">Project 정보가 없습니다.</li>');
                   orderUl3.append(orderLi3);
                   projectListCont.append(orderUl3);
+                  projectListCont.addClass('show');
                 } else {
                   projectList.map(project => {
                       
@@ -17746,6 +17769,7 @@ function requestItemsInputFirst(requestdata) {
                     orderUl3.append(orderLi3);
                   });
                   projectListCont.append(orderUl3);
+                  projectListCont.addClass('show');
                 }
                 
                 //closeLoadingWithMask();
@@ -17758,16 +17782,16 @@ function requestItemsInputFirst(requestdata) {
     
     inputBoxText3.append(inputTextContent3);
     
-    var note = $('<span class="input-box-note">Project 입력 시, Project로 비용이 청구됩니다.</span>');
+    var note = $('<span class="input-box-note">Project 입력 시 Project로 비용이 청구됩니다.</span>');
     inputBoxText3.append(note);
     
     pluginForm.append(inputBoxText3);
 
     /* ###[ 계정 ]### */
-    var inputBoxText4 = $('<div class="input-box add-order"><label>계정<b>*</b></label></div>');
+    var inputBoxText4 = $('<div class="input-box add-order"><div ><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기</a></label></div></div>');
     var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon"></div>');
     var accountSelected = $('<div class="selected-order"></div>');
-    var inputBox4 = $('<input type="text" placeholder="계정을 입력해 주세요." max-length="50" id="account-name" autocomplete="off" readonly disabled/>');
+    var inputBox4 = $('<input type="text" placeholder="청구할 계정을 선택해 주세요." max-length="50" id="account-name" autocomplete="off" readonly disabled/>');
     var accountListCont = $('<div class="order-list"></div>');
     
     var accountListTitle = $('<span>계정 목록</span>');
@@ -17787,7 +17811,9 @@ function requestItemsInputFirst(requestdata) {
         // 목록을 위로 펼치기 위해서 스타일 변경.         
         accountListCont.css('top', 'auto').css('bottom', 'calc(100% + 2px)');       
         
-        accountListCont.addClass('show');
+        //accountListCont.addClass('show');
+        accountListCont.removeClass('show');
+        
         orderUl4.empty();
             
         if(isNull($('#department_code').val())) {
@@ -17828,6 +17854,7 @@ function requestItemsInputFirst(requestdata) {
                   var orderLi4 = $('<li class="no-res">계정 정보가 없습니다.</li>');
                   orderUl4.append(orderLi4);
                   accountListCont.append(orderUl4);
+                  accountListCont.addClass('show');
                 }
                 
                 accountList = result.resultList;
@@ -17836,12 +17863,18 @@ function requestItemsInputFirst(requestdata) {
                   var orderLi4 = $('<li class="no-res">계정 정보가 없습니다.</li>');
                   orderUl4.append(orderLi4);
                   accountListCont.append(orderUl4);
+                  accountListCont.addClass('show');
                 } else {
                   accountList.map(account => {
                       
                     var orderLi4 = $(
                         '<li>'
-                            +'<p>['+account.ZCLSCODE+'] '+ account.ZCLCDTEXT // + '()' 
+                            //+'<p>['+account.ZCLSCODE+'] '+ account.ZCLCDTEXT // + '()' 
+                            //+'</p>'
+                            +'<p>'+ account.ZCLSCODE // 
+                            +'</p>'
+                            +'<p class="small">'
+                            + account.ZCLCDTEXT
                             +'</p>'
                         +'</li>'
                     );
@@ -17851,8 +17884,10 @@ function requestItemsInputFirst(requestdata) {
                         
                         var accountInfo = $(
                             '<div class="data-wrap">'
-                                 +'<p>['+account.ZCLSCODE+']' + account.ZCLCDTEXT 
-                                 + '</p>'
+                                // +'<p>['+account.ZCLSCODE+']' + account.ZCLCDTEXT 
+                                // + '</p>'
+                                +'<p>'+ account.ZCLSCODE // 
+                                +'</p>'
                             + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
                                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
                             + '</button>'
@@ -17881,6 +17916,7 @@ function requestItemsInputFirst(requestdata) {
                     orderUl4.append(orderLi4);
                   });
                   accountListCont.append(orderUl4);
+                  accountListCont.addClass('show');
                 }
                 
                 //closeLoadingWithMask();
@@ -18107,6 +18143,8 @@ function requestItemsInputFirst(requestdata) {
 function requestItemsInputSecond(requestdata) {
     console.log('2단계 requestdata  : ', requestdata);
 
+    //var userId = chatui.getSetting("userId"); 
+    
     var placeholderToday = moment().format('YYYY.MM.DD');
     var itemCnt = (requestdata.item_cnt == null)? '1':requestdata.item_cnt;
     var itemNo = (requestdata.item_no == null)? '1':requestdata.item_no;
@@ -18134,6 +18172,11 @@ function requestItemsInputSecond(requestdata) {
     var selPlantCode = (requestdata.plant_code == null)? '':requestdata.plant_code;
     var selPlantName = (requestdata.plant_name == null)? '':requestdata.plant_name;
 
+    var selProjectCode = (requestdata.project_code == null)? '':requestdata.project_code;
+    var selProjectName = (requestdata.project_name == null)? '':requestdata.project_name;
+
+    var textBudget = (selProjectCode != '')? 'Project':'Department';
+    
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
@@ -18151,7 +18194,7 @@ function requestItemsInputSecond(requestdata) {
     pluginForm.append(smallNote);
     
     var inputBoxTopList = $('<h3 class="balance-box"></h3>');
-    var inputBoxTopTitle = $('<span>Department 예산 잔액</span>');
+    var inputBoxTopTitle = $('<span>'+textBudget+' 예산 잔액</span>');
     var inputBoxTopContent = $('<span class="balance">'+formatAmount(budgetAmount)+'원</span>');          // 
     inputBoxTopList.append(inputBoxTopTitle);
     inputBoxTopList.append(inputBoxTopContent);
@@ -18228,6 +18271,8 @@ function requestItemsInputSecond(requestdata) {
         let showClass = (tabNo==itemNo)? ' show':'';
         let delBtnShow = (itemCnt == 1)? 'disabled':'';
         
+        let totalview = (itemCnt == 1)? 'display:none;':'';
+        
         //let itemAmount = (item.item_qty == '')? Number(item.item_unit) * Number(item.item_qty);
         
         var tabContent1 = $('<div class="tab-content'+showClass+'"></div>');
@@ -18245,7 +18290,7 @@ function requestItemsInputSecond(requestdata) {
     
         var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+tabNo+'</span> 수량 <b>*</b></label></div>');
         var itemQtyBox = $('<div class="input-form"></div>');
-        var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" id="item_qty" value="'+item.item_qty+'" autocomplete="off"/>');
+        var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" maxlength="15" id="item_qty" value="'+item.item_qty+'" autocomplete="off"/>');
         var itemQtyHidden = $('<input type="hidden" id="item_unit" value="'+item.item_unit+'"/>');
     
         itemQtyBox.append(itemQtyInput);
@@ -18257,8 +18302,8 @@ function requestItemsInputSecond(requestdata) {
         var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
         var itemDateWrap = $('<div class="schedule-wrap"></div>');
         var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date" placeholder="'+item.due_date+'" id="due_date" onclick="datepicker.open(this)" value="'+item.due_date+'" autocomplete="off"/>');
-    
+        var itemDateInput = $('<input type="text" class="input-schedule-date startdate" placeholder="'+item.due_date+'" id="due_date" onclick="datepicker.open(this)" value="'+item.due_date+'" autocomplete="off"/>');
+
         itemDateBox.append(itemDateInput);
         
         /*  #########[ datepicker ]#########  */
@@ -18294,7 +18339,7 @@ function requestItemsInputSecond(requestdata) {
         amountBox.append(amountItem);
 
         var amountTotalBox = $(
-            '<div class="amount-item total">'
+            '<div class="amount-item total" style="'+totalview+'">'
                 +'<h4>Total Amount</h4>'
                 +'<div class="amount">'
                     +badgeConfirm + '<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
@@ -18302,9 +18347,9 @@ function requestItemsInputSecond(requestdata) {
             +'</div>'
         );
         
-        if(tabNo > 1) {
+        //if(tabNo > 1) {
             amountBox.append(amountTotalBox);
-        }
+        //}
         
         tabContent1.append(amountBox);
         
@@ -18349,7 +18394,7 @@ function requestItemsInputSecond(requestdata) {
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
-        var tabContents = pluginForm.find('.tab-content');
+        /*var tabContents = pluginForm.find('.tab-content');
         var itemList = new Array();
         
         for ( let i = 0; i <= (tabContents.length)-1; i++ ) {
@@ -18367,11 +18412,11 @@ function requestItemsInputSecond(requestdata) {
         }        
         
         console.log('itemList', itemList);
-        
+        */
         requestdata.step = 3;
 
-        requestdata.item_list = itemList;
-        requestdata.item_cnt = itemCnt;
+        //requestdata.item_list = itemList;
+        //requestdata.item_cnt = itemCnt;
 
         pluginForm.removeClass('show');
         pluginForm.remove();
@@ -18399,6 +18444,8 @@ function requestItemsInputSecond(requestdata) {
                 //else{
                     tabCont.find('.btn-input').attr('disabled', false);
                     pluginForm.find('.tabBtn-add').attr('disabled', true);              // tab 추가 버튼 활성화.
+                    
+                    nextBtn.find('button').attr('disabled', true);
                 //}
             }
             else{
@@ -18443,6 +18490,7 @@ function requestItemsInputSecond(requestdata) {
         console.log('input ...');
         
         var inputBtn = $(this);
+        var tabName = $('.tabBtn-box').find('.tabBtn.active').find('.prod_name').text();
         //itemAmountCalculate(this);
         
         // 물품 청구 품목 조회.        
@@ -18472,6 +18520,10 @@ function requestItemsInputSecond(requestdata) {
                 if(meterialInfo.length == 0) {
                       console.log('품목 결과 : 0건');
                       
+                      setTimeout(function() {
+                        showSmallDialog('유효하지 않은 물품ID입니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                      }, 100);                      
+                      return;                      
                 } else {
                     console.log('품목  조회 완료 : ', meterialInfo);
                     
@@ -18482,13 +18534,25 @@ function requestItemsInputSecond(requestdata) {
                     inputBtn.parents('.tab-content').find('.help-message').text(itemName);
                     itemAmountCalculate(itemUnit, inputBtn);
                     var isOver = totalAmountCalculate();
+                    
+                    let productList = makeItemList();
+                    
+                    requestdata.item_list = productList;
+                    requestdata.item_cnt = itemCnt;
+                    
                     nextBtnEvent();
                     
                     if(isOver) {
                         setTimeout(function() {
                             showSmallDialog('예산을 초과했습니다.'); 
-                        }, 500);               
+                        }, 100);               
+                    }else{
+                        setTimeout(function() {
+                            showSmallDialog(tabName+'이 입력되었습니다.'); 
+                        }, 100);   
                     }
+                    
+                    
                 }
             }
             else {
@@ -18496,7 +18560,7 @@ function requestItemsInputSecond(requestdata) {
                 
                 setTimeout(function() {
                     showSmallDialog('품목 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                }, 500);
+                }, 100);
                 
             }    
             
@@ -18592,6 +18656,10 @@ function requestItemsInputSecond(requestdata) {
 
         // 삭제 버튼 able/disable 
 
+        if(itemCnt < maxItemCount) {
+             pluginForm.find('.tabBtn-add').css('display', '');              // tab 추가 버튼 숨김.
+        }
+        
         //showTabMoveBtn();
         pluginForm.find('.tabBtn-add').attr('disabled', false); 
         if(itemCnt == 1) {
@@ -18601,11 +18669,21 @@ function requestItemsInputSecond(requestdata) {
         nextBtnEvent();
     });
     
+    
+    var number_patten = /[^0-9.]/;         
     // input
     $(document).on('keyup','.form-second input', function(e) {
     //pluginForm.find('input').on('keyup', function(e) {
         hblInput = e.target.value;
         
+        if('item_qty' == e.target.id) {
+            if(number_patten.test(hblInput) == true) {
+                //console.log('e.target ...'+e.target.id);
+                setTimeout(function() {
+                    showSmallDialog('숫자와 소수점(.)만 입력해 주세요.'); 
+                }, 100);              
+            }
+        }
         //console.log('hblInput ::: '+hblInput);
         //console.log('keyup'+$(this).attr('name'));
         inputBtnEvent();
@@ -18618,12 +18696,16 @@ function requestItemsInputSecond(requestdata) {
         console.log('clcik.'+itemCnt);
         
         // 마지막 탭을 선택한 상태가 아닌 경우를 대비해서. 
-        $(this).parent().find('.tabBtn').removeClass('active');
+        $(this).parent().find('.tabBtn').removeClass('active').addClass('disabled');
         $(this).parent().find('.tabBtn').last().addClass('active');
 
         itemCnt = tabAdd();
         
         tabContentAdd(tabContentList);
+        
+        if(itemCnt == maxItemCount) {
+             pluginForm.find('.tabBtn-add').css('display', 'none');              // tab 추가 버튼 숨김.
+        }
         
         //$(this).parent().removeClass('active');         // 탭 추가 버튼 비활성화. 
         //$(this).parents().find('.amount-list').removeClass('show');                         // 물품금액 list 감추기 (outter 에 있을 때 )
@@ -18652,6 +18734,9 @@ function requestItemsInputSecond(requestdata) {
         var showContent = $('.tab-content.show');
         console.log('amont box : '+showContent.find('.btn-input').attr('disabled'));
         
+        if($(this).hasClass('active')) {
+            return;
+        }
         var current_tab_no = $('.tabBtn-box').find('.tabBtn.active').find('#item_no').val();        
         if (showContent.find('.amount-box').hasClass('show') == false || showContent.find('.btn-input').attr('disabled') != 'disabled') {
             setTimeout(function() {
@@ -18716,6 +18801,27 @@ function requestItemsInputSecond(requestdata) {
 
     //tabClick(true);  
     /* #########[ popup_content_form_end ]######### */
+    function makeItemList() {
+        var tabContents = pluginForm.find('.tab-content');
+        var itemList = new Array();
+        
+        for ( let i = 0; i <= (tabContents.length)-1; i++ ) {
+            let tabContent = tabContents[i];
+            
+            var item = new Object();
+            
+            item.item_id = $(tabContent).find('#item_id').val();
+            item.item_qty = $(tabContent).find('#item_qty').val();
+            item.due_date = $(tabContent).find('#due_date').val();
+            item.item_name = $(tabContent).find('.help-message').text();
+            item.item_unit = $(tabContent).find('#item_unit').val();
+
+            itemList.push(item);
+        }       
+        
+        return itemList;
+    }
+    
     function afterTabDelete() {
         // tab 이동 버튼 제어. 
         var tabBtnBox = pluginForm.find('.tabBtn-box');
@@ -18745,7 +18851,17 @@ function requestItemsInputSecond(requestdata) {
     function tabBtnPrev(target, isShow) {
         var tabBtnBox = target.parents('.tabBtn-wrap').find('.tabBtn-box');
         var activeBtnNum = 0;
-        if(isShow)  target.next().attr('disabled', false);
+        if(isShow){
+           target.next().attr('disabled', false);
+           
+           if(tabBtnBox.find('.tabBtn').hasClass('disabled')) {
+                target.next().addClass('disabled');   
+           }
+           else{
+                target.next().removeClass('disabled');   
+           }
+           
+        }  
         
         if (tabBtnBox.find('.active').prev().hasClass('tabBtn')) {
             tabBtnBox.find('.active').removeClass('active').prev().addClass('active').focus();
@@ -18763,7 +18879,16 @@ function requestItemsInputSecond(requestdata) {
     function tabBtnNext(target, isShow) {
         var tabBtnBox = target.parents('.tabBtn-wrap').find('.tabBtn-box');
         var activeBtnNum = 0;
-        if(isShow)  target.prev().attr('disabled', false);
+        if(isShow){
+           target.prev().attr('disabled', false);
+           
+           if(tabBtnBox.find('.tabBtn').hasClass('disabled')) {
+                target.prev().addClass('disabled');   
+           }
+           else{
+                target.prev().removeClass('disabled');   
+           }
+        }  
         
         if (tabBtnBox.find('.active').next().hasClass('tabBtn')) {
             tabBtnBox.find('.active').removeClass('active').next().addClass('active').focus();
@@ -18797,6 +18922,7 @@ function requestItemsInputSecond(requestdata) {
         amount_box.find('.item').find('.amount-formula').text(amount_formula.toLocaleString());
 
         //var isOver = totalAmountCalculate();
+
 
         console.log('itemCnt : '+itemCnt+', maxItemCount : '+maxItemCount);
         if(itemCnt < maxItemCount) { 
@@ -18833,7 +18959,17 @@ function requestItemsInputSecond(requestdata) {
         }
         
         console.log('total : '+totalAmountStr);
+        if(amountList.length == 1) {
+            amountList.find('.amount-item.total').css('display', 'none');
+        }
+        else{
+            amountList.find('.amount-item.total').css('display', '');
+        }
         amountList.find('.amount-item.total').find('.amount').html(totalAmountText);
+        
+        pluginForm.find('.tabBtn').removeClass('disabled');
+        pluginForm.find('.tabBtn-move-prev').removeClass('disabled');
+        pluginForm.find('.tabBtn-move-next').removeClass('disabled');
         
         return isOver;
     }
@@ -18953,7 +19089,7 @@ function requestItemsInputSecond(requestdata) {
         
         var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> 수량 <b>*</b></label></div>');
         var itemQtyBox = $('<div class="input-form"></div>');
-        var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" id="item_qty" value="" autocomplete="off"/>');
+        var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" maxlength="15" id="item_qty" value="" autocomplete="off"/>');
         var itemQtyHidden = $('<input type="hidden" id="item_unit" value="0"/>');
     
         itemQtyBox.append(itemQtyInput);
@@ -18965,7 +19101,7 @@ function requestItemsInputSecond(requestdata) {
         var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
         var itemDateWrap = $('<div class="schedule-wrap"></div>');
         var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date" placeholder="'+placeholderToday+'" id="due_date" onclick="datepicker.open(this)" value="'+placeholderToday+'" autocomplete="off"/>');
+        var itemDateInput = $('<input type="text" class="input-schedule-date startdate" placeholder="'+placeholderToday+'" id="due_date" onclick="datepicker.open(this)" value="'+placeholderToday+'" autocomplete="off"/>');
     
         itemDateBox.append(itemDateInput);
         
@@ -19092,6 +19228,8 @@ function requestItemsInputSecond(requestdata) {
         }, delay);  
     });
      
+    ascendScroll();     
+    
      requestItemsInputForm = pluginForm;
     return pluginForm;
     
@@ -19470,6 +19608,8 @@ function requestItemsInputThird(requestdata) {
         $('.plugin-contents').append(requestItemsInputForm);
         
     });
+
+    ascendScroll();
 
     requestItemsInputForm = pluginForm;
     return pluginForm;
