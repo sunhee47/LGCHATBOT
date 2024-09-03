@@ -1,6 +1,9 @@
-
+// STG URL 세팅
 let imgBaseUrl = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/3ace0979-8ff0-49f3-814b-84c500f5fbef';
-let imgPurBaseUrl = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/048bc84c-e99a-4a1f-8573-26b4128d9256';
+let imgPurBaseUrl = 'https://chatclient-stg.ai.lgcns.com/singlex-ai-chatbot-contents-stg/3ace0979-8ff0-49f3-814b-84c500f5fbef';
+let chatbotUrl = 'https://chatclient-stg.ai.lgstation.com';
+let gptChatbotId = '53496e65-19e4-4d34-8469-c7b83263b588';
+let eduChatbotId = '459bac85-f58f-48eb-9c75-c6f17b73ac59';
 
 let searchActive = false;
 let searchActive2 = false;
@@ -39,6 +42,24 @@ let smsUrl = "http://gportal.lgchem.com/support/sms/sms.do?gubun=1&receiverId=";
 
 // EP 통합검색 
 let epTotalUrl = "https://ep.lgcns.com/support/search/totalSearch.do?totalSearch=%query%";          
+
+// 일정등록 에러 메시지 
+let ScheduleRegErrorMap = new Map([
+  ["exchange_user", "일정 및 회의실 기능은 Domino Mail 사용자에게만 제공되는 기능입니다."],
+  ["parameter_error", "일정 시작일시 또는 종료일시를 다시 한번 확인해 주세요."],
+  ["locationGroupId_null", "회의실 예약에 필요한 지역그룹이 없습니다.</br>Help Desk에 문의해 주세요."], 
+  ["not_use_system", "회의실 예약에 필요한 지역그룹 담당자가 설정돼 있지 않습니다.</br>Help Desk에 문의해 주세요."], 
+  ["error_authorized", "권한이 없는 지역그룹에 속한 회의실을 선택했어요.</br>회의실을 다시 선택해 주세요."], 
+
+  ["WritePermission_error", "예약 권한이 없는 회의실입니다.</br>회의실을 다시 선택해 주세요."],
+  ["usage_error", "사용하지 않는 회의실입니다.</br>회의실을 다시 선택해 주세요."],
+  ["RestrictionUse_error", "사용이 제한된 회의실입니다.</br>회의실을 다시 선택해 주세요."], 
+  ["MaxPerReservation_error", "회의실 최대 예약 가능 시간을 초과했어요.</br>일정 시간을 다시 설정해 주세요."], 
+  ["LimitAvaliableTime_error", "회의실 사용이 불가능한 시간대입니다.</br>일정 시간을 다시 설정해 주세요."], 
+
+  ["ID_null", "회의실 예약이 정상적으로 처리되지 않았네요.</br>일정 등록을 다시 한번 시도해 주세요."], 
+  ["Participant_error", "사용자 정보가 없는 참여자가 있습니다.</br>참여자를 다시 설정한 후 일정을 등록해 주세요."]
+]);
 
 // Push 초기화 비활성화(챗봇창 오픈 시 push 시점 제어)
 // chatSettings["initPush"] = "N";
@@ -251,6 +272,42 @@ var iconTwo = '<svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns
 var iconTeam = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
 +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
 +'</svg>';
+
+// 240530 [퍼블 추가]_start
+/* ##### [ 아이콘 추가 ] ##### */
+var iconBell = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" fill="#898989"></path>'
++'</svg>';
+var iconRoundCheck = '<svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill="#2C2C2C" fill-rule="evenodd" clip-rule="evenodd" d="M7.00004 12.8663C10.2401 12.8663 12.8667 10.2397 12.8667 6.99967C12.8667 3.7596 10.2401 1.13301 7.00004 1.13301C3.75997 1.13301 1.13337 3.7596 1.13337 6.99967C1.13337 10.2397 3.75997 12.8663 7.00004 12.8663ZM7.00004 13.6663C10.6819 13.6663 13.6667 10.6816 13.6667 6.99967C13.6667 3.31778 10.6819 0.333008 7.00004 0.333008C3.31814 0.333008 0.333374 3.31778 0.333374 6.99967C0.333374 10.6816 3.31814 13.6663 7.00004 13.6663Z" />'
++'<path fill="#2C2C2C" fill-rule="evenodd" clip-rule="evenodd" d="M9.95025 5.3835C10.1065 5.53971 10.1065 5.79297 9.95025 5.94918L6.61692 9.28252C6.46073 9.43871 6.2075 9.43873 6.05128 9.28257L4.05058 7.28257C3.89434 7.12638 3.8943 6.87312 4.05048 6.71688C4.20666 6.56064 4.45993 6.5606 4.61617 6.71678L6.33403 8.43404L9.38457 5.3835C9.54078 5.22729 9.79404 5.22729 9.95025 5.3835Z" />'
++'</svg>';
+var listHeaderIcon2 = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill="#2C2C2C" d="M1.99992 4.00033C2.36811 4.00033 2.66659 3.70185 2.66659 3.33366C2.66659 2.96547 2.36811 2.66699 1.99992 2.66699C1.63173 2.66699 1.33325 2.96547 1.33325 3.33366C1.33325 3.70185 1.63173 4.00033 1.99992 4.00033Z" />'
++'<path fill="#2C2C2C" d="M1.99992 8.66699C2.36811 8.66699 2.66659 8.36852 2.66659 8.00033C2.66659 7.63214 2.36811 7.33366 1.99992 7.33366C1.63173 7.33366 1.33325 7.63214 1.33325 8.00033C1.33325 8.36852 1.63173 8.66699 1.99992 8.66699Z" />'
++'<path fill="#2C2C2C" d="M2.66659 12.667C2.66659 13.0352 2.36811 13.3337 1.99992 13.3337C1.63173 13.3337 1.33325 13.0352 1.33325 12.667C1.33325 12.2988 1.63173 12.0003 1.99992 12.0003C2.36811 12.0003 2.66659 12.2988 2.66659 12.667Z" />'
++'<path fill="#2C2C2C" d="M4.39992 7.60026C4.179 7.60026 3.99992 7.77935 3.99992 8.00026C3.99992 8.22117 4.179 8.40026 4.39992 8.40026H14.2666C14.4875 8.40026 14.6666 8.22117 14.6666 8.00026C14.6666 7.77935 14.4875 7.60026 14.2666 7.60026H4.39992Z" />'
++'<path fill="#2C2C2C" d="M3.99992 3.33359C3.99992 3.11268 4.179 2.93359 4.39992 2.93359H14.2666C14.4875 2.93359 14.6666 3.11268 14.6666 3.33359C14.6666 3.55451 14.4875 3.73359 14.2666 3.73359H4.39992C4.179 3.73359 3.99992 3.55451 3.99992 3.33359Z" />'
++'<path fill="#2C2C2C" d="M4.39992 12.2669C4.179 12.2669 3.99992 12.446 3.99992 12.6669C3.99992 12.8878 4.179 13.0669 4.39992 13.0669H14.2666C14.4875 13.0669 14.6666 12.8878 14.6666 12.6669C14.6666 12.446 14.4875 12.2669 14.2666 12.2669H4.39992Z" />'
++'</svg>';
+var plusIconRed = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill="#E0205C" d="M7.60059 14.2663C7.60059 14.4873 7.77967 14.6663 8.00059 14.6663C8.2215 14.6663 8.40059 14.4873 8.40059 14.2663V8.39961H14.2673C14.4882 8.39961 14.6673 8.22052 14.6673 7.99961C14.6673 7.7787 14.4882 7.59961 14.2673 7.59961H8.40059V1.73301C8.40059 1.51209 8.2215 1.33301 8.00059 1.33301C7.77967 1.33301 7.60059 1.51209 7.60059 1.73301V7.59961H1.73398C1.51307 7.59961 1.33398 7.7787 1.33398 7.99961C1.33398 8.22052 1.51307 8.39961 1.73398 8.39961H7.60059V14.2663Z"/>'
++'</svg>';
+var plusIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill="#6B6B6B" d="M11.3999 21.4C11.3999 21.7314 11.6685 22 11.9999 22C12.3313 22 12.5999 21.7314 12.5999 21.4V12.5999H21.4C21.7314 12.5999 22 12.3313 22 11.9999C22 11.6685 21.7314 11.3999 21.4 11.3999H12.5999V2.6C12.5999 2.26863 12.3313 2 11.9999 2C11.6685 2 11.3999 2.26863 11.3999 2.6V11.3999H2.6C2.26863 11.3999 2 11.6685 2 11.9999C2 12.3313 2.26863 12.5999 2.6 12.5999H11.3999V21.4Z"/>'
++'</svg>';
+var minusIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill="#6B6B6B" fill-rule="evenodd" clip-rule="evenodd" d="M2 12.0004C2 11.669 2.26863 11.4004 2.6 11.4004L21.4 11.4004C21.7314 11.4004 22 11.669 22 12.0004C22 12.3318 21.7314 12.6004 21.4 12.6004L2.6 12.6004C2.26863 12.6004 2 12.3318 2 12.0004Z"/>'
++'</svg>';
+var trashIcon = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill="#A5A5A5" d="M7.49993 6.67493C7.74845 6.67493 7.94993 6.8764 7.94993 7.12493V12.7499C7.94993 12.9985 7.74846 13.1999 7.49993 13.1999C7.2514 13.1999 7.04993 12.9985 7.04993 12.7499L7.04993 7.12493C7.04993 6.8764 7.2514 6.67493 7.49993 6.67493Z"/>'
++'<path fill="#A5A5A5" d="M10.9499 7.12493C10.9499 6.8764 10.7485 6.67493 10.4999 6.67493C10.2514 6.67493 10.0499 6.8764 10.0499 7.12493V12.7499C10.0499 12.9985 10.2514 13.1999 10.4999 13.1999C10.7485 13.1999 10.9499 12.9985 10.9499 12.7499L10.9499 7.12493Z"/>'
++'<path fill="#A5A5A5" fill-rule="evenodd" clip-rule="evenodd" d="M6.375 2.625C6.375 2.00368 6.87868 1.5 7.5 1.5H10.5C11.1213 1.5 11.625 2.00368 11.625 2.625V3.60004L14.55 3.60004C14.7985 3.60004 15 3.80151 15 4.05004C15 4.29856 14.7985 4.50004 14.55 4.50004H14.25V14.1C14.25 15.3427 13.2426 16.35 12 16.35H6C4.75736 16.35 3.75 15.3427 3.75 14.1V4.50004H3.45C3.20147 4.50004 3 4.29856 3 4.05004C3 3.80151 3.20147 3.60004 3.45 3.60004H6.375V2.625ZM7.5 2.4H10.5C10.6243 2.4 10.725 2.50074 10.725 2.625V3.6H7.275V2.625C7.275 2.50074 7.37574 2.4 7.5 2.4ZM4.65 4.50004H13.35V14.1C13.35 14.8456 12.7456 15.45 12 15.45H6C5.25442 15.45 4.65 14.8456 4.65 14.1V4.50004Z"/>'
++'</svg>';
+var popBackBtn = '<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill="#2C2C2C" fill-rule="evenodd" clip-rule="evenodd" d="M10.9987 13.3026C10.6451 13.7004 10.6451 14.2999 10.9987 14.6978L19.2986 24.0351C19.5554 24.3241 19.5294 24.7665 19.2405 25.0234C18.9515 25.2802 18.5091 25.2542 18.2522 24.9652L9.95234 15.6279C9.12721 14.6996 9.12721 13.3008 9.95234 12.3725L18.2522 3.03513C18.5091 2.74618 18.9515 2.72016 19.2405 2.977C19.5294 3.23384 19.5554 3.67629 19.2986 3.96524L10.9987 13.3026Z"/>'
++'</svg>';
+// 240530 [퍼블 추가]_end
  
  function selectWeatherIcon2(sky, pty) { //sky : 하늘상태 pty: 강수형태 //하늘상태(SKY) 코드 : 맑음(1), 구름많음(3), 흐림(4) - 강수형태(PTY) 코드 : (단기) 없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4) 
    if(pty != 0 && pty != null) {
@@ -350,7 +407,7 @@ function appendQueryText(message) {
 
 function appendWelcomeText(message) {
     var chatMessage = '<div class="chat-message left">'
-    +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>'
+    +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>'
     +'<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"><div class="basic"><div class="message-content" style="white-space: pre-line">'
     +message
     +'</div></div></div>'
@@ -362,7 +419,7 @@ function appendWelcomeText(message) {
 
 function appendChatbotText(message) {
   var chatMessage = '<div class="chat-message left">'
-  +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>'
+  +'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>'
   + message
   +'<span class="message-date">' + moment().format("a h:mm") + '</span>';
 
@@ -372,7 +429,7 @@ function appendChatbotText(message) {
 
 function appendChatbotText2(message, customQuick) {
   var chatMessage = $('<div class="chat-message left"></div>');
-  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>');
   chatMessage.append(profile);
   chatMessage.append(message);
   chatMessage.append(customQuick);
@@ -558,7 +615,12 @@ function intentEvent(btn,type,param){
 		    break;
 		    
 		}
-		
+		//수입화물 현황 by hhs
+	    case "importCargo" :{
+	        var arrParam = param.split(',');
+			chatui.sendEventMessage("importedFreightEvent", {"reqHblNo" : arrParam[0],"reqBlYy" : arrParam[1],"reqCargMtNo" : arrParam[2]});
+			break;
+		}		
 	}	
 }
 
@@ -696,6 +758,28 @@ const popup = function() {
   }
  };
  window.pop = popup();
+
+var lodashDebounce ;
+
+function loadScript(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    // script.type = 'module';
+    script.dataset.name ='lodash';
+    
+    script.onload = () => callback(script);
+    
+    document.head.appendChild(script);
+}
+
+chatui.onLoad = function(){
+    var lodashSrc = 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js';
+    loadScript(lodashSrc, function() {
+        // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
+        window.lodash = _.noConflict();
+        lodashDebounce = lodash.debounce(autoSearchEmployees, 500);
+    });
+};
 
  //Popup Event
  jQuery(document).ready(function(e){
@@ -988,8 +1072,8 @@ function searchActiveSystem() {
  );
 
  $('.search-desc').find('.desc').html('시스템 담당자를 검색합니다.<br />'
- +'‘시스템명 + 담당자’ 로 검색해 보세요.<br /><br />'
- +'예) GERP 담당자, ecm 담당자');
+ +'‘시스템명’ 또는 ‘시스템명 + 담당자’ 로 검색해 보세요.<br /><br />'
+ +'예) GQMS, GQMS 담당자');
  $('.search-desc').addClass('show');
 };
 
@@ -1008,7 +1092,7 @@ function searchActiveSchedule() {
  +'일정 검색'
  );
 
- $('.search-desc').find('.desc').html('‘이름 + 일정’ 혹은 ‘이름 + 직책 + 일정’ 키워드로 화학 임직원 일정 정보를 검색해 보세요.<br />'
+ $('.search-desc').find('.desc').html('‘이름 + 일정’ 혹은 ‘이름 + 직책 + 일정’ 키워드로 전자 임직원 일정 정보를 검색해 보세요.<br />'
  +'검색일 기준 일정이 기본 안내되며, 주간일정 버튼을 통해 주단위 일정도 확인할 수 있습니다.<br /><br />'
  + '예) 홍길동 일정, 홍길동 선임 일정');
  $('.search-desc').addClass('show');
@@ -1089,7 +1173,7 @@ function activeGptBot(text) {
     } else{
         console.log("activeGptBot : "+text);
         var paramForm = document.createElement("form");
-        var url = "https://chatclient-stg.ai.lgstation.com/53496e65-19e4-4d34-8469-c7b83263b588/chat";
+        var url = chatbotUrl+"/"+gptChatbotId+"/chat";
         window.open("", "chatGptBot", "top=500, left=500, width=500, height=700, toolbar=1, scrollbars=1, resizable=1");
         
         $(paramForm).attr('action', url);
@@ -1172,27 +1256,25 @@ const setAutocomplete = function() {
   });
  };
  
-
 const autoSearchEmployees = function(inputVal) {
-  // Reset Input Message
-  function resetInputMsg() {
-  // activeAutoComplete('N');
-      $(".chat-footer-form").removeClass('search-where search-dict search-person search-total');
-      $(".autocomplete-wrap .search-title").removeClass("keyword person on");
-      $(".autocomplete-wrap .btn-goSearch").removeClass("show");
-      $(".autocomplete-wrap .btn-goSearch span").text('');
-      $(".chat-footer-form").attr('data-mode','message');
-      $(".test-sentence-input").val('');
-  }
+// function autoSearchEmployees(inputVal) {
+    // Reset Input Message
+    function resetInputMsg() {
+        // activeAutoComplete('N');
+        $(".chat-footer-form").removeClass('search-where search-dict search-person search-total');
+        $(".autocomplete-wrap .search-title").removeClass("keyword person on");
+        $(".autocomplete-wrap .btn-goSearch").removeClass("show");
+        $(".autocomplete-wrap .btn-goSearch span").text('');
+        $(".chat-footer-form").attr('data-mode','message');
+        $(".test-sentence-input").val('');
+    }
+    // Set Autocomplete
+    var keyword = [];
+    var $frmWrap = $(".chat-footer-form");
+    //var inputVal = $(this).val();
+    var searchVal = "'" + inputVal + "'";
     
-  // Set Autocomplete
-  var keyword = [];
- 
-      var $frmWrap = $(".chat-footer-form");
-      //var inputVal = $(this).val();
-      var searchVal = "'" + inputVal + "'";
- 
-      //console.log('searchVal : '+searchVal);
+    console.log('searchVal : '+searchVal);
       if ($frmWrap.hasClass("search-where") || $frmWrap.hasClass("search-dict")) {
           if ($.trim(inputVal) == "") {
               resetInputMsg();
@@ -1210,38 +1292,40 @@ const autoSearchEmployees = function(inputVal) {
       keyword: inputVal,
         limit: 10   
     };
-    
-    chatui.searchEmployees(options)
-        .then(function (employees) {
-          if(employees.length > 0){
-            console.log("employees : " + JSON.stringify(employees));
-              
-            // autoComplete는 Label 기준으로 세팅하기 때문에 Label 값을 insert
-            $.each(employees, function(index) {
-              var employee = employees[index]
-              var userKorName = employee.userKorName;
-              employee.label = userKorName;
-              employee.type = "person";
-            });
-              
-              keyword = employees;
-            $(".test-sentence-input").autocomplete("option", "source", keyword);
-              $(".test-sentence-input").autocomplete("option", "appendTo", $(".test-sentence-input").closest(".form-group").find(".autocomplete-wrap"));
-          }else{
-            $.each(window.phrases, function(index) {
-                keyword.push({
-                    "type": "keyword",
-                    "label": window.phrases[index]
-                });
-                
-              if(index > 2000){
-                return false;
-              }
-            });
-            keyword = [];
-          }
-    });
 
+    if (inputVal.length > 1) {
+        chatui.searchEmployees(options).then(function(employees) {
+            if (employees.length > 0) {
+                console.log("employees : " + JSON.stringify(employees));
+    
+                // autoComplete는 Label 기준으로 세팅하기 때문에 Label 값을 insert
+                $.each(employees, function(index) {
+                    var employee = employees[index]
+                    var userKorName = employee.userKorName;
+                    employee.label = userKorName;
+                    employee.type = "person";
+                });
+    
+                keyword = employees;
+                $(".test-sentence-input").autocomplete("option", "source", keyword);
+                $(".test-sentence-input").autocomplete("option", "appendTo", $(".test-sentence-input").closest(".form-group").find(".autocomplete-wrap"));
+    
+                $(".test-sentence-input").focus();
+            } else {
+                $.each(window.phrases, function(index) {
+                    keyword.push({
+                        "type": "keyword",
+                        "label": window.phrases[index]
+                    });
+    
+                    if (index > 2000) {
+                        return false;
+                    }
+                });
+                keyword = [];
+            }
+        });
+    }
 
   $(".test-sentence-input").autocomplete({
       appendTo: ".form-group .autocomplete-wrap",
@@ -1371,6 +1455,7 @@ const autoSearchEmployees = function(inputVal) {
 };
 
 function sendWelcomeEvent() {
+    console.log(chatui.getParameter('corpId'));
   var key = chatui.getSetting("userId") ? chatui.getSetting("userId").replace(/=/gi, "") : "";
   var lastAccessDate = localStorage.getItem(key + "_lastAccessDate");
 //   if(lastAccessDate == null || welcomeClick === true) { lastAccessDate=''; };
@@ -1404,7 +1489,7 @@ function smsCheck() {
     $('#attendees').attr('placeholder', '');
     $('#department').attr('placeholder', '');
   } else {
-    $('#attendees').attr('placeholder', '이름을 입력해 주세요.');
+    $('#attendees').attr('placeholder', '직원명을 입력해 주세요.');
     $('#department').attr('placeholder', '조직명을 입력해 주세요.');
   }
 }
@@ -1420,7 +1505,8 @@ const setAutocompleteJoinMember = function(input) {
       var inputVal = $(input).val();
       var searchVal = "'" + inputVal + "'";
       var sessionId = $(input).closest(".form-schedule").attr("data-sessionId");
-      
+
+     console.log('searchVal : '+searchVal);
      // 임직원 검색
      var options = {
        keyword: inputVal, // 이름 또는 전화번호 (Ex. "홍길동", "1234")
@@ -1429,7 +1515,9 @@ const setAutocompleteJoinMember = function(input) {
 
      chatui.searchEmployees(options)
          .then(function (employees) {
-           if(employees){
+           //if(employees.length > 0){
+           if(employees) {
+               console.log("employees : " + JSON.stringify(employees));
              // autoComplete는 Label 기준으로 세팅하기 때문에 Label 값을 insert
              $.each(employees, function(index) {
                var employee = employees[index]
@@ -1441,6 +1529,11 @@ const setAutocompleteJoinMember = function(input) {
                keyword = employees;
              $(input).autocomplete("option", "source", keyword);
                $(input).autocomplete("option", "appendTo", $(input).closest(".form-schedule").find(".autocomplete-member"));
+               
+               $(input).focus();
+           }
+           else{
+               console.log('no employees...');
            }
          });
       
@@ -1791,10 +1884,10 @@ function sendSMSPopupOpen(data, targetName, targetDept, targetMobileNum) {
 
   memberList.append(selectedMembers);
   var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-3" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
-  memberList.append(autocompleteMember);
+  //memberList.append(autocompleteMember);
   var memberInput = $('<input type="text" placeholder="이름을 입력해 주세요." id="attendees" class="search-input" />');
-  setAutocompleteJoinMember(memberInput);
-  memberList.append(memberInput);
+  //setAutocompleteJoinMember(memberInput);
+  //memberList.append(memberInput);
 
   var groupInput = $('<input type="text" placeholder="조직명을 입력해 주세요." id="department" class="search-input hide" />');
   setAutocompleteJoinGroup(groupInput);
@@ -2033,8 +2126,8 @@ function showNotiSettings() {
       pushEduBotSetting = 'N';
     }
   });
-  pushAll.append(pushAllSwitch);
-  onOffList2.append(pushAll);
+  //pushAll.append(pushAllSwitch);
+  //onOffList2.append(pushAll);
 
   var push15Before =  $('<li><span class="a-text">일정 15분 전 알림</span></li>');
   var push15BeforeSwitch = $('<label class="switch">'
@@ -2065,8 +2158,8 @@ function showNotiSettings() {
     pushEduBotSetting = 'N';  
   }
   });
-  pushEduBot.append(pushEduBotSwitch);
-  onOffList2.append(pushEduBot);
+  //pushEduBot.append(pushEduBotSwitch);
+  //onOffList2.append(pushEduBot);
 
   onOffBox2.append(onOffList2);
   
@@ -2173,11 +2266,15 @@ function showNotiSettings() {
 
 var welcomeClick = false;
 function welcomeAppend(welcomeMessage) {
-    //console.log('welcomeMessage', welcomeMessage);
+    console.log('welcomeMessage', welcomeMessage);
 // if(welcomeMessage[0].response !== null) $('.chat-message.left').last().remove();
   $('.chat-message.left').last().remove();
-  if(welcomeMessage[0].panelType === "error"){
-    appendWelcomeText("안녕하세요, 스마트 업무비서 케미입니다. 오늘도 좋은 하루 보내세요!");
+  //if(welcomeMessage[0].panelType === "error"){
+  //appendWelcomeText("안녕하세요, 스마트 업무비서 케미입니다. 오늘도 좋은 하루 보내세요!");
+  //} 
+  if(welcomeMessage[0].panelType === "basic"){
+      console.log(welcomeMessage[0].message);
+      appendWelcomeText('안녕하세요, 엘지니입니다.<br/>오늘도 좋은 하루 보내세요!');
   }else{
   if(JSON.parse(welcomeMessage[0].response)) {
     var todaySchedule = JSON.parse(welcomeMessage[0].response).template.outputs[0];
@@ -2195,27 +2292,30 @@ function welcomeAppend(welcomeMessage) {
   welcomeContent.append(timeNow);
 
   var userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, <br />오늘도 멋진 하루 보내세요!</h1>');
-  var characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/hello_big.gif" /></div>');
+  //var characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/hello_big.gif" /></div>');
   var welcomeMessage = "";
   if(alarmInfo.openMessage == "Y") {
-     userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님, 반가워요!<br />새로워진 엘지니와 대화해 보세요.</h1>');
-     characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/welcome.gif" /></div>');
+      console.log('positionNm : '+userInfo.positionNm);
+      var userTitle = (userInfo.positionNm != null)? userInfo.userKorName + ' ' + userInfo.jobTitle + '/' + userInfo.positionNm : userInfo.userKorName + ' ' + userInfo.jobTitle;
+
+     userName = $('<h1>' + userTitle +'님, <br />오늘도 멋진 하루 보내세요!</h1>');
+     //characterBox = $('<div class="welcome-img"><img src="'+imgBaseUrl+'/images/welcome.gif" /></div>');
      
      welcomeMessage = $(
         '<div class="message">'
-        +   '<h2>✔<b>New 엘지니, 무엇이 달라졌을까요?</b></h2>'
+        +   '<h2>✔<b>new 엘지니, 무엇이 달라졌을까요?</b></h2>'
         +    '<p>'
         +    '    · 일정 등록, 시스템 담당자 검색 등 기존 챗봇 기능을 더욱 편리하게 리뉴얼했어요.</br>'
-        +    '    · 예산시스템과 수입진행현황 조회 기능을 새로 추가했어요. (ERP 관련 기능은 계속 업데이트 될 예정입니다.)</br>'
-        +    '    · 학습봇 모드를 통해 새로운 정보 등록을 요청할 수 있어요.</br>'
-        +    '    · 엘지전자 전용 Chat GPT 서비스를 연동했어요.</br>'
+//        +    '    · 예산시스템과 수입진행현황 조회 기능을 새로 추가했어요. (ERP 관련 기능은 계속 업데이트 될 예정입니다.)</br>'
+//        +    '    · 학습봇 모드를 통해 새로운 정보 등록을 요청할 수 있어요.</br>'
+        +    '    · 수입진행현황 조회 기능을 새로 추가했어요.</br>'
         +    '</p>'
         +    '</br>'
         +    '<h2>✔<b>엘지니를 100% 활용하는 Tip!</b></h2>'
         +    '<p>'
-        +    '    · HR, 총무, IT 등 원하는 정보를 쉽게 찾아가도록 메뉴를 구성했어요. 정확한 검색어가 생각나지 않아도 버튼을 클릭해 답변을 확인해보세요.</br>'
-        +    '    · 일상대화 기능으로 엘지니의 매력이 한층 업그레이드됐어요. 다정다감한 엘지니와 자주 대화 나눠요.😊</br>'
-        +    '    ex) 사투리해봐, 퀴즈내줘</br>'
+        +    '    · 좌측 하단 ┼ 버튼을 클릭해 보세요. HR, 총무, IT 등 원하는 정보를 쉽게 찾아가도록 메뉴를 구성했어요.</br>'
+        //+    '    · 일상대화 기능으로 엘지니의 매력이 한층 업그레이드됐어요. 다정다감한 엘지니와 자주 대화 나눠요.😊</br>'
+        //+    '    ex) 사투리해봐, 퀴즈내줘</br>'
         +    '</p>'
         +'</div>' )
   }
@@ -2224,7 +2324,7 @@ function welcomeAppend(welcomeMessage) {
   //}
 
   welcomeContent.append(userName);
-  welcomeContent.append(characterBox);
+  //welcomeContent.append(characterBox);            // welcome 이미지 일단 추가하지 않음. 
   
   if(alarmInfo.openMessage == "Y") {
       welcomeContent.append(welcomeMessage);
@@ -2247,8 +2347,8 @@ function welcomeAppend(welcomeMessage) {
 
    
    todayTodo.on('click', function() {
-    chatui.sendMessage("오늘의 일정");
-    welcomeClick = true;
+    chatui.sendMessage("오늘 일정");
+    //welcomeClick = true;
    });
 
   if(alarmInfo["schedule"] == 'Y') {
@@ -2275,26 +2375,26 @@ function welcomeAppend(welcomeMessage) {
   if(alarmInfo["favorite"] == 'Y') {
     welcomeList.append(ecmUpdate);
   }
-
+*/
    var allNotice = $('<li>'
    +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
    + '<path fill-rule="evenodd" clip-rule="evenodd" d="M12.4995 17.8474C11.3803 17.3306 10.219 16.9198 9.03082 16.6184C9.13589 18.3636 9.48754 19.7475 9.72656 20.5156C9.94447 21.2158 9.43883 22.0006 8.65011 22.0006H6.43325C5.99256 22.0006 5.57349 21.7335 5.41742 21.2874C5.15375 20.5336 4.56276 18.5754 4.50463 16.0085C4.37456 16.006 4.24441 16.0047 4.11419 16.0047H3.5C2.67157 16.0047 2 15.3331 2 14.5047V7.50468C2 6.67626 2.67157 6.00468 3.5 6.00468H4.09711C7.00105 6.00468 9.87016 5.3723 12.505 4.1515L16.6592 2.22675C17.9847 1.61261 19.5 2.58057 19.5 4.04143V8.04198C20.9188 8.28006 21.9999 9.51402 21.9999 11.0005C21.9999 12.487 20.9188 13.7209 19.5 13.959V17.9538C19.5 19.4135 17.9867 20.3815 16.6615 19.7695L12.4995 17.8474ZM4.11419 14.8047H3.5C3.33431 14.8047 3.2 14.6704 3.2 14.5047V7.50468C3.2 7.339 3.33431 7.20468 3.5 7.20468H4.09711C5.34204 7.20468 6.58093 7.09504 7.79981 6.87883L7.7998 15.1275C6.58642 14.9133 5.35329 14.8047 4.11419 14.8047ZM8.9998 15.3753C10.3729 15.7005 11.7141 16.1629 13.0027 16.758L17.1646 18.68C17.6947 18.9249 18.3 18.5377 18.3 17.9538V4.04143C18.3 3.45708 17.6939 3.0699 17.1637 3.31556L13.0095 5.24031C11.719 5.83823 10.3755 6.30299 8.9998 6.63L8.9998 15.3753ZM19.5 12.7301C20.2508 12.5134 20.7999 11.8211 20.7999 11.0005C20.7999 10.1799 20.2508 9.48757 19.5 9.27087V12.7301ZM5.70651 16.0682C6.41485 16.1247 7.11889 16.219 7.81569 16.3502C7.89754 18.3225 8.28433 19.9023 8.5587 20.8006H6.51893C6.27092 20.0694 5.76931 18.3285 5.70651 16.0682Z" fill="#6B6B6B"/>'
    + '</svg>'
-   +'<span class="list-title">전사 공지사항</span>'
-   +'<span class="count"><b>'+ notice.totalCnt + '</b>건</span>'
+   +'<span class="list-title">공지사항</span>'
+   +'<span class="count"><b></b></span>'
    +'<span class="arrow-right">' + arrowRight + '</span>'
    +'</li>');
 
    allNotice.on('click', function() {
-    chatui.sendMessage("전사 공지사항");
-    welcomeClick = true;
+    chatui.sendMessage("공지사항");
+    //welcomeClick = true;
    });
 
 
-  if(alarmInfo["notice"] == 'Y') {
+  //if(alarmInfo["notice"] == 'Y') {
     welcomeList.append(allNotice);
-  }
-
+  //}
+/*
    var todayBirthday = $('<li>'
    +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M15.5921 8.87659C15.2009 8.81956 14.8629 8.57354 14.6884 8.21882L12.3178 3.39968C12.1868 3.13344 11.8124 3.13344 11.6814 3.39968L9.31081 8.21882C9.13632 8.57354 8.79833 8.81956 8.40715 8.87659L3.10634 9.64937C2.81897 9.69127 2.69307 10.0539 2.91011 10.2661L6.74581 14.0173C7.02752 14.2928 7.15603 14.689 7.08963 15.0774L6.18414 20.3742C6.13233 20.6773 6.44548 20.8893 6.69857 20.7559L11.4398 18.2551C11.7901 18.0703 12.2091 18.0703 12.5595 18.2551L17.3006 20.7559C17.5537 20.8893 17.8669 20.6773 17.8151 20.3742L16.9096 15.0774C16.8432 14.689 16.9717 14.2928 17.2534 14.0173L21.0891 10.2661C21.3061 10.0539 21.1803 9.69127 20.8929 9.64937L15.5921 8.87659ZM13.3946 2.87C12.824 1.71 11.1753 1.71 10.6046 2.87L8.23404 7.68914L2.93323 8.46193C1.65728 8.64794 1.1478 10.2211 2.07109 11.1241L5.90679 14.8752L5.0013 20.172C4.78334 21.4469 6.11718 22.4192 7.25842 21.8173L11.9996 19.3165L16.7408 21.8173C17.882 22.4192 19.2159 21.4469 18.9979 20.172L18.0924 14.8752L21.9281 11.124C22.8514 10.2211 22.3419 8.64794 21.066 8.46193L15.7652 7.68914L13.3946 2.87Z" fill="#6B6B6B"/>'
@@ -2332,6 +2432,55 @@ function welcomeAppend(welcomeMessage) {
    
    welcomeList.append(hrInfo);
 */
+
+    var welcomeBtns = $('<div class="btn btn-quick-reply"></div>');
+
+    var gptBtn = $('<button type="button" class="btn-quick-reply btn-basic blue">' 
+      +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >'
+      +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M13.5276 13.5652L12.1955 12.2274C12.0704 12.1017 11.9004 12.0311 11.7231 12.0311H6.66669C6.34898 12.0311 6.04857 11.957 5.7818 11.8252C5.2965 11.5854 4.92251 11.1545 4.75813 10.6307C4.69355 10.425 4.81712 10.2366 5.00599 10.1645C5.05843 10.1444 5.11592 10.1333 5.17581 10.1333C5.22482 10.1333 5.27105 10.1446 5.31328 10.1645C5.40564 10.2079 5.47888 10.2927 5.52022 10.3915C5.52194 10.3957 5.52361 10.3998 5.52522 10.404C5.52598 10.4059 5.52673 10.4079 5.52747 10.4099C5.5289 10.4137 5.53029 10.4176 5.53162 10.4215C5.69361 10.8926 6.14062 11.2311 6.66669 11.2311H11.7231C12.1131 11.2311 12.4871 11.3865 12.7623 11.6629L13.8667 12.7719V6.66667C13.8667 6.00393 13.3294 5.46667 12.6667 5.46667H12.5335C12.3134 5.46667 12.1348 5.28893 12.1335 5.06916C12.1335 5.06833 12.1335 5.0675 12.1335 5.06667C12.1335 5.06583 12.1335 5.065 12.1335 5.06417C12.1348 4.84441 12.3134 4.66667 12.5335 4.66667C12.5334 4.66667 12.5336 4.66667 12.5335 4.66667H12.6667C13.7713 4.66667 14.6667 5.5621 14.6667 6.66667V13.0948C14.6667 13.6894 13.9472 13.9865 13.5276 13.5652ZM9.3335 9.36445C10.4381 9.36445 11.3335 8.46902 11.3335 7.36445V4C11.3335 2.89543 10.4381 2 9.3335 2H3.3335C2.22893 2 1.3335 2.89543 1.3335 4V10.4281C1.3335 11.0227 2.053 11.3199 2.47256 10.8985L3.80473 9.56071C3.92984 9.43508 4.09983 9.36445 4.27713 9.36445H9.3335ZM3.3335 2.8C2.67075 2.8 2.1335 3.33726 2.1335 4V10.1053L3.23785 8.99623C3.51308 8.71983 3.88707 8.56445 4.27713 8.56445H9.3335C9.99624 8.56445 10.5335 8.02719 10.5335 7.36445V4C10.5335 3.33726 9.99624 2.8 9.3335 2.8H3.3335Z"/>'
+      +         '</svg>'
+        +'              GPT 모드</button>');
+    
+    gptBtn.on('click', function() {
+        activeGptBot("");
+    });
+    
+    var eudBtn = $('<button type="button" class="btn-quick-reply btn-basic green">' // [퍼블 수정_240528 (클래스 btn-highlight 제거 & green 추가)]
+    +             '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +             '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M3.41041 10.3086L2.80655 12.9235C2.76915 13.0855 2.91432 13.2306 3.07628 13.1932L5.69134 12.5893L13.1516 5.12906L10.8708 2.84835L3.41041 10.3086ZM10.3876 2.20012L2.82106 9.76658C2.73054 9.85711 2.66726 9.97125 2.63846 10.096L2.02706 12.7435C1.85661 13.4816 2.5182 14.1432 3.25631 13.9727L5.90398 13.3612C6.02871 13.3324 6.14284 13.2691 6.23336 13.1786L13.7999 5.6122C14.0667 5.34537 14.0667 4.91273 13.7999 4.6459L11.3539 2.2001C11.087 1.93329 10.6544 1.9333 10.3876 2.20012Z"/>'
+    +             '</svg>'
+    +'              학습봇 모드</button>');
+    
+    eudBtn.on('click', function() {
+        $('body').append('<div id="caas-chatbot-container"><iframe id="caas-chatbot-chat-iframe" name="caas-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe></div>');
+
+        if (!document.getElementById("caas-chatbot-chat-iframe").isLoaded) {
+            document.getElementById("caas-chatbot-chat-iframe").isLoaded = true;
+            openChatFrame();
+        };
+    });
+    
+    //var schBtn = $('<button type="button" class="btn-quick-reply btn-basic">일정 등록</button>');
+    
+    //schBtn.on('click', function() {
+    //  var mText = '일정 등록';
+    //  chatui.sendMessage(mText);
+    //});
+    
+    var transBtn = $('<button type="button" class="btn-quick-reply btn-basic">번역</button>');
+    
+    transBtn.on('click', function() {
+      var mText = '번역';
+      chatui.sendMessage(mText);
+    });
+    
+    welcomeBtns.append(gptBtn);
+    //welcomeBtns.append(eudBtn);
+    //welcomeBtns.append(schBtn);
+    //welcomeBtns.append(transBtn);
+    
+    welcomeList.append(welcomeBtns);
+
    welcomeContent.append(welcomeList);
 
 
@@ -2413,10 +2562,10 @@ function searchActiveFalse() {
 
 function openChatFrame() {
   var languageCode = "ko";
-  var token = "test";
+  var token = chatui.getSetting("apiToken");
   var userId = chatui.getSetting('userId');
 
-  var url = "https://chatclient-stg.ai.lgstation.com/459bac85-f58f-48eb-9c75-c6f17b73ac59/chat";
+  var url = chatbotUrl+"/"+eduChatbotId+"/chat";
 
   var form = document.createElement("form");
   form.setAttribute("target", "caas-chatbot-chat-iframe");
@@ -2464,10 +2613,10 @@ function openChatFrame() {
 
 function openGptBotFrame(queryText) {
   var languageCode = "ko";
-  var token = "test";
+  var token = chatui.getSetting("apiToken");
   var userId = chatui.getSetting('userId');
 
-  var url = "https://chatclient-stg.ai.lgstation.com/53496e65-19e4-4d34-8469-c7b83263b588/chat";
+  var url = chatbotUrl+"/"+gptChatbotId+"/chat";
 
   var form = document.createElement("form");
   form.setAttribute("target", "caas-chatbot-chat-iframe");
@@ -2522,6 +2671,57 @@ function openGptBotFrame(queryText) {
   
 }
 
+function openEnChatFrame(token, userId) {
+  var languageCode = "en";
+//   var token = token;
+//   var userId = chatui.getSetting('userId');
+
+  var url = "https://chatclient-stg.ai.lgstation.com/d495ebce-9bfe-41b7-91e5-205962876680/chat";
+
+  var form = document.createElement("form");
+  form.setAttribute("target", "_self");
+  form.setAttribute("method", "POST");
+  form.setAttribute("action", url);
+
+  var param = null;
+
+  obj = document.createElement("input");
+  obj.setAttribute("type", "hidden");
+  obj.setAttribute("name", "languageCode");
+    obj.setAttribute("value", languageCode);
+    form.appendChild(obj);
+
+  obj = document.createElement("input");
+  obj.setAttribute("type", "hidden");
+  obj.setAttribute("name", "token");
+    obj.setAttribute("value", token);
+    form.appendChild(obj);
+
+//   if(targetParent != null) {
+//     obj = document.createElement("input");
+//     obj.setAttribute("type", "hidden");
+//     obj.setAttribute("name", "targetParent");
+//     obj.setAttribute("value", targetParent);
+//     form.appendChild(obj);
+//   }
+
+
+    if (userId) {
+    obj = document.createElement("input");
+    obj.setAttribute("type", "hidden");
+    obj.setAttribute("name", "userId");
+      obj.setAttribute("value", userId);
+      form.appendChild(obj);
+
+      document.body.appendChild(form);
+    }
+
+  form.submit();
+
+  setTimeout(function() { form.parentNode.removeChild(form); }, 1000);
+  
+}
+
 function sendGptMsg(text) { 
     // iframe으로 메시지 전송 
     var targetWindow = document.getElementById("caas-chatbot-chat-iframe").contentWindow;
@@ -2534,14 +2734,56 @@ function sendGptMsg(text) {
 } 
 
 var targetParent = null;
+let checkUserEvent = "checkUser";
 jQuery(document).ready(function(e){
     
-    $('#divScroll').on('change', function() {
-    if ($(this).find('.chat-message.right')) {
-        console.log('아아아아', $('.chat-message.right').last().offset().top)
-    }
-});
+//     ////////// 사용 제한 
     
+    console.log('languageCode : '+chatui.getSetting("languageCode"));
+    // chatui.setParameter('corpId', "LGEKR");
+//     if(chatui.getSetting("languageCode") !== "ko"){
+//         console.log("챗봇 이동")
+//         openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'));
+//     }
+//     var sessionId = chatui.getSessionId();
+    
+//     var reqHeader = {};
+//     reqHeader["Content-Type"] = "application/json",
+//     reqHeader.Authorization = "Bearer " + chatui.getSetting("apiToken"),
+//     sessionId && (reqHeader["X-CHATBOT-SESSION"] = sessionId);
+//     var requestParam = {
+//         "query": {
+//             "event": checkUserEvent,
+//             "languageCode":"ko"
+//         },
+//         "payload": {
+//             "userId": chatui.getSetting('userId')
+//         }
+//     }
+    
+//     var response;
+//     $.ajax({
+//         type: 'POST',
+// 	    url: chatui.getSetting("chatApiUrl") + "/gateway",
+// 	    headers: reqHeader,
+// 	    dataType: 'json',
+// 	    contentType: "application/json",
+// 	    data: JSON.stringify(requestParam),
+// 	    async: false,
+// 	    success: function(payload, textStatus, jqXHR) {
+//             response = JSON.parse(payload.queryResult.messages[0].response);
+//             console.log(payload.queryResult.messages[0].response);
+//         }
+// 	});
+//     console.log(response.result);
+//     if(response.result.accessYn === 'false'){
+//         alert("챗봇 사용 대상자가 아닙니다. (Not eligible for use chatbot.)");
+//         window.close();
+//     } else if (response.result.localeKoYn === 'false'){
+//         openEnChatFrame(chatui.getSetting("apiToken"), chatui.getSetting('userId'))
+//     }
+    
+    ////////// 사용 제한 
     
     // 2023.11.21 GPT 팝업시 처리. 
     var paramInitMode = chatui.getParameter('initMode');
@@ -2589,7 +2831,8 @@ jQuery(document).ready(function(e){
   + '</svg>      '
   +'</div>'
   +'<div class="center">'
-  +   '<img src="'+imgBaseUrl+'/images/hello_03.gif" />'
+  +   '<img src="'+imgBaseUrl+'/images/Header_final.png" />'
+//  +   '<img src="'+imgBaseUrl+'/images/Header_smile_right%20align.png" />'
   +'</div>'
 // 2023.11.13 추가 (팝업띄우기, 사이즈 원복 버튼...) Start
 
@@ -2613,18 +2856,18 @@ jQuery(document).ready(function(e){
       +'</span>'
     +'</div>'
     +'<ul class="list-menu-body">'
-      +'<li class="list-menu-first">도움말'
-        + arrow2
-      +'</li>'
+//      +'<li class="list-menu-first">도움말'
+//        + arrow2
+//      +'</li>'
       +'<li class="list-menu-second">대화내역 초기화'
       + arrow2
       +'</li>'
       +'<li class="list-menu-third">챗봇 평가 및 사용자 의견'
         + arrow2
       +'</li>'
-      +'<li class="list-menu-fourth">학습봇 모드'
-        + arrow2
-    +'</li>'
+//      +'<li class="list-menu-fourth">학습봇 모드'
+//        + arrow2
+//    +'</li>'
       +'<li class="list-menu-fifth">GPT 모드'
         + arrow2
     +'</li>'
@@ -2743,20 +2986,23 @@ jQuery(document).ready(function(e){
   +  '<div class="faq-body">'
   +     '<div class="btns">'
 
+//  +         '<button type="button" class="btn-s btn-icon btn-text edu-bot green">' // [퍼블 수정_240528 (클래스 btn-highlight 제거 & green 추가)]
+//  +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//  +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M3.41041 10.3086L2.80655 12.9235C2.76915 13.0855 2.91432 13.2306 3.07628 13.1932L5.69134 12.5893L13.1516 5.12906L10.8708 2.84835L3.41041 10.3086ZM10.3876 2.20012L2.82106 9.76658C2.73054 9.85711 2.66726 9.97125 2.63846 10.096L2.02706 12.7435C1.85661 13.4816 2.5182 14.1432 3.25631 13.9727L5.90398 13.3612C6.02871 13.3324 6.14284 13.2691 6.23336 13.1786L13.7999 5.6122C14.0667 5.34537 14.0667 4.91273 13.7999 4.6459L11.3539 2.2001C11.087 1.93329 10.6544 1.9333 10.3876 2.20012Z"/>'
+//  +         '</svg>'
+//  +           '학습봇 모드</button>'
+
+  +         '<button type="button" class="btn-s btn-icon btn-text gpt-bot blue">' // [퍼블 수정_240528 (클래스 blue 추가)]
+  +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >'
+  +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M13.5276 13.5652L12.1955 12.2274C12.0704 12.1017 11.9004 12.0311 11.7231 12.0311H6.66669C6.34898 12.0311 6.04857 11.957 5.7818 11.8252C5.2965 11.5854 4.92251 11.1545 4.75813 10.6307C4.69355 10.425 4.81712 10.2366 5.00599 10.1645C5.05843 10.1444 5.11592 10.1333 5.17581 10.1333C5.22482 10.1333 5.27105 10.1446 5.31328 10.1645C5.40564 10.2079 5.47888 10.2927 5.52022 10.3915C5.52194 10.3957 5.52361 10.3998 5.52522 10.404C5.52598 10.4059 5.52673 10.4079 5.52747 10.4099C5.5289 10.4137 5.53029 10.4176 5.53162 10.4215C5.69361 10.8926 6.14062 11.2311 6.66669 11.2311H11.7231C12.1131 11.2311 12.4871 11.3865 12.7623 11.6629L13.8667 12.7719V6.66667C13.8667 6.00393 13.3294 5.46667 12.6667 5.46667H12.5335C12.3134 5.46667 12.1348 5.28893 12.1335 5.06916C12.1335 5.06833 12.1335 5.0675 12.1335 5.06667C12.1335 5.06583 12.1335 5.065 12.1335 5.06417C12.1348 4.84441 12.3134 4.66667 12.5335 4.66667C12.5334 4.66667 12.5336 4.66667 12.5335 4.66667H12.6667C13.7713 4.66667 14.6667 5.5621 14.6667 6.66667V13.0948C14.6667 13.6894 13.9472 13.9865 13.5276 13.5652ZM9.3335 9.36445C10.4381 9.36445 11.3335 8.46902 11.3335 7.36445V4C11.3335 2.89543 10.4381 2 9.3335 2H3.3335C2.22893 2 1.3335 2.89543 1.3335 4V10.4281C1.3335 11.0227 2.053 11.3199 2.47256 10.8985L3.80473 9.56071C3.92984 9.43508 4.09983 9.36445 4.27713 9.36445H9.3335ZM3.3335 2.8C2.67075 2.8 2.1335 3.33726 2.1335 4V10.1053L3.23785 8.99623C3.51308 8.71983 3.88707 8.56445 4.27713 8.56445H9.3335C9.99624 8.56445 10.5335 8.02719 10.5335 7.36445V4C10.5335 3.33726 9.99624 2.8 9.3335 2.8H3.3335Z"/>'
+  +         '</svg>'
+  +           'GPT 모드</button>'
+
   + ( !isMobile ? '<button type="button" class="btn-s btn-icon btn-text search-ep-total">'
   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +             '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.7137 11.2806C9.71915 12.1444 8.42048 12.6673 6.99967 12.6673C3.87006 12.6673 1.33301 10.1303 1.33301 7.00065C1.33301 3.87104 3.87006 1.33398 6.99967 1.33398C10.1293 1.33398 12.6663 3.87104 12.6663 7.00065C12.6663 8.42154 12.1434 9.72028 11.2794 10.7149L14.549 13.9845C14.7052 14.1407 14.7052 14.3939 14.549 14.5501C14.3928 14.7064 14.1395 14.7064 13.9833 14.5501L10.7137 11.2806ZM11.8663 7.00065C11.8663 9.68844 9.68746 11.8673 6.99967 11.8673C4.31189 11.8673 2.13301 9.68844 2.13301 7.00065C2.13301 4.31287 4.31189 2.13398 6.99967 2.13398C9.68746 2.13398 11.8663 4.31287 11.8663 7.00065Z" fill="#E0205C"/>'
   +            '</svg>'
   +           'EP 통합 검색</button>' : '')
-
-  +         '<button type="button" class="btn-s btn-icon btn-text search-employee">'
-  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
-  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M1.33301 11.8667C1.33301 9.62074 3.15372 7.80003 5.39967 7.80003H5.933C8.17896 7.80003 9.99967 9.62074 9.99967 11.8667V12.6C9.99967 12.8209 9.82059 13 9.59967 13C9.37876 13 9.19967 12.8209 9.19967 12.6V11.8667C9.19967 10.0626 7.73714 8.60003 5.933 8.60003H5.39967C3.59554 8.60003 2.13301 10.0626 2.13301 11.8667V12.6C2.13301 12.8209 1.95392 13 1.73301 13C1.51209 13 1.33301 12.8209 1.33301 12.6V11.8667Z" fill="#E0205C"/>'
-  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.6663 6.86667C11.1449 6.86667 11.5329 6.47865 11.5329 6C11.5329 5.52135 11.1449 5.13333 10.6663 5.13333C10.1876 5.13333 9.79961 5.52135 9.79961 6C9.79961 6.47865 10.1876 6.86667 10.6663 6.86667ZM10.6663 7.66667C11.5868 7.66667 12.3329 6.92047 12.3329 6C12.3329 5.07953 11.5868 4.33333 10.6663 4.33333C9.7458 4.33333 8.99961 5.07953 8.99961 6C8.99961 6.92047 9.7458 7.66667 10.6663 7.66667Z" fill="#E0205C"/>'
-  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
-  +            '</svg>'
-  +         '전자/그룹사 임직원 검색</button>'
 
   +         '<button type="button" class="btn-s btn-icon btn-text search-schedule">'
   +            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -2768,20 +3014,22 @@ jQuery(document).ready(function(e){
   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5999 2.6C8.5999 2.26863 8.33127 2 7.9999 2C7.66853 2 7.3999 2.26863 7.3999 2.6V4H6C4.34315 4 3 5.34315 3 7V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V7C21 5.34315 19.6569 4 18 4H16.5999V2.6C16.5999 2.26863 16.3313 2 15.9999 2C15.6685 2 15.3999 2.26863 15.3999 2.6V4H8.5999L8.5999 2.6ZM18 5.2H6C5.00589 5.2 4.2 6.00589 4.2 7V9L19.8 9V7C19.8 6.00589 18.9941 5.2 18 5.2ZM4.2 19V10.2L19.8 10.2V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19Z" fill="#E0205C"/>'
   +'</svg>'
   +         '일정 검색</button>'
+
+  +         '<button type="button" class="btn-s btn-icon btn-text search-employee">'
+  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M1.33301 11.8667C1.33301 9.62074 3.15372 7.80003 5.39967 7.80003H5.933C8.17896 7.80003 9.99967 9.62074 9.99967 11.8667V12.6C9.99967 12.8209 9.82059 13 9.59967 13C9.37876 13 9.19967 12.8209 9.19967 12.6V11.8667C9.19967 10.0626 7.73714 8.60003 5.933 8.60003H5.39967C3.59554 8.60003 2.13301 10.0626 2.13301 11.8667V12.6C2.13301 12.8209 1.95392 13 1.73301 13C1.51209 13 1.33301 12.8209 1.33301 12.6V11.8667Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M10.6663 6.86667C11.1449 6.86667 11.5329 6.47865 11.5329 6C11.5329 5.52135 11.1449 5.13333 10.6663 5.13333C10.1876 5.13333 9.79961 5.52135 9.79961 6C9.79961 6.47865 10.1876 6.86667 10.6663 6.86667ZM10.6663 7.66667C11.5868 7.66667 12.3329 6.92047 12.3329 6C12.3329 5.07953 11.5868 4.33333 10.6663 4.33333C9.7458 4.33333 8.99961 5.07953 8.99961 6C8.99961 6.92047 9.7458 7.66667 10.6663 7.66667Z" fill="#E0205C"/>'
+  +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
+  +            '</svg>'
+  +         '전자/그룹사 임직원 검색</button>'
+
   +         '<button type="button" class="btn-s btn-icon btn-text search-system">'
   +           '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +             '<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
   +           '</svg>'
   +         '시스템 담당자 검색</button>'
   
-  +         '<button type="button" class="btn-s btn-icon btn-text gpt-bot">'
-  +         '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path d="M8.5 14C9.05228 14 9.5 13.5523 9.5 13C9.5 12.4477 9.05228 12 8.5 12C7.94772 12 7.5 12.4477 7.5 13C7.5 13.5523 7.94772 14 8.5 14Z" fill="#E0205C"/>'
-  +'<path d="M9.22287 15.4679C9.51436 15.3161 9.87319 15.4271 10.0284 15.7157C10.0295 15.7177 10.0326 15.7229 10.0376 15.7309C10.0487 15.7484 10.0691 15.7788 10.0998 15.8181C10.1614 15.8969 10.263 16.0094 10.4124 16.1242C10.7039 16.348 11.2017 16.6 12 16.6C12.7983 16.6 13.2962 16.348 13.5877 16.1242C13.7371 16.0094 13.8387 15.8969 13.9003 15.8181C13.931 15.7788 13.9514 15.7484 13.9624 15.7309C13.9675 15.7229 13.9705 15.7177 13.9717 15.7157C14.1269 15.4271 14.4857 15.3161 14.7772 15.4679C15.0711 15.6209 15.1852 15.9833 15.0322 16.2772L15.0315 16.2785L15.0307 16.28L15.029 16.2832L15.0248 16.291L15.0132 16.3118C15.004 16.3278 14.9918 16.3482 14.9766 16.3723C14.9462 16.4204 14.9031 16.4837 14.8459 16.5569C14.7317 16.7031 14.5598 16.8906 14.3186 17.0759C13.8289 17.452 13.0767 17.8 12 17.8C10.9233 17.8 10.1712 17.452 9.68144 17.0759C9.44022 16.8906 9.26838 16.7031 9.15416 16.5569C9.09698 16.4837 9.0539 16.4204 9.02345 16.3723C9.00821 16.3482 8.99608 16.3278 8.98689 16.3118L8.97527 16.291L8.97105 16.2832L8.96934 16.28L8.96857 16.2785C8.96759 16.2766 8.96788 16.2772 8.96788 16.2772C8.81481 15.9833 8.92897 15.6209 9.22287 15.4679Z" fill="#E0205C"/>'
-  +'<path d="M16.5 13C16.5 13.5523 16.0523 14 15.5 14C14.9477 14 14.5 13.5523 14.5 13C14.5 12.4477 14.9477 12 15.5 12C16.0523 12 16.5 12.4477 16.5 13Z" fill="#E0205C"/>'
-  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10 4C10 4.89556 9.41137 5.65365 8.5999 5.90847L8.5999 7H15.3999V5.90841C14.5885 5.65353 14 4.89549 14 4C14 2.89543 14.8954 2 16 2C17.1046 2 18 2.89543 18 4C18 4.89556 17.4114 5.65365 16.5999 5.90847L16.5999 7H18C19.6569 7 21 8.34315 21 10V19C21 20.6569 19.6569 22 18 22H6C4.34315 22 3 20.6569 3 19V10C3 8.34315 4.34315 7 6 7H7.3999V5.90841C6.58853 5.65353 6 4.89549 6 4C6 2.89543 6.89543 2 8 2C9.10457 2 10 2.89543 10 4ZM8.8 4C8.8 4.44183 8.44183 4.8 8 4.8C7.55817 4.8 7.2 4.44183 7.2 4C7.2 3.55817 7.55817 3.2 8 3.2C8.44183 3.2 8.8 3.55817 8.8 4ZM16.8 4C16.8 4.44183 16.4418 4.8 16 4.8C15.5582 4.8 15.2 4.44183 15.2 4C15.2 3.55817 15.5582 3.2 16 3.2C16.4418 3.2 16.8 3.55817 16.8 4ZM6 8.2H18C18.9941 8.2 19.8 9.00589 19.8 10V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19V10C4.2 9.00589 5.00589 8.2 6 8.2Z" fill="#E0205C"/>'
-  +'</svg>'
-  +           'GPT 모드</button>'
   +     '</div>'
   +   '</div>'
   + '</div>'
@@ -2801,49 +3049,63 @@ jQuery(document).ready(function(e){
   +     '</div>'
   +   '</div>'
   +   '<div class="faq-body">'
-  +     '<h2>주요업무</h2>'
+  +     '<h2>사용해 보세요!</h2>'
   +     '<div class="btns">'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">HR</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">정도경영</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">IT</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">DX</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">업무지원</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">회사일반</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">도움말</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">홍보자료</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구 신청</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문 입력</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">번역</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">Trans Talk</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 등록</button>'
+  //+         '<button type="button" class="btn-s btn-text btn-sendtext">화상회의 등록</button>'
+  //+         '<button type="button" class="btn-s btn-text btn-sendtext">월마감</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">예산 조회</button>'
   +     '</div>'
-  +     '<h2>IT 관련 문의가 있으신가요?</h2>'
+  
+  +     '<h2>주요 메뉴</h2>'
   +     '<div class="btns">'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">Webex(화상회의)</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">PC 신청/반납</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">SW 신청</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">복합기 설치</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">GUAS</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">G Portal</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">메일</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">날씨</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">통근 버스</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">주차</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">법인카드 이용내역</button>'
   +     '</div>'
-  +     '<h2>업무에 필요한 정보를 안내해 드릴게요.</h2>'
+  +     '<h2>주요 업무</h2>'
   +     '<div class="btns">'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">출입/보안</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">출장</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">전임여비</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">차량 주차</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">사내 생활 안내</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">전화신청</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">사원증</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">HR</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">총무</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">내부회계관리제도</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">금융</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">연말정산</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">ERP</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">GP</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">IT</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">CTO</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">LG Magna</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">회사일반</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">정도경영</button>'
+  +     '<button type="button" class="btn-s btn-text btn-sendtext">조직별 정보</button>'
   +     '</div>'
-  +     '<h2>다양한 사내 복지 제도를 소개해 드릴게요!</h2>'
-  +     '<div class="btns">'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">통근버스</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">주택자금</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">교육</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">의료비</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">자격증</button>'
-  +     '<button type="button" class="btn-s btn-text btn-sendtext">휴양소</button>'
-  +     '</div>'
+
+//  +     '<h2>업무에 필요한 정보를 안내해 드릴게요.</h2>'
+//  +     '<div class="btns">'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">출입/보안</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">출장</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">전임여비</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">차량 주차</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">사내 생활 안내</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">전화신청</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">사원증</button>'
+//  +     '</div>'
+//  +     '<h2>다양한 사내 복지 제도를 소개해 드릴게요!</h2>'
+//  +     '<div class="btns">'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">통근버스</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">주택자금</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">교육</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">의료비</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">자격증</button>'
+//  +     '<button type="button" class="btn-s btn-text btn-sendtext">휴양소</button>'
+//  +     '</div>'
   +   '</div>'
   +'</div>'
   +'</div>');
@@ -2911,7 +3173,20 @@ jQuery(document).ready(function(e){
     // }
     else {
     */
-    chatui.sendMessage(val);
+    //전화번호 검색 기능 추가 by hhs
+    var regex = /^[0-9]*$/; // 숫자만 체크
+    var replaceVal = val.replaceAll('-','');
+    if(regex.test(replaceVal) && (replaceVal.length == 11 && replaceVal.substr(0,3) == '010')){
+        appendQueryText(val);
+        searchEmployeeByPhone(replaceVal.substr(3,replaceVal.length));
+        searchActiveFalse();
+    }else if(regex.test(replaceVal) && (replaceVal.length ==4 || replaceVal.length == 8)){
+        appendQueryText(val);
+        searchEmployeeByPhone(replaceVal);
+        searchActiveFalse();
+    }else{
+        chatui.sendMessage(val);
+    }
     //}
 
     $('.sendText').val("");
@@ -2957,7 +3232,7 @@ jQuery(document).ready(function(e){
     //} 
     else if(searchType == 'ep-total' && (e.code == 'Enter' || e.keyCode == 13)) {
       var url = epTotalUrl.replace("%query%", $(e.target).val());
-      window.open(url, "epTotalSearch", "width=1024,height=550,resizable=1,scrollbars=1");
+      window.open(url, "epTotalSearch", "width=1280,height=800,resizable=1,scrollbars=1");
       searchActiveFalse();
       return;
     } 
@@ -2994,7 +3269,18 @@ jQuery(document).ready(function(e){
     } 
     else if(searchType == 'system' && (e.code == 'Enter' || e.keyCode == 13)) {
       var findMessage = val;
-      chatui.sendMessage(findMessage);
+//      chatui.sendMessage(findMessage);
+      appendQueryText(findMessage);
+      
+      //console.log('담당자 : '+val.indexOf('담당자'));
+      var operName = val;
+      if(operName.indexOf('담당자') > 0) {
+            operName = operName.substring(0, operName.indexOf('담당자'));
+            operName = operName.trim();
+      }
+      //console.log('시스템: '+operName);
+      
+      chatui.sendEventMessage("systemQueryEvent", {"operName":operName});
       searchActiveFalse();
       return;
     } 
@@ -3022,12 +3308,14 @@ jQuery(document).ready(function(e){
         setAutocomplete();
       }
     }
+    
+    console.log('length : '+val.length);
     if(val.length > 0) {
-
         //console.log('e.code : '+e.code);
         // 입력된 메시지에 대한 자동완성 기능. 
         if(!ignoreKeyArr.includes(e.code)) {
-            autoSearchEmployees(val);
+            // console.log("lodashDebounce");
+            lodashDebounce(val);
         }
       /*  
       if(val == '/') {
@@ -3079,7 +3367,8 @@ jQuery(document).ready(function(e){
   );
 
   $('.send-more').on('click', function() {
-      $('.faq-menu').removeClass('show'); // 퍼블 추가 내용
+      
+      $('.faq-menu').removeClass('show'); // [퍼블 수정 및 추가_0527] - faq-menu 닫힘
       
     if($(this).hasClass('active')) {
       $(this).removeClass('active');
@@ -3176,9 +3465,24 @@ jQuery(document).ready(function(e){
     faqOriginalHide();
   });
 
+  $('.edu-bot').on('click', function() {
+//    activeGptBot("");
+//    faqOriginalHide();
+
+        $('body').append('<div id="caas-chatbot-container"><iframe id="caas-chatbot-chat-iframe" name="caas-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe></div>');
+
+        if (!document.getElementById("caas-chatbot-chat-iframe").isLoaded) {
+            document.getElementById("caas-chatbot-chat-iframe").isLoaded = true;
+            openChatFrame();
+        };
+
+  });
+
   $('.btn-sendtext').each(function() {
     $(this).on('click', function() {
-        $('.faq-menu').removeClass('show'); // 퍼블 추가 내용
+        
+        $('.faq-menu').removeClass('show'); // [퍼블 수정 및 추가_0527] - faq-menu 닫힘
+        
       var sendText = $(this).text();
       chatui.sendMessage(sendText);
       $('.faq-original').removeClass('show');
@@ -3224,6 +3528,8 @@ jQuery(document).ready(function(e){
       }
   });
 
+
+  
 //   var key = chatui.getSetting("userId") ? chatui.getSetting("userId").replace(/=/gi, "") : "";
 //   var lastAccessDate = localStorage.getItem(key + "_lastAccessDate");
 //       if(lastAccessDate == null) { lastAccessDate=''; };
@@ -3243,6 +3549,7 @@ jQuery(document).ready(function(e){
   //scroll event
   $('#divScroll').on("scroll", function () {
     let scrollPosition = $(this).scrollTop();
+    
     if (scrollPosition != 0) {
       $('.info-area .center').addClass('on');
     }
@@ -3321,27 +3628,10 @@ jQuery(document).ready(function(e){
     loadScript(postcodeSrc, function() {
         // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
     });
-
-    //var daterangepickerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-date-range-picker/0.14.2/jquery.daterangepicker.min.js';
-
-    loadScript('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', function() {
-        // 콜백 함수는 스크립트 로드가 끝나면 실행됩니다.
-        
-        window.daterangepicker = setDaterangepicker();
-
-    });
-    
+  
 });
 //ready end
 
-function loadScript(src, callback) {
-    let script = document.createElement('script');
-    script.src = src;
-    
-    script.onload = () => callback(script);
-    
-    document.head.appendChild(script);
-}
 
 window.addEventListener("message", function (e) {
   if(e.data === 'bot_close') {
@@ -3440,27 +3730,16 @@ function dictDeatilOpen(btn, termId) {
 
 
  
-
+var button_data = null;
 chatui.onReceiveResponse = function(resp, isHistory) {
    console.log("chatui.onReceiveResponse", resp, isHistory);
    
-   
    setTimeout(function() {
-
     // if(resp.response.query.text =="GPT 모드"){
     //     activeGptBot("");
     // }
     if(resp.response.query.event == 'Welcome' || resp.response.queryResult.intent.name == 'Default Welcome Intent') {
-      //welcomeAppend(resp.response.queryResult.messages);
-      
-      
-        // [테스트 용으로 사용_시작점]
-
-		//makeAnotherAccountOrderCard();
-
-		// [테스트 용으로 사용_종료점]
-      
-      
+      welcomeAppend(resp.response.queryResult.messages); 
       return;
     }
 
@@ -3469,7 +3748,7 @@ chatui.onReceiveResponse = function(resp, isHistory) {
         
         return;
     }
-    
+
     if(resp.response.query.event == 'sendSmsNew') {
       sendSmsNewAppend(resp.response.queryResult);
       return;
@@ -3553,6 +3832,18 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 
         $('.quick-list').last().html(quickButtons);
       }
+      
+      if(message.buttons && message.buttons.length > 0) {
+          for(var k=0; k<message.buttons.length; k++) {
+              var button = message.buttons[k];
+              
+              if(button.label == '마곡 LG 사이언스 파크') {
+                  //console.log('button.value : '+button.value);
+                  
+                  button_data = button;
+              }
+          }
+      }
     }
 
     
@@ -3576,19 +3867,28 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       welcomeClick = false;
 
     } else if(welcomeClick == true) {
-      var quickReply = $('<div class="quick-list custom-quick-reply"></div>');
-      var homeBtn = $('<span class="btn-custom-reply btn-emphasis">Home</span>')
-
-      homeBtn.on('click', function() {
-        sendWelcomeEvent();
-      });
-      quickReply.append(homeBtn);
-      var lastFeedback = $('.chat-message.left').last().find('.feedback');
-      quickReply.insertBefore(lastFeedback); 
-      welcomeClick = false;
+        var quickReply = $('<div class="quick-list custom-quick-reply"></div>');
+        if(resp.response.query.text != "공지사항") {
+          var homeBtn = $('<span class="btn-custom-reply btn-emphasis">Home</span>')
+    
+          homeBtn.on('click', function() {
+            sendWelcomeEvent();
+          });
+          quickReply.append(homeBtn);
+        }
+        var lastFeedback = $('.chat-message.left').last().find('.feedback');
+        quickReply.insertBefore(lastFeedback); 
+        welcomeClick = false;
     }
 
-
+    // 대화 내용 중 A링크 새창으로 띄우기 위해서 처리함. 
+    //console.log($('.chat-message .message .message-content').last().html());
+    //console.log('content >>> '+$('.chat-message .message .message-content').length);
+    var lastLeftMessage = $('.chat-message.left').last();
+    newWindowForLink(lastLeftMessage);
+    
+    buttonLink(lastLeftMessage);
+        
     $('.btn-system').on('click', function() {
       var systemSelect = $(this).data('system');
 
@@ -3630,7 +3930,6 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 
   }, 100)
   
-    // 스크롤 이동_리뉴얼
     // [퍼블 수정_240528 (스크롤 이동_커스텀)]
     setTimeout(function() {
         var sclTarget = $('#divScroll');
@@ -3642,9 +3941,118 @@ chatui.onReceiveResponse = function(resp, isHistory) {
             sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg - 230);
         }
     },100);
-
 }
 
+
+function openWindows(link, userInfo) {
+    
+    if($('#menu_form').length) {
+        var paramForm = $('#menu_form');
+        
+        var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
+        window.open("", "LGenieWin", "width=1200,height=900", "_blank");
+        
+        $(paramForm).attr('action', url);
+        $(paramForm).attr('target', "LGenieWin");
+        $(paramForm).attr('method', 'post');
+        
+        paramForm.submit();        
+    }
+    else{
+        var paramForm = document.createElement("form");
+        var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
+        window.open("", "LGenieWin", "width=1200,height=900", "_blank");
+        
+        $(paramForm).attr('id', "menu_form");
+        $(paramForm).attr('action', url);
+        $(paramForm).attr('target', "LGenieWin");
+        $(paramForm).attr('method', 'post');
+    
+        var obj = document.createElement("input");
+        obj.setAttribute("type", "hidden");
+        obj.setAttribute("name", "cid");
+        obj.setAttribute("value", "040");
+        paramForm.appendChild(obj);
+    
+        var obj = document.createElement("input");
+        obj.setAttribute("type", "hidden");
+        obj.setAttribute("name", "userInfo");
+        obj.setAttribute("value", userInfo);
+        paramForm.appendChild(obj);
+    
+        document.body.appendChild(paramForm);
+        paramForm.submit();
+    }
+}
+
+function newWindowForLink(lastLeftMessage) {
+    var childMessages = lastLeftMessage.children('.message');
+    
+    //console.log('길이 : '+lastLeftMessage.children('.message').length);
+    
+    for(var m=0; m<childMessages.length; m++) {
+        var childMessage = childMessages[m];
+        var atag = $(childMessage).find('.message-content > a');
+    
+        //var atag = $(childMessage).children('.message-content').children('a');
+        //console.log(atag.length);
+
+        for(var i=0; i<atag.length; i++) {
+            var element = atag[i];
+            console.log($(element).attr('href'));
+            
+            var link = $(element).attr('href');
+            var clickValue = 'window.open("'+link+'", "title'+i+'", "location=0,status=0,toolbar=0", "_blank")';
+
+            $(element).removeAttr('href');
+            $(element).removeAttr('target');
+
+            $(element).attr('href', '#');
+            $(element).attr('onClick', clickValue);
+            
+        }            
+    }
+    
+}
+
+function buttonLink(lastLeftMessage) {
+    var childMessages = lastLeftMessage.children('.message');
+    
+    console.log('길이 : '+lastLeftMessage.children('.message').length);
+    
+    for(var m=0; m<childMessages.length; m++) {
+        var childMessage = childMessages[m];
+        var buttons = $(childMessage).find('.btn-wrap').find('.btn-default');
+        
+        console.log(buttons.length);
+        
+        for(var i=0; i<buttons.length; i++) {
+            var button = buttons[i];
+            //console.log('buttons : ', button);
+            
+            //console.log('label : '+$(button).children('span').text());
+            
+            let label = $(button).children('span').text();
+            if(label == '마곡 LG 사이언스 파크') {
+                
+                if(button_data.label == label) {
+                    let linkBtn = $(button);  
+              
+                    let addBtn = $('<div><button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color"><span>'+button_data.label+'</span></button></div>');
+               
+                    linkBtn.after(addBtn);
+                    linkBtn.remove();
+               
+                    console.log('button_data > ', button_data.value);
+                    addBtn.on('click', function(){
+                        openWindows('https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do', button_data.value);
+                    });     
+                }
+            }
+        }
+        
+    }    
+}
 /**
  * '화면 스크롤 최하단으로 내리기' 함수
  */
@@ -3652,7 +4060,6 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 	setTimeout(function() {
         var e = document.getElementById("divScroll");
         e.scrollTop = e.scrollHeight
-        
     }, 50)
 }
 
@@ -3860,7 +4267,7 @@ function checkScheduleRequire() {
 const setDatepicker = function() {
   var $initEl;
   var callbackfunc;
-
+  
   // 날짜 한글 변환
   function fullDate(val, target) {
     var today;
@@ -3889,9 +4296,8 @@ const setDatepicker = function() {
       });
     } else {
       $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
-      
     }
-    
+
     if (target) {
       $input = $(target);
     } else {
@@ -3932,6 +4338,7 @@ const setDatepicker = function() {
         beforeShow: function() {
         },
         onChangeMonthYear: function() {
+
         },
         onSelect: function() {
           $initEl.find('.selected-date').text(this.value);
@@ -3947,17 +4354,15 @@ const setDatepicker = function() {
 
           if (callback){
             //eval(callback);
-            //callback();
             callbackfunc = callback;
           }
         },
         onClose: function() {
-            console.log('close111');
             $(btn).focus();
         }
-        
     });
 
+         
     if(!$initEl.find('.dp-header').text()) {
       $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>날짜를 선택해주세요<b>*</b></p></div>');
     }
@@ -3993,17 +4398,6 @@ const setDatepicker = function() {
       $(this).addClass("show");
     });
         
-    /*
-    if($initEl.find('.ui-datepicker').length > 0) {
-        $initEl.find('.ui-datepicker').css('height', '593px');
-    }
-    if($initEl.find('.dp-header').length > 0) {
-        $initEl.find('.dp-header').css('bottom', '470px');
-    }
-    if($initEl.find('.ui-datepicker-calendar').length > 0) {
-        $initEl.find('.ui-datepicker-calendar').css('border-width', '20px 24px 40px 24px');
-    }
-    */
   }
   }
 
@@ -4011,13 +4405,13 @@ const setDatepicker = function() {
   function dpClose() {
     $(".datepicker-chem").fadeOut('fast', function(){
       $(this).removeClass("show");
-      //console.log('close2222');
       
       if(callbackfunc) {
           callbackfunc();
       }
       
       callbackfunc = null;
+      
     })
   }
 
@@ -4029,189 +4423,6 @@ const setDatepicker = function() {
 };
 
 window.datepicker = setDatepicker();
-
-//Datepicker Module
-const setDaterangepicker = function() {
-  var $initEl;
-  var callbackfunc;
-
-  // 날짜 한글 변환
-  function fullDate(val, target) {
-    var today;
-    var strWeek = ["일요일","월요일","화요일", "수요일","목요일","금요일","토요일"]
-    var fullDate;
-
-    if (target) {
-      today = new Date($(target).val());
-    } else {
-      today = new Date(val);
-    }
-
-    fullDate = today.getFullYear() +'년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 ' + strWeek[today.getDay()]
-    return fullDate;
-  }
-
-  // open
-  function dpOpen(btn, target, callback){
-    var $input;
-    
-
-    if ($(btn).closest(".schedule-input-wrap").length > 0) {
-      $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
-      $(".datepicker-chem:visible").not($initEl).fadeOut('fast', function(){
-        $(this).removeClass("show");
-      });
-    } else {
-      $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
-    }
-    
-    console.log('$initEl : ', $initEl);
-
-    if (target) {
-      $input = $(target);
-    } else {
-      if ($(btn).closest(".schedule-wrap")) {
-        $input = $(btn).closest(".schedule-input-wrap").find(".input-schedule-date");
-      } else {
-        $input = $(btn).prev("input[type=text]");
-      }
-    }
-
-    var minDate = '';
-
-    if($(btn).hasClass('startdate')) {
-      minDate = $(btn).val();
-    }
-
-    if($(btn).hasClass('enddate')) {
-      minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
-    }
-
-    if ($initEl.is(':visible')) {
-      dpClose();
-    } else {
-      $initEl.datepicker({
-        formatDate: "ATOM",
-        minDate: minDate,
-        dateFormat: "yy.mm.dd",
-        defaultDate: $input.val(),
-        showOn: "",
-        buttonImageOnly: true,
-        showMonthAfterYear: true,
-        monthNames: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
-        monthNamesShort: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
-        dayNamesMin: ['일','월','화','수','목','금','토'], 
-        altField: target,
-        showButtonPanel: true,
-        closeText: "close",
-        beforeShow: function() {
-        },
-        onChangeMonthYear: function() {
-
-        },
-        onSelect: function() {
-
-          //console.log('active date : '+$initEl.find('.ui-state-active').text())
-          var prevday = $initEl.find('.ui-state-active').text();
-          var prevDate = moment("202407"+prevday).format('YYYY.MM.DD');
-            
-          //console.log('prevday : '+prevday);
-            
-          //console.log('date_rows > ', date_rows);
-          
-          //$initEl.datepicker("setDate", prevDate);
-          
-          $initEl.find('.selected-date').text(this.value);
-          $(btn).val(this.value);
-          var endDt = moment($('.enddate').val()).format('YYYYMMDD');
-          var startDt = moment($('.startdate').val()).format('YYYYMMDD');
-          if(endDt < startDt) {
-            $('.enddate').val($('.startdate').val());
-          }
-          checkScheduleRequire();
-
-          ////////
-          ////////
-
-          // dpClose();
-
-          if (callback){
-            //eval(callback);
-            //callback();
-            //console.log('callback...');
-            callbackfunc = callback;
-            
-            //callbackfunc();
-          }
-        },
-        onClose: function() {
-            console.log('close111');
-            $(btn).focus();
-        }
-    });
-
-         
-    if(!$initEl.find('.dp-header').text()) {
-      $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>날짜를 선택해주세요<b>*</b></p></div>');
-    }
-           
-    if($initEl.find('.plugin-select-dim').length == 0) {
-      $initEl.prepend('<div class="plugin-select-dim"></div>');
-    }
-
-    if($initEl.find('.selected-date').length == 0) {
-      var selectedDate = new Date();
-      $initEl.find('.dp-header').append('<div class="selected-date">' + moment(selectedDate).format('YYYY.MM.DD') + '</div>');
-    }
-        
-    if($initEl.find('.dtpicker-refresh').length == 0) {
-      $initEl.find('.dp-header').append('<div class="dtpicker-refresh">초기화</div>');
-    }
-
-    $('.dtpicker-refresh').on('click', function(){
-      var newDt = new Date();
-      var selectedDate = moment(newDt).format('YYYY.MM.DD');
-      $initEl.datepicker("setDate", selectedDate);
-      $initEl.find('.selected-date').text(selectedDate);
-      $(btn).val(selectedDate);
-    });
-
-    if($initEl.find('.btn-datepicker').length == 0) {
-      $initEl.append('<button type="button" class="btn-plugin btn-datepicker" onclick="daterangepicker.close();">확인</button>');  
-    }
-        
-
-    $initEl.fadeIn('fast', function(){  
-      $(this).find('.plugin-select-dim').addClass('show');
-      $(this).addClass("show");
-    });
-        
-  }
-  }
-
-
-  function dpClose() {
-    $(".datepicker-chem").fadeOut('fast', function(){
-      $(this).removeClass("show");
-      //console.log('close2222');
-      
-      if(callbackfunc) {
-          //console.log('callbackfunc ');
-          callbackfunc();
-      }
-      
-      callbackfunc = null;
-    })
-  }
-
-  return {
-    open: dpOpen,
-    close: dpClose,
-    fulldate: fullDate
-  }
-};
-
-window.daterangepicker = setDaterangepicker();
 
 function setTimePicker(timeinput) {
   
@@ -6314,7 +6525,9 @@ function connectMessenger(userId, targetId){
   }
   else{
        var uCapUri = 'LGUCAPL://';
-       uCapUri += 'GUC005;CHAT;'+userId+';'+targetId+'@GUC005';
+       //LG전자 코드로 수정 by hhs
+    //   uCapUri += 'GUC005;CHAT;'+userId+';'+targetId+'@GUC005';
+       uCapUri += 'GUC002;CHAT;'+userId+';'+targetId+'@GUC002';
        window.protocolCheck(uCapUri, function() {
            window.open("http://www.lgucap.com", "width=1100,height=800, resizable=1,scrollbars=1");
        });
@@ -6340,27 +6553,56 @@ function connectMessenger(userId, targetId){
 	// name
 	var textBox = $('<div class="text-box"></div>');
   var nameWrap = $('<div class="name"></div>');
-  var title = $('<h1>'+ data.userNm + ' ' + data.titleNm + isBirthdayToday(data.birth) + '</h1>');
+  
+    var userTitle = (data.positionNm != '' && data.positionNm != null)?  data.userNm + ' ' + data.titleNm + '/' + data.positionNm : data.userNm + ' ' + data.titleNm;
+  
+  var title = $('<h1>'+ userTitle + isBirthdayToday(data.birth) + '</h1>');
 
   nameWrap.append(title);
   textBox.append(nameWrap);
  
 
   var descList = $('<ul class="profile-info"></ul>');
-  var team = $('<li>'
-  +'<span class="profile-icon icon-team">'
-    +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-      +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
-    +'</svg>'
-  +'</span>' + (data.deptNm ? data.deptNm : '-') + '</li>');
-  descList.append(team);
-
-  var mobile = $('<li>'
-  +'<span class="profile-icon icon-phone">'
-    +'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
-      +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5842 10.5261L10.3746 9.14452C10.2925 9.09317 10.1745 9.10065 10.0918 9.18231C10.0131 9.26012 9.9358 9.33551 9.87193 9.39564C9.1487 10.0767 8.21307 9.93799 7.54251 9.66479C6.85048 9.38284 6.1788 8.8696 5.65588 8.34687C5.13291 7.82409 4.61899 7.15196 4.33668 6.45924C4.06308 5.78791 3.92438 4.85121 4.60668 4.12737C4.66788 4.06244 4.74239 3.98595 4.81898 3.90841C4.9012 3.82516 4.90827 3.70712 4.85718 3.62542L3.47542 1.41615L3.47137 1.40939C3.30654 1.1339 2.99922 1.03945 2.68408 1.24462C1.85645 1.78509 1.43723 2.37962 1.25418 2.971C1.06765 3.57363 1.09939 4.26136 1.33263 5.02227C1.80708 6.57004 3.05679 8.22718 4.41578 9.58568C5.77497 10.9444 7.43109 12.1933 8.97796 12.6675C9.7384 12.9006 10.4258 12.9324 11.0283 12.7461C11.6196 12.5632 12.2142 12.1443 12.7552 11.3174C12.9603 11.0029 12.867 10.6959 12.5904 10.5298L12.5842 10.5261ZM13.425 11.7548C10.922 15.5818 6.6355 12.9357 3.8502 10.1515C1.06491 7.3672 -1.58331 3.07544 2.24711 0.574501C2.95544 0.113007 3.76792 0.346919 4.15787 0.998626L5.53544 3.20121C5.78858 3.60595 5.72365 4.13091 5.38816 4.47058C5.31335 4.54632 5.24381 4.61776 5.18882 4.6761C4.46912 5.43963 5.2675 6.82747 6.22146 7.78108C7.17542 8.73469 8.56121 9.531 9.3235 8.81321C9.38036 8.75968 9.45232 8.68957 9.52946 8.61333C9.86892 8.27782 10.394 8.21314 10.7987 8.46619L13.0023 9.84394C13.6537 10.2351 13.887 11.0468 13.425 11.7548Z" fill="#898989"/>'
-    +'</svg>'
-  +'</span>' + (data.empMobile ? data.empMobile : '-') + '</li>');
+  //메일 버튼 제거 및 임직원 / 그룹사 조회 간 항목 수정
+  if(data.group != 'Y' ) {
+        var team = $('<li>'
+        +'<span class="profile-icon icon-team">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
+            +'</svg>'
+        +'</span>' + (data.deptNm ? data.deptNm : '-') + '</li>');
+        descList.append(team);
+    
+        var mobile = $('<li>'
+        +'<span class="profile-icon icon-phone">'
+            +'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5842 10.5261L10.3746 9.14452C10.2925 9.09317 10.1745 9.10065 10.0918 9.18231C10.0131 9.26012 9.9358 9.33551 9.87193 9.39564C9.1487 10.0767 8.21307 9.93799 7.54251 9.66479C6.85048 9.38284 6.1788 8.8696 5.65588 8.34687C5.13291 7.82409 4.61899 7.15196 4.33668 6.45924C4.06308 5.78791 3.92438 4.85121 4.60668 4.12737C4.66788 4.06244 4.74239 3.98595 4.81898 3.90841C4.9012 3.82516 4.90827 3.70712 4.85718 3.62542L3.47542 1.41615L3.47137 1.40939C3.30654 1.1339 2.99922 1.03945 2.68408 1.24462C1.85645 1.78509 1.43723 2.37962 1.25418 2.971C1.06765 3.57363 1.09939 4.26136 1.33263 5.02227C1.80708 6.57004 3.05679 8.22718 4.41578 9.58568C5.77497 10.9444 7.43109 12.1933 8.97796 12.6675C9.7384 12.9006 10.4258 12.9324 11.0283 12.7461C11.6196 12.5632 12.2142 12.1443 12.7552 11.3174C12.9603 11.0029 12.867 10.6959 12.5904 10.5298L12.5842 10.5261ZM13.425 11.7548C10.922 15.5818 6.6355 12.9357 3.8502 10.1515C1.06491 7.3672 -1.58331 3.07544 2.24711 0.574501C2.95544 0.113007 3.76792 0.346919 4.15787 0.998626L5.53544 3.20121C5.78858 3.60595 5.72365 4.13091 5.38816 4.47058C5.31335 4.54632 5.24381 4.61776 5.18882 4.6761C4.46912 5.43963 5.2675 6.82747 6.22146 7.78108C7.17542 8.73469 8.56121 9.531 9.3235 8.81321C9.38036 8.75968 9.45232 8.68957 9.52946 8.61333C9.86892 8.27782 10.394 8.21314 10.7987 8.46619L13.0023 9.84394C13.6537 10.2351 13.887 11.0468 13.425 11.7548Z" fill="#898989"/>'
+            +'</svg>'
+        +'</span>' + (data.empMobile ? data.empMobile : '-') + '</li>');
+    }else{
+        var team = $(
+            '<li>'
+                +'<span class="profile-icon icon-company">'
+                    +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M7.07338 1.51904C7.66652 1.27165 8.3338 1.27165 8.92695 1.51904L13.74 3.5265C14.9758 4.04189 14.9758 5.79423 13.74 6.30962L8.92695 8.31708C8.3338 8.56447 7.66652 8.56447 7.07338 8.31708L2.26028 6.30962C1.02457 5.79423 1.02457 4.04189 2.26028 3.5265L7.07338 1.51904ZM8.61802 2.26121C8.22259 2.09628 7.77773 2.09628 7.38231 2.26121L2.56921 4.26866C1.99254 4.50918 1.99254 5.32694 2.56921 5.56746L7.38231 7.57492C7.77773 7.73984 8.22259 7.73984 8.61802 7.57492L13.4311 5.56746C14.0078 5.32694 14.0078 4.50918 13.4311 4.26866L8.61802 2.26121Z"/>'
+                        +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M2.19928 7.00974C2.37607 7.14381 2.41082 7.39596 2.27688 7.57293C2.01401 7.92025 2.12255 8.46317 2.5693 8.6495L7.3824 10.657C7.77782 10.8219 8.22268 10.8219 8.61811 10.657L13.4312 8.6495C13.878 8.46317 13.9865 7.92025 13.7236 7.57293C13.5897 7.39596 13.6244 7.14381 13.8012 7.00974C13.978 6.87566 14.2299 6.91044 14.3639 7.08741C14.9138 7.81407 14.717 8.98424 13.7401 9.39167L8.92704 11.3991C8.3339 11.6465 7.66661 11.6465 7.07347 11.3991L2.26037 9.39167C1.28352 8.98424 1.08668 7.81407 1.63665 7.08741C1.77059 6.91044 2.02249 6.87566 2.19928 7.00974Z"/>'
+                        +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M2.22792 10.0745C2.40068 10.2137 2.42798 10.4667 2.28889 10.6397C2.01112 10.9851 2.11553 11.5424 2.5693 11.7317L7.3824 13.7391C7.77782 13.904 8.22268 13.904 8.61811 13.7391L13.4312 11.7317C13.885 11.5424 13.9894 10.9851 13.7116 10.6397C13.5725 10.4667 13.5998 10.2137 13.7726 10.0745C13.9454 9.93522 14.1982 9.96255 14.3373 10.1355C14.9201 10.8602 14.732 12.0601 13.7401 12.4738L8.92704 14.4813C8.3339 14.7287 7.66661 14.7287 7.07347 14.4813L2.26037 12.4738C1.26848 12.0601 1.08038 10.8602 1.66324 10.1355C1.80233 9.96255 2.05515 9.93522 2.22792 10.0745Z"/>'
+                    +'</svg>'
+                +'</span>' + (data.cmpnyKorNm ? data.cmpnyKorNm : '-')
+            +'</li>'
+        );
+        descList.append(team);
+        // team
+        var mobile = $(
+            '<li>'
+                +'<span class="profile-icon icon-team">'
+                    +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
+                    +'</svg>'
+                +'</span>' + (data.deptNm ? data.deptNm : '-')
+            +'</li>'
+        );
+    }
   descList.append(mobile);
   textBox.append(descList);
 
@@ -6371,14 +6613,35 @@ function connectMessenger(userId, targetId){
 
   var moreInfos = $('<div class="more-infos"></div>');
   var moreInfoList = $('<ul class="p-info"></ul>');
-  var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') + '</span></li>');
+  var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') 
+                + '&nbsp;<a href="#"><img src="'+imgBaseUrl+'/images/copy.png" style="width:16px;height:16px;vertical-align: top;color:#6b6b6b;"/></a></span></li>');
+                
   moreInfoList.append(email);
+  //메일 버튼 제거 및 임직원 / 그룹사 조회 간 항목 수정
+  if(data.group == 'Y' ) {
+     var phone = $('<li><span class="info-label">Phone</span><span class="info">'+ (data.empMobile ? data.empMobile : '-') + '</span></li>');
+     moreInfoList.append(phone);
+  }
   var office = $('<li><span class="info-label">Office</span><span class="info">'+ (data.empTelNo ? data.empTelNo : '-') + '</span></li>');
   moreInfoList.append(office);
   moreInfos.append(moreInfoList);
 
   var isMobile = Mobile();
 
+    email.find('img').click(function() {
+        //console.log($(this).attr('src'));
+        //console.log($(this).parents('li').find('.info').text());
+        
+        var emailAddr = $(this).parents('li').find('.info').text().trim();
+        var temp = $('<textarea type="text" class="hidden-textbox" />');
+        $("body").append(temp);
+        temp.val(emailAddr).select();
+        document.execCommand('copy');
+        showHtmlSmallDialog(temp);
+        temp.remove();
+
+        showHtmlSmallDialog('E-mail 주소가 복사되었습니다.');
+    });	
 	
 	var userId = data.empMail.split("@");
     //console.log('data.userId : '+data.userId+', data.targetId : '+data.targetId+', userId : '+userId[0]);	
@@ -6387,49 +6650,99 @@ function connectMessenger(userId, targetId){
 		// dpContact
    
 		var dpContactHtml = '<div class="p-btns">';
-    if(!isMobile && data.group != 'Y') {
-      dpContactHtml += '<button type="button" class="icon-btn" onClick="connectMessenger(\''+data.userId+'\',\''+userId[0]+'\');">'
-      +'<span class="b-icon">'
-        +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M20.2912 20.3478L18.2929 18.3411C18.1053 18.1526 17.8503 18.0467 17.5843 18.0467H9.99979C9.52323 18.0467 9.07261 17.9356 8.67245 17.7378C7.94451 17.3781 7.38352 16.7317 7.13695 15.9461C7.04009 15.6375 7.22544 15.3549 7.50873 15.2467C7.58741 15.2166 7.67363 15.2 7.76346 15.2C7.83698 15.2 7.90632 15.2169 7.96967 15.2467C8.10822 15.3119 8.21807 15.4391 8.28008 15.5873C8.28267 15.5935 8.28517 15.5997 8.28759 15.606C8.28873 15.6089 8.28986 15.6119 8.29096 15.6149C8.29311 15.6206 8.29518 15.6264 8.29719 15.6322C8.54017 16.3389 9.21068 16.8467 9.99979 16.8467H17.5843C18.1694 16.8467 18.7304 17.0797 19.1433 17.4943L20.7998 19.1579V10C20.7998 9.00589 19.9939 8.2 18.9998 8.2H18.8C18.4699 8.2 18.202 7.93339 18.2 7.60374C18.2 7.6025 18.2 7.60125 18.2 7.6C18.2 7.59875 18.2 7.5975 18.2 7.59625C18.202 7.26661 18.4699 7 18.8 7C18.7998 7 18.8002 7 18.8 7H18.9998C20.6567 7 21.9998 8.34315 21.9998 10V19.6422C21.9998 20.5341 20.9205 20.9798 20.2912 20.3478ZM14 14.0467C15.6569 14.0467 17 12.7035 17 11.0467V6C17 4.34315 15.6569 3 14 3H5C3.34315 3 2 4.34314 2 6V15.6422C2 16.5341 3.07925 16.9798 3.7086 16.3478L5.70685 14.3411C5.89451 14.1526 6.1495 14.0467 6.41545 14.0467H14ZM5 4.2C4.00589 4.2 3.2 5.00589 3.2 6V15.1579L4.85653 13.4943C5.26937 13.0797 5.83036 12.8467 6.41545 12.8467H14C14.9941 12.8467 15.8 12.0408 15.8 11.0467V6C15.8 5.00589 14.9941 4.2 14 4.2H5Z" fill="#6B6B6B"/>'
-        +'</svg>')
-      +'</span><span class="b-text">메신저</span></button>';
-    }
+    // if(!isMobile && data.group != 'Y') {
+    //   dpContactHtml += '<button type="button" class="icon-btn" onClick="connectMessenger(\''+data.userId+'\',\''+userId[0]+'\');">'
+    //   +'<span class="b-icon">'
+    //     +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //     +'<path fill-rule="evenodd" clip-rule="evenodd" d="M20.2912 20.3478L18.2929 18.3411C18.1053 18.1526 17.8503 18.0467 17.5843 18.0467H9.99979C9.52323 18.0467 9.07261 17.9356 8.67245 17.7378C7.94451 17.3781 7.38352 16.7317 7.13695 15.9461C7.04009 15.6375 7.22544 15.3549 7.50873 15.2467C7.58741 15.2166 7.67363 15.2 7.76346 15.2C7.83698 15.2 7.90632 15.2169 7.96967 15.2467C8.10822 15.3119 8.21807 15.4391 8.28008 15.5873C8.28267 15.5935 8.28517 15.5997 8.28759 15.606C8.28873 15.6089 8.28986 15.6119 8.29096 15.6149C8.29311 15.6206 8.29518 15.6264 8.29719 15.6322C8.54017 16.3389 9.21068 16.8467 9.99979 16.8467H17.5843C18.1694 16.8467 18.7304 17.0797 19.1433 17.4943L20.7998 19.1579V10C20.7998 9.00589 19.9939 8.2 18.9998 8.2H18.8C18.4699 8.2 18.202 7.93339 18.2 7.60374C18.2 7.6025 18.2 7.60125 18.2 7.6C18.2 7.59875 18.2 7.5975 18.2 7.59625C18.202 7.26661 18.4699 7 18.8 7C18.7998 7 18.8002 7 18.8 7H18.9998C20.6567 7 21.9998 8.34315 21.9998 10V19.6422C21.9998 20.5341 20.9205 20.9798 20.2912 20.3478ZM14 14.0467C15.6569 14.0467 17 12.7035 17 11.0467V6C17 4.34315 15.6569 3 14 3H5C3.34315 3 2 4.34314 2 6V15.6422C2 16.5341 3.07925 16.9798 3.7086 16.3478L5.70685 14.3411C5.89451 14.1526 6.1495 14.0467 6.41545 14.0467H14ZM5 4.2C4.00589 4.2 3.2 5.00589 3.2 6V15.1579L4.85653 13.4943C5.26937 13.0797 5.83036 12.8467 6.41545 12.8467H14C14.9941 12.8467 15.8 12.0408 15.8 11.0467V6C15.8 5.00589 14.9941 4.2 14 4.2H5Z" fill="#6B6B6B"/>'
+    //     +'</svg>')
+    //   +'</span><span class="b-text">메신저</span></button>';
+    // }
 		
-     dpContactHtml +=	'<button type="button" class="icon-btn" onClick="sendSMSPopupOpen(null,\''+data.userNm+'\',\''+data.deptNm+'\',\''+data.empMobile+'\')">'
-     +'<span class="b-icon">'
-     +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-     +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5 4.2C4.00703 4.2 3.2 5.0061 3.2 6.00304V19.4955C3.2 19.7664 3.52435 19.8967 3.7117 19.7091L6.81171 16.606C7.31813 16.099 8.0053 15.8142 8.72186 15.8142H19C19.993 15.8142 20.8 15.0081 20.8 14.0111V6.00304C20.8 5.0061 19.993 4.2 19 4.2H5ZM2 6.00304C2 4.34451 3.34315 3 5 3H19C20.6569 3 22 4.34451 22 6.00304V14.0111C22 15.6697 20.6569 17.0142 19 17.0142H8.72186C8.32377 17.0142 7.94201 17.1724 7.66067 17.4541L4.56066 20.5572C3.61571 21.5031 2 20.8332 2 19.4955V6.00304Z" fill="#6B6B6B"/>'
-     +'</svg>')
-      +'</span><span class="b-text">문자</span></button>';
+    //  dpContactHtml +=	'<button type="button" class="icon-btn" onClick="sendSMSPopupOpen(null,\''+data.userNm+'\',\''+data.deptNm+'\',\''+data.empMobile+'\')">'
+    //  +'<span class="b-icon">'
+    //  +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5 4.2C4.00703 4.2 3.2 5.0061 3.2 6.00304V19.4955C3.2 19.7664 3.52435 19.8967 3.7117 19.7091L6.81171 16.606C7.31813 16.099 8.0053 15.8142 8.72186 15.8142H19C19.993 15.8142 20.8 15.0081 20.8 14.0111V6.00304C20.8 5.0061 19.993 4.2 19 4.2H5ZM2 6.00304C2 4.34451 3.34315 3 5 3H19C20.6569 3 22 4.34451 22 6.00304V14.0111C22 15.6697 20.6569 17.0142 19 17.0142H8.72186C8.32377 17.0142 7.94201 17.1724 7.66067 17.4541L4.56066 20.5572C3.61571 21.5031 2 20.8332 2 19.4955V6.00304Z" fill="#6B6B6B"/>'
+    //  +'</svg>')
+    //   +'</span><span class="b-text">문자</span></button>';
 			
-    if(!isMobile) {
-     dpContactHtml +=	'<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
-      +'<span class="b-icon">'
-          +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-          +'<path fill-rule="evenodd" clip-rule="evenodd" d="M19 5.2H5C4.00589 5.2 3.2 6.00589 3.2 7V17C3.2 17.9941 4.00589 18.8 5 18.8H19C19.9941 18.8 20.8 17.9941 20.8 17V7C20.8 6.00589 19.9941 5.2 19 5.2ZM5 4C3.34315 4 2 5.34315 2 7V17C2 18.6569 3.34315 20 5 20H19C20.6569 20 22 18.6569 22 17V7C22 5.34315 20.6569 4 19 4H5Z" fill="#6B6B6B"/>'
-          +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2 7C2 5.34315 3.34315 4 5 4H19C20.6569 4 22 5.34315 22 7C22 7.58091 21.8783 8.07924 21.5702 8.53793C21.2764 8.9753 20.8423 9.33144 20.3129 9.68998C19.4609 10.267 14.7828 12.8399 13.0035 13.8149C12.3765 14.1584 11.6235 14.1584 10.9965 13.8149C9.21694 12.8397 4.53774 10.2662 3.68633 9.68954C3.15719 9.33114 2.72334 8.97498 2.42973 8.5376C2.12186 8.07897 2 7.5807 2 7ZM5 5.2C4.00589 5.2 3.2 6.00589 3.2 7C3.2 7.39675 3.27829 7.64863 3.42607 7.86878C3.58811 8.11017 3.86561 8.36162 4.35928 8.69598C5.14928 9.23106 9.74951 11.7632 11.5731 12.7625C11.8409 12.9092 12.1591 12.9092 12.4269 12.7625C14.2502 11.7634 18.8494 9.2318 19.64 8.69639C20.1341 8.36174 20.4119 8.11025 20.574 7.86883C20.7219 7.64872 20.8 7.3969 20.8 7C20.8 6.00589 19.9941 5.2 19 5.2H5C5.00001 5.2 4.99999 5.2 5 5.2Z" fill="#6B6B6B"/>'
-          +'</svg>')
-      +'</span>'
-      +'<span class="b-text">메일</span></button>';
-    }
+    // if(!isMobile) {
+    //  dpContactHtml +=	'<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
+    //   +'<span class="b-icon">'
+    //       +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //       +'<path fill-rule="evenodd" clip-rule="evenodd" d="M19 5.2H5C4.00589 5.2 3.2 6.00589 3.2 7V17C3.2 17.9941 4.00589 18.8 5 18.8H19C19.9941 18.8 20.8 17.9941 20.8 17V7C20.8 6.00589 19.9941 5.2 19 5.2ZM5 4C3.34315 4 2 5.34315 2 7V17C2 18.6569 3.34315 20 5 20H19C20.6569 20 22 18.6569 22 17V7C22 5.34315 20.6569 4 19 4H5Z" fill="#6B6B6B"/>'
+    //       +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2 7C2 5.34315 3.34315 4 5 4H19C20.6569 4 22 5.34315 22 7C22 7.58091 21.8783 8.07924 21.5702 8.53793C21.2764 8.9753 20.8423 9.33144 20.3129 9.68998C19.4609 10.267 14.7828 12.8399 13.0035 13.8149C12.3765 14.1584 11.6235 14.1584 10.9965 13.8149C9.21694 12.8397 4.53774 10.2662 3.68633 9.68954C3.15719 9.33114 2.72334 8.97498 2.42973 8.5376C2.12186 8.07897 2 7.5807 2 7ZM5 5.2C4.00589 5.2 3.2 6.00589 3.2 7C3.2 7.39675 3.27829 7.64863 3.42607 7.86878C3.58811 8.11017 3.86561 8.36162 4.35928 8.69598C5.14928 9.23106 9.74951 11.7632 11.5731 12.7625C11.8409 12.9092 12.1591 12.9092 12.4269 12.7625C14.2502 11.7634 18.8494 9.2318 19.64 8.69639C20.1341 8.36174 20.4119 8.11025 20.574 7.86883C20.7219 7.64872 20.8 7.3969 20.8 7C20.8 6.00589 19.9941 5.2 19 5.2H5C5.00001 5.2 4.99999 5.2 5 5.2Z" fill="#6B6B6B"/>'
+    //       +'</svg>')
+    //   +'</span>'
+    //   +'<span class="b-text">메일</span></button>';
+    // }
 
-      if(data.group != 'Y' ) {
-        dpContactHtml +='<button type="button" class="icon-btn" onClick="intentEvent(null, \'schedule\', \''+data.targetId+'\');">'
+    //   if(data.group != 'Y' ) {
+    //     dpContactHtml +='<button type="button" class="icon-btn" onClick="intentEvent(null, \'schedule\', \''+data.targetId+'\');">'
+    //     +'<span class="b-icon">'
+    //       +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //       +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#6B6B6B"/>'
+    //       +'<path d="M12.8791 14.5999L11.1209 14.5999C10.7896 14.5999 10.5209 14.3313 10.5209 13.9999C10.5209 13.6685 10.7896 13.3999 11.1209 13.3999L12.8791 13.3999C13.2104 13.3999 13.4791 13.6685 13.4791 13.9999C13.4791 14.3313 13.2104 14.5999 12.8791 14.5999Z" fill="#6B6B6B"/>'
+    //       +'<path d="M8.10698 14.5999L6.6 14.5999C6.26863 14.5999 6 14.3313 6 13.9999C6 13.6685 6.26863 13.3999 6.6 13.3999L8.10698 13.3999C8.43835 13.3999 8.70698 13.6685 8.70698 13.9999C8.70698 14.3313 8.43835 14.5999 8.10698 14.5999Z" fill="#6B6B6B"/>'
+    //       +'<path d="M11.1209 17.5999L12.8791 17.5999C13.2104 17.5999 13.4791 17.3313 13.4791 16.9999C13.4791 16.6685 13.2104 16.3999 12.8791 16.3999L11.1209 16.3999C10.7896 16.3999 10.5209 16.6685 10.5209 16.9999C10.5209 17.3313 10.7896 17.5999 11.1209 17.5999Z" fill="#6B6B6B"/>'
+    //       +'<path d="M6.6 17.5999L8.10698 17.5999C8.43835 17.5999 8.70698 17.3313 8.70698 16.9999C8.70698 16.6685 8.43835 16.3999 8.10698 16.3999L6.6 16.3999C6.26863 16.3999 6 16.6685 6 16.9999C6 17.3313 6.26863 17.5999 6.6 17.5999Z" fill="#6B6B6B"/>'
+    //       +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5999 2.6C8.5999 2.26863 8.33127 2 7.9999 2C7.66853 2 7.3999 2.26863 7.3999 2.6V4H6C4.34315 4 3 5.34315 3 7V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V7C21 5.34315 19.6569 4 18 4H16.5999V2.6C16.5999 2.26863 16.3313 2 15.9999 2C15.6685 2 15.3999 2.26863 15.3999 2.6V4H8.5999L8.5999 2.6ZM18 5.2H6C5.00589 5.2 4.2 6.00589 4.2 7V9L19.8 9V7C19.8 6.00589 18.9941 5.2 18 5.2ZM4.2 19V10.2L19.8 10.2V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19Z" fill="#6B6B6B"/>'
+    //       +'</svg>')
+    //   +'</span>'
+    //     +'<span class="b-text">일정</span></button>';
+    //   }
+    // 프로필 버튼 추가 (프로필 버튼 클릭 시, 블로그 페이지 새창으로 오픈)
+    if(data.group != 'Y' ) {
+    //프로파일 url 추가 by hhs
+        var profileBtnUrl ='http://newep.lge.com/support/profile/getProfile.do?targetUserId=@'+window.btoa(data.empNo);
+        dpContactHtml += '<button type="button" class="icon-btn" onClick="window.open(\''+profileBtnUrl+'\')">'
         +'<span class="b-icon">'
-          +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-          +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#6B6B6B"/>'
-          +'<path d="M12.8791 14.5999L11.1209 14.5999C10.7896 14.5999 10.5209 14.3313 10.5209 13.9999C10.5209 13.6685 10.7896 13.3999 11.1209 13.3999L12.8791 13.3999C13.2104 13.3999 13.4791 13.6685 13.4791 13.9999C13.4791 14.3313 13.2104 14.5999 12.8791 14.5999Z" fill="#6B6B6B"/>'
-          +'<path d="M8.10698 14.5999L6.6 14.5999C6.26863 14.5999 6 14.3313 6 13.9999C6 13.6685 6.26863 13.3999 6.6 13.3999L8.10698 13.3999C8.43835 13.3999 8.70698 13.6685 8.70698 13.9999C8.70698 14.3313 8.43835 14.5999 8.10698 14.5999Z" fill="#6B6B6B"/>'
-          +'<path d="M11.1209 17.5999L12.8791 17.5999C13.2104 17.5999 13.4791 17.3313 13.4791 16.9999C13.4791 16.6685 13.2104 16.3999 12.8791 16.3999L11.1209 16.3999C10.7896 16.3999 10.5209 16.6685 10.5209 16.9999C10.5209 17.3313 10.7896 17.5999 11.1209 17.5999Z" fill="#6B6B6B"/>'
-          +'<path d="M6.6 17.5999L8.10698 17.5999C8.43835 17.5999 8.70698 17.3313 8.70698 16.9999C8.70698 16.6685 8.43835 16.3999 8.10698 16.3999L6.6 16.3999C6.26863 16.3999 6 16.6685 6 16.9999C6 17.3313 6.26863 17.5999 6.6 17.5999Z" fill="#6B6B6B"/>'
-          +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5999 2.6C8.5999 2.26863 8.33127 2 7.9999 2C7.66853 2 7.3999 2.26863 7.3999 2.6V4H6C4.34315 4 3 5.34315 3 7V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V7C21 5.34315 19.6569 4 18 4H16.5999V2.6C16.5999 2.26863 16.3313 2 15.9999 2C15.6685 2 15.3999 2.26863 15.3999 2.6V4H8.5999L8.5999 2.6ZM18 5.2H6C5.00589 5.2 4.2 6.00589 4.2 7V9L19.8 9V7C19.8 6.00589 18.9941 5.2 18 5.2ZM4.2 19V10.2L19.8 10.2V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19Z" fill="#6B6B6B"/>'
-          +'</svg>')
-      +'</span>'
-        +'<span class="b-text">일정</span></button>';
-      }
-			
-			dpContactHtml +='</div>';
+            +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12 9.8C13.5464 9.8 14.8 8.5464 14.8 7C14.8 5.4536 13.5464 4.2 12 4.2C10.4536 4.2 9.20002 5.4536 9.20002 7C9.20002 8.5464 10.4536 9.8 12 9.8ZM12 11C14.2092 11 16 9.20914 16 7C16 4.79086 14.2092 3 12 3C9.79089 3 8.00002 4.79086 8.00002 7C8.00002 9.20914 9.79089 11 12 11Z" fill="#2C2C2C"/>'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M3.00012 20.3C3.00012 15.8265 6.62662 12.2 11.1001 12.2H12.9001C17.3736 12.2 21.0001 15.8265 21.0001 20.3V20.4C21.0001 20.7314 20.7315 21 20.4001 21C20.0688 21 19.8001 20.7314 19.8001 20.4V20.3C19.8001 16.4893 16.7109 13.4 12.9001 13.4H11.1001C7.28936 13.4 4.20012 16.4893 4.20012 20.3V20.4C4.20012 20.7314 3.93149 21 3.60012 21C3.26875 21 3.00012 20.7314 3.00012 20.4V20.3Z" fill="#2C2C2C"/>'
+            +'</svg>')
+        +'</span><span class="b-text">프로필</span></button>';
+      
+        // 일정
+        // if(data.group != 'Y' ) {
+            dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'schedule\', \''+data.targetId+'\');">'
+            +'<span class="b-icon">'
+                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#6B6B6B"/>'
+                    +'<path d="M12.8791 14.5999L11.1209 14.5999C10.7896 14.5999 10.5209 14.3313 10.5209 13.9999C10.5209 13.6685 10.7896 13.3999 11.1209 13.3999L12.8791 13.3999C13.2104 13.3999 13.4791 13.6685 13.4791 13.9999C13.4791 14.3313 13.2104 14.5999 12.8791 14.5999Z" fill="#6B6B6B"/>'
+                    +'<path d="M8.10698 14.5999L6.6 14.5999C6.26863 14.5999 6 14.3313 6 13.9999C6 13.6685 6.26863 13.3999 6.6 13.3999L8.10698 13.3999C8.43835 13.3999 8.70698 13.6685 8.70698 13.9999C8.70698 14.3313 8.43835 14.5999 8.10698 14.5999Z" fill="#6B6B6B"/>'
+                    +'<path d="M11.1209 17.5999L12.8791 17.5999C13.2104 17.5999 13.4791 17.3313 13.4791 16.9999C13.4791 16.6685 13.2104 16.3999 12.8791 16.3999L11.1209 16.3999C10.7896 16.3999 10.5209 16.6685 10.5209 16.9999C10.5209 17.3313 10.7896 17.5999 11.1209 17.5999Z" fill="#6B6B6B"/>'
+                    +'<path d="M6.6 17.5999L8.10698 17.5999C8.43835 17.5999 8.70698 17.3313 8.70698 16.9999C8.70698 16.6685 8.43835 16.3999 8.10698 16.3999L6.6 16.3999C6.26863 16.3999 6 16.6685 6 16.9999C6 17.3313 6.26863 17.5999 6.6 17.5999Z" fill="#6B6B6B"/>'
+                    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5999 2.6C8.5999 2.26863 8.33127 2 7.9999 2C7.66853 2 7.3999 2.26863 7.3999 2.6V4H6C4.34315 4 3 5.34315 3 7V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V7C21 5.34315 19.6569 4 18 4H16.5999V2.6C16.5999 2.26863 16.3313 2 15.9999 2C15.6685 2 15.3999 2.26863 15.3999 2.6V4H8.5999L8.5999 2.6ZM18 5.2H6C5.00589 5.2 4.2 6.00589 4.2 7V9L19.8 9V7C19.8 6.00589 18.9941 5.2 18 5.2ZM4.2 19V10.2L19.8 10.2V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19Z" fill="#6B6B6B"/>'
+                +'</svg>')
+            +'</span>'
+            +'<span class="b-text">일정</span></button>';
+        }
+
+        //메일 버튼 기능 삭제
+        // 메일
+        // if(!isMobile) {
+        //     dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
+        //     +'<span class="b-icon">'
+        //         +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        //             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M19 5.2H5C4.00589 5.2 3.2 6.00589 3.2 7V17C3.2 17.9941 4.00589 18.8 5 18.8H19C19.9941 18.8 20.8 17.9941 20.8 17V7C20.8 6.00589 19.9941 5.2 19 5.2ZM5 4C3.34315 4 2 5.34315 2 7V17C2 18.6569 3.34315 20 5 20H19C20.6569 20 22 18.6569 22 17V7C22 5.34315 20.6569 4 19 4H5Z" fill="#6B6B6B"/>'
+        //             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2 7C2 5.34315 3.34315 4 5 4H19C20.6569 4 22 5.34315 22 7C22 7.58091 21.8783 8.07924 21.5702 8.53793C21.2764 8.9753 20.8423 9.33144 20.3129 9.68998C19.4609 10.267 14.7828 12.8399 13.0035 13.8149C12.3765 14.1584 11.6235 14.1584 10.9965 13.8149C9.21694 12.8397 4.53774 10.2662 3.68633 9.68954C3.15719 9.33114 2.72334 8.97498 2.42973 8.5376C2.12186 8.07897 2 7.5807 2 7ZM5 5.2C4.00589 5.2 3.2 6.00589 3.2 7C3.2 7.39675 3.27829 7.64863 3.42607 7.86878C3.58811 8.11017 3.86561 8.36162 4.35928 8.69598C5.14928 9.23106 9.74951 11.7632 11.5731 12.7625C11.8409 12.9092 12.1591 12.9092 12.4269 12.7625C14.2502 11.7634 18.8494 9.2318 19.64 8.69639C20.1341 8.36174 20.4119 8.11025 20.574 7.86883C20.7219 7.64872 20.8 7.3969 20.8 7C20.8 6.00589 19.9941 5.2 19 5.2H5C5.00001 5.2 4.99999 5.2 5 5.2Z" fill="#6B6B6B"/>'
+        //         +'</svg>')
+        //     +'</span>'
+        //     +'<span class="b-text">메일</span></button>';
+        // }
+        
+        // 메신저
+        if(data.group != 'Y' ) {
+            dpContactHtml += '<button type="button" class="icon-btn" onClick="connectMessenger(\''+data.userId+'\',\''+userId[0]+'\');">'
+            +'<span class="b-icon">'
+                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M20.2912 20.3478L18.2929 18.3411C18.1053 18.1526 17.8503 18.0467 17.5843 18.0467H9.99979C9.52323 18.0467 9.07261 17.9356 8.67245 17.7378C7.94451 17.3781 7.38352 16.7317 7.13695 15.9461C7.04009 15.6375 7.22544 15.3549 7.50873 15.2467C7.58741 15.2166 7.67363 15.2 7.76346 15.2C7.83698 15.2 7.90632 15.2169 7.96967 15.2467C8.10822 15.3119 8.21807 15.4391 8.28008 15.5873C8.28267 15.5935 8.28517 15.5997 8.28759 15.606C8.28873 15.6089 8.28986 15.6119 8.29096 15.6149C8.29311 15.6206 8.29518 15.6264 8.29719 15.6322C8.54017 16.3389 9.21068 16.8467 9.99979 16.8467H17.5843C18.1694 16.8467 18.7304 17.0797 19.1433 17.4943L20.7998 19.1579V10C20.7998 9.00589 19.9939 8.2 18.9998 8.2H18.8C18.4699 8.2 18.202 7.93339 18.2 7.60374C18.2 7.6025 18.2 7.60125 18.2 7.6C18.2 7.59875 18.2 7.5975 18.2 7.59625C18.202 7.26661 18.4699 7 18.8 7C18.7998 7 18.8002 7 18.8 7H18.9998C20.6567 7 21.9998 8.34315 21.9998 10V19.6422C21.9998 20.5341 20.9205 20.9798 20.2912 20.3478ZM14 14.0467C15.6569 14.0467 17 12.7035 17 11.0467V6C17 4.34315 15.6569 3 14 3H5C3.34315 3 2 4.34314 2 6V15.6422C2 16.5341 3.07925 16.9798 3.7086 16.3478L5.70685 14.3411C5.89451 14.1526 6.1495 14.0467 6.41545 14.0467H14ZM5 4.2C4.00589 4.2 3.2 5.00589 3.2 6V15.1579L4.85653 13.4943C5.26937 13.0797 5.83036 12.8467 6.41545 12.8467H14C14.9941 12.8467 15.8 12.0408 15.8 11.0467V6C15.8 5.00589 14.9941 4.2 14 4.2H5Z" fill="#6B6B6B"/>'
+                +'</svg>')
+            +'</span><span class="b-text">메신저</span></button>';
+        }			
+		
+		dpContactHtml +='</div>';
     		
     	var dpContact = $(dpContactHtml);
     	moreInfos.append(dpContact);
@@ -6447,7 +6760,8 @@ function connectMessenger(userId, targetId){
  */
 function makeEmployeeListCard(data,isHistory){
 	
-	var dList = $('<div class="message profile-list"></div>');
+// 	var dList = $('<div class="message profile-list"></div>');
+	var dList = $('<div class="message profile-list employee"></div>'); // [퍼블 수정 및 추가] - 클래스 employee 추가
 	dList.attr("data-sessionId", data.chatSessionId.split("sessions/")[1]);
 	
 	//일정조회 동명이인 전용 파라미터
@@ -6455,8 +6769,25 @@ function makeEmployeeListCard(data,isHistory){
 	dList.attr("data-date", data.date);
 	dList.attr("data-krname", data.krname);
 
+	// [퍼블 수정 및 추가] - list-header-title 추가
+    // list-header-title
+    var dListHeader = $('<div class="list-header-title">' + listHeaderIcon + '</div>');
+    var nameSearch = '';
+    // 검색명 관련 조건
+    // if ('검색 내용이 이름/이름+직책' = true) {
+    //     // 이름/이름+직책 검색 (이름 추가)
+        nameSearch = data.krname == ""? '<span class="search-name"></span>':'<span class="search-name"><b>' + data.krname + '</b>님의 </span>'
+    // } // 그 외 해당 없음.
+    var dListHeaderTitle = $(
+        '<p class="profile-list-box">'
+            + nameSearch + '프로필 리스트'
+        +'</p>'
+    )
+    dListHeader.append(dListHeaderTitle);
+    dList.append(dListHeader);
+    
   var dListWrap = $('<ul></ul>');
-	
+	console.log("임직원 일정 검색 리스트 !!!");
 	
 	if (data.items instanceof Array && data.items.length > 0) {
 		data.items.forEach(function(item,index) {
@@ -6464,6 +6795,8 @@ function makeEmployeeListCard(data,isHistory){
 			var empMail = item.empMail.split('@');
 			var userId = empMail[0];
 			var display = (index > 4)? "none":"flex";
+			
+			var userTitle = (item.positionNm != null)? item.userNm + ' ' + item.titleNm + '/' + item.positionNm : item.userNm + ' ' + item.titleNm;
 			
 			var liHtml = '<li class="list-box" style="display:'+display+'" onclick="intentEvent(this , \''+ type +'\', \''+ userId +'\')">';
 			
@@ -6474,7 +6807,7 @@ function makeEmployeeListCard(data,isHistory){
 				liHtml += 	(item.profilePicture ? '<div class="profile-img">' + `<img src="' + item.profilePicture + '" onerror="this.src='` + pAlternative + `';"></div>` : '<div class="profile-img"><img class="img-circle" src="'+ pAlternative +'"></div>');
 				liHtml += 	'<div class="text-box">';
         liHtml +=	'<div class="name">'
-                    + '<h1>' + item.userNm + ' ' + item.titleNm +'</h1>'
+                    + '<h1>' + userTitle +'</h1>'
                     +'</div">';
 
         liHtml += '</div>';
@@ -6671,21 +7004,27 @@ function sendEquipNameChange(btn) {
 
 //일정등록 Card 생성 함수
 function makeScheduleRegCard(data) {
+
   var scheduleRegCard = $('<div class="message simple-text"></div>');
+  
+  if(data.empNo == "") {  
+      scheduleRegCard.append('<p>사용자 정보가 없습니다. 관리자에게 문의하세요.</p>');
+      return scheduleRegCard;
+  }
   var scheduleRegText = $('<p>새로운 일정을 등록하시려면 아래 버튼을 눌러주세요!</p>'
     + '<h6>※ 일정 등록 화면에서 회의실을 예약할 수 있어요.</h6>');
   scheduleRegCard.append(scheduleRegText);
   var regBtnWrap = $('<div class="btn"></div>');
   var regBtn = $('<button type="button" class="btn btn-emphasis add-schedule">일정 등록</button>');
   regBtn.on('click', function() {
-    // addSchedulePopupOpen(data); // [퍼블 수정 및 추가] - 원본(데이터 없음으로 확인이 어려워 addSchedulePopupOpenRenew로 샘플작업)
+     //addSchedulePopupOpen(data); // [퍼블 수정 및 추가] - 원본(데이터 없음으로 확인이 어려워 addSchedulePopupOpenRenew로 샘플작업)
     addSchedulePopupOpenRenew(data) // [퍼블 수정 및 추가] - 퍼블 작업용 샘플
   });
   regBtnWrap.append(regBtn);
   scheduleRegCard.append(regBtnWrap);
 
   if(checkChatHistory == false) {
-    // addSchedulePopupOpen(data); // [퍼블 수정 및 추가] - 원본(데이터 없음으로 확인이 어려워 addSchedulePopupOpenRenew로 샘플작업)
+     //addSchedulePopupOpen(data); // [퍼블 수정 및 추가] - 원본(데이터 없음으로 확인이 어려워 addSchedulePopupOpenRenew로 샘플작업)
     addSchedulePopupOpenRenew(data) // [퍼블 수정 및 추가] - 퍼블 작업용 샘플
   }
   
@@ -7528,7 +7867,11 @@ function makeDefaultFallbackCard(data) {
   var defaultQuickReply = $('<div class="custom-quick-reply"></div>');
   var btnList = $('<div class="btn-list"></div>');
   
-  var btnLearningBot = $('<span class="btn-custom-reply btn-text">학습봇 모드</span>');
+  var btnLearningBot = $('<span class="btn-custom-reply btn-text green">' // [퍼블 수정_240528 (클래스 btn-highlight 제거 & green 추가)]
+  +             '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +             '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M3.41041 10.3086L2.80655 12.9235C2.76915 13.0855 2.91432 13.2306 3.07628 13.1932L5.69134 12.5893L13.1516 5.12906L10.8708 2.84835L3.41041 10.3086ZM10.3876 2.20012L2.82106 9.76658C2.73054 9.85711 2.66726 9.97125 2.63846 10.096L2.02706 12.7435C1.85661 13.4816 2.5182 14.1432 3.25631 13.9727L5.90398 13.3612C6.02871 13.3324 6.14284 13.2691 6.23336 13.1786L13.7999 5.6122C14.0667 5.34537 14.0667 4.91273 13.7999 4.6459L11.3539 2.2001C11.087 1.93329 10.6544 1.9333 10.3876 2.20012Z"/>'
+  +             '</svg>'
+  +             ' 학습봇 모드</span>');
   btnLearningBot.on('click', function() {
     $('body').append('<div id="caas-chatbot-container"><iframe id="caas-chatbot-chat-iframe" name="caas-chatbot-chat-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe></div>');
 
@@ -7538,9 +7881,13 @@ function makeDefaultFallbackCard(data) {
     };
   });
 
-  btnList.append(btnLearningBot);
+  //btnList.append(btnLearningBot);
   
-  var gptBotBtn = $('<span class="btn-custom-reply btn-text">Chat GPT</span>');
+  var gptBotBtn = $('<span class="btn-custom-reply btn-text blue">' // [퍼블 수정_240528 (클래스 blue 추가)]
+  +         '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" >'
+  +         '<path fill="#E0205C" fill-rule="evenodd" clip-rule="evenodd" d="M13.5276 13.5652L12.1955 12.2274C12.0704 12.1017 11.9004 12.0311 11.7231 12.0311H6.66669C6.34898 12.0311 6.04857 11.957 5.7818 11.8252C5.2965 11.5854 4.92251 11.1545 4.75813 10.6307C4.69355 10.425 4.81712 10.2366 5.00599 10.1645C5.05843 10.1444 5.11592 10.1333 5.17581 10.1333C5.22482 10.1333 5.27105 10.1446 5.31328 10.1645C5.40564 10.2079 5.47888 10.2927 5.52022 10.3915C5.52194 10.3957 5.52361 10.3998 5.52522 10.404C5.52598 10.4059 5.52673 10.4079 5.52747 10.4099C5.5289 10.4137 5.53029 10.4176 5.53162 10.4215C5.69361 10.8926 6.14062 11.2311 6.66669 11.2311H11.7231C12.1131 11.2311 12.4871 11.3865 12.7623 11.6629L13.8667 12.7719V6.66667C13.8667 6.00393 13.3294 5.46667 12.6667 5.46667H12.5335C12.3134 5.46667 12.1348 5.28893 12.1335 5.06916C12.1335 5.06833 12.1335 5.0675 12.1335 5.06667C12.1335 5.06583 12.1335 5.065 12.1335 5.06417C12.1348 4.84441 12.3134 4.66667 12.5335 4.66667C12.5334 4.66667 12.5336 4.66667 12.5335 4.66667H12.6667C13.7713 4.66667 14.6667 5.5621 14.6667 6.66667V13.0948C14.6667 13.6894 13.9472 13.9865 13.5276 13.5652ZM9.3335 9.36445C10.4381 9.36445 11.3335 8.46902 11.3335 7.36445V4C11.3335 2.89543 10.4381 2 9.3335 2H3.3335C2.22893 2 1.3335 2.89543 1.3335 4V10.4281C1.3335 11.0227 2.053 11.3199 2.47256 10.8985L3.80473 9.56071C3.92984 9.43508 4.09983 9.36445 4.27713 9.36445H9.3335ZM3.3335 2.8C2.67075 2.8 2.1335 3.33726 2.1335 4V10.1053L3.23785 8.99623C3.51308 8.71983 3.88707 8.56445 4.27713 8.56445H9.3335C9.99624 8.56445 10.5335 8.02719 10.5335 7.36445V4C10.5335 3.33726 9.99624 2.8 9.3335 2.8H3.3335Z"/>'
+  +         '</svg>'
+  +         ' GPT 모드</span>');
   gptBotBtn.on('click', function() {
     searchActiveFalse();
     activeGptBot("");
@@ -7606,22 +7953,6 @@ function makeDefaultFallbackCard(data) {
   btnList.append(dictBtn);
   */
   
-  var searchSystemBtn = $('<span class="btn-custom-reply btn-icon btn-text search-system">'
-  +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
-  +'</svg>'
-  +'시스템 담당자 검색</span>'
-  );
-  searchSystemBtn.on('click', function() {
-    searchActiveFalse();
-    searchActiveSystem();
-    searchActive2 = true;
-    setTimeout(function() {
-      searchActive2 = false;
-    }, 500)
-  });
-  btnList.append(searchSystemBtn);
-  
   var searchEmployeeBtn = $('<span class="btn-custom-reply btn-icon btn-text search-employee">'
   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M5.66628 6.2C6.32902 6.2 6.86628 5.66274 6.86628 5C6.86628 4.33726 6.32902 3.8 5.66628 3.8C5.00353 3.8 4.46628 4.33726 4.46628 5C4.46628 5.66274 5.00353 6.2 5.66628 6.2ZM5.66628 7C6.77084 7 7.66628 6.10457 7.66628 5C7.66628 3.89543 6.77084 3 5.66628 3C4.56171 3 3.66628 3.89543 3.66628 5C3.66628 6.10457 4.56171 7 5.66628 7Z" fill="#E0205C"/>'
@@ -7640,6 +7971,23 @@ function makeDefaultFallbackCard(data) {
  
   });
   btnList.append(searchEmployeeBtn);
+  
+  var searchSystemBtn = $('<span class="btn-custom-reply btn-icon btn-text search-system">'
+  +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+  +'<path d="M10.8837 4.05322C10.7822 4.15268 10.4111 4.64773 10.8807 5.11789C11.3509 5.5875 11.8459 5.21639 11.9454 5.11485C12.0449 5.01328 13.5376 3.52467 13.5376 3.52467C13.7352 3.32732 14.0658 3.3729 14.2003 3.61607C15.002 5.0651 14.7537 6.89305 13.5593 8.0882C12.6582 8.98861 11.3442 9.33879 10.1358 9.10652C9.89479 9.0602 9.63997 9.11984 9.46582 9.29407L9.4471 9.31279C9.1409 9.61916 5.17412 13.5881 4.70768 14.0545C4.03418 14.728 2.88148 15.0002 1.93997 14.0587L2.50484 13.4938C2.81952 13.8084 3.11943 13.8828 3.36816 13.8653C3.64007 13.8462 3.92237 13.71 4.14279 13.4896C4.6136 13.0188 8.65215 8.97809 8.88985 8.74026L8.90093 8.72918C9.29263 8.33739 9.83029 8.2343 10.2866 8.32201C11.2545 8.50805 12.2945 8.22261 12.9944 7.52329C13.8096 6.70742 14.0643 5.5206 13.7118 4.47933L13.3431 4.84713C12.9542 5.23524 12.5616 5.62737 12.5161 5.67387C12.3914 5.80119 12.1161 6.01688 11.738 6.10748C11.2974 6.21307 10.7644 6.13112 10.3158 5.68278C9.86747 5.23414 9.78552 4.70124 9.89111 4.26058C9.98171 3.88248 10.1974 3.60723 10.3247 3.48252C10.3712 3.43697 10.7634 3.04436 11.1515 2.65547L11.5193 2.28681C10.478 1.93429 9.29117 2.18898 8.4753 3.00417C7.77599 3.70411 7.49054 4.74411 7.67658 5.712C7.76429 6.1683 7.6612 6.70596 7.26941 7.09766L7.25833 7.10874C7.0205 7.34644 2.97978 11.385 2.50898 11.8558C2.28855 12.0762 2.15244 12.3585 2.13327 12.6304C2.11574 12.8792 2.19015 13.1791 2.50484 13.4938L1.93997 14.0587C0.998463 13.1172 1.27058 11.9644 1.94409 11.2909C2.41075 10.8242 6.38325 6.85387 6.68624 6.55105L6.70452 6.53277C6.87875 6.35862 6.93839 6.1038 6.89207 5.86279C6.6598 4.65436 7.00998 3.34035 7.91039 2.4393C9.10554 1.24492 10.9335 0.99658 12.3825 1.79827C12.6257 1.93281 12.6713 2.26335 12.4739 2.46096C12.4739 2.46096 10.9853 3.95373 10.8837 4.05322Z" fill="#E0205C"/>'
+  +'</svg>'
+  +'시스템 담당자 검색</span>'
+  );
+  searchSystemBtn.on('click', function() {
+    searchActiveFalse();
+    searchActiveSystem();
+    searchActive2 = true;
+    setTimeout(function() {
+      searchActive2 = false;
+    }, 500)
+  });
+  btnList.append(searchSystemBtn);
+  
   /*
   var searchAiBtn = $('<span class="btn-custom-reply btn-icon btn-text search-ai">'
   +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -7808,292 +8156,12 @@ function makeListStandardItem(listUl, item, searchData){
 // ** 커스텀 음답 메시지 생성 함수 **
 chatui.createCustomResponseMessage = function(response, isHistory) {
   console.log("chatui.createCustomResponseMessage()", response);
-  
+
   try {
     var customPayload = JSON.parse(response.response);
 
     var messageCard = null;
    
-    if(customPayload) {   
-        if(customPayload.type == 'apmsPush') {          // 광고판촉비 push 일 경우 
-            console.log('apmsPush : ', response);
-            
-            var apmsInfo = '';
-            var regSuccessYn = '';
-            var errorMessage = '';
-            var parameters = null;
-            if(response.result_code && response.result_code == 'SUCCESS') {
-                regSuccessYn = 'Y';
-                
-                if(response.result_data) {
-                    apmsInfo = response.result_data;
-                }
-            }
-            else{
-                regSuccessYn = 'N';
-                errorMessage = response.result_message;
-                parameters = response.parameters;
-            }
-            
-            if(regSuccessYn == 'N') {           // 광고판촉비 조회 에러시. 
-                
-                console.log('광고판촉비 조회 실패 : ');
-                
-                if(customPayload.mode == "input") {         // 타계정 주문 입력 4단계 광고판촉비 조회시
-                    setTimeout(function() {
-                        showSmallDialog('광고판촉비 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                        $('.chat-message.left').last().remove();
-                    }, 100);
-                }
-                else{                                       // 광고판촉비 조회 
-                    //thisPluginClose();
-                    apmsPluginClose();
-    
-                    var anotherApmsResult = '<div class="message simple-text">'
-                                     +'<p>'
-                                        +'시스템 오류로 인해 조회되지 않았어요.<br><br>'
-                                        +'아래 버튼을 눌러 광고판촉비를 다시 조회해 보세요.'
-                                     +'</p>'
-                                    +'<div class="btn">'
-                                        +'<button type="button" class="btn btn-default btn-big reload-apms">다시 조회하기</button>'
-                                    +'</div>'
-                                    + '</div>'; 
-                                    
-                    //appendChatbotText(anotherApmsResult);
-                    
-                    //$('.reload-apms').on('click', function() {
-                    //    apmsPopupOpen(reviewParam);
-                    //});
-                    
-                    messageCard = apmsResultError(parameters);
-                }
-            }   
-            else{           // 광고판촉비 조회가 정상적인 경우.
-            
-                console.log('광고판촉비 조회 완료 : ', apmsInfo);
-                
-                if(customPayload.mode == "input") {                 // 타계정 주문 입력 4단계 광고판촉비 조회시
-                    if(apmsInfo.length == 1) {                // 광고판촉비 조회 단건
-                        let apms_data = apmsInfo[0];
-                        
-                        let orderdata = getOrderdata();
-                        
-                        console.log('orderdata get : ', orderdata);
-                        
-                        orderdata.apms_no = apms_data.apms_no;
-                        orderdata.au_code = apms_data.au_code;
-                        orderdata.au_name = apms_data.au_name;
-                        orderdata.department_code = apms_data.department_code;
-                        orderdata.department_name = apms_data.department_name;
-                        orderdata.account_code = apms_data.account_code;
-                        orderdata.account_name = apms_data.account_name;
-                        orderdata.activity_code = apms_data.activity_code;
-                        orderdata.activity_id = apms_data.activity_id;
-                        orderdata.activity_name = apms_data.activity_name;
-                        orderdata.activity_amount = apms_data.activity_amount;
-                        orderdata.activity_rate = apms_data.activity_rate;
-                        
-                        delete orderdata.action;    
-                        
-                        //pluginForm.removeClass('show');
-                        //pluginForm.remove();
-                        $('.form-fourth').removeClass('show');
-                        $('.form-fourth').remove();
-                        anotherAccountOrderFifth(orderdata);
-                        $('.plugin-contents').append(anotherAccountOrderForm);
-                        
-                    }
-                    else{                                   // 광고판촉비가 0건인 경우.
-                        console.log('광고판촉비 조회 : 0건.');
-                        
-                        setTimeout(function() {
-                            showSmallDialog('광고판촉비 조회 내역이 없습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                            $('.chat-message.left').last().remove();
-                        }, 100);
-                    }                    
-                }
-                else{                                       // 광고판촉비 조회시
-                    
-                    var msgApmsResult = '<div class="message simple-text">'
-                                     +'<p>'
-                                        +'<b>광고판촉비(APMS)</b>를 확인해 보세요. '
-                                     +'</p>'
-                                    + '</div>'; 
-                    
-                    var anotherApmsResult = '';
-                    if(apmsInfo.length == 1) {                // 광고판촉비 조회 단건
-                        apmsPluginClose();
-                        //var anotherApmsResult = msgApmsResult + apmsResult(apmsInfo);
-                        //thisPluginClose();
-                        //appendChatbotText(anotherApmsResult);
-                        
-                        messageCard = apmsResult(apmsInfo);
-                    }
-                    else{
-                        console.log('광고판촉비 조회 : 0건.');
-                        
-                        setTimeout(function() {
-                            showSmallHtmlDialog('품의번호가 조회되지 않았습니다. </br>확인 후 다시 입력해 주세요.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                            $('.chat-message.left').last().remove();
-                        }, 100);                          
-                    }
-                    
-                }
-                
-            }            
-
-            closeLoadingWithMask();
-        }       // customPayload.type == 'apmsPush' 
-        else if(customPayload.type == 'accountPush') {          // 비용처리계정 push 일 경우 
-            console.log('accountPush : ', response);
-            
-            var accntList = '';
-            var regSuccessYn = '';
-            var errorMessage = '';
-            var parameters = null;
-            if(response.result_code && response.result_code == 'SUCCESS') {
-                regSuccessYn = 'Y';
-                
-                if(response.result_data) {
-                    accntList = response.result_data;
-                }
-            }
-            else{
-                regSuccessYn = 'N';
-                errorMessage = response.result_message;
-                parameters = response.parameters;
-            }
-            
-            var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
-            
-            if(regSuccessYn == 'N') {           // 비용처리계정 조회 에러시. 
-                var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
-                orderUl3.append(orderLi3);
-                $('.cost_accnt_list').append(orderUl3);
-            }
-            else{
-                orderUl3.empty();
-                if(accntList.length == 0) {
-                    var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
-                    orderUl3.append(orderLi3);
-                    $('.cost_accnt_list').append(orderUl3);
-                }   
-                else{
-                    
-                  accntList.map(costAccount => {
-                      
-                    var orderLi3 = $(
-                        '<li>'
-                            +'<p>['+costAccount.account_code+']'+ costAccount.account_name // + '()' 
-                            +'</p>'
-                        +'</li>'
-                    );
-                    
-                    // 비용처리 계정 목록 리스트 클릭
-                    orderLi3.on('click', function() {
-                        
-                        var coastAccountInfo = $(
-                            /*'<div class="place-info">'
-                                + '['+costAccount.account_code+'] ' + costAccount.account_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                                + '<button type="button" class="btn btn-delete">' 
-                                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                    + '</svg>'
-                                + '</button>'
-                                  + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
-                                  + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
-                            +'</div>'*/
-                            '<div class="data-wrap">'
-                                 +'<p>['+costAccount.account_code+'] ' + costAccount.account_name
-                                 + '</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
-                              + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
-                            +'</div>'
-                        );
-                        
-                        $('#costaccount').empty();
-                        $('#costaccount').val('');
-                        $('.cost_accnt_selected').empty();
-                        $('.cost_accnt_selected').css('width', '100%'); 
-                        $('.cost_accnt_selected').append(coastAccountInfo);
-                        
-                        //orderInput.val(orderInfo.html());
-                        
-                        // [퍼블 수정 및 추가]
-                        var targetHeight = $('.cost_accnt_selected').height();
-                        $('.cost_accnt_input').removeClass('focus');
-                        console.log(targetHeight);
-                
-                        $('.cost_accnt_list').removeClass('show');
-                        // $('.order-list').css('top', '82px');
-                        $('.cost_accnt_list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-                        $('#costaccount-name').attr('placeholder', '');
-                        //scheduleorderWidth($('#costdept-name'));
-                        
-                        scheduleorderWidth($('.cost_accnt_input'), $('.cost_accnt_selected'), $('#costaccount-name')); 
-                        
-                        selectBoxAction($('#project-name'), $('.project_input'), 'enabled');
-                        selectBoxAction($('#activity-name'), $('.activity_input'), 'enabled');
-
-						$('.project_selected').empty();
-						$('.activity_selected').empty();
-                        
-                        $('#project-name').attr('placeholder', 'Project Code를 선택하세요.');
-                        $('#activity-name').attr('placeholder', 'Activity Code를 선택하세요.');
-    
-                        //nextBtnEvent($(this));
-                        
-                    });
-                    
-                    orderUl3.append(orderLi3);
-                  });
-                  $('.cost_accnt_list').append(orderUl3);
-                    
-                }
-                
-            }
-            
-            closeLoadingWithMask();
-        }
-        
-        
-    }
-    
-    function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
-        let orderSelectWidth = $inputTextContent.width();
-        let selectedorderWidth = $costSelected.width();
-        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
-        $inputId.css('width', scheduleorderWidth + "px");
-        if ($inputId.width() === 0) {
-            $inputId.attr('style', '');
-        }
-        
-        if(selectedorderWidth == 0) {
-            $inputId.css('display', 'block');
-        }
-        else{
-            $inputId.css('display', 'none');
-        }
-    };    
-    
-    function selectBoxAction($input, $inputContent, action) {
-        if(action == 'disabled') {
-            $input.attr('disabled', true);
-            $inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
-            
-            //$inputContent.addClass('addValue');
-        }
-        else{
-            $input.attr('disabled', false);
-            $inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
-            //$inputContent.removeClass('addValue');
-        }
-    }	    
-    
-    /////////////////////////////////////////////////////////////////////////////////////   End Push
     
     if (customPayload['template'] && customPayload.template.outputs instanceof Array && customPayload.template.outputs.length > 0) {
       var messages = customPayload.template.outputs;
@@ -8208,6 +8276,34 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'budgetResultError') {                    // 예산조회 실패
           messageCard = budgetResultError(message.data); 
     	}
+    	/* [퍼블 수정 및 추가] 수입화물 조회 */
+        else if (message.type == 'importCargoInput') {
+          messageCard = makeImportCargoCard(message.data); // 수입화물 조회
+        }
+        else if (message.type == 'importCargoError') {
+          console.log(message.data);
+          addImportCargoPopupClose();
+          messageCard = importCargoResultError(message.data); // 수입화물 조회 실패
+        }
+        else if (message.type == 'importCargoResult') {
+          addImportCargoPopupClose();
+          messageCard = importCargoResult(message.data); // 수입화물 조회 결과(단건)
+          descendScroll();
+        }
+        else if (message.type == 'importCargoResultList') {
+          addImportCargoPopupClose();
+          messageCard = importCargoListResult(message.data); // 수입화물 조회 결과(다건)
+          descendScroll();
+        }
+        else if (message.type == 'importCargoNoCnt') { //수입화물 조회 없음
+            setTimeout( function() {
+                $('.importCargo-tooltip').fadeIn();
+                $('.chat-message.left').last().remove();
+            }, 1);
+            setTimeout(function() {
+                $('.importCargo-tooltip').fadeOut();
+            },2000);
+        }
         else if(message.type == 'anotherBudgetInput') {                    // 타계정 부서예산조회
           messageCard = makeCardGBMS(message.data); 
     	}
@@ -8220,15 +8316,31 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'orderInquiryInput') {                    // 타계정 주문 현황 조회
           messageCard = makeCardAALV(message.data);
     	}
-        else if(message.type == 'calendarInput') {                    // 타계정 주문 현황 조회
-          messageCard = makeCalendarInput(message.data);
-    	}
-        else if(message.type == 'requestItemsInput') {                    // 물품 청구 신청
-          messageCard = makeRequestItemsInput(message.data);
-    	}
+        else if(message.type == 'hsCodeInput') {
+          messageCard = makeHsCodeCard(message.data);
+        }
+        else if (message.type == 'hsCodeResult') {
+          messageCard = hsCodeResult(message.data); // HSCode 조회 결과(단건)
+          addHsCodePopupClose();
+        }
+        else if (message.type == 'hsCodeResultError') {
+          messageCard = hsCodeResultError(message.data); // HSCode 조회 결과(없음)
+          addHsCodePopupClose();
+        }
+        else if (message.type == 'hsCodeResultList') {
+          messageCard = hsCodeResultList(message.data); // HSCode 조회 결과(다건)
+          addHsCodePopupClose();
+        }
+        else if (message.type == 'hsCodeResultErrorPage') {
+            messageCard = hsCodeResultErrorPage(message.data); // HSCode 조회 결과(예외처리)
+            addHsCodePopupClose();
+            descendScroll();
+        }
         else {
           console.log(message.type);
         }
+
+         
       });
     }
 
@@ -8742,14 +8854,14 @@ function addBudgetPopupOpen(data) {
         gAccountList = data.account;
     }
     var accountList = gAccountList;                 // expense type에 맞는 계정목록.
-    console.log('accountList length : '+accountList.length);
+    //console.log('accountList length : '+accountList.length);
 
     let accTypeList = [];                                   // expense type에 맞는 계정유형목록
     accountList.filter((origin, index) => {
         if(!accTypeList.find((_retData, _retIndex) => origin.group === _retData.group && index !== _retIndex)) accTypeList.push(origin);
     }); 
             
-    console.log('typeList length : '+accTypeList.length);
+    //console.log('typeList length : '+accTypeList.length);
     
     var accountTypeText = '예산 유형을 선택해 주세요.';
     
@@ -8840,13 +8952,34 @@ function addBudgetPopupOpen(data) {
 
     /*  ###[ etc ]###  */
     // 코멘트
-    var addBudgetComent = $('<p class="small coment-b">※ 현재 시간 기준으로 조회합니다.</p>');
+    var addBudgetComent = $('<p class="small coment-b" style="margin-top: 20%;">※ 현재 시간 기준으로 조회합니다.</p>');
+    
+    // var formAddHiddenText = $(
+    //     '<input type="hidden" id="accountType" value=""/>'    
+    //     +'<input type="hidden" id="accountCode" value=""/>'    
+    //     +'<input type="hidden" id="accountName" value=""/>'    
+    // );
+    
+    var projectInputBox = $('<div class="input-box"><label>프로젝트 코드</label></div>');
+    
+    var formProjectText = $(
+        '<b style="color: #F94B50">*필요시 프로젝트 코드 13자리를 입력해 주세요.</b>'
+        + '<input type="text" id="projectCode" value="0000000000000" placeholder="프로젝트 코드 13자리를 입력해 주세요." />'
+        // + '<input type="text" id="projectCode" value="0000000000000"/>'
+    );
+    addBudgetForm.append(projectInputBox);
+    projectInputBox.append(formProjectText);
     
     var formAddHiddenText = $(
         '<input type="hidden" id="accountType" value=""/>'    
         +'<input type="hidden" id="accountCode" value=""/>'    
-        +'<input type="hidden" id="accountName" value=""/>'    
+        +'<input type="hidden" id="accountName" value=""/>'  
+        +'<input type="hidden" id="deptExtraCode" value="'+data.deptExtraCode+'"/>'
+        +'<input type="hidden" id="deptKorName" value="'+data.deptKorName+'"/>'
+        +'<input type="hidden" id="deptAccountUnit" value="'+data.deptAccountUnit+'"/>'
+        +'<input type="hidden" id="corpId" value="'+data.corpId+'"/>'
     );
+    
     addBudgetForm.append(formAddHiddenText);
     addBudgetForm.append(addBudgetComent);
 
@@ -8854,21 +8987,47 @@ function addBudgetPopupOpen(data) {
     var addBudgetSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-budget">조회</button>');
     addBudgetForm.append(addBudgetSubmit);
     addBudgetSubmit.on('click', function() {
-        addBudgetPopupClose();
         
         var accountCd = $('#accountCode').val();
         var accountNm = $('#accountName').val();
         var accountType = $('#accountType').val();
-        console.log('data.userId >>> '+data.userId);
         
+        var deptExtraCode = $('#deptExtraCode').val();
+        var deptKorName = $('#deptKorName').val();
+        var deptAccountUnit = $('#deptAccountUnit').val();
+        var corpId = $('#corpId').val();
+        var projectCode = $('#projectCode').val().trim();
+        
+        if(projectCode.length != 13) {
+            showSmallDialog("프로젝트 코드 13자리를 다시 한번 확인해 주세요. ");
+            $('#projectCode').focus();
+            return;
+        }
+
+        //console.log(':'+projectCode+':');
+        // var param = {
+        //     "deptId": data.deptId, 
+        //     "userId": data.userId, 
+        //     "expenseType": data.expenseType,  
+        //     "accountType": accountType, 
+        //     "accountCode": accountCd, 
+        //     "accountName": accountNm,
+        //     "deptCode" : deptCode,
+        //     "actUnitCode" : actUnitCode
+        // }
         var param = {
-            "deptId": data.deptId, 
             "userId": data.userId, 
-            "expenseType": data.expenseType,  
             "accountType": accountType, 
             "accountCode": accountCd, 
-            "accountName": accountNm 
+            "accountName": accountNm,
+            "deptKorName": deptKorName,
+            "deptExtraCode" : deptExtraCode,
+            "deptAccountUnit" : deptAccountUnit,
+            "corpId": corpId,
+            "projectCode": projectCode
         }
+        
+        addBudgetPopupClose();
         
         chatui.sendEventMessage("searchBudgetResult", param);
     });
@@ -8891,6 +9050,21 @@ function addBudgetPopupOpen(data) {
 
     /*  #########[ dropdown ]#########  */
     
+    // dropdown box 열려 있으면 닫기. 
+    $(document).on('click', function(e) {
+        
+        //console.log('length : '+$('.dropdown-box').has(e.target).length+' / '+$('.dropdown-box').length+' / ', e.target);
+        for(var i=0; i<$('.dropdown-box').length; i++) {
+            let dropdownBox = $('.dropdown-box')[i];
+            
+            if($(dropdownBox).has(e.target).length === 0) {
+                if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
+                    dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
+                }
+            }            
+        }
+    });
+
     function reloadPopup() {
         $('.budget-tooltip').fadeOut(1);
         $('.dropdown-budget .btn-dropdown').removeClass('accent');
@@ -8934,6 +9108,8 @@ function addBudgetPopupOpen(data) {
             $('#accountType').val(targetText);
             $('#btn-account').html('<span>계정 정보를 선택해 주세요.</span>');
             
+            $('#btn-account').append(userInfoDropdownArrow);
+            
             for(var i=0; i<accountList.length; i++) {
                 var account = accountList[i];
                 if(account.group == targetText) {
@@ -8965,8 +9141,8 @@ function addBudgetPopupOpen(data) {
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
-            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
-            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
         }
     }
 }
@@ -8988,11 +9164,11 @@ function budgetResult(data) {
     var budgetMessageResultContent = $(
         '<div class="budget-content">'
         + '<div class="budget-content-header">'
-        + '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<svg width="17" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
         + '<path fill="#898989" d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>'
         + '<path fill="#898989" d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"></path>'
         + '</svg>'
-        + '<h3>'+data.deptName+'</h3>'
+        + '<h3>'+data.deptKorName+'</h3>'
         + '</div>'
         + '<ul class="budget-list-wrap">'
         + '<li>'
@@ -9001,7 +9177,13 @@ function budgetResult(data) {
         + '</li>'
         + '<li>'
         + '<h4>계정 정보</h4>'
-        + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
+        // + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
+        + '<div class="budget-user"><span>'+data.accountName+'</span></div>'
+        + '</li>'
+        + '<li>'
+        + '<h4>PJT Code</h4>'
+        // + '<div class="budget-user"><span>'+data.accountItem[0].ACCOUNT_NAME+'</span></div>'
+        + '<div class="budget-project"><span>'+data.projectCode+'</span></div>'
         + '</li>'
         + '<li>'
         + '<h4>기준 일시</h4>'
@@ -9009,16 +9191,18 @@ function budgetResult(data) {
         + '</li>'
         + '<li>'
         + '<h4>예산 잔액</h4>'
-        + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].BALANCE)+'</span>원</div>'
+        // + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].BALANCE)+'</span>원</div>'
+        + '<div class="budget-remain"><span>'+getAmountComma(data.accountItem[0].P_BALANCED_BUDGET_AMOUNT)+'</span>원</div>'
+        // + '<div class="budget-remain"><span>'+getAmountComma(data.totalBudget)+'</span>원</div>'
         + '</li>'
         + '</ul>'
-        + '<div class="btn">'
-        + '<button type="button" class="btn btn-default move_n-erp">N-ERP Portal'
-        + '<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
-        + '<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
-        + '</svg>'
-        + '</button>'
-        + '</div>'
+        // + '<div class="btn">'
+        // + '<button type="button" class="btn btn-default move_n-erp">N-ERP Portal'
+        // + '<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        // + '<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
+        // + '</svg>'
+        // + '</button>'
+        // + '</div>'
         + '</div>'
     );
     budgetMessageResultWarp.append(budgetMessageResultContent);
@@ -9041,6 +9225,8 @@ function budgetResultError(data) {
     
     var budgetResultErrorMessage = $(
          '<p>시스템 오류로 인해 조회되지 않았어요. 아래 버튼을 눌러 잔여 예산을 다시 조회해 보세요.</p>'
+         + '<p>'+data.errorMsg+'</p>'
+         
     );
     
     var budgetResultReloadBtn = $(
@@ -9051,7 +9237,6 @@ function budgetResultError(data) {
     //appendChatbotText2(budgetResultErrorMessage);
     
     budgetResultReloadBtn.on('click', function() {
-        console.log('aaaaa');
         addBudgetPopupOpen(data);
 
         ////////////     
@@ -9070,6 +9255,8 @@ function budgetResultError(data) {
 }
 
 function reloadSearchBudget(data) {
+    console.log('data : ', data);
+    
     $('.budget-tooltip').fadeOut(1);
     $('.dropdown-budget .btn-dropdown').removeClass('accent');
     
@@ -9094,13 +9281,17 @@ function reloadSearchBudget(data) {
         var nameTag = $(listAccount[i]).find('a');
         var codeTag = $(listAccount[i]).find('span');
         
-        if(codeTag.text() == data.accountItem[0].ACCOUNT_CODE) {
+        //console.log('tag : '+codeTag.text()+' / '+nameTag.text());
+        if(codeTag.text() == data.accountItem[0].P_ACCOUNT_CODE) {
             nameTag.trigger('click');
         }
     }
+    
+    $('#projectCode').val(data.projectCode);
 }
 
 function getAmountComma(price) {
+    console.log(price);
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
@@ -9306,7 +9497,7 @@ var data = {
         endDate = moment().format('YYYYMMDD') + '2400';
     };
     var userId = data.userId;
-    var empNo = data.empNo;    // "999991"; //
+    var empNo = data.empNo;    // "999991"; // 
     
     var placeInput = $('<input type="text" placeholder="회의실 선택 또는 장소를 입력해 주세요." id="schedule-place" />');
     var placeList = $('<div class="place-list"></div>');
@@ -9389,7 +9580,7 @@ var data = {
                 searchStartTime:startTime,
                 searchEndDt:endDate, 
                 searchEndTime:endTime, 
-                loginUserId:"999991"
+                loginUserId:empNo
             }
           };
           
@@ -9518,6 +9709,7 @@ var data = {
     });
     
     // [퍼블 수정 및 추가] - 참석인 선택 유무에 따라 input 스타일 변경
+    
     $(document).on('click', '.schedule-join-member .btn-delete', function() {
         if ($('.member-info').length > 0) {
             memberInput.addClass('select');
@@ -9532,6 +9724,7 @@ var data = {
             memberInput.removeClass('select');
         }
     })
+    
     
     /* ###[ 기타 옵션 ]### */
     var otherOptionsBox = $('<div class="input-box"><p>기타 옵션</p></div>');
@@ -9571,6 +9764,7 @@ var data = {
             checkAttendance = 'N';
         } 
     });
+    
     checkAttendanceLi.append(checkAttendanceSwitch);
     otherOptionsUl.append(checkAttendanceLi);
     otherOptions.append(otherOptionsUl);
@@ -9692,6 +9886,7 @@ var data = {
                 console.log('일정 등록 : ', payload);
                 var savedInfo = '';
                 var regSuccessYn = '';
+                var errorMessage = '';
                 if (payload && payload.queryResult && payload.queryResult.messages.length > 1 && payload.queryResult.messages[1].response) {
                     var savedResponse = JSON.parse(payload.queryResult.messages[1].response);
                     console.log(savedResponse["successYn"]);
@@ -9703,6 +9898,7 @@ var data = {
                         else{
                             console.log('errorMessage : '+savedResponse["errorMessage"]);
                             regSuccessYn = 'N';
+                            errorMessage = savedResponse["errorMessage"];               // 에러메시지.
                         }
                     } else {
                         regSuccessYn = 'Y';
@@ -9718,7 +9914,8 @@ var data = {
                 if(regSuccessYn == 'N') {
                     
                     var scheduleResult = '<div class="message simple-text">'
-                                + '<p>일정 등록에 실패했습니다. 다시 시도해 주세요.</p>'
+                                + '<p>일정이 등록되지 않았어요.</p>'
+                                + '<p>' + ScheduleRegErrorMap.get(errorMessage) + '</p>'
                                 + '<div class="btn">'
                                 + '<button type="button" class="btn btn-default reload-schedule">일정 재등록</button>'
                                 + '</div>'
@@ -10000,6 +10197,7 @@ function makeScheduleItemSample(scheduleList, scheduleBody){
 
 // 일정 등록 실패
 function scheduleResultError(data) {
+    
     console.log('scheduleResultError : ', data);
     var scheduleResultMessage = $('<div class="custom-message"></div>');
     var scheduleMessageResult = $('<div class="message"></div>');
@@ -10066,7 +10264,7 @@ function showHtmlSmallDialog(msg) {
 // 시스템 담당자 조회 : 시스템 클릭시 
 function appendChatbotText3(firstMsg, message, customQuick) {
   var chatMessage = $('<div class="chat-message left"></div>');
-  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>');
   chatMessage.append(profile);
   chatMessage.append(firstMsg);
   chatMessage.append(message);
@@ -10104,6 +10302,738 @@ function appendChatbotText3(firstMsg, message, customQuick) {
   
 }
 
+/**
+ * '화면 스크롤 최하단으로 내리기' 함수
+ */
+ function descendScroll() {
+	setTimeout(function() {
+        var e = document.getElementById("divScroll");
+        e.scrollTop = e.scrollHeight
+    }, 50)
+}
+
+// 수입화물, 임직원검색 관련 function --------------------------------------------------------------------------------------
+// 수입 화물 메세지 조회
+function makeImportCargoCard(data) {
+    var importCargoInputCard = $('<div class="message simple-text"></div>');
+    var importCargoInputText = $('<p>수입 화물 진행 현황을 조회하려면 아래 버튼을 눌러주세요.</p>');
+    importCargoInputCard.append(importCargoInputText);
+
+    var regBtnWrap = $('<div class="btn"></div>');
+    var regBtn = $('<button type="button" class="btn btn-emphasis add-importCargo">수입 화물 조회</button>');
+    regBtn.on('click', function() {
+        addImportCargoPopupOpen(data);
+    });
+    regBtnWrap.append(regBtn);
+    importCargoInputCard.append(regBtnWrap);
+    
+    if(checkChatHistory == false) {
+        addImportCargoPopupOpen(data);
+    }
+
+    return importCargoInputCard;
+}
+
+// 수입 화물 조회 popup
+function addImportCargoPopupOpen(data) {
+    /* #########[ popup_wrap_start ]######### */
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addImportCargo = $('<div class="plugins" id="addImportCargo"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addImportCargoHeader = $('<div class="plugin-header"><h1>수입 화물 조회</h1></div>');
+    var addImportCargoClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    addImportCargoClose.on('click', function() {
+        addImportCargoPopupClose();
+    })
+    addImportCargoHeader.append(addImportCargoClose);
+    addImportCargo.append(addImportCargoHeader);
+
+    function addImportCargoPopupClose() {
+        $('#addImportCargo').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#addImportCargo').remove();
+        }, 300);
+    }
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addImportCargoContents = $('<div class="plugin-contents"></div>');
+    var addImportCargoForm = $('<form class="form-importCargo"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ House BL No. ]###  */
+    var hblInputBox = $(
+        '<div class="input-box">'
+            +'<label>House BL No.<b>*</b></label>'
+            +'<small class="require-alert show">*입력된 특수문자 및 공백은 조회 시 자동 제거되며, 대/소문자 모두 입력 가능합니다.</small>'
+        +'</div>'
+    );console.log("data.reqHblNo : "+data.hasOwnProperty('reqHblNo')+" / data.reqBlYy : "+data.hasOwnProperty('reqBlYy'));
+    var hblInputForm = $(
+        '<div class="input-form">'
+            +'<input type="text" placeholder="House BL No.를 입력해 주세요." name="importCargo_HBL" id="importCargo_HBL" max-length="358" />'
+            +'<span class="input-val-del">'
+                +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+                +'</svg>'
+            +'</span>'
+        +'</div>'
+    );
+    hblInputForm.on('keyup', function(e) {
+        hblInput = e.target.value;
+        checkImportCargoRequire();
+
+        if (hblInput) {
+            $(this).find('.input-val-del').addClass('show');
+        } else {
+            $(this).find('.input-val-del').removeClass('show');
+        };
+    });
+    hblInputBox.append(hblInputForm);
+    addImportCargoForm.append(hblInputBox);
+
+    /*  ###[ 입항 연도 ]###  */
+    var arrivalYearDropdownBox = $(
+        '<div class="dropdown-box dropdown-arrivalYear">'
+            +'<label>입항 연도<b>*</b></label>'
+            +'<small class="require-alert show">*최대 10년 전까지 조회할 수 있어요.</small>'
+        +'</div>'
+    );
+    var arrivalYearDropdown = $('<button type="button" class="btn btn-dropdown default" id="blYy"><span>입항 연도를 선택해 주세요.</span></button>');
+    var arrivalYearDropdownArrow = $(
+        '<i class="icons">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</i>'
+    );
+    addImportCargoForm.append(arrivalYearDropdownBox);
+    arrivalYearDropdownBox.append(arrivalYearDropdown);
+    arrivalYearDropdown.append(arrivalYearDropdownArrow);
+
+    // 입항 연도 드롭다운메뉴 & 리스트
+    var arrivalYearDropdownListWrap = $('<ul class="dropdown-menu" id=""></ul>');
+
+    // 년도 생성
+    var year = new Date().getFullYear();
+    var yearBox = [];
+    for (let i = 1; i <= 10; i++) {
+        yearBox.push(year);
+        year = year - 1;
+    }
+    yearBox.forEach(function(yearBox, index) {
+        let arrivalYearDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + yearBox + '</a></li>');
+        arrivalYearDropdownListWrap.append(arrivalYearDropdownList)
+    });
+
+    arrivalYearDropdownBox.append(arrivalYearDropdownListWrap);
+
+    /*  ###[ etc ]###  */
+    // 조회 오류 툴팁
+    var importCargoTooltip = $(
+        '<div class="importCargo-tooltip">'
+            +'조회된 수입 화물이 없습니다.</br>'
+            +'House BL No. 또는 입항 연도를 다시 입력해 주세요.'
+        +'</div>'
+    );
+    addImportCargoForm.append(importCargoTooltip);
+    
+    // 조회버튼
+    var addImportCargoSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-importCargo">조회</button>');
+    addImportCargoForm.append(addImportCargoSubmit);
+    addImportCargoSubmit.on('click', function() {
+
+        var reqHblNo = $('#importCargo_HBL').val();
+        var reqBlYy = $('#blYy').text();
+        console.log(reqHblNo+"/"+reqBlYy);
+        var param = {
+            "reqHblNo":reqHblNo,
+            "reqBlYy":reqBlYy
+        }
+        
+        // chatui.sendEventMessage("importedFreightEvent", param);
+        // addImportCargoPopupClose();
+        
+        // 툴팁 확인용 (input 값이 PLIID4F02265 가 아닐때 출력)
+        // if (reqHblNo == "PLIID4F02265") {
+        //   chatui.sendEventMessage("importedFreightEvent", param);
+        //   addImportCargoPopupClose();
+        // } else {
+        //   $('.importCargo-tooltip').fadeIn();
+        //   setTimeout(function() {
+        //       $('.importCargo-tooltip').fadeOut();
+        //   },2000);
+        // }
+        chatui.sendEventMessage("importedFreightEvent", param);
+    });
+    
+    /* #########[ popup_content_wrap_end ]######### */
+    addImportCargoContents.append(addImportCargoForm);
+    addImportCargo.append(addImportCargoContents);
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addImportCargo);
+    $('.plugin-dim').css('display', 'block');
+    $('#addImportCargo').css('display', 'block');
+
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addImportCargo').addClass('show');
+    }, 100);
+
+    /*  #########[ dropdown ]#########  */
+    $('.btn-dropdown').on('click', function() {
+        dropdownBtnEvent(this);
+    });
+    $('.dropdown-menu a').on('click', function() {
+        dropdownMenuEvent(this);
+    });
+
+    function dropdownMenuEvent(target) {
+        const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).text();
+        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        dropmenu.stop().slideUp().removeClass('show');
+        
+        // input box value 유무 검사
+        hblInput = $('#importCargo_HBL').val();
+        checkImportCargoRequire();
+    }
+
+    function dropdownBtnEvent(target) {
+        if ($(target).hasClass('active')) {
+            $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+        }
+        else {
+            //$('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+            //$(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').addClass('show');
+            
+            $(target).not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+        }
+    }
+    
+    /*  #########[ input-form ]#########  */
+    $('.input-val-del').on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+        }
+    });
+    
+}
+
+// 수입 화물 팝업 close
+function addImportCargoPopupClose() {
+    $('#addImportCargo').removeClass('show');
+    $('.plugin-dim').removeClass('show');
+    setTimeout(function() {
+        $('.plugin-dim').remove();
+        $('#addImportCargo').remove();
+    }, 300);
+}
+
+// 수입 화물 팝업 체크
+var hblInput = '';
+function checkImportCargoRequire() {
+    var btnImportCargo = $('#btn-importCargo');
+    if (hblInput && $('#blYy').hasClass('select')) {
+        btnImportCargo.removeClass('btn-disabled');
+    } else {
+        btnImportCargo.addClass('btn-disabled');
+    }
+}
+
+// 수입 화물 조회 결과 메세지
+function importCargoResult(data) {
+    var importCargoResult = $('<div class="custom-message"></div>');
+    var importCargoResultMessageWrap = $('<div class="message"></div>');
+    var importCargoResultContentWrap = $('<div class="importCargo-wrap"></div>');
+    
+    var importCargoResultHeader = $(
+        '<div class="importCargo-header">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" fill="#898989"></path>'
+            +'</svg>'
+            +'<h2>수입 화물 진행 현황</h2>'
+        +'</div>'
+    );
+    importCargoResultContentWrap.append(importCargoResultHeader);
+    var importCargoResultContent = $(
+        '<div class="importCargo-content">'
+            +'<ul class="importCargo-list-wrap">' 
+                +'<li>'
+                    +'<h4>House B/L</h4>'
+                    +'<div class="importCargo-type"><span>' + data.hblNo + '</span></div>'
+                +'</li>'
+                +'<li>'
+                    +'<h4>입항 연도</h4>'
+                    +'<div class="importCargo-type"><span>' + data.etprDt + '</span></div>'
+                +'</li>'
+                +'<li>'
+                    +'<h4>진행 상태</h4>'
+                    +'<div class="importCargo-user"><span>' + data.prgsStts + '</span></div>'
+                +'</li>'
+                +'<li>'
+                    +'<h4>통관 상태</h4>'
+                    +'<div class="importCargo-remain"><span>' + data.csclPrgsStts + '</span></div>'
+                +'</li>'
+                +'<li>'
+                    +'<h4>처리 일시</h4>'
+                    +'<div class="importCargo-date">'
+                        +'<span>' + data.prcsDt + '</span>'
+                        +'<span>' + data.prcsTm + '</span>'
+                    +'</div>'
+                +'</li>'
+            +'</ul>'
+            // +'<div class="btn">'
+            //     +'<button type="button" class="btn btn-default move_n-erp">'
+            //         +'N-ERP Portal'
+            //         +'<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            //             +'<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
+            //         +'</svg>'
+            //     +'</button>'
+            // +'</div>'
+        +'</div>'
+    );
+
+    importCargoResultContentWrap.append(importCargoResultContent);
+    importCargoResultMessageWrap.append(importCargoResultContentWrap);
+    importCargoResult.append(importCargoResultMessageWrap);        
+
+    // $('.move_n-erp').on('click', function() {
+    //     window.open('', '_blank');
+    // });
+
+    return importCargoResult;
+}
+
+
+// 수입 화물 조회 결과 메세지(다건)
+function importCargoListResult(data) {
+    var dList = $('<div class="message profile-list import-cargo"></div>');
+    
+    // list-header-title
+    var dListHeader = $('<div class="list-header-title">' + listHeaderIcon + '</div>');
+    var dListHeaderTitle = $('<p class="profile-list-box"><b>' + data.reqHblNo + '</b> 수입화물 리스트</p>');
+    dListHeader.append(dListHeaderTitle);
+    dList.append(dListHeader);
+
+    // list
+    var dListWrap = $('<ul></ul>');
+	if (data.cargoList instanceof Array && data.cargoList.length > 0) {
+		data.cargoList.forEach(function(cargoList,index) {
+		    
+		    var dateData = cargoList.etprDt.toString();
+            var date = dateData.substring(0,4) + '-' + dateData.substring(4,6) + '-' + dateData.substring(6,8);
+            
+            var display = (index >= 4)? "none":"flex";
+
+            var liHtml = '<li class="list-box" style="display:' + display + '" onclick="intentEvent(this,\'importCargo\', \''+cargoList.hblNo+','+date+','+cargoList.cargMtNo+'\')">';
+
+            liHtml +=       '<div class="text-box">';
+            liHtml +=           '<div class="name">'
+                                    +'<h1>' + cargoList.mblNo +' - '+ cargoList.hblNo +'</h1>'
+            liHtml +=           '</div>';
+            liHtml +=           '<ul class="profile-info">'
+            liHtml += (
+                                    '<li>'
+                                        +'<h4>화물관리번호</h4>'
+                                        +'<span class="import-cargo-number">' + cargoList.cargMtNo + '</span>'
+                                    +'</li>'
+            );
+            liHtml += (
+                                    '<li>'
+                                        +'<h4>입항날짜</h4>'
+                                        +'<span class="date">' + date + '</span>'
+                                    +'</li>'
+            );
+            liHtml +=           '</ul>';
+
+            liHtml +=           '<span class="arrow">'
+                                    +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                                        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                                    +'</svg>'
+                                +'</span>';
+            liHtml +=       '</div>';
+            liHtml +=    '</li>';
+            var li = $(liHtml);
+			dListWrap.append(li);
+		});
+        dList.append(dListWrap);
+		
+        // 더보기 버튼 출력
+		if (data.cargoList.length > 4) {
+			var btn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            btn.click(function() {
+                $(this).parents('.profile-list').find(".list-box").css("display","flex");
+                $(this).css({"display":"none"});
+            });
+            dList.append(btn);
+		}
+	}
+	return dList;
+}
+
+// 수입 화물 조회 결과 오류 메세지
+function importCargoResultError(data) {
+    var importCargoResultError = $('<div class="custom-message"></div>');
+    var importCargoErrorMessageWrap = $('<div class="message"></div>');
+    var importCargoErrorContent = $('<div class="message simple-text"></div>');
+
+    var importCargoErrorText = $('<p>시스템 오류로 인해 조회되지 않았어요.</br></br>아래 버튼을 눌러 수입 화물을 다시 조회해 보세요.</p>');
+    var importCargoReloadBtn = $(
+        '<div class="btn">'
+        + '<button type="button" class="btn btn-default reload-importCargo">다시 조회하기</button>'
+        + '</div>'
+    );
+    importCargoErrorContent.append(importCargoErrorText);
+    importCargoErrorContent.append(importCargoReloadBtn);
+
+    importCargoReloadBtn.on('click', function() {
+        addImportCargoPopupOpen(data);
+
+        // 조회 오류 실패로 팝업 재오픈 시 값 자동 설정
+        if(data.hasOwnProperty('reqHblNo') == true) $('#importCargo_HBL').val(data.reqHblNo);
+        if(data.hasOwnProperty('reqBlYy') == true) $('#blYy').find('span').text(data.reqBlYy);
+        
+        // 드롭다운 버튼 활성화
+        $('#blYy').removeClass('default');
+        $('#blYy').addClass('select');
+        
+        // 조회 버튼 활성화
+        $('#btn-importCargo').removeClass('btn-disabled');
+    });
+    
+    importCargoErrorMessageWrap.append(importCargoErrorContent);
+    importCargoResultError.append(importCargoErrorMessageWrap);
+            
+    return importCargoResultError;
+}
+
+// 수입 화물 조회 오류 툴팁_샘플
+// function importCargoTooltip() {
+//     var importCargoTooltip = $(
+//         '<div class="importCargo-tooltip">'
+//             +'조회된 수입 화물이 없습니다.</br>'
+//             +'House BL No. 또는 입항 연도를 다시 입력해 주세요.'
+//         +'</div>'
+//     );
+//     addImportCargoForm.append(importCargoTooltip);
+
+//     importCargoTooltip.fadeIn();
+//     setTimeout( function() {
+//         importCargoTooltip.fadeOut();
+//     }, 2000);
+// };
+
+
+// 임직원 검색결과 오류
+function employeeError() {
+    var employeeResultError = $('<div class="custom-message"></div>');
+    var employeeErrorMessageWrap = $('<div class="message"></div>');
+    var employeeErrorContent = $('<div class="message simple-text"></div>');
+    var employeeErrorText = $('<p>검색 결과가 없습니다. 임직원명을 확인한 후 다시 검색해 보세요.</p>');
+    employeeErrorContent.append(employeeErrorText);
+    employeeErrorMessageWrap.append(employeeErrorContent);
+    employeeResultError.append(employeeErrorMessageWrap);
+    return employeeError;
+}
+
+
+
+
+// 그룹사 임직원 조회 검색결과(단건)
+function makeGroupEmployeeCard(data, isHistory){
+	console.log(data);
+    // profileMSG Wrap
+	var dprofile = $('<div class="message profile-one"></div>');
+
+    // top
+    var dprofileList = $('<ul></ul>')
+	var listBox  = $('<li class="list-box"></li>');
+
+    // profileIMG(left)
+    var profileImg = $(data.profilePicture ? '<div class="profile-img">' + `<img src="' + data.profilePicture +'" onerror="this.src='` + pAlternative + `';"></div>` : '<div class="profile-img">' + '<img src="' + pAlternative +'"></div>');
+    listBox.append(profileImg); // profileIMG(left)END
+
+	/* top-info(right) */
+	var textBox = $('<div class="text-box"></div>');
+    // name
+    var nameWrap = $('<div class="name"></div>');
+    var title = $('<h1>'+ data.userNm + ' ' + data.titleNm + isBirthdayToday(data.birth) + '</h1>');
+    nameWrap.append(title);
+    textBox.append(nameWrap);
+ 
+    var descList = $('<ul class="profile-info"></ul>');
+    // company
+    var company = $(
+        '<li>'
+            +'<span class="profile-icon icon-company">'
+                +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M7.07338 1.51904C7.66652 1.27165 8.3338 1.27165 8.92695 1.51904L13.74 3.5265C14.9758 4.04189 14.9758 5.79423 13.74 6.30962L8.92695 8.31708C8.3338 8.56447 7.66652 8.56447 7.07338 8.31708L2.26028 6.30962C1.02457 5.79423 1.02457 4.04189 2.26028 3.5265L7.07338 1.51904ZM8.61802 2.26121C8.22259 2.09628 7.77773 2.09628 7.38231 2.26121L2.56921 4.26866C1.99254 4.50918 1.99254 5.32694 2.56921 5.56746L7.38231 7.57492C7.77773 7.73984 8.22259 7.73984 8.61802 7.57492L13.4311 5.56746C14.0078 5.32694 14.0078 4.50918 13.4311 4.26866L8.61802 2.26121Z"/>'
+                    +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M2.19928 7.00974C2.37607 7.14381 2.41082 7.39596 2.27688 7.57293C2.01401 7.92025 2.12255 8.46317 2.5693 8.6495L7.3824 10.657C7.77782 10.8219 8.22268 10.8219 8.61811 10.657L13.4312 8.6495C13.878 8.46317 13.9865 7.92025 13.7236 7.57293C13.5897 7.39596 13.6244 7.14381 13.8012 7.00974C13.978 6.87566 14.2299 6.91044 14.3639 7.08741C14.9138 7.81407 14.717 8.98424 13.7401 9.39167L8.92704 11.3991C8.3339 11.6465 7.66661 11.6465 7.07347 11.3991L2.26037 9.39167C1.28352 8.98424 1.08668 7.81407 1.63665 7.08741C1.77059 6.91044 2.02249 6.87566 2.19928 7.00974Z"/>'
+                    +'<path fill="#898989" fill-rule="evenodd" clip-rule="evenodd" d="M2.22792 10.0745C2.40068 10.2137 2.42798 10.4667 2.28889 10.6397C2.01112 10.9851 2.11553 11.5424 2.5693 11.7317L7.3824 13.7391C7.77782 13.904 8.22268 13.904 8.61811 13.7391L13.4312 11.7317C13.885 11.5424 13.9894 10.9851 13.7116 10.6397C13.5725 10.4667 13.5998 10.2137 13.7726 10.0745C13.9454 9.93522 14.1982 9.96255 14.3373 10.1355C14.9201 10.8602 14.732 12.0601 13.7401 12.4738L8.92704 14.4813C8.3339 14.7287 7.66661 14.7287 7.07347 14.4813L2.26037 12.4738C1.26848 12.0601 1.08038 10.8602 1.66324 10.1355C1.80233 9.96255 2.05515 9.93522 2.22792 10.0745Z"/>'
+                +'</svg>'
+            +'</span>' + (data.deptKorName ? data.deptKorName : '-')
+        +'</li>'
+    );
+    descList.append(company);
+    // team
+    var team = $(
+        '<li>'
+            +'<span class="profile-icon icon-team">'
+                +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
+                +'</svg>'
+            +'</span>' + (data.deptNm ? data.deptNm : '-')
+        +'</li>'
+    );
+    descList.append(team);
+
+    textBox.append(descList);
+    listBox.append(textBox); // top-info(right)END
+
+    dprofileList.append(listBox);
+    dprofile.append(dprofileList); // topEND
+
+
+    // bottom
+    var moreInfos = $('<div class="more-infos"></div>');
+    var moreInfoList = $('<ul class="p-info"></ul>');
+    
+    var email = $('<li><span class="info-label">E-mail</span><span class="info">'+ (data.empMail ? data.empMail : '-') + '</span></li>');
+    moreInfoList.append(email);
+    var phone = $('<li><span class="info-label">Phone</span><span class="info">'+ (data.empMobile ? data.empMobile : '-') + '</span></li>');
+    moreInfoList.append(phone);
+    var office = $('<li><span class="info-label">Office</span><span class="info">'+ (data.empTelNo ? data.empTelNo : '-') + '</span></li>');
+    moreInfoList.append(office);
+    
+    moreInfos.append(moreInfoList);
+    var isMobile = Mobile();
+	var userId = data.empMail.split("@");
+    //console.log('data.userId : '+data.userId+', data.targetId : '+data.targetId+', userId : '+userId[0]);	
+    
+    if ( data.isMobile != 'Y') {  
+		// dpContact
+		var dpContactHtml = '<div class="p-btns">';
+
+        // 프로필
+        dpContactHtml += '<button type="button" class="icon-btn" onClick="' + '블로그 페이지 새창 오픈' + '">'
+        +'<span class="b-icon">'
+            +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12 9.8C13.5464 9.8 14.8 8.5464 14.8 7C14.8 5.4536 13.5464 4.2 12 4.2C10.4536 4.2 9.20002 5.4536 9.20002 7C9.20002 8.5464 10.4536 9.8 12 9.8ZM12 11C14.2092 11 16 9.20914 16 7C16 4.79086 14.2092 3 12 3C9.79089 3 8.00002 4.79086 8.00002 7C8.00002 9.20914 9.79089 11 12 11Z" fill="#2C2C2C"/>'
+            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M3.00012 20.3C3.00012 15.8265 6.62662 12.2 11.1001 12.2H12.9001C17.3736 12.2 21.0001 15.8265 21.0001 20.3V20.4C21.0001 20.7314 20.7315 21 20.4001 21C20.0688 21 19.8001 20.7314 19.8001 20.4V20.3C19.8001 16.4893 16.7109 13.4 12.9001 13.4H11.1001C7.28936 13.4 4.20012 16.4893 4.20012 20.3V20.4C4.20012 20.7314 3.93149 21 3.60012 21C3.26875 21 3.00012 20.7314 3.00012 20.4V20.3Z" fill="#2C2C2C"/>'
+            +'</svg>')
+        +'</span><span class="b-text">프로필</span></button>';
+        
+        // 일정
+        if(data.group != 'Y' ) {
+            dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'schedule\', \''+data.targetId+'\');">'
+            +'<span class="b-icon">'
+                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#6B6B6B"/>'
+                +'<path d="M12.8791 14.5999L11.1209 14.5999C10.7896 14.5999 10.5209 14.3313 10.5209 13.9999C10.5209 13.6685 10.7896 13.3999 11.1209 13.3999L12.8791 13.3999C13.2104 13.3999 13.4791 13.6685 13.4791 13.9999C13.4791 14.3313 13.2104 14.5999 12.8791 14.5999Z" fill="#6B6B6B"/>'
+                +'<path d="M8.10698 14.5999L6.6 14.5999C6.26863 14.5999 6 14.3313 6 13.9999C6 13.6685 6.26863 13.3999 6.6 13.3999L8.10698 13.3999C8.43835 13.3999 8.70698 13.6685 8.70698 13.9999C8.70698 14.3313 8.43835 14.5999 8.10698 14.5999Z" fill="#6B6B6B"/>'
+                +'<path d="M11.1209 17.5999L12.8791 17.5999C13.2104 17.5999 13.4791 17.3313 13.4791 16.9999C13.4791 16.6685 13.2104 16.3999 12.8791 16.3999L11.1209 16.3999C10.7896 16.3999 10.5209 16.6685 10.5209 16.9999C10.5209 17.3313 10.7896 17.5999 11.1209 17.5999Z" fill="#6B6B6B"/>'
+                +'<path d="M6.6 17.5999L8.10698 17.5999C8.43835 17.5999 8.70698 17.3313 8.70698 16.9999C8.70698 16.6685 8.43835 16.3999 8.10698 16.3999L6.6 16.3999C6.26863 16.3999 6 16.6685 6 16.9999C6 17.3313 6.26863 17.5999 6.6 17.5999Z" fill="#6B6B6B"/>'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.5999 2.6C8.5999 2.26863 8.33127 2 7.9999 2C7.66853 2 7.3999 2.26863 7.3999 2.6V4H6C4.34315 4 3 5.34315 3 7V19C3 20.6569 4.34315 22 6 22H18C19.6569 22 21 20.6569 21 19V7C21 5.34315 19.6569 4 18 4H16.5999V2.6C16.5999 2.26863 16.3313 2 15.9999 2C15.6685 2 15.3999 2.26863 15.3999 2.6V4H8.5999L8.5999 2.6ZM18 5.2H6C5.00589 5.2 4.2 6.00589 4.2 7V9L19.8 9V7C19.8 6.00589 18.9941 5.2 18 5.2ZM4.2 19V10.2L19.8 10.2V19C19.8 19.9941 18.9941 20.8 18 20.8H6C5.00589 20.8 4.2 19.9941 4.2 19Z" fill="#6B6B6B"/>'
+                +'</svg>')
+            +'</span>'
+            +'<span class="b-text">일정</span></button>';
+        }
+
+        // 메일
+        if(!isMobile) {
+            dpContactHtml += '<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
+            +'<span class="b-icon">'
+                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M19 5.2H5C4.00589 5.2 3.2 6.00589 3.2 7V17C3.2 17.9941 4.00589 18.8 5 18.8H19C19.9941 18.8 20.8 17.9941 20.8 17V7C20.8 6.00589 19.9941 5.2 19 5.2ZM5 4C3.34315 4 2 5.34315 2 7V17C2 18.6569 3.34315 20 5 20H19C20.6569 20 22 18.6569 22 17V7C22 5.34315 20.6569 4 19 4H5Z" fill="#6B6B6B"/>'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2 7C2 5.34315 3.34315 4 5 4H19C20.6569 4 22 5.34315 22 7C22 7.58091 21.8783 8.07924 21.5702 8.53793C21.2764 8.9753 20.8423 9.33144 20.3129 9.68998C19.4609 10.267 14.7828 12.8399 13.0035 13.8149C12.3765 14.1584 11.6235 14.1584 10.9965 13.8149C9.21694 12.8397 4.53774 10.2662 3.68633 9.68954C3.15719 9.33114 2.72334 8.97498 2.42973 8.5376C2.12186 8.07897 2 7.5807 2 7ZM5 5.2C4.00589 5.2 3.2 6.00589 3.2 7C3.2 7.39675 3.27829 7.64863 3.42607 7.86878C3.58811 8.11017 3.86561 8.36162 4.35928 8.69598C5.14928 9.23106 9.74951 11.7632 11.5731 12.7625C11.8409 12.9092 12.1591 12.9092 12.4269 12.7625C14.2502 11.7634 18.8494 9.2318 19.64 8.69639C20.1341 8.36174 20.4119 8.11025 20.574 7.86883C20.7219 7.64872 20.8 7.3969 20.8 7C20.8 6.00589 19.9941 5.2 19 5.2H5C5.00001 5.2 4.99999 5.2 5 5.2Z" fill="#6B6B6B"/>'
+                +'</svg>')
+            +'</span>'
+            +'<span class="b-text">메일</span></button>';
+        }
+
+        // 메신저
+        if(data.group != 'Y' ) {
+            dpContactHtml += '<button type="button" class="icon-btn" onClick="connectMessenger(\''+data.userId+'\',\''+userId[0]+'\');">'
+            +'<span class="b-icon">'
+                +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M20.2912 20.3478L18.2929 18.3411C18.1053 18.1526 17.8503 18.0467 17.5843 18.0467H9.99979C9.52323 18.0467 9.07261 17.9356 8.67245 17.7378C7.94451 17.3781 7.38352 16.7317 7.13695 15.9461C7.04009 15.6375 7.22544 15.3549 7.50873 15.2467C7.58741 15.2166 7.67363 15.2 7.76346 15.2C7.83698 15.2 7.90632 15.2169 7.96967 15.2467C8.10822 15.3119 8.21807 15.4391 8.28008 15.5873C8.28267 15.5935 8.28517 15.5997 8.28759 15.606C8.28873 15.6089 8.28986 15.6119 8.29096 15.6149C8.29311 15.6206 8.29518 15.6264 8.29719 15.6322C8.54017 16.3389 9.21068 16.8467 9.99979 16.8467H17.5843C18.1694 16.8467 18.7304 17.0797 19.1433 17.4943L20.7998 19.1579V10C20.7998 9.00589 19.9939 8.2 18.9998 8.2H18.8C18.4699 8.2 18.202 7.93339 18.2 7.60374C18.2 7.6025 18.2 7.60125 18.2 7.6C18.2 7.59875 18.2 7.5975 18.2 7.59625C18.202 7.26661 18.4699 7 18.8 7C18.7998 7 18.8002 7 18.8 7H18.9998C20.6567 7 21.9998 8.34315 21.9998 10V19.6422C21.9998 20.5341 20.9205 20.9798 20.2912 20.3478ZM14 14.0467C15.6569 14.0467 17 12.7035 17 11.0467V6C17 4.34315 15.6569 3 14 3H5C3.34315 3 2 4.34314 2 6V15.6422C2 16.5341 3.07925 16.9798 3.7086 16.3478L5.70685 14.3411C5.89451 14.1526 6.1495 14.0467 6.41545 14.0467H14ZM5 4.2C4.00589 4.2 3.2 5.00589 3.2 6V15.1579L4.85653 13.4943C5.26937 13.0797 5.83036 12.8467 6.41545 12.8467H14C14.9941 12.8467 15.8 12.0408 15.8 11.0467V6C15.8 5.00589 14.9941 4.2 14 4.2H5Z" fill="#6B6B6B"/>'
+                +'</svg>')
+            +'</span><span class="b-text">메신저</span></button>';
+        }
+        
+        dpContactHtml += '</div>';
+    		
+    	var dpContact = $(dpContactHtml);
+    	moreInfos.append(dpContact);
+        dprofile.append(moreInfos);
+	}
+	return dprofile;
+}
+
+// 그룹사 임직원 조회 검색결과(다건_동명이인_리스트)
+function makeGroupEmployeeListCard(data, isHistory){
+	
+	var dList = $('<div class="message profile-list employee"></div>');
+	dList.attr("data-sessionId", data.chatSessionId.split("sessions/")[1]);
+	
+	//일정조회 동명이인 전용 파라미터
+	dList.attr("data-loginUserId", data.loginUserId);
+	dList.attr("data-date", data.date);
+	dList.attr("data-krname", data.krname);
+
+    var dListWrap = $('<ul></ul>');
+	if (data.items instanceof Array && data.items.length > 0) {
+		data.items.forEach(function(item,index) {
+            var type = data.type;
+            var empMail = item.empMail.split('@');
+            var userId = empMail[0];
+            var display = (index >= 4)? "none":"flex";
+            
+            var liHtml = '<li class="list-box" style="display:' + display + '" onclick="intentEvent(this , \''+ type +'\', \''+ userId +'\')">';
+                
+            if (data.group == 'Y') {
+                liHtml = '<li class="list-box" style="display:' + display + '" onclick="intentEvent(this , \'group\', \''+ item.empMail +'\')">';
+            }
+                
+            liHtml += (item.profilePicture ? '<div class="profile-img">' + `<img src="' + item.profilePicture + '" onerror="this.src='` + pAlternative + `';"></div>` : '<div class="profile-img"><img class="img-circle" src="'+ pAlternative +'"></div>');
+            
+            liHtml += '<div class="text-box">';
+            liHtml +=   '<div class="name">'
+                            +'<h1>' + item.userNm + ' ' + item.titleNm +'</h1>'
+                        +'</div">';
+
+            liHtml += '<ul class="profile-info">'
+            liHtml += (
+                '<li>'
+                    +'<span class="profile-icon icon-team">'
+                        +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39792 5.29389C9.31181 5.10936 9.99992 4.30178 9.99992 3.3335C9.99992 2.22893 9.10449 1.3335 7.99992 1.3335C6.89535 1.3335 5.99992 2.22893 5.99992 3.3335C5.99992 4.30174 6.68796 5.10928 7.60179 5.29387C7.60051 5.30688 7.59985 5.32008 7.59985 5.33343V7.6001H5.33319C4.0077 7.6001 2.93319 8.67461 2.93319 10.0001V10.6668C2.93319 10.6802 2.93385 10.6934 2.93513 10.7065C2.0213 10.891 1.33325 11.6986 1.33325 12.6668C1.33325 13.7714 2.22868 14.6668 3.33325 14.6668C4.43782 14.6668 5.33325 13.7714 5.33325 12.6668C5.33325 11.6985 4.64514 10.891 3.73124 10.7064C3.73253 10.6934 3.73319 10.6802 3.73319 10.6668V10.0001C3.73319 9.11644 4.44953 8.4001 5.33319 8.4001H10.6665C11.5502 8.4001 12.2665 9.11644 12.2665 10.0001V10.6668C12.2665 10.6802 12.2672 10.6934 12.2685 10.7065C11.3546 10.891 10.6666 11.6986 10.6666 12.6668C10.6666 13.7714 11.562 14.6668 12.6666 14.6668C13.7712 14.6668 14.6666 13.7714 14.6666 12.6668C14.6666 11.6985 13.9785 10.891 13.0646 10.7064C13.0659 10.6934 13.0665 10.6802 13.0665 10.6668V10.0001C13.0665 8.67461 11.992 7.6001 10.6665 7.6001H8.39985L8.39985 5.33343C8.39985 5.32009 8.3992 5.3069 8.39792 5.29389ZM7.99992 4.5335C8.66266 4.5335 9.19992 3.99624 9.19992 3.3335C9.19992 2.67075 8.66266 2.1335 7.99992 2.1335C7.33718 2.1335 6.79992 2.67075 6.79992 3.3335C6.79992 3.99624 7.33718 4.5335 7.99992 4.5335ZM3.33325 13.8668C3.99599 13.8668 4.53325 13.3296 4.53325 12.6668C4.53325 12.0041 3.99599 11.4668 3.33325 11.4668C2.67051 11.4668 2.13325 12.0041 2.13325 12.6668C2.13325 13.3296 2.67051 13.8668 3.33325 13.8668ZM13.8666 12.6668C13.8666 13.3296 13.3293 13.8668 12.6666 13.8668C12.0038 13.8668 11.4666 13.3296 11.4666 12.6668C11.4666 12.0041 12.0038 11.4668 12.6666 11.4668C13.3293 11.4668 13.8666 12.0041 13.8666 12.6668Z" fill="#898989"/>'
+                        +'</svg>'
+                    +'</span><span class="team-name">' + (item.deptNm ? item.deptNm : '-') + '</span>'
+                +'</li>'
+            );
+            
+            liHtml += (
+                '<li>'
+                    +'<span class="profile-icon icon-phone">'
+                        + '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M12.5842 10.5261L10.3746 9.14452C10.2925 9.09317 10.1745 9.10065 10.0918 9.18231C10.0131 9.26012 9.9358 9.33551 9.87193 9.39564C9.1487 10.0767 8.21307 9.93799 7.54251 9.66479C6.85048 9.38284 6.1788 8.8696 5.65588 8.34687C5.13291 7.82409 4.61899 7.15196 4.33668 6.45924C4.06308 5.78791 3.92438 4.85121 4.60668 4.12737C4.66788 4.06244 4.74239 3.98595 4.81898 3.90841C4.9012 3.82516 4.90827 3.70712 4.85718 3.62542L3.47542 1.41615L3.47137 1.40939C3.30654 1.1339 2.99922 1.03945 2.68408 1.24462C1.85645 1.78509 1.43723 2.37962 1.25418 2.971C1.06765 3.57363 1.09939 4.26136 1.33263 5.02227C1.80708 6.57004 3.05679 8.22718 4.41578 9.58568C5.77497 10.9444 7.43109 12.1933 8.97796 12.6675C9.7384 12.9006 10.4258 12.9324 11.0283 12.7461C11.6196 12.5632 12.2142 12.1443 12.7552 11.3174C12.9603 11.0029 12.867 10.6959 12.5904 10.5298L12.5842 10.5261ZM13.425 11.7548C10.922 15.5818 6.6355 12.9357 3.8502 10.1515C1.06491 7.3672 -1.58331 3.07544 2.24711 0.574501C2.95544 0.113007 3.76792 0.346919 4.15787 0.998626L5.53544 3.20121C5.78858 3.60595 5.72365 4.13091 5.38816 4.47058C5.31335 4.54632 5.24381 4.61776 5.18882 4.6761C4.46912 5.43963 5.2675 6.82747 6.22146 7.78108C7.17542 8.73469 8.56121 9.531 9.3235 8.81321C9.38036 8.75968 9.45232 8.68957 9.52946 8.61333C9.86892 8.27782 10.394 8.21314 10.7987 8.46619L13.0023 9.84394C13.6537 10.2351 13.887 11.0468 13.425 11.7548Z" fill="#898989"/>'
+                        +'</svg>'
+                    + '</span>' + (item.empMobile ? item.empMobile : '')
+                +'</li>'
+            );
+            liHtml += '</ul>';
+
+            liHtml += '<span class="arrow">'
+                        +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                        +'</svg>'
+                    +'</span>';
+
+            liHtml += '</div>';
+            liHtml += '</li>';
+            var li = $(liHtml);
+			dListWrap.append(li);
+		});
+        dList.append(dListWrap);
+		
+        // 더보기 버튼 출력
+		if (data.items.length > 4) {
+			var btn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            btn.click(function() {
+                $(this).parents('.profile-list').find(".list-box").css("display","flex");
+                $(this).css({"display":"none"});
+            });
+            dList.append(btn);
+		}
+	} else {
+        dList.removeClass('profile-list').addClass('simple-text');
+        dList.append('<p>검색 결과가 없습니다. 임직원명을 확인한 후 다시 검색해 보세요.</p>');
+    }
+	return dList;
+}
+
+// 그룹사 임직원 조회 검색결과 오류
+function groupEmployeeError() {
+    var employeeResultError = $('<div class="custom-message"></div>');
+    var employeeErrorMessageWrap = $('<div class="message"></div>');
+    var employeeErrorContent = $('<div class="message simple-text"></div>');
+    var employeeErrorText = $('<p>검색 결과가 없습니다. 임직원명을 확인한 후 다시 검색해 보세요.</p>');
+    employeeErrorContent.append(employeeErrorText);
+    employeeErrorMessageWrap.append(employeeErrorContent);
+    employeeResultError.append(employeeErrorMessageWrap);
+    return employeeError;
+}
+
+//전화번호로 임직원 검색 by hhs
+function searchEmployeeByPhone(phoneNo){
+    
+    console.log('phoneNo :'+phoneNo);
+    
+    var inputParam = {"phone_number":phoneNo.replace('-','')};
+    var employee = [];
+    var isMobile = Mobile();
+
+    var options = {
+        keyword: inputParam.phone_number,
+        type:'any'
+    };
+
+    chatui.searchEmployees(options).then(function(employees) {
+        if(employees.length > 0){
+            console.log("chatui.searchEmployees employees : " + JSON.stringify(employees));
+
+            $.each(employees, function(index) {
+                var info = {};
+                //오픈 시점은 기본 이미지, singlex hr 전환되면 hr쪽에 있는 이미지를 연결.
+                //전환 시 임직원카드 생성쪽 소스도 같이 수정 필요
+                info.profilePicture = "";
+                info.userNm = employees[index].userKorName;
+                info.titleNm = employees[index].jobTitle;
+                info.deptNm = employees[index].deptKorName;
+                info.empMobile = employees[index].mobilePhoneNo;
+                info.empMail = employees[index].email?employees[index].email:'@';
+                info.empNo = employees[index].empNo;
+                info.empTelNo= '-';
+                employee.push(info);
+            });
+            
+            console.log('employeeList : \n'+JSON.stringify(employee));
+            chatui.sendEventMessage("searchEmployeeByPhone", {"empInfo":JSON.stringify(employee),"isMobile":isMobile?'Y':'N'});
+        } else {
+            chatui.sendEventMessage("searchEmployeeByPhone", {"empInfo":JSON.stringify(employee),"isMobile":isMobile?'Y':'N'});
+        }
+        
+    });
+}
+
 
 // 240530 [퍼블 추가]
 // 드롭다운 외 클릭 닫힘
@@ -10113,46 +11043,11 @@ $(document).on('click', function(e) {
             $('.btn-dropdown').removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
     }
-})
-
-// 240530 [퍼블 추가]_start
-/* ##### [ 아이콘 추가 ] ##### */
-var iconBell = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-+'<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" fill="#898989"></path>'
-+'</svg>';
-var iconRoundCheck = '<svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
-+'<path fill="#2C2C2C" fill-rule="evenodd" clip-rule="evenodd" d="M7.00004 12.8663C10.2401 12.8663 12.8667 10.2397 12.8667 6.99967C12.8667 3.7596 10.2401 1.13301 7.00004 1.13301C3.75997 1.13301 1.13337 3.7596 1.13337 6.99967C1.13337 10.2397 3.75997 12.8663 7.00004 12.8663ZM7.00004 13.6663C10.6819 13.6663 13.6667 10.6816 13.6667 6.99967C13.6667 3.31778 10.6819 0.333008 7.00004 0.333008C3.31814 0.333008 0.333374 3.31778 0.333374 6.99967C0.333374 10.6816 3.31814 13.6663 7.00004 13.6663Z" />'
-+'<path fill="#2C2C2C" fill-rule="evenodd" clip-rule="evenodd" d="M9.95025 5.3835C10.1065 5.53971 10.1065 5.79297 9.95025 5.94918L6.61692 9.28252C6.46073 9.43871 6.2075 9.43873 6.05128 9.28257L4.05058 7.28257C3.89434 7.12638 3.8943 6.87312 4.05048 6.71688C4.20666 6.56064 4.45993 6.5606 4.61617 6.71678L6.33403 8.43404L9.38457 5.3835C9.54078 5.22729 9.79404 5.22729 9.95025 5.3835Z" />'
-+'</svg>';
-var listHeaderIcon2 = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-+'<path fill="#2C2C2C" d="M1.99992 4.00033C2.36811 4.00033 2.66659 3.70185 2.66659 3.33366C2.66659 2.96547 2.36811 2.66699 1.99992 2.66699C1.63173 2.66699 1.33325 2.96547 1.33325 3.33366C1.33325 3.70185 1.63173 4.00033 1.99992 4.00033Z" />'
-+'<path fill="#2C2C2C" d="M1.99992 8.66699C2.36811 8.66699 2.66659 8.36852 2.66659 8.00033C2.66659 7.63214 2.36811 7.33366 1.99992 7.33366C1.63173 7.33366 1.33325 7.63214 1.33325 8.00033C1.33325 8.36852 1.63173 8.66699 1.99992 8.66699Z" />'
-+'<path fill="#2C2C2C" d="M2.66659 12.667C2.66659 13.0352 2.36811 13.3337 1.99992 13.3337C1.63173 13.3337 1.33325 13.0352 1.33325 12.667C1.33325 12.2988 1.63173 12.0003 1.99992 12.0003C2.36811 12.0003 2.66659 12.2988 2.66659 12.667Z" />'
-+'<path fill="#2C2C2C" d="M4.39992 7.60026C4.179 7.60026 3.99992 7.77935 3.99992 8.00026C3.99992 8.22117 4.179 8.40026 4.39992 8.40026H14.2666C14.4875 8.40026 14.6666 8.22117 14.6666 8.00026C14.6666 7.77935 14.4875 7.60026 14.2666 7.60026H4.39992Z" />'
-+'<path fill="#2C2C2C" d="M3.99992 3.33359C3.99992 3.11268 4.179 2.93359 4.39992 2.93359H14.2666C14.4875 2.93359 14.6666 3.11268 14.6666 3.33359C14.6666 3.55451 14.4875 3.73359 14.2666 3.73359H4.39992C4.179 3.73359 3.99992 3.55451 3.99992 3.33359Z" />'
-+'<path fill="#2C2C2C" d="M4.39992 12.2669C4.179 12.2669 3.99992 12.446 3.99992 12.6669C3.99992 12.8878 4.179 13.0669 4.39992 13.0669H14.2666C14.4875 13.0669 14.6666 12.8878 14.6666 12.6669C14.6666 12.446 14.4875 12.2669 14.2666 12.2669H4.39992Z" />'
-+'</svg>';
-var plusIconRed = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-+'<path fill="#E0205C" d="M7.60059 14.2663C7.60059 14.4873 7.77967 14.6663 8.00059 14.6663C8.2215 14.6663 8.40059 14.4873 8.40059 14.2663V8.39961H14.2673C14.4882 8.39961 14.6673 8.22052 14.6673 7.99961C14.6673 7.7787 14.4882 7.59961 14.2673 7.59961H8.40059V1.73301C8.40059 1.51209 8.2215 1.33301 8.00059 1.33301C7.77967 1.33301 7.60059 1.51209 7.60059 1.73301V7.59961H1.73398C1.51307 7.59961 1.33398 7.7787 1.33398 7.99961C1.33398 8.22052 1.51307 8.39961 1.73398 8.39961H7.60059V14.2663Z"/>'
-+'</svg>';
-var plusIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-+'<path fill="#6B6B6B" d="M11.3999 21.4C11.3999 21.7314 11.6685 22 11.9999 22C12.3313 22 12.5999 21.7314 12.5999 21.4V12.5999H21.4C21.7314 12.5999 22 12.3313 22 11.9999C22 11.6685 21.7314 11.3999 21.4 11.3999H12.5999V2.6C12.5999 2.26863 12.3313 2 11.9999 2C11.6685 2 11.3999 2.26863 11.3999 2.6V11.3999H2.6C2.26863 11.3999 2 11.6685 2 11.9999C2 12.3313 2.26863 12.5999 2.6 12.5999H11.3999V21.4Z"/>'
-+'</svg>';
-var minusIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-+'<path fill="#6B6B6B" fill-rule="evenodd" clip-rule="evenodd" d="M2 12.0004C2 11.669 2.26863 11.4004 2.6 11.4004L21.4 11.4004C21.7314 11.4004 22 11.669 22 12.0004C22 12.3318 21.7314 12.6004 21.4 12.6004L2.6 12.6004C2.26863 12.6004 2 12.3318 2 12.0004Z"/>'
-+'</svg>';
-var trashIcon = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">'
-+'<path fill="#A5A5A5" d="M7.49993 6.67493C7.74845 6.67493 7.94993 6.8764 7.94993 7.12493V12.7499C7.94993 12.9985 7.74846 13.1999 7.49993 13.1999C7.2514 13.1999 7.04993 12.9985 7.04993 12.7499L7.04993 7.12493C7.04993 6.8764 7.2514 6.67493 7.49993 6.67493Z"/>'
-+'<path fill="#A5A5A5" d="M10.9499 7.12493C10.9499 6.8764 10.7485 6.67493 10.4999 6.67493C10.2514 6.67493 10.0499 6.8764 10.0499 7.12493V12.7499C10.0499 12.9985 10.2514 13.1999 10.4999 13.1999C10.7485 13.1999 10.9499 12.9985 10.9499 12.7499L10.9499 7.12493Z"/>'
-+'<path fill="#A5A5A5" fill-rule="evenodd" clip-rule="evenodd" d="M6.375 2.625C6.375 2.00368 6.87868 1.5 7.5 1.5H10.5C11.1213 1.5 11.625 2.00368 11.625 2.625V3.60004L14.55 3.60004C14.7985 3.60004 15 3.80151 15 4.05004C15 4.29856 14.7985 4.50004 14.55 4.50004H14.25V14.1C14.25 15.3427 13.2426 16.35 12 16.35H6C4.75736 16.35 3.75 15.3427 3.75 14.1V4.50004H3.45C3.20147 4.50004 3 4.29856 3 4.05004C3 3.80151 3.20147 3.60004 3.45 3.60004H6.375V2.625ZM7.5 2.4H10.5C10.6243 2.4 10.725 2.50074 10.725 2.625V3.6H7.275V2.625C7.275 2.50074 7.37574 2.4 7.5 2.4ZM4.65 4.50004H13.35V14.1C13.35 14.8456 12.7456 15.45 12 15.45H6C5.25442 15.45 4.65 14.8456 4.65 14.1V4.50004Z"/>'
-+'</svg>';
-var popBackBtn = '<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
-+'<path fill="#2C2C2C" fill-rule="evenodd" clip-rule="evenodd" d="M10.9987 13.3026C10.6451 13.7004 10.6451 14.2999 10.9987 14.6978L19.2986 24.0351C19.5554 24.3241 19.5294 24.7665 19.2405 25.0234C18.9515 25.2802 18.5091 25.2542 18.2522 24.9652L9.95234 15.6279C9.12721 14.6996 9.12721 13.3008 9.95234 12.3725L18.2522 3.03513C18.5091 2.74618 18.9515 2.72016 19.2405 2.977C19.5294 3.23384 19.5554 3.67629 19.2986 3.96524L10.9987 13.3026Z"/>'
-+'</svg>';
-// 240530 [퍼블 추가]_end
+});
 
 
-/* ########### 타계정 추가 ########### */
+
+/* ########### 타계정 추가 Start ########### */
 
 function showSmallHtmlDialog(msg) {
   $('.test-panel').append('<div class="small-dialog"></div>');
@@ -10184,11 +11079,6 @@ const setAutocompleteTeamMember = function(input, empNo) {
       
       if(e.keyCode == 13) { 
           
-            if(inputVal.length < 2) {
-                showSmallDialog("대리 주문자 검색은 2글자 이상 입력해야 합니다.");
-                return;
-            }
-          
           LoadingWithMask();
           
         var requestParam = {
@@ -10207,7 +11097,7 @@ const setAutocompleteTeamMember = function(input, empNo) {
             console.log('result', result);
             teamMemberList = result.resultList;
             
-            console.log('teamMemberList : ', teamMemberList);
+            //console.log('teamMemberList : ', teamMemberList);
             
             if(teamMemberList) {
                 if(teamMemberList.length == 0) {
@@ -10228,7 +11118,6 @@ const setAutocompleteTeamMember = function(input, empNo) {
                  $(input).autocomplete("option", "source", keyword);
                    $(input).autocomplete("option", "appendTo", $(input).closest(".form-first").find(".autocomplete-member"));
                 
-                console.log($(input).closest(".form-first").find(".autocomplete-member"));
                 //$(this).data("uiAutocomplete").search($(this).val());
             }
 
@@ -10306,7 +11195,6 @@ const setAutocompleteTeamMember = function(input, empNo) {
           + '<input type="hidden" value="'+ui.item.employee_number+'" class="person-empNo"/>'
           +'</div>';
           
-          console.log('htmlStr > '+htmlStr);
           $memList.append(htmlStr);
           
           if($('.selected-members').height() > 110) {
@@ -10431,7 +11319,7 @@ function closeLoadingWithMask() {
 
 function appendChatbotHtml(message, isTime) {
   var chatMessage = $('<div class="chat-message left"></div');
-  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>');
+  var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>');         // /images/chem-profile.png
   var time = $('<span class="message-date">' + moment().format("a h:mm") + '</span>');
   //+'<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/chem-profile.png"></div>'
   //+ message
@@ -10445,6 +11333,7 @@ function appendChatbotHtml(message, isTime) {
   $('#divScroll').append(chatMessage);
   descendScroll();
 }
+
 
 var gReviewParam = null;
 /* ##### [ 타계정 주문_메인 메세지 카드 ] ##### */
@@ -10519,8 +11408,6 @@ function anotherAccountPopupOpen(orderdata) {
     pluginHeader.append(pluginClose);
     addPlugin.append(pluginHeader);
     function thisPluginClose() {
-        $(document).off('keydown');
-        console.log('keydown off');
         $('#another-account-order').removeClass('show');
         $('.plugin-dim').removeClass('show');
         setTimeout(function() {
@@ -10532,7 +11419,7 @@ function anotherAccountPopupOpen(orderdata) {
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents" tabindex="0"></div>');
+    var pluginContents = $('<div class="plugin-contents"></div>');
     console.log('orderdata.step >>> '+orderdata.step);
     
     if(orderdata.step == 8) {
@@ -10540,7 +11427,7 @@ function anotherAccountPopupOpen(orderdata) {
     }
     else{
         var anotherForm = anotherAccountOrderFirst(orderdata);
-        //var anotherForm = anotherAccountOrderSixth(orderdata);
+        //var anotherForm = anotherAccountOrderSeventh(orderdata);
     }
     //var anotherForm = anotherAccountOrderFirst(orderdata);
     pluginContents.append(anotherForm);
@@ -10600,6 +11487,7 @@ function anotherAccountOrderFirst(orderdata) {
         $('.plugin-contents').css('overflow-y', 'auto');
     },1);
 
+
     /* #########[ popup_content_wrap_start ]######### */
     var pluginForm = $('<form class="form-first" onsubmit="return false;"></form>');
     
@@ -10624,12 +11512,8 @@ function anotherAccountOrderFirst(orderdata) {
         }
     });
     inputBoxRadio.append(radioWrap);
-    
-    var hiddenRadio = $('<input type="text" value="" />');
-    //inputBoxRadio.append(hiddenRadio);
-    
     pluginForm.append(inputBoxRadio);
-    
+
     /* ###[ 대리 주문자 ]### */
     var inputBoxText1 = $('<div class="input-box add-order"><label>대리 주문자<b>*</b></label></div>');
 
@@ -10664,7 +11548,7 @@ function anotherAccountOrderFirst(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-   var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step1">다음</button></div>');
+   var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
         
@@ -10679,8 +11563,7 @@ function anotherAccountOrderFirst(orderdata) {
 
         if(selfYN == 'NO' && deputyEmpNo == null) {
             showSmallDialog("대리 주문인 경우 대리 주문자를 입력하세요. ");
-            //memberInput.focus();
-            textFocusStyle(memberList);
+            memberInput.focus();
             return;
         }
         
@@ -10813,16 +11696,6 @@ function anotherAccountOrderFirst(orderdata) {
 
     }
     
-    $(document).off('keydown').on('keydown', function(e) {
-    //pluginForm.on('keyup', function(e) {
-        console.log('keydown on .... ');
-        if (e.keyCode == 13) {
-            console.log('form enter key. ');
-            if(e.target.id == 'attendees')  return;
-            $('#btn_step1').click();
-        }
-    });    
-    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
@@ -10847,8 +11720,9 @@ function anotherAccountOrderSecond(orderdata) {
     pluginHeader.find('.backBtn').remove();
     pluginHeader.prepend(backBtn);
     
+    $('.plugin-contents').focus();
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-second" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-second"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 주문 목적 ]### */
@@ -10960,12 +11834,14 @@ function anotherAccountOrderSecond(orderdata) {
         dropdownMenuListWrap.css('height', listH);
         
     });
-    
+
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step2" disabled>다음</button></div>')
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        
+        LoadingWithMask(); 
         
         var orderTypeVal = $('#order_type').val();
         var reasonCodeVal = $('#reason_code').val();
@@ -10973,16 +11849,6 @@ function anotherAccountOrderSecond(orderdata) {
 
         console.log('reasonCodeVal : '+reasonCodeVal);
         
-        if(reasonCodeVal == '') {
-            showSmallDialog("상세 주문 목적을 선택하세요. ");
-            //dropdownMainBtn.focus();
-            textFocusStyle(dropdownMainBtn);
-            //dropdownBox.focus();
-            return;
-        }
-        
-        LoadingWithMask(); 
-
         setTimeout(function() {
             orderdata.step = 3;        
             orderdata.orderType = orderTypeVal;
@@ -10996,8 +11862,7 @@ function anotherAccountOrderSecond(orderdata) {
             
             anotherAccountOrderThird(orderdata);
             $('.plugin-contents').append(anotherAccountOrderForm);
-    
-            
+
             closeLoadingWithMask();
             console.log('2단계 닫기.');
         }, 500);
@@ -11099,14 +11964,6 @@ function anotherAccountOrderSecond(orderdata) {
         inputTextContent.find('#order_type_desc').val('['+selOrderType+'] '+selReasonCode);       
     }
 
-    dropdownBox.focus();
-    $(document).off('keydown').on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            console.log('step2 .');
-            $('#btn_step2').click();
-        }
-    });    
-
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
@@ -11188,7 +12045,7 @@ function anotherAccountOrderThird(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-third" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-third"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ 주의 사항 ]### */
@@ -11495,9 +12352,11 @@ function anotherAccountOrderThird(orderdata) {
 
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled id="btn_step3">다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        
+        LoadingWithMask();
         
         var receiver_name = $('#receiver_name').val();
         var zipno = $('#zipno').val();
@@ -11509,51 +12368,6 @@ function anotherAccountOrderThird(orderdata) {
         
         var donation_code = $('#donation-code').val();
         var donation_name = $('#donation-name').val();
-
-        if(receiver_name == '') {
-            showSmallDialog("받는 사람을 입력하세요. ");
-            $('#receiver_name').focus();
-            return;
-        }
-        if(zipno == '') {
-            showSmallDialog("주소를 검색해 주세요.");
-            $('#address1').focus();
-            return;
-        }
-        if(address2 == '') {
-            showSmallDialog("상세 주소를 입력해 주세요.");
-            $('#address2').focus();
-            return;
-        }
-        if(receiver_phone_no == '') {
-            showSmallDialog("전화번호를 입력해 주세요.");
-            $('#receiver_phone_no').focus();
-            return;
-        }
-        if(orderdata.reasonCode != 'R&D') { 
-            if(redidence_type == '') {
-                showSmallDialog("주거형태를 선택해 주세요.");
-                //dropdownBox.focus();
-                textFocusStyle(dropdownMainBtn);
-                return;
-            }
-        }
-        if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') {     
-            if(donation_code == null || donation_code == '') {
-                showSmallDialog("기부처를 검색해 주세요.");
-                //$('#donation-input').focus();
-                textFocusStyle(inputTextContent);
-                //inputBoxText.focus();
-                return;
-            }
-            if(donation_data == '') {
-                showSmallDialog("기부일자를 입력해 주세요.");
-                dateStartInput.focus();
-                return;
-            }
-        }
-        
-        LoadingWithMask();
 
         setTimeout(function() {
             orderdata.step = 4;        
@@ -11583,7 +12397,7 @@ function anotherAccountOrderThird(orderdata) {
         var inputObj = pluginForm.find('input').not('#donation-input');
         var donationval = donationSelected.find('.data-wrap').text();
         
-        //console.log('donationval : '+donationval);
+        console.log('donationval : '+donationval);
          //console.log('length : '+inputObj.length);
         for ( let i = 0; i <= (inputObj.length)-1; i++ ) {
             
@@ -11718,15 +12532,6 @@ function anotherAccountOrderThird(orderdata) {
         
     }
 
-    inputBoxText.focus();
-    $(document).off('keydown').on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            console.log('step3 .');
-            if(e.target.id == 'donation-input')     return;
-            $('#btn_step3').click();
-        }
-    });    
-
     nextBtnEvent();
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -11760,7 +12565,7 @@ function anotherAccountOrderFourth(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-fourth" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-fourth"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 사용 예산이 광고판촉비(APMS)인가요? ]### */
@@ -11796,7 +12601,7 @@ function anotherAccountOrderFourth(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step4" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
         
@@ -11999,15 +12804,6 @@ function anotherAccountOrderFourth(orderdata) {
             nextBtn.find('button').attr('disabled', false);
         }
     //}    
-    
-    inputBoxText.focus();
-    $(document).off('keydown').on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            console.log('step4 .');
-            $('#btn_step4').click();
-        }
-    });    
-    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
@@ -12070,7 +12866,7 @@ function anotherAccountOrderFifth(orderdata) {
     pluginHeader.prepend(backBtn);
 
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-fifth" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-fifth"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 예산/비용의 계정 정보를 입력해 주세요. ]### */
@@ -12562,7 +13358,7 @@ function anotherAccountOrderFifth(orderdata) {
             // 비용처리 계정 조회 Not Push Start            
             var result = JSON.parse(payload.queryResult.messages[0].response);
             console.log('result', result);
-            
+
             if(result == null) {
               var orderLi3 = $('<li class="no-res">조회시 에러가 발생했습니다. 다시 조회하세요.</li>');
               orderUl3.append(orderLi3);
@@ -12939,7 +13735,7 @@ function anotherAccountOrderFifth(orderdata) {
               
               return;
             }
-
+            
             activityCodeList = result.resultList;
             
             if(activityCodeList.length == 0) {
@@ -13214,58 +14010,9 @@ function anotherAccountOrderFifth(orderdata) {
     }
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step5" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
-        
-        if($('#au_code').val() == null || $('#au_code').val() == '') {
-            showSmallDialog("Cost Au를 검색해 주세요.");
-            //$('#costau-name').focus();
-            //inputBoxText1.focus();
-            textFocusStyle(inputTextContent1);
-            return;
-        }
-        if($('#costdept_code').val() == null || $('#costdept_code').val() == '') {
-            showSmallDialog("비용 처리 부서를 검색해 주세요.");
-            //$('#costdept-name').focus();
-            //inputBoxText2.focus();
-            textFocusStyle(inputTextContent2);
-            return;
-        }
-        if($('#costaccount_code').val() == null || $('#costaccount_code').val() == '') {
-            showSmallDialog("비용 처리 계정을 검색해 주세요.");
-            //$('#costaccount-name').focus();
-            //inputBoxText3.focus();
-            textFocusStyle(inputTextContent3);
-            return;
-        }
-        if($('#activity_code').val() == null || $('#activity_code').val() == '') {
-            showSmallDialog("Activity Code를 검색해 주세요.");
-            //$('#activity-name').focus();
-            //inputBoxText5.focus();
-            textFocusStyle(inputTextContent5);
-            return;
-        }
-        if(selOrderType == 'OTHERS_OUT_FA_OMD')  {
-            if($('#Asset_name').val() == '') {
-                showSmallDialog("Activity Name을 입력해 주세요.");
-                $('#Asset_name-name').focus();
-                return;
-            }
-            if($('#major_category').val() == '') {
-                showSmallDialog("Major Category를 선택해 주세요.");
-                //dropdownBox.focus();
-                textFocusStyle(dropdownMainBtn);
-                return;
-            }
-            if($('#minor_category').val() == null || $('#minor_category').val() == '') {
-                showSmallDialog("Minor Category를 검색해 주세요.");
-                //$('#minor-category').focus();
-                //inputBoxText7.focus();
-                textFocusStyle(inputTextContent7);
-                return;
-            }
-        }
         
         LoadingWithMask();
         
@@ -13680,15 +14427,6 @@ function anotherAccountOrderFifth(orderdata) {
         //nextBtnEvent(inputBox7);
     }
 
-    inputBoxText.focus();
-    $(document).off('keydown').on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            console.log('step5 .'+ e.target.type);
-            if(e.target.type == 'text' && e.target.id != 'Asset_name')     return; 
-            $('#btn_step5').click();
-        }
-    });    
-
     nextBtnEvent();
 
     /* #########[ popup_content_form_end ]######### */
@@ -13712,7 +14450,7 @@ function anotherAccountOrderSixth(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-sixth" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-sixth"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ 주문 모델 ]### */
@@ -13922,9 +14660,11 @@ function anotherAccountOrderSixth(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step6" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        
+        LoadingWithMask();
         
         setTimeout(function() {
             orderdata.step = 7; 
@@ -13933,22 +14673,13 @@ function anotherAccountOrderSixth(orderdata) {
                 apmsModelList = new Array();                // 초기화. 
                 var orderModelList = $('.stepper-wrap').find('li');
                 
-                if(orderModelList.length == 1 && $(orderModelList[0]).find('textarea').val() == '') {
-                    showSmallDialog("주문 모델을 1개 이상 입력해 주세요.");
-                    //$('#donation-input').focus();
-                    textFocusStyle($(orderModelList[0]).find('textarea'));
-                    return;
-                }
-
-                LoadingWithMask();
-                
                 //console.log('length : '+orderModelList.length);
                 for(var m=0; m<orderModelList.length; m++) {
                     let orderModelText = orderModelList[m];
                     
                     let textVal = $(orderModelText).find('textarea').val();
                     
-                    console.log('textVal : '+textVal);
+                    //console.log('textVal : '+textVal);
                     let textArr = new Array();
                     if(textVal.indexOf('] ') > -1) {
                         textArr = textVal.split('] ');
@@ -14137,15 +14868,6 @@ function anotherAccountOrderSixth(orderdata) {
         eventKeyUp($(this), e);
     });
     
-    inputBoxText.focus();
-    $(document).off('keydown').on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            console.log('step6 .'+e.target.value);
-            if(e.target.value != null)  return;
-            $('#btn_step6').click();
-        }
-    });    
-    
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
@@ -14253,7 +14975,7 @@ function anotherAccountOrderSixth(orderdata) {
         
      
     }
-    
+
 // 타계정 주문 입력 팝업 컨텐츠 7
 function anotherAccountOrderSeventh(orderdata) {
     console.log('orderdata : ', orderdata);    
@@ -14284,7 +15006,7 @@ function anotherAccountOrderSeventh(orderdata) {
             "model_number": "3"
         }
     ];                     // 
-    
+
     var apmsModelList = [
 			{
 				"model_code": "W10EGN.AKOR",
@@ -14302,7 +15024,7 @@ function anotherAccountOrderSeventh(orderdata) {
 				"model_number": 1
 			}
 		];
-    */
+    */    
     
     var apmsModelStr = '';
     var apmsModelNum = '';
@@ -14329,7 +15051,7 @@ function anotherAccountOrderSeventh(orderdata) {
     pluginHeader.prepend(backBtn);
 
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-seventh" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-seventh"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ 배송 유형 ]### */
@@ -14470,7 +15192,7 @@ function anotherAccountOrderSeventh(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn btn-next"><button type="button" class="btn btn-emphasis btn-big" id="btn_step7" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn btn-next"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     
     pluginForm.children('.btn').find('button').on('click', function() {
@@ -14479,14 +15201,12 @@ function anotherAccountOrderSeventh(orderdata) {
         
         if(dateStartInput.val() == '') {
             showSmallDialog('도착 날짜를 선택하세요. '); 
-            //dateStartInput.focus();
-            textFocusStyle(dateStartInput);
+            dateStartInput.focus();
             return;
         }
         
         if(dateStartInput.val() != api_date) {
             showSmallDialog('가능한 도착날짜가 반영되지 않았습니다.'); 
-            textFocusStyle(dateStartInput);
             return;
         }
         
@@ -14631,14 +15351,6 @@ function anotherAccountOrderSeventh(orderdata) {
     //    titleNote.css('display', 'block');
     //}    
 
-    inputTimeBox.focus();
-    $(document).off('keydown').on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            console.log('step7 .');
-            $('#btn_step7').click();
-        }
-    });    
-
     nextBtnEvent();
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -14660,7 +15372,7 @@ function anotherAccountOrderEighth(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-eighth" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-eighth"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 승인 요청 ]### */
@@ -14798,23 +15510,16 @@ function anotherAccountOrderEighth(orderdata) {
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
         
+        LoadingWithMask();
+        
         //orderdata.step = 9;
         orderdata.remark = $('#remark').val();
-        
-        if(orderdata.remark == '') {
-            showSmallDialog("승인 요청에 필요한 문구를 입력해 주세요.");
-            //$('#remark').focus();
-            textFocusStyle($('#remark'));
-            return;
-        }
         
         orderInfo.p_request_remark = $('#remark').val();
         
         let orderInfoStr = JSON.stringify(orderInfo);
         let apmsModelListStr = JSON.stringify(apmsModelList);
-
-        LoadingWithMask();
-
+        
         var requestParam = {
             query: {
               "event": "anotherOrderCreateEvent"
@@ -14943,8 +15648,6 @@ function anotherAccountOrderEighth(orderdata) {
             closeLoadingWithMask();
           });
 
-        descendScroll();
-
         //////        
           
         //console.log('orderdata.remark : '+orderdata.remark);
@@ -14980,14 +15683,6 @@ function anotherAccountOrderEighth(orderdata) {
     if(selRemark != '') {
         submitBtn.find('button').attr('disabled', false);
     }
-    
-    inputBoxText.focus();
-    $(document).off('keydown').on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            console.log('step8 .');
-            $('#btn-anotheAccountOrder').click();
-        }
-    });    
     
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -16814,7 +17509,7 @@ function aalvResult(result) {
                         +'<ul class="list-info">'
                             +'<li>'
                                 +'<h4>주문자</h4>'
-                                +'<span class="list-info-value text">' + result.employee_name + '</span>'
+                                +'<span class="list-info-value text">' + result.employee_name  + '</span>'
                             +'</li>'
                             +'<li>'
                                 +'<h4>접수번호</h4>'
@@ -16847,7 +17542,7 @@ function aalvResult(result) {
                             //+'</li>'
                             +'<li>'
                                 +'<h4>주문자</h4>'
-                                +'<span class="list-info-value text">' + result.employee_name  + '</span>'
+                                +'<span class="list-info-value text">' + result.employee_name + '('+index+')' + '</span>'
                             +'</li>'
                             +'<li>'
                                 +'<h4>접수번호</h4>'
@@ -16930,9 +17625,6 @@ function aalvResult(result) {
 }
 
 function formatAmount(amt) {
-    if(amt < 3) {
-        return amt;
-    } 
     return amt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')    
 }
 
@@ -16951,2730 +17643,1329 @@ function memberCheck() {
   }
 }
 
-function textFocusStyle(target) {
-    
-    $(target).css('border-color', '#2c2c2c');  // #F94B50 
-    setTimeout(function() {
-        $(target).css('border-color', '');
-    },2000);
-}
-
-/* #################### [ 타계정 주문 End ] #################### */
-
-// 달력 입력 확인
-function makeCalendarInput(data) {
-    var messageWrap = $('<div class="custom-message"></div>');
-    var messageBox = $('<div class="message"></div>');
-    var messageTextWrap = $('<div class="message simple-text"></div>');
-    var messageTextContent = $(
-         '<p>'
-            +'달력 입력'
-         +'</p>'
-    );
-    var loadBtn = $(
-        '<div class="btn">'
-            +'<button type="button" class="btn btn-emphasis btn-big">달력 입력</button>'
-        +'</div>'
-    );
-    loadBtn.on('click', function() {
-        calendarPopupOpen(data);
-    });
-    messageTextWrap.append(messageTextContent);
-    messageTextWrap.append(loadBtn);
-    
-    if(checkChatHistory == false) {
-        calendarPopupOpen(data);
-    }
-    
-    //messageBox.append(messageTextWrap);
-    //messageWrap.append(messageBox);
-    //return messageWrap; 
-    return messageTextWrap;
-}
-
-function dateRange() {
-    
-         var prevday = '22';
-          var date_table = $('.datepicker-chem').find('.ui-datepicker').find('.ui-datepicker-calendar').find('tbody');  
-          var date_rows = date_table.find('tr');
-
-          //console.log('length : '+ date_rows);
-          for(var i=0; i<date_rows.length; i++) {
-              let date_cols = $(date_rows[i]).find('td');
-              
-              //console.log('date_cols > ', date_cols);
-              for(var j=0; j<date_cols.length; j++) {
-                  let date_col = $(date_cols[j]); 
-                  let date_link = date_col.find('a');
-                  
-                  //console.log('td > ', date_col);
-                  if(date_link.length > 0) {
-                      let date_no = date_link.text();
-                      
-                      if(date_no == prevday) {
-                          //console.log('date_no : '+date_no);
-                          //console.log('add...');
-                          date_col.addClass('.ui-datepicker-current-day');
-                          date_link.addClass('.ui-state-active');
-                          //date_col.find('a').css('background-color', '#E0205C').css('color', 'white');
-                          
-                          //console.log('td > ', date_link);
-                      }
-                  }
-                  
-                    
-              } 
-          }
-    
-}
-
-function calendarPopupOpen(data) {
-    console.log('data : ', data);
-    var userId = data.userId;
-    
-    /* #########[ popup_wrap_start ]######### */
-    var pulginDim = $('<div class="plugin-dim show"></div>');
-    var addPlugin = $('<div class="plugins" id="calendarPopup"></div>');
-
-    /* #########[ popup_header ]######### */
-    var pluginHeader = $('<div class="plugin-header"><h1>달력 조회</h1></div>');
-    var pluginClose = $('<span class="close-plugin">' + iconPopupClose + '</span>');
-    pluginClose.on('click', function() {
-        thisPluginClose();
-    })
-    pluginHeader.append(pluginClose);
-    addPlugin.append(pluginHeader);
-    function thisPluginClose() {
-        $('#calendarPopup').removeClass('show');
-        $('.plugin-dim').removeClass('show');
-        setTimeout(function() {
-            $('.plugin-dim').remove();
-            $('#calendarPopup').remove();
-        }, 300);
-    }
-
-    /* #########[ popup_content_wrap_start ]######### */
-    var pluginContents = $('<div class="plugin-contents" style="height:500px;"></div>');
-    var pluginForm = $('<form class="form-calendar"></form>');
-    
-    /* #########[ popup_content ]######### */
-    /* ###[ 광고 판촉비(APMS) 폼의 번호 ]### */
-    
-    /* ###[ 기부 일자 ]### */
-    var inputTimeBox = $('<div class="input-box"><label>기간 입력<b>*</b></label></div>');
-    var dateTimeWrap = $('<div class="schedule-wrap"></div>');
-    var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-    var dateStartInput = $('<input type="text" class="input-schedule-date" placeholder="YYYY.MM.DD - YYYY.MM.DD" id="date_input" onclick="daterangepicker.open(this, null, function() { dateRange(); })"/>');
-    dateTimeStartBox.append(dateStartInput);
-    
-    /*  #########[ datepicker ]#########  */
-    var datepicker = $('<div class="datepicker-chem"></div>');
-    dateTimeStartBox.append(datepicker);
-    
-    dateTimeWrap.append(dateTimeStartBox);
-    inputTimeBox.append(dateTimeWrap);
-    
-    pluginForm.append(inputTimeBox);
-    //dateStartInput.val(selDonationDate);
-    
-    //inputBoxTextcalendarNum.on('keyup', function(e) {
-    //    hblInput = e.target.value;
-    //    btnValueCheck();
-    //});
+/* ########### 타계정 추가 End ########### */
 
 /*
-$(function () {
-            $('.input-schedule-date').daterangepicker({
-                "locale": {
-                    "format": "YYYY-MM-DD",
-                    "separator": " ~ ",
-                    "applyLabel": "확인",
-                    "cancelLabel": "취소",
-                    "fromLabel": "From",
-                    "toLabel": "To",
-                    "customRangeLabel": "Custom",
-                    "weekLabel": "W",
-                    "daysOfWeek": ["월", "화", "수", "목", "금", "토", "일"],
-                    "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
-                    "firstDay": 1
-                },
-                "startDate": "2024-07-21",
-                "endDate": "2024-07-23",
-                "drops": "down"
-            }, function (start, end, label) {
-                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
-            });
-        });    
-*/        
-    /*  ###[ etc ]### */
-    // 조회버튼
-    var submitBtn = $('<button disabled type="button" class="btn btn-plugin btn-apply" id="btn-calendar">조회</button>');
-    pluginForm.append(submitBtn);
-    submitBtn.on('click', function() {
-        //thisPluginClose();
-        //$('.chat-message.left').last().append(apmsResult()); // 결과 메세지 (임시 확인용)
+title : HsCode 조회
+작성자 : 이건희
+date : 2024-07-01 11:10
+*/
+
+// 사업부조회 체크
+var partNoInput = '';
+var orgIdInput = '';
+function checkHsCodeRequire() {
+    var btnHsCode = $('#btn-hsCode');
+
+    partNoInput = $('#hsCode_partNo').val();
+
+    if (partNoInput) {
         
-
-    });
-
-    /* #########[ popup_content_wrap_end ]######### */
-    pluginContents.append(pluginForm);
-    addPlugin.append(pluginContents);
-
-    /* #########[ popup_wrap_end ]######### */
-    $('.test-panel').append(pulginDim);
-    $('.test-panel').append(addPlugin);
-    $('.plugin-dim').css('display', 'block');
-    $('#calendarPopup').css('display', 'block');
-    setTimeout(function() {
-        $('.plugin-dim').addClass('show');
-        $('#calendarPopup').addClass('show');
-    }, 100);
-
-    /* #########[ 기타 ]######### */
-    // 조회버튼 활성화 체크
-    function btnValueCheck() {
-        function btnActive() {submitBtn.removeClass('btn-disabled');submitBtn.attr('disabled', false);}
-        function btnDisabled() {submitBtn.addClass('btn-disabled');submitBtn.attr('disabled', true);}
-
-        if (inputBoxTextcalendarNum.find('input').val()) {
-            btnActive();
-        } else {
-            btnDisabled();
-        };
-    };
-    //btnValueCheck();
-    
+        var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+        
+        if(check.test(partNoInput)){
+            btnHsCode.addClass('btn-disabled');
+        }else{
+            btnHsCode.removeClass('btn-disabled');
+        }
+        
+    } else {
+        btnHsCode.addClass('btn-disabled');
+    }
 }
 
-/* #################### [ 물품 청구 신청] #################### */
-var tabAddBtn =  '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                + '<path d="M5 0V10" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"/>'
-                + '<path d="M0 5L10 5" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"/>'
-                + '</svg>';
-
-var tabMoveBtn = (
-    '<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">'
-        +'<path fill="#2C2C2C" fill-rule="evenodd" clip-rule="evenodd" d="M7.64014 9.86913C7.41171 9.61214 7.41171 9.22488 7.64014 8.96789L13.0016 2.93619C13.1676 2.74954 13.1508 2.46373 12.9641 2.29782C12.7774 2.1319 12.4916 2.14871 12.3257 2.33537L6.96421 8.36706C6.4312 8.9667 6.4312 9.87032 6.96421 10.47L12.3257 16.5017C12.4916 16.6883 12.7774 16.7051 12.9641 16.5392C13.1508 16.3733 13.1676 16.0875 13.0016 15.9008L7.64014 9.86913Z"/>'
-    +'</svg>'
-);
-var badgeConfirm = (
-    '<span class="badge-confirm">'
-        +'<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">'
-            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10 5C10 7.76142 7.76142 10 5 10C2.23858 10 0 7.76142 0 5C0 2.23858 2.23858 0 5 0C7.76142 0 10 2.23858 10 5ZM7.21346 4.21086C7.33062 4.0937 7.33062 3.90376 7.21346 3.7866C7.09631 3.66944 6.90636 3.66944 6.7892 3.7866L4.5013 6.0745L3.2129 4.78656C3.09572 4.66942 2.90577 4.66946 2.78864 4.78664C2.6715 4.90381 2.67153 5.09376 2.78871 5.2109L4.28924 6.7109C4.4064 6.82802 4.59632 6.828 4.71346 6.71086L7.21346 4.21086Z" fill="#04B395"/>'
-        +'</svg>'
-        +'Confirm'
-    +'</span>'
-);
-var badgeOver = (
-    '<span class="badge-over">'
-        +'<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">'
-            +'<path fill-rule="evenodd" clip-rule="evenodd" d="M11.3166 6.00008C11.3166 8.95032 8.92493 11.342 5.97469 11.342C3.02445 11.342 0.632812 8.95032 0.632812 6.00008C0.632812 3.04984 3.02445 0.658203 5.97469 0.658203C8.92493 0.658203 11.3166 3.04984 11.3166 6.00008ZM4.5995 4.17161C4.47433 4.04644 4.27139 4.04644 4.14622 4.17161C4.02105 4.29678 4.02105 4.49972 4.14622 4.62489L5.52215 6.00081L4.14622 7.37674C4.02105 7.50191 4.02105 7.70485 4.14622 7.83001C4.27139 7.95518 4.47433 7.95518 4.5995 7.83001L5.97542 6.45409L7.35135 7.83001C7.47652 7.95518 7.67946 7.95518 7.80462 7.83001C7.92979 7.70485 7.92979 7.50191 7.80462 7.37674L6.4287 6.00081L7.80462 4.62489C7.92979 4.49972 7.92979 4.29678 7.80462 4.17161C7.67946 4.04644 7.47652 4.04644 7.35135 4.17161L5.97542 5.54754L4.5995 4.17161Z" fill="#F94B50"/>'
-        +'</svg>'
-        +'Over'
-    +'</span>'
-);
-var iconEdit = (
-    '<svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">'
-        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.48738 14.1424L15.7338 3.896C16.0951 3.53467 16.6809 3.53467 17.0422 3.89598L20.3545 7.20806C20.7159 7.5694 20.7159 8.15527 20.3545 8.51661L10.1082 18.763C9.98563 18.8856 9.83107 18.9713 9.66217 19.0103L6.07678 19.8383C5.07726 20.0692 4.18136 19.1733 4.41218 18.1737L5.24011 14.5885C5.27912 14.4196 5.3648 14.265 5.48738 14.1424ZM5.63013 18.455L6.43711 14.9605L16.388 5.00951L19.241 7.86236L9.29015 17.8133L5.79549 18.6204C5.69623 18.6433 5.60718 18.5544 5.63013 18.455Z" fill="#A5A5A5"/>'
-        +'<path d="M4.79199 21.1248C4.44681 21.1248 4.16699 21.4046 4.16699 21.7498C4.16699 22.095 4.44681 22.3748 4.79199 22.3748H20.2087C20.5538 22.3748 20.8337 22.095 20.8337 21.7498C20.8337 21.4046 20.5538 21.1248 20.2087 21.1248H4.79199Z" fill="#A5A5A5"/>'
-    +'</svg>'
-);
-var iconTrash = (
-    '<svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">'
-        +'<path d="M10.4169 9.77138C10.7621 9.77138 11.0419 10.0512 11.0419 10.3964V18.2089C11.0419 18.5541 10.7621 18.8339 10.4169 18.8339C10.0717 18.8339 9.79189 18.5541 9.79189 18.2089L9.79189 10.3964C9.79189 10.0512 10.0717 9.77138 10.4169 9.77138Z" fill="#A5A5A5"/>'
-        +'<path d="M15.2086 10.3964C15.2086 10.0512 14.9287 9.77138 14.5836 9.77138C14.2384 9.77138 13.9586 10.0512 13.9586 10.3964V18.2089C13.9586 18.5541 14.2384 18.8339 14.5836 18.8339C14.9287 18.8339 15.2086 18.5541 15.2086 18.2089L15.2086 10.3964Z" fill="#A5A5A5"/>'
-        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.85449 4.14648C8.85449 3.28354 9.55405 2.58398 10.417 2.58398H14.5837C15.4466 2.58398 16.1462 3.28354 16.1462 4.14648V5.5007L20.2087 5.5007C20.5538 5.5007 20.8337 5.78052 20.8337 6.1257C20.8337 6.47088 20.5538 6.7507 20.2087 6.7507H19.792V20.084C19.792 21.8099 18.3929 23.209 16.667 23.209H8.33366C6.60777 23.209 5.20866 21.8099 5.20866 20.084V6.7507H4.79199C4.44681 6.7507 4.16699 6.47088 4.16699 6.1257C4.16699 5.78052 4.44681 5.5007 4.79199 5.5007H8.85449V4.14648ZM10.417 3.83398H14.5837C14.7562 3.83398 14.8962 3.9739 14.8962 4.14648V5.50065H10.1045V4.14648C10.1045 3.9739 10.2444 3.83398 10.417 3.83398ZM6.45866 6.7507H18.542V20.084C18.542 21.1196 17.7025 21.959 16.667 21.959H8.33366C7.29813 21.959 6.45866 21.1196 6.45866 20.084V6.7507Z" fill="#A5A5A5"/>'
-    +'</svg>'
-);
-var iconLink = (
-    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">'
-        +'<path d="M9.53353 2.06602C9.53353 1.8451 9.71261 1.66602 9.93353 1.66602H12.9335C13.7067 1.66602 14.3335 2.29282 14.3335 3.06602V6.06602C14.3335 6.28693 14.1544 6.46602 13.9335 6.46602C13.7126 6.46602 13.5335 6.28693 13.5335 6.06602V3.06602C13.5335 3.05481 13.5332 3.04367 13.5326 3.03262L7.94977 8.61546C7.79356 8.77167 7.54029 8.77167 7.38408 8.61546C7.22787 8.45925 7.22787 8.20598 7.38408 8.04977L12.9669 2.46693C12.9559 2.46632 12.9447 2.46602 12.9335 2.46602H9.93353C9.71261 2.46602 9.53353 2.28693 9.53353 2.06602Z" fill="#2C2C2C"/>'
-        +'<path d="M3.66699 3.13268C3.00425 3.13268 2.46699 3.66994 2.46699 4.33268V12.3327C2.46699 12.9954 3.00425 13.5327 3.66699 13.5327H11.667C12.3297 13.5327 12.867 12.9954 12.867 12.3327V8.99928C12.867 8.77837 13.0461 8.59928 13.267 8.59928C13.4879 8.59928 13.667 8.77837 13.667 8.99928V12.3327C13.667 13.4373 12.7716 14.3327 11.667 14.3327H3.66699C2.56242 14.3327 1.66699 13.4373 1.66699 12.3327V4.33268C1.66699 3.22811 2.56242 2.33268 3.66699 2.33268H7.00032C7.22124 2.33268 7.40032 2.51177 7.40032 2.73268C7.40032 2.9536 7.22124 3.13268 7.00032 3.13268H3.66699Z" fill="#2C2C2C"/>'
-    +'</svg>'
-);
-var maxItemCount = 10;
-// 물품 청구 신청 메세지
-function makeRequestItemsInput(requestdata) {
-    var messageWrap = $('<div class="custom-message"></div>');
-    //var messageWrap = $('<div class=""></div>');
+// HSCode 조회 결과(예외처리)
+function hsCodeResultErrorPage(data) {
     
-    var messageTextWrap = $('<div class="message simple-text"></div>');
-    var messageTextContent = $(
-         '<p>'
-            +'엘지니에서는  한 번에 <b>최대 10개</b>의 물품을 청구할 수 있어요. 아래 버튼을 눌러 물품 청구에 필요한 정보를 입력해 주세요.'
-         +'</p>'
+    var hsCodeResultMessage = $('<div class="custom-message"></div>');
+    var budgetMessageResult = $('<div class="message"></div>');
+    var hsCodeResultErrorWrap = $('<div class="message simple-text"></div>');
+    
+    var hsCodeResultErrorMessage = $(
+         '<p>시스템 오류로 인해 조회되지 않았어요. 아래 버튼을 눌러 Hs code을 다시 조회해 보세요.</p>'
     );
-    var loadBtn = $(
+    
+    var hsCodeResultReloadBtn = $(
         '<div class="btn">'
-            +'<button type="button" class="btn btn-emphasis btn-big">물품 청구하기</button>'
-        +'</div>'
+        + '<button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color" data-slot="N"><span>HS Code 다시 물어보기</span></button>'
+        + '</div>'
     );
-    loadBtn.on('click', function() {
-        requestdata.step = 1;
-        requestItemsPopupOpen(requestdata);
+
+    hsCodeResultReloadBtn.on('click', function() {
+        addHsCodePopupOpen(data);
+        
+        var orgId = data.orgId;
+        var partNo = data.partNo;
+        var origCntryCode = data.origCntryCode;
+        var countryNameKo = data.countryNameKo;
+        var countryNameEn = data.countryNameEn;
+        var countryCdTrd = data.countryCdTrd;
+        var isoNum = data.isoNum;
+        
+        if(orgId != ""){
+            $("#hsCode_orgId").val(orgId);
+
+            $("#hsCode_orgId").closest('.input-form').find('.input-val-del').addClass('show');
+        }
+        
+        if(partNo != ""){
+            $("#hsCode_partNo").val(partNo);
+            $("#hsCode_partNo").closest('.input-form').find('.input-val-del').addClass('show');
+            checkHsCodeRequire();
+        }
+        
+        if(origCntryCode != ""){
+            
+            var $memList = $(".form-hsCode").find(".selected-members");
+            var htmlStr;
+            
+            htmlStr = '<div class="member-info">'
+              + '<input type="hidden" value="'+countryNameEn+'" class="country-name"/>'
+              + '<input type="hidden" value="'+countryNameKo+'" class="country-nameKo"/>'
+              + '<input type="hidden" value="'+origCntryCode+'" class="country-code"/>'
+              + '<input type="hidden" value="'+countryCdTrd+'" class="country-codeTrd"/>'
+              + '<input type="hidden" value="'+isoNum+'" class="country-isoNum"/>'
+              +'</div>';
+              
+            $memList.append(htmlStr);
+
+            $("#attendees").val(countryNameEn);
+            $("#attendees").closest('.input-form').find('.input-val-del').addClass('show');
+        }  
     });
-    messageTextWrap.append(messageTextContent);
-    messageTextWrap.append(loadBtn);
     
-    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
-    var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
-    var guide = $('<button type="button" class="btn-quick-reply btn-basic">물품 청구 가이드</button>');
-    var history = $('<button type="button" class="btn-quick-reply btn-basic">물품 청구 내역</button>');
-    quickBtnBox.append(guide);
-    quickBtnBox.append(history);
-    messageTextWrap2.append(quickBtnBox);
+    hsCodeResultErrorWrap.append(hsCodeResultErrorMessage);
+    hsCodeResultErrorWrap.append(hsCodeResultReloadBtn);
     
-    guide.on('click', function() {
-        console.log('물품 청구 가이드');
+    budgetMessageResult.append(hsCodeResultErrorWrap);
+    hsCodeResultMessage.append(budgetMessageResult);
+            
+    return hsCodeResultMessage;
+}
+
+//Hs Code 조회 START
+function makeHsCodeCard(data) {
+    var hsCodeCard = $('<div class="message simple-text"></div>');
+        var hsCodeText = $(
+        '<div class="message">'
+        +   '<p>엘지니는 <b>한국이 수입국</b>인 경우의 안내해 드릴 수 있어요.</p>'
+        +   '<p><b>HS Code</b> 조회에 필요한 정보를 아래 버튼을 눌러 입력해주세요.</p>'
+        +'</div>' )
+    hsCodeCard.append(hsCodeText);
+
+    var hsCodeBtnWrap = $('<div class="btn"></div>');
+    var hsCodeBtn = $('<button type="button" class="btn btn-emphasis">HS Code 조회</button>');
+    
+    hsCodeBtn.on('click', function() {
+        addHsCodePopupOpen(data);
     });
-    history.on('click', function() {
-        console.log('물품 청구 내역');
-    });
+    
+    hsCodeBtnWrap.append(hsCodeBtn);
+    hsCodeCard.append(hsCodeBtnWrap);
     
     if(checkChatHistory == false) {
-        //requestItemsPopupOpen(quickBtnBox);
+        //강예진 선임 요청으로 주석처리
+        //addHsCodePopupOpen(data);
     }
     
-    messageWrap.append(messageTextWrap);
-    messageWrap.append(messageTextWrap2);
-
-    //messageBox.append(messageTextWrap);
-    //messageWrap.append(messageBox);
-    return messageWrap;
-    //return messageTextWrap;
+    return hsCodeCard;
 }
 
-// [ 물품 청구 신청 입력 팝업 ]
-var requestItemsInputForm;
-function requestItemsPopupOpen(requestdata) {
+function addHsCodePopupClose() {
+    $('#addHsCode').removeClass('show');
+    $('.plugin-dim').removeClass('show');
+    setTimeout(function() {
+        $('.plugin-dim').remove();
+        $('#addHsCode').remove();
+    }, 300);
+}
+
+// HsCode 조회 popup
+function addHsCodePopupOpen(data) {
+    var hsCodeReply = data.hsCodeReply;
+    var organizationId = data.organizationId;
+    var partNo = data.partNo;
+    var origCntryCode = data.origCntryCode;
+    
     /* #########[ popup_wrap_start ]######### */
+    
     var pulginDim = $('<div class="plugin-dim show"></div>');
-    //var addPlugin = $('<div class="plugins another-account-order" id="request-items"></div>');
-    var addPlugin = $('<div class="plugins products-bill" id="products-bill" style="height: 100%;max-height: calc(100% - 38px);"></div>');
+    var addHsCode = $('<div class="plugins" id="addHsCode"></div>');
 
     /* #########[ popup_header ]######### */
-    var pluginHeader = $('<div class="plugin-header"><h1>물품 청구 ('+ '1' + '/' + '3' +')</h1></div>');
-    var pluginClose = $('<span class="close-plugin">' + iconPopupClose + '</span>');
-    pluginClose.on('click', function() {
-        thisPluginClose();
+    var addHsCodeHeader = $('<div class="plugin-header"><h1>HS Code 조회</h1></div>');
+    var addHsCodeClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    
+    addHsCodeClose.on('click', function() {
+        addHsCodePopupClose();
     })
-    pluginHeader.append(pluginClose);
-    addPlugin.append(pluginHeader);
-    function thisPluginClose() {
-        $('#products-bill').removeClass('show');
-        $('.plugin-dim').removeClass('show');
-        setTimeout(function() {
-            $('.plugin-dim').remove();
-            $('#products-bill').remove();
-        }, 300);
-    }
+    addHsCodeHeader.append(addHsCodeClose);
+    addHsCode.append(addHsCodeHeader);
 
-    /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents" id="item-content" style="height: 100%; max-height: calc(100vh - 100px);"></div>');
-    var requestForm = requestItemsInputFirst(requestdata);
-    //var requestForm = requestItemsInputSecond(requestdata);
-    pluginContents.append(requestForm);
-    addPlugin.append(pluginContents);
+    /* #########[ popup_content_wrap_start ]######### */
+    var addHsCodeContents = $('<div class="plugin-contents" style="max-height: calc(90vh - 170px);"></div>');
+    var addHsCodeForm = $('<form class="form-hsCode"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ 사업부 코드 ]###  */
+    var orgIdInputBox = $('<div class="input-box"><label>사업부 코드</label></div>');
+    var orgIdList = $('<div class="orgId-form scrollbar-able"></div>');
 
+    var selectedOrg = $('<div class="selected-org fold"></div>');
+    orgIdList.append(selectedOrg);
+    var autocompleteOrg = $('<div class="autocomplete-member"></div>');
+    orgIdList.append(autocompleteOrg);
+
+    var orgIdInputForm = $('<div class="input-form"></div>');
+    var orgIdInput = $('<input type="text" placeholder="사업부 코드나 사업부 명 입력 후 \'Enter\'로 검색" id="hsCode_orgId" class="search-input" autocomplete="off"/>');
+    var orgDelButton = $('<span class="input-val-del">'
+        +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+        +'</svg>'
+        +'</span>'
+    );
+    var orgIdSmall = $('<small class="hsCode-orgId show">사업부 코드 미입력 시 전체 사업부로 조회됩니다.</small>');
+    
+    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;"></ul>');
+
+    autocompleteOrg.append(orgUi);
+    
+    orgIdInputForm.on('keyup', function(e) {
+        var orgIdInput = e.target.value;
+        checkHsCodeRequire(); //
+
+        if (orgIdInput) {
+            $(this).find('.input-val-del').addClass('show');
+        } else {
+            $(this).find('.input-val-del').removeClass('show');
+        };
+    });
+
+    orgIdInput.on('keyup', function(e) {
+        var orgs = [];
+
+        if (window.event.keyCode == 13) {
+            var ul = $(this).closest('.orgId-form').find('ul');
+            ul.empty();
+
+            var inputVal = $(this).val().toUpperCase();
+            var inputLength = inputVal.length;
+            
+            if(inputLength > 1){
+                
+                data.orgItems.forEach(function(item){
+                    var org = {};
+        
+                    // 코드, 이름 like
+                    /* 
+                    var orgName = item.ORGANIZATION_NAME.substr(0,inputLength).toUpperCase();
+                    var orgCode = item.ORGANIZATION_CODE.substr(0,inputLength);
+                    */
+                    var orgName = item.ORGANIZATION_NAME.toUpperCase();
+                    var orgCode = item.ORGANIZATION_CODE;
+                    
+                    if (orgName.indexOf(inputVal) != -1||orgCode.indexOf(inputVal) != -1) {
+                        org.label = "";
+                        org.ATTRIBUTE2 = item.ATTRIBUTE2;
+                        org.ATTRIBUTE4 = item.ATTRIBUTE4;
+                        org.COMPANY_CODE = item.COMPANY_CODE;
+                        org.ORGANIZATION_CODE = item.ORGANIZATION_CODE;
+                        org.ORGANIZATION_NAME = item.ORGANIZATION_NAME;
+                        orgs.push(org);
+                    }
+                });
+
+                if(orgs.length == 0){
+                    var org = {};
+                    org.label = "검색 결과가 없습니다.";
+                    org.ATTRIBUTE2 = "";
+                    org.ATTRIBUTE4 = "";
+                    org.COMPANY_CODE = "";
+                    org.ORGANIZATION_CODE = "";
+                    org.ORGANIZATION_NAME = "";
+                    orgs.push(org);
+                }
+
+                orgs.map(org => {
+                    var li = $('<li class="ui-menu-item"></li>');
+                    var htmlStr = "";
+        
+                    if (org.label == "") {
+                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">'+ org.ORGANIZATION_CODE + ' <span>'+ org.ORGANIZATION_NAME +'</span>';
+                        htmlStr += '<input type="hidden" class="org-atr2" value="' + org.ATTRIBUTE2 + '"/>';
+                        htmlStr += '<input type="hidden" class="org-atr4" value="' + org.ATTRIBUTE4 + '"/>';
+                        htmlStr += '<input type="hidden" class="org-companyCode" value="' + org.COMPANY_CODE + '"/>';
+                        htmlStr += '<input type="hidden" class="org-orgCode" value="' + org.ORGANIZATION_CODE + '"/>';
+                        htmlStr += '<input type="hidden" class="org-orgName" value="' + org.ORGANIZATION_NAME + '"/>';
+                        htmlStr += '</div>';
+                    }else {
+                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">'+ org.label + '</div>';
+                        htmlStr += '<input type="hidden" class="org-atr2" value=""/>';
+                        htmlStr += '<input type="hidden" class="org-atr4" value=""/>';
+                        htmlStr += '<input type="hidden" class="org-companyCode" value=""/>';
+                        htmlStr += '<input type="hidden" class="org-orgCode" value=""/>';
+                        htmlStr += '<input type="hidden" class="org-orgName" value=""/>';
+                        htmlStr += '</div>';
+                    }
+        
+                    li.append(htmlStr);
+                    orgUi.append(li);
+        
+                    li.on('click', function() {
+                        var orgCode = $(this).find('.org-orgCode').val();
+                        var orgName = $(this).find('.org-orgName').val();
+                        var attr2 = $(this).find('.org-atr2').val();
+                        var attr4 = $(this).find('.org-atr4').val();
+                        var companyCode = $(this).find('.org-companyCode').val();
+                
+                        if(orgCode != ""){
+                            var orgInfo = $('<div class="sel-org-info" style="display: none;">'
+                              + '<input type="hidden" value="'+ attr2 +'" class="sel-org-atr2"/>'
+                              + '<input type="hidden" value="'+ attr4 +'" class="sel-org-atr4"/>'
+                              + '<input type="hidden" value="'+ companyCode +'" class="sel-org-companyCode"/>'
+                              + '<input type="hidden" value="'+ orgCode +'" class="sel-org-Code"/>'
+                              + '<input type="hidden" value="'+ orgName +'" class="sel-org-Name"/>'
+                              +'</div>'
+                            );
+                        
+                            selectedOrg.empty();
+                            selectedOrg.append(orgInfo);
+                            orgIdInput.val(orgCode);
+                        }else{
+                            orgIdInput.val("");
+                            selectedOrg.empty();
+                        }
+                
+                        orgUi.css('display','none');
+                        
+                    });
+                })
+        
+                if(orgUi.length){
+                    orgUi.css('display','block');
+                }
+            }else{
+                showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
+                $(this).focus();
+                orgUi.css('display','none');
+            }
+        }
+
+    });
+    
+    $(document).on('click', function(e) {
+        if ($('.orgId-form').has(e.target).length === 0) {
+            orgUi.css('display','none');
+            if(selectedOrg.length == 0){
+                orgIdInput.val('');
+            }else{
+                if(orgIdInput.val()){
+                    var selecteVal = selectedOrg.find('.sel-org-Code').val();
+                    orgIdInput.val(selecteVal);
+                }else{
+                    orgIdInput.val('');
+                    selectedOrg.empty();
+                }
+            }
+        }
+    });
+    
+    orgIdInputForm.append(orgIdInput);
+    orgIdInputForm.append(orgDelButton);
+    orgIdList.append(orgIdInputForm);
+    orgIdList.append(orgIdSmall);
+
+    orgIdInputBox.append(orgIdList);
+    addHsCodeForm.append(orgIdInputBox);
+    
+    /* ###[ Part/Model No. ]###  */
+    var partNoInputBox = $(
+        '<div class="input-box">'
+            +'<label>Part/Model No.<b>*</b></label>'
+        +'</div>'
+    );
+    var partNoInputForm = $(
+        '<div class="input-form">'
+            +'<input type="text" placeholder="내용을 입력해 주세요." name="hsCode_partNo" id="hsCode_partNo" max-length="358" pattern="" />'
+            +'<span class="input-val-del">'
+                +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+                +'</svg>'
+            +'</span>'
+        +'</div>'
+    );
+    partNoInputForm.on('keyup', function(e) {
+        partNoInput = e.target.value;
+        checkHsCodeRequire();
+
+        if (partNoInput) {
+            $(this).find('.input-val-del').addClass('show');
+        } else {
+            $(this).find('.input-val-del').removeClass('show');
+        };
+        
+    });
+    
+    partNoInputForm.on('blur keyup', function(e) {
+        partNoInput = e.target.value;
+        var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+        
+        if(check.test(partNoInput)){
+            showSmallDialog("영어,숫자,기호만 입력해주세요.");
+            $('#hsCode_partNo').focus();
+        }
+        
+    });
+    
+    partNoInputBox.append(partNoInputForm);
+    addHsCodeForm.append(partNoInputBox);
+    
+    /*  ###[ 수출국 ]###  */
+    var memberInputBox = $('<div class="input-box"><label>수출국</label></div>');
+    var memberList = $('<div class="country-form scrollbar-able"></div>');
+    
+    var selectedMembers = $('<div class="selected-members fold"></div>');
+    memberList.append(selectedMembers);
+    var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-4" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
+    memberList.append(autocompleteMember);
+    
+    //var memberInput = $('<input type="text" placeholder="수출국을 영어로 입력해 주세요." id="attendees" class="search-input" />');
+    var countryInputForm = $('<div class="input-form"></div>');
+    var countryInput = $('<input type="text" placeholder="수출국을 영어로 입력해 주세요." id="attendees"/>');
+    var countryInputSpan = $(
+        '<span class="input-val-del">'
+            +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+            +'</svg>'
+        +'</span>'
+    );
+    setAutocompleteCountry(countryInput, data.items);
+    countryInputForm.append(countryInput);
+    countryInputForm.append(countryInputSpan);
+
+    memberList.append(countryInputForm);
+    memberInputBox.append(memberList);
+    addHsCodeForm.append(memberInputBox);
+
+    countryInput.on('focus keyup', function(e) {
+        countryInputVal = e.target.value;
+        checkHsCodeRequire();
+
+        if (countryInputVal) {
+            $(this).find('.input-val-del').addClass('show');
+        } else {
+            $(this).find('.input-val-del').removeClass('show');
+        };
+        
+    });
+    
+    countryInput.on('blur', function(e) {
+        $(this).closest('.input-box').css('padding-bottom','10px');
+    });
+
+    addHsCodeContents.append(addHsCodeForm);
+    addHsCode.append(addHsCodeContents);
+    
+    var addHsCodeFoot = $('<div style="padding: 0px 16px 0px 16px; position: relative;"></div>');
+    var addHsCodeSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-hsCode">조회</button>');
+    addHsCodeFoot.append(addHsCodeSubmit);
+    addHsCode.append(addHsCodeFoot);
+    
+    addHsCodeSubmit.on('click', function() {
+        var orgId = $('#hsCode_orgId').val().toUpperCase();
+        var partNo = $('#hsCode_partNo').val();
+        var countryCd = $('.country-code').val();
+        var countryText = $('#attendees').val();
+
+        var requestParam = {
+            query: {
+                "event": "avaliableHsCodeReturnEvent"
+            },
+            payload:{
+                "PART_NO" : partNo,
+                "ORGANIZATION_ID" : orgId,
+                "ORIG_CNTRY_CODE" : countryCd
+            }
+        };
+        
+        var abledFlag = $('#btn-hsCode').hasClass("btn-disabled");
+        if(!abledFlag){
+            sendChatApi(requestParam, null, function(payload){
+                var message = payload.queryResult.messages[0];
+                var response = message.response;
+                var result = JSON.parse(response);
+                
+                if(result == null){
+                    var param = {
+                        "ORGANIZATION_ID":orgId,
+                        "PART_NO":partNo,
+                        "ORIG_CNTRY_CODE":countryCd
+                    }
+                                        
+                    chatui.sendEventMessage("importedHsCodeEvent", param);
+                }else{
+                    if(result.HsCodeApiResultMessage == "Organization code is invalid"||result.HsCodeApiResultMessage == "Part No is not exits.") {
+                        
+                        result = JSON.parse(response);
+                
+                        $('.test-panel').append('<div class="small-dialog"></div>');
+                        $('.small-dialog').append(result.HsCodeApiResultText);
+                        $('.small-dialog').addClass('show');
+                        setTimeout(function() {
+                            $('.small-dialog').removeClass('show');
+                        }, 2000);
+                          
+                        setTimeout(function() {
+                            $('.small-dialog').remove();
+                        }, 5000);
+                            
+                    }else{
+                        var param = {
+                            "ORGANIZATION_ID":orgId,
+                            "PART_NO":partNo,
+                            "ORIG_CNTRY_CODE":countryCd
+                        }
+                                            
+                        chatui.sendEventMessage("importedHsCodeEvent", param);
+                    }
+                }
+            });
+        }
+    });
+    
     /* #########[ popup_wrap_end ]######### */
     $('.test-panel').append(pulginDim);
-    $('.test-panel').append(addPlugin);
+    $('.test-panel').append(addHsCode);
     $('.plugin-dim').css('display', 'block');
-    $('#products-bill').css('display', 'block');
-    //$('#products-bill').css('max-height', 'calc(100%-10px)');
+    $('#addHsCode').css('display', 'block');
+    
     setTimeout(function() {
         $('.plugin-dim').addClass('show');
-        $('#products-bill').addClass('show');
+        $('#addHsCode').addClass('show');
+    }, 100);
+    
+    /*  #########[ input-form ]#########  */
+    $('.input-val-del').on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+            
+            var inputKind = $(this).parents('.input-form').find('input').attr('id');
+            
+            if(inputKind == "hsCode_partNo"){
+                partNoInput = $('#hsCode_partNo').val();
+            }else if(inputKind == "attendees"){
+                $(this).closest('.country-form').find('.member-info').empty();
+            }else if(inputKind == "hsCode_orgId"){
+                selectedOrg.empty();
+                orgIdInput.val("");
+            }
+
+            checkHsCodeRequire();
+        }
+    });
+}
+
+// 국가 자동 완성 모듈
+const setAutocompleteCountry = function(input, items) {
+  // Test Item
+  var keyword = [];   
+  
+  //var $autocompleteWrap;
+  $(input).on('focus keyup', function(e) {
+      var countrys = [];
+      var inputVal = $(input).val().toUpperCase();
+      var searchVal = "'" + inputVal + "'";
+      var sessionId = $(input).closest(".form-hsCode").attr("data-sessionId");
+     // 임직원 검색
+     var options = {
+       keyword: inputVal, // 이름 또는 전화번호 (Ex. "홍길동", "1234")
+         limit: 30    // default 30, max 100
+     };
+
+     var inpLength = inputVal.length;
+     
+     items.forEach(function(item){
+        var ctrNmEn = item.ctrNmEn;
+        var country = {
+            label:"",
+            type:"",
+            labelKo:"",
+            code:"",
+            codeTrd:"",
+            isoNum:""
+        };
+        
+        if(inpLength == 0){
+            country.label = ctrNmEn;
+            country.type = "person";
+            country.labelKo = item.ctrNmKo;
+            country.code = item.ctrCd;
+            country.codeTrd = item.ctrCdTrd;
+            country.isoNum = item.isoNum;
+            countrys.push(country);
+        }else{
+            var ctrNmStr = ctrNmEn.substr(0,inpLength).toUpperCase();
+            
+            if (ctrNmStr.indexOf(inputVal) != -1) {
+                country.label = ctrNmEn;
+                country.type = "person";
+                country.labelKo = item.ctrNmKo;
+                country.code = item.ctrCd;
+                country.codeTrd = item.ctrCdTrd;
+                country.isoNum = item.isoNum;
+                countrys.push(country);
+            }
+        }
+     });
+     
+     // 검색 결과가 없을 경우
+     if(countrys.length == 0){
+        var country = {};
+        country.label = "검색 결과가 없습니다.";
+        country.type = "none";
+        country.labelKo = "none";
+        country.code = "none";
+        country.codeTrd = "none";
+        country.isoNum = "none";
+        countrys.push(country);
+     }
+     
+     keyword = countrys;
+     
+    $(input).autocomplete("option", "source", keyword);
+    $(input).autocomplete("option", "appendTo", $(input).closest(".country-form").find(".autocomplete-member"));
+
+  }).autocomplete({
+      appendTo: ".country-form .autocomplete-member",
+      autofocus: true,
+      delay: 300,
+      source: keyword,
+      minLength : 0,
+      create: function() {
+        
+      },
+      open: function(event, ui) {
+          $('.country-form .ui-autocomplete').scrollTop();
+          
+      },
+      focus: function(event, ui){
+          //$(this).val(ui.item.label);
+          
+         // return false;
+      },
+      select: function(event, ui){
+
+        $(this).closest('.input-box').css('padding-bottom','10px');
+        
+        if(ui.item.type == "none"){
+            $(this).val('');
+            $(this).find('.input-val-del').removeClass('show');
+            return false;
+        }
+
+        var $memList = $(this).closest(".country-form").find(".selected-members");
+        var htmlStr;
+
+        $(this).val(ui.item.label);
+        $(this).find('.input-val-del').addClass('show');
+
+        htmlStr = '<div class="member-info">'
+        + '<input type="hidden" value="'+ui.item.label+'" class="country-name"/>'
+        + '<input type="hidden" value="'+ui.item.labelKo+'" class="country-nameKo"/>'
+        + '<input type="hidden" value="'+ui.item.code+'" class="country-code"/>'
+        + '<input type="hidden" value="'+ui.item.codeTrd+'" class="country-codeTrd"/>'
+        + '<input type="hidden" value="'+ui.item.isoNum+'" class="country-isoNum"/>'
+        +'</div>';
+        
+        $memList.empty();
+        $memList.append(htmlStr);
+        
+        hsCodeCountryCheck();
+
+        return false;
+      },
+        response: function( event, ui ) {
+            var contents = ui.content;
+            var dataSize = contents.length;
+            
+            var heightSize = "";
+            
+            if(dataSize == 0){
+                var content = {};
+                content.label = "검색 결과가 없습니다.";
+                content.type = "none";
+                content.labelKo = "";
+                content.code = "";
+                content.codeTrd = "";
+                content.isoNum = "";
+                contents.push(content);
+
+                heightSize = "30px";
+            }else if(dataSize == 1){
+                heightSize = "70px";
+            }else if(dataSize == 2){
+                heightSize = "110px";
+            }else if(dataSize == 3){
+                heightSize = "150px";
+            }else if(dataSize == 4){
+                heightSize = "180px";
+            }else if(dataSize >= 5){
+                heightSize = "200px";
+            }
+            
+            $(this).closest('.input-box').css('padding-bottom', heightSize);
+            
+            $(this).closest('.plugin-contents').scrollTop(500);
+
+            hsCodeCountryCheck();
+        },
+        close: function(){
+            if($(this).val() == ""){
+                $(this).closest('.country-form').find('.member-info').empty();
+            }
+
+            var countryInfo = $(this).closest('.country-form').find('.member-info').find('input');
+            var contryName = $(this).closest('.country-form').find('.member-info').find('.country-name').val();
+            
+            if(countryInfo.length == 0){
+                $(this).val('');
+                $(this).closest('.input-form').find('.input-val-del').removeClass('show');
+            }else{
+                if($(this).val()){
+                    $(this).closest('.input-form').find('.input-val-del').addClass('show');
+                    $(this).val(contryName);
+                }else{
+                    $(this).val('');
+                    $(this).closest('.country-form').find('.member-info').empty()
+                    $(this).closest('.input-form').find('.input-val-del').removeClass('show');
+                }
+            }
+            
+            hsCodeCountryCheck();
+        }
+  }).focus(function(){
+      $(this).data("uiAutocomplete").search($(this).val());
+      $(this).autocomplete("search", $(this).val());
+      
+  }).autocomplete("instance")._renderItem = function( ul, item ) {
+      var searchMask = this.element.val();
+      var regEx = new RegExp(searchMask, "ig");
+      var replaceMask = "<strong>$&</strong>";
+      var labelStr = item.label.replace(regEx, replaceMask);
+      var htmlStr;
+
+      if (item.type == "person") {
+          htmlStr = 	'<div class="person-info">'+ item.label + ' <span>'+ item.labelKo +'</span></div>';
+      }else if (item.type == "none") {
+          htmlStr = 	'<div class="person-info">'+ item.label + '</div>';
+      }
+
+      var listItem;
+
+      if (item.type == "keyword") {
+          listItem = '<li style="display:none"></li>';
+      } else {
+          listItem = '<li></li>';
+      }
+
+      return $(listItem)
+              .data( "ui-autocomplete-item", item )
+              .append(htmlStr)
+              .appendTo(ul);
+  };
+  
+  // Delete Schedule Join Member
+  $(document).on('click', '.country-form .input-form .input-val-del', function(){
+      $(this).closest(".member-info").remove();
+      hsCodeCountryCheck();
+      $("#attendees").css('display', "block");
+      $(".selected-members").css("height", "0px");
+  })
+};
+
+function hsCodeCountryCheck() {
+  var countryInput = $('#attendees');
+
+  if(countryInput.val() != "") {  
+    $('#attendees').attr('placeholder', '');
+  } else {
+    $('#attendees').attr('placeholder', '수출국을 영어로 입력해 주세요.');
+  }
+}
+
+function hsCodeOrgCheck() {
+    var orgInput = $('#hsCode_orgId');
+  
+    if(orgInput.val() != "") {  
+        orgInput.attr('placeholder', '');
+    } else {
+        orgInput.attr('placeholder', '사업부 코드나 사업부 명 입력 후 \'Enter\'로 검색');
+    }
+}
+
+function showHtmlSmallDialog(msg) {
+  $('.test-panel').append('<div class="small-dialog"></div>');
+  $('.small-dialog').html(msg);
+  $('.small-dialog').addClass('show');
+  setTimeout(function() {
+    $('.small-dialog').removeClass('show');
+  }, 2000);
+
+  setTimeout(function() {
+    $('.small-dialog').remove();
+  }, 5000);
+}
+
+// HSCode 조회 결과 메세지 (단건)
+function hsCodeResult(data) {
+    var chatRight = $('#divScroll').find('.right').last();
+    var chatRightVal= chatRight.find('.message').text();;
+    console.log(data.items);
+    var hsCodeResult = $('<div class="custom-message scrollfix"></div>');
+    var hsCodeResultMessageWrap = $('<div class="message"></div>');
+    var hsCodeResultContentWrap = $('<div class="importCargo-wrap"></div>');
+    
+    var msgCon = $('<div class="message simple-text"></div>');
+    
+    var item = data.items[0];
+    
+    var textHtml = '';
+    if(item.userList.length === 1){
+        textHtml += '<p><font color="red"><b>' + data.partNo + '</b></font> 조회 결과입니다.</p>';
+    }else if(item.userList.length > 1){
+        textHtml += '<p><font color="red"><b>' + data.partNo + '</b></font> 조회 결과입니다. 이 HS Code를 사용하는 사업부는 <font color="red"><b>' + item.userList.length + '개</b></font>예요.</p>';
+    }
+    
+    var text = $(textHtml);
+    
+    msgCon.append(text);
+    hsCodeResult.append(msgCon);
+    
+    var hsCodeResultLiOrgName = "";
+    
+    if(item.userList.length === 1){
+        hsCodeResultLiOrgName += '<li><h5 style="font-size: 12px;">' + item.userList[0].organizationName + '</h5></li>';
+    }
+    
+    var hsCodeResultLiRate = "";
+    
+    if(item.rateList.length > 0){
+        item.rateList.forEach(function(itemR){
+            hsCodeResultLiRate += '<li><h4 class="hsCode-li-header">' + itemR.meaning + '</h4><div class="hsCode-li-content"><span>' + itemR.tariffRate + '</span></div></li>';
+        });
+    }
+    
+    var hsCodeResultLiUser = "";
+    if(item.userList.length === 1){
+        if(item.userList[0].userName !== ""){
+            hsCodeResultLiUser +='<li style="display: flex; align-items: baseline;"><h4 class="hsCode-li-header">담당자</h4><div class="hsCode-li-content"><span>' + item.userList[0].userName ;
+            if(item.userList[0].userEmail !== ""){
+                hsCodeResultLiUser += '</br>(<a id="hscode_userEmail" href="#" style="text-decoration: underline; ">' + item.userList[0].userEmail + '</a>)';
+            }
+            hsCodeResultLiUser += '</span></div></li>';
+        }
+    }
+    
+    var hsCodeResultLiCountry = "";
+    if(data.countryNameEn != ""){
+        hsCodeResultLiCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수출국</h4><div class="hsCode-li-content"><span>' + data.countryNameEn + '</span></div></li>';
+    }
+   
+    var hsCodeResultLiUserBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 및 담당자 조회</button></li>');
+    
+    var hsCodeResultContent = $('<div class="importCargo-content"></div>');
+
+    var itemDesc;
+    var standardItemDesc;
+
+    var hsCodeResultContentUi = $(
+        '<ul class="importCargo-list-wrap hsCodeResult-list-wrap">' 
+                + hsCodeResultLiOrgName
+                +'<li>'
+                    +'<div>'
+                        +'<h2>' + item.itemDesc + '</h2>'
+                        +'<div>' + item.standardItemDesc + '</div>'
+                    +'</div>'
+                +'</li>'
+                +'<li></li>'
+                +'<li>'
+                    +'<h4>HS Code</h4>'
+                    +'<div class="hsCode-li-header"><span class="hsCode-li-content"><h5>' + item.hsCode + '</h5></span></div>'
+                +'</li>'
+                +hsCodeResultLiCountry
+                +hsCodeResultLiRate
+                +hsCodeResultLiUser
+                +'<li>'
+                    +'<div class="importCargo-remain">'
+                        +'<div>* 본 품목에 대한 세율 및 HS Code는 ERP상 확정 데이터입니다.</div>'
+                        +'<div>* 관세혜택을 받으려면 원산지 결정기준을 충족하고 원산지 증명서를 제출해야 합니다.</div>'
+                    +'</div>'
+                +'</li>'
+            +'</ul>'
+    );
+    
+    if(item.userList.length > 1){
+        hsCodeResultContentUi.append(hsCodeResultLiUserBtn);
+    }
+    
+    hsCodeResultContent.append(hsCodeResultContentUi);
+    hsCodeResultContentWrap.append(hsCodeResultContent);
+    hsCodeResultMessageWrap.append(hsCodeResultContentWrap);
+    hsCodeResult.append(hsCodeResultMessageWrap);        
+    
+    hsCodeResultContentUi.find("li").find("a").click(function() {
+        var emailAddr = $(this).text().trim();
+        var temp = $('<textarea type="text" class="hidden-textbox" />');
+        $("body").append(temp);
+        temp.val(emailAddr).select();
+        document.execCommand('copy');
+        showHtmlSmallDialog(temp);
+        temp.remove();
+        
+        showHtmlSmallDialog('E-mail 주소가 복사되었습니다.');
+    });
+    
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var systemBtnHsCodeRe = $('<span class="btn-custom-reply">HS Code 다시 물어보기</span>');
+    quickReplies.append(systemBtnHsCodeRe);
+    //var systemBtnGPT = $('<span class="btn-custom-reply">GPT에게 물어보기</span>');
+    //quickReplies.append(systemBtnGPT);
+    hsCodeResult.append(quickReplies);
+    
+    systemBtnHsCodeRe.click(function(){
+        chatui.sendMessage("HS Code 조회");    
+    });
+    /* 
+    systemBtnGPT.click(function(){
+        //chatui.sendMessage("GPT에게 물어보기");
+        activeGptBot('');
+    });
+    */
+    
+    hsCodeResultLiUserBtn.click(function(){
+        addHsCodeSeachUserPopupOpen(item.userList);
+    });
+    
+    return hsCodeResult;
+}
+
+// HsCode 사업부 담당자 조회 popup
+function addHsCodeSeachUserPopupOpen(data) {
+    var hsCodeReply = data.hsCodeReply;
+    var organizationId = data.organizationId;
+    var partNo = data.partNo;
+    var origCntryCode = data.origCntryCode;
+    
+    /* #########[ popup_wrap_start ]######### */
+    
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addHsCode = $('<div class="plugins" id="addHsCode"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addHsCodeHeader = $('<div class="plugin-header"><h1>사업부 및 담당자 조회</h1></div>');
+    var addHsCodeClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    
+    addHsCodeClose.on('click', function() {
+        addHsCodePopupClose();
+    })
+    addHsCodeHeader.append(addHsCodeClose);
+    addHsCode.append(addHsCodeHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addHsCodeContents = $('<div class="plugin-contents" style="max-height: calc(92vh - 170px); scrollbar-width: auto;"></div>');
+    var addHsCodeForm = $('<form class="form-hsCode"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ 사업부 코두 ]###  */
+    var orgIdInputBox = $(
+        '<div class="input-box">'
+            +'<div class="hsCode-orgId">'
+                +'<label>총 <font color="#E0205C">' + data.length + '개</font> 사업부</label>'
+            +'</div>'
+        +'</div>'
+    );
+    
+    addHsCodeForm.append(orgIdInputBox);
+    
+    var hsCodeResultContentUi = $(
+        '<ul class="importCargo-list-wrap hsCodeResult-list-wrap"  style="display: flex; flex-direction: column;"></ul>'
+    );
+    
+    var hsCodeResultContentLiHtml = "";
+    
+    data.forEach(function(item){
+       hsCodeResultContentLiHtml += '<li style="display: flex;align-items: center;"><h5 style="width: 70px;">사업부</h5>'
+                    +'<div class="importCargo-type"><span style="font-size: 14px;">' + item.organizationName + '</span></div>'
+                +'</li>'
+        ;
+        if(item.userName != ""){
+            hsCodeResultContentLiHtml +='<li style="display: flex;align-items: center;"><h5 style="width: 70px;">담당자</h5><div class="importCargo-type"><span style="font-size: 14px;">' + item.userName
+            if(item.userEmail != ""){
+                hsCodeResultContentLiHtml +='(<a href="javascript:void(0)" style="text-decoration: underline; color: #0056b3; ">' + item.userEmail + '</a>)';
+            }
+            hsCodeResultContentLiHtml +='</span></div></li></br>';
+        }else{
+            hsCodeResultContentLiHtml +='<br>';
+        }
+    });
+    
+    var hsCodeResultContentLi = $(hsCodeResultContentLiHtml);
+    
+    hsCodeResultContentUi.append(hsCodeResultContentLi);
+    addHsCodeForm.append(hsCodeResultContentUi);
+    
+    hsCodeResultContentUi.find("li").find("a").click(function() {
+        var emailAddr = $(this).text().trim();
+        var temp = $('<textarea type="text" class="hidden-textbox" />');
+        $("body").append(temp);
+        temp.val(emailAddr).select();
+        document.execCommand('copy');
+        showHtmlSmallDialog(temp);
+        temp.remove();
+        
+        showHtmlSmallDialog('E-mail 주소가 복사되었습니다.');
+    });
+    
+    addHsCodeContents.append(addHsCodeForm);
+    addHsCode.append(addHsCodeContents);
+
+    // 조회버튼
+    var addHsCodeFoot = $('<div style="padding: 0px 16px 0px 16px; position: relative;"></div>');
+    var addHsCodeSubmit = $('<button type="button" class="btn btn-plugin btn-apply" id="btn-hsCode">확인</button>');
+    addHsCodeFoot.append(addHsCodeSubmit);
+    addHsCode.append(addHsCodeFoot);
+    
+    addHsCodeSubmit.on('click', function() {
+        addHsCodePopupClose();
+    });
+    
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addHsCode);
+    $('.plugin-dim').css('display', 'block');
+    $('#addHsCode').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addHsCode').addClass('show');
     }, 100);
 }
 
-// 물품 청구 신청 입력 팝업 컨텐츠 1
-function requestItemsInputFirst(requestdata) {
-    console.log('requestdata : ', requestdata);
-    //console.log('anotherAccountOrderForm : ', anotherAccountOrderForm);
+// HSCode 조회 결과 메세지 (없음)
+function hsCodeResultError(data) {
     
-    userId = chatui.getSetting("userId"); 
-    
-    var selDeptCode = (requestdata.department_code == null)? '':requestdata.department_code;
-    var selDeptName = (requestdata.department_name == null)? '':requestdata.department_name;
-    
-    var selPlantCode = (requestdata.plant_code == null)? '':requestdata.plant_code;
-    var selPlantName = (requestdata.plant_name == null)? '':requestdata.plant_name;
-    
-    var selProjectCode = (requestdata.project_code == null)? '':requestdata.project_code;
-    var selProjectName = (requestdata.project_name == null)? '':requestdata.project_name;
-    
-    var selAccountCode = (requestdata.account_code == null)? '':requestdata.account_code;
-    var selAccountName = (requestdata.account_name == null)? '':requestdata.account_name;
-
-    //$('.plugin-contents').css('overflow-y', 'auto');
-    var pluginHeader = $('.plugin-header');
-    pluginHeader.find('h1').text('물품 청구 ('+ '1' + '/' + '3' +')');
-    pluginHeader.find('.backBtn').remove();
-    setTimeout(function() {
-        $('.plugin-contents').css('overflow-y', 'auto');
-    },1);
-
-
-    /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-first" onsubmit="return false;"></form>');
-    
-    /* #########[ popup_content ]######### */
-    /* ###[ Department ]  ]### */
-    var inputBoxText1 = $('<div class="input-box add-order"><label>Department<b>*</b></label></div>');
-    // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
-    var inputTextContent1 = $('<div class="input-form order-select searchIcon" id="input_content1"></div>');
-    var departmentSelected = $('<div class="selected-order" id="input_selected1"></div>');
-    var inputBox1 = $('<input type="text" placeholder="Department 입력 후 \'Enter\'로 검색" max-length="50" id="department-name"  autocomplete="off"/>');
-    var departmentListCont = $('<div class="order-list"></div>');
-    
-    var departmentListTitle = $('<span>Department 목록</span>');
-    departmentListCont.append(departmentListTitle);
-    //inputBox.append('<input type="text" value="" id="costau-code"/>');
-    
-    inputTextContent1.append(departmentSelected);
-    inputTextContent1.append(inputBox1);
-    inputTextContent1.append(departmentListCont);
-    
-    var orderUl1 = $('<ul></ul>');
-    
-    inputBox1.on('keyup', function(e) {        
-
-        var inval = inputBox1.val();
-        console.log('key : '+inval);
-        
-        if(e.keyCode == 13) {
-            
-            if(inval.length < 2) {
-                showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
-                return;
-            }            
-            
-            // [퍼블 수정 및 추가] - order-select 스타일 변경
-            inputTextContent1.addClass('focus');
-                
-            //departmentListCont.addClass('show');      // 'department 목록' 같이 표시 
-            departmentListCont.removeClass('show');     // 'department 목록' 같이 표시 
-
-            orderUl1.empty();
-            
-            //LoadingWithMask(); 
-            
-            var requestParam = {
-                query: {
-                  "event": "reqItemsDepartmentSearchEvent"
-                },
-                payload: {
-                    BNAME: chatui.getSetting("userId"), 
-                    ZORGNAME: inval
-                }
-              };
-
-              sendChatApi(requestParam, null, function(payload){
-                //console.log('payload > ', payload);
-                var result = JSON.parse(payload.queryResult.messages[0].response);
-                console.log('result', result);
-                
-                if(result == null) {
-                  var orderLi1 = $('<li class="no-res">Department 정보가 없습니다.</li>');
-                  orderUl1.append(orderLi1);
-                  departmentListCont.append(orderUl1);
-                  
-                  departmentListCont.addClass('show');      // 'department 목록' 같이 표시 
-                }
-                
-                departmentList = result.resultList;
-                
-                if(departmentList.length == 0) {
-                  var orderLi1 = $('<li class="no-res">Department 정보가 없습니다.</li>');
-                  orderUl1.append(orderLi1);
-                  departmentListCont.append(orderUl1);
-                  
-                  departmentListCont.addClass('show');      // 'department 목록' 같이 표시 
-
-                } else {
-                  departmentList.map(department => {
-                      
-                    var orderLi1 = $(
-                        '<li>'
-                            +'<p>['+department.ZORGID+'] '+ department.ZORGNAME // + '()' 
-                            +'</p>'
-                        +'</li>'
-                    );
-                    
-                    // Cost AU 목록 리스트 클릭
-                    orderLi1.on('click', function() {
-                        
-                        var departmentInfo = $(
-                            '<div class="data-wrap">'
-                                 +'<p>['+department.ZORGID+']' + department.ZORGNAME 
-                                 + '</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ department.ZORGID +'" id="department_code"/>'
-                              + '<input type="hidden" value="'+ department.ZORGNAME +'" id="department_name"/>'
-                            +'</div>'
-                        );
-                        
-                        departmentSelected.css('width', '100%');        // 0717 추가 
-                        departmentSelected.append(departmentInfo);
-
-                        // [퍼블 수정 및 추가]
-                        var targetHeight = departmentSelected.height();
-                        inputTextContent1.removeClass('focus');
-                        console.log(targetHeight);
-                
-                        departmentListCont.removeClass('show');
-                        departmentListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-
-                        inputBox1.val('');
-                        scheduleorderWidth(inputTextContent1, departmentSelected, inputBox1);
-                        
-                        selectBoxAction(inputBox4, inputTextContent4, accountSelected);
-                        
-                        nextBtnEvent();  
-                    });
-                    
-                    orderUl1.append(orderLi1);
-                  });
-                  departmentListCont.append(orderUl1);
-                  
-                  departmentListCont.addClass('show');              // 'department 목록' 같이 표시 
-                }
-                
-                //closeLoadingWithMask();
-
-              });
-
-         }   // end if 
-        //////        
-    });
-    
-    inputBoxText1.append(inputTextContent1);
-    pluginForm.append(inputBoxText1);
-    
-    function selectBoxAction($input, $inputContent, $costSelected) {
-        var deptval = departmentSelected.find('.data-wrap').text();
-        var plantval = plantSelected.find('.data-wrap').text();
-        
-        if(deptval && plantval) {
-            $input.attr('disabled', false);
-            $inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
-        }
-        else{
-            // 계정 정보 초기화. 
-            $input.val('');
-            $costSelected.empty();
-            $input.css('display', 'block');
-        
-            $input.attr('disabled', true);
-            $inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
-        }
+    if(data.errorYn == "Y"){
+        var hsCodeResultError = $('<div class="message simple-text"></div>');
+        var hsCodeErrorMsg = $('<p>'+data.errorMsg+'</p>')
+        hsCodeResultError.append(hsCodeErrorMsg);
+        return hsCodeResultError;
     }
     
-    function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
-        let orderSelectWidth = $inputTextContent.width();
-        let selectedorderWidth = $costSelected.width();
-        
-        //console.log('inputTextContent width : '+orderSelectWidth+', selected width : '+selectedorderWidth);
-        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
-        $inputId.css('width', scheduleorderWidth + "px");
-        if ($inputId.width() === 0) {
-            $inputId.attr('style', '');
-        }
-        
-        if(selectedorderWidth == 0) {
-            $inputId.css('display', 'block');
-        }
-        else{
-            $inputId.css('display', 'none');
-        }
-    };
+    console.log("resultMessage:"+data.resultMessage);
+    var hsCodeResultError = $('<div class="custom-message"></div>');
+    var hsCodeResultErrorMessageWrap = $('<div class="message"></div>');
+    var hsCodeResultErrorContentWrap = $('<div class="importCargo-wrap"></div>');
     
-    $(document).off("click").on('click', '.data-wrap .btn-delete', function(){
-        console.log('delete....');
-        var content = $(this).parents(".order-select");
-        var selected = $(this).parents(".order-select").find('.selected-order');
-        var input = $(this).parents(".order-select").find('input[type=text]');
-        var label = $(this).parents(".input-box").find('label');
-        
-        console.log('label : ', label.text());
-        //input.attr('placeholder', plageHoderMsg);
-        content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
-        $(this).closest(".data-wrap").remove();
-        selected.css('width', '0px');
-        
-        scheduleorderWidth(content, selected, input);
-
-        // department, plant 값을 삭제한 경우. 
-        if(label.text() == 'Department*' || label.text() == 'Plant*') {
-            selectBoxAction(inputBox4, inputTextContent4, accountSelected);
-        }
-        
-        nextBtnEvent();  
-    });
-    
-    // order-select 제외 클릭
-    $(document).on('click', function(e) {
-        if ($('.order-select').has(e.target).length === 0) {
-            $('.order-list').removeClass('show');
-    
-            // [퍼블 수정 및 추가] - order-select 스타일 변경
-            $('.order-select').removeClass('focus');
-        }
-    });
-    
-    /* ###[ Plant ]### */
-    var inputBoxText2 = $('<div class="input-box add-order"><label>Plant<b>*</b></label></div>');
-    var inputTextContent2 = $('<div class="input-form order-select searchIcon"></div>');
-    var plantSelected = $('<div class="selected-order"></div>');
-    var inputBox2 = $('<input type="text" placeholder="Plant ID 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
-    var plantListCont = $('<div class="order-list"></div>');
-
-    var plantListTitle = $('<span>Plant 목록</span>');
-    plantListCont.append(plantListTitle);
-
-    inputTextContent2.append(plantSelected);
-    inputTextContent2.append(inputBox2);
-    inputTextContent2.append(plantListCont);
-    
-    var orderUl2 = $('<ul></ul>');
-    
-    inputBox2.on('keyup', function(e) {        
-
-        var inval = inputBox2.val();
-        console.log('key : '+inval);
-        
-        if(e.keyCode == 13) {
-            
-            if(inval.length < 2) {
-                showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
-                return;
-            }            
-            
-            // [퍼블 수정 및 추가] - order-select 스타일 변경
-            inputTextContent2.addClass('focus');
-                
-            //plantListCont.addClass('show');
-            plantListCont.removeClass('show');
-            
-            orderUl2.empty();
-            
-            //LoadingWithMask(); 
-
-            var deptCode = ($('#department_code').val() == null)? '':$('#department_code').val();
-            //console.log('deptCode : '+deptCode);
-            
-            var requestParam = {
-                query: {
-                  "event": "reqItemsPlantSearchEvent"
-                },
-                payload: {
-                    BNAME: chatui.getSetting("userId"), 
-                    ZORGID: deptCode, 
-                    WERKS: inval
-                }
-              };
-
-              sendChatApi(requestParam, null, function(payload){
-                //console.log('payload > ', payload);
-                var result = JSON.parse(payload.queryResult.messages[0].response);
-                console.log('result', result);
-                
-                if(result == null) {
-                    var orderLi2 = $('<li class="no-res">Plant 정보가 없습니다.</li>');
-                    orderUl2.append(orderLi2);
-                    plantListCont.append(orderUl2);
-                    plantListCont.addClass('show');
-                }
-                
-                plantList = result.resultList;
-                
-                if(plantList.length == 0) {
-                  var orderLi2 = $('<li class="no-res">Plant 정보가 없습니다.</li>');
-                  orderUl2.append(orderLi2);
-                  plantListCont.append(orderUl2);
-                    plantListCont.addClass('show');
-                } else {
-                  plantList.map(plant => {
-                      
-                    var orderLi2 = $(
-                        '<li>'
-                            +'<p>['+plant.WERKS+'] '+ plant.NAME1 // + '()' 
-                            +'</p>'
-                        +'</li>'
-                    );
-                    
-                    // Cost AU 목록 리스트 클릭
-                    orderLi2.on('click', function() {
-                        
-                        var plantInfo = $(
-                            '<div class="data-wrap">'
-                                 +'<p>['+plant.WERKS+']' + plant.NAME1 
-                                 + '</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ plant.WERKS +'" id="plant_code"/>'
-                              + '<input type="hidden" value="'+ plant.NAME1 +'" id="plant_name"/>'
-                            +'</div>'
-                        );
-                        
-                        plantSelected.css('width', '100%');        // 0717 추가 
-                        plantSelected.append(plantInfo);
-                        
-                        // [퍼블 수정 및 추가]
-                        var targetHeight = plantSelected.height();
-                        inputTextContent2.removeClass('focus');
-                        console.log(targetHeight);
-                
-                        plantListCont.removeClass('show');
-                        plantListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-
-                        inputBox2.val('');
-                        scheduleorderWidth(inputTextContent2, plantSelected, inputBox2);
-                        
-                        selectBoxAction(inputBox4, inputTextContent4, accountSelected);
-
-                        nextBtnEvent();  
-                    });
-                    
-                    orderUl2.append(orderLi2);
-                  });
-                  plantListCont.append(orderUl2);
-                  plantListCont.addClass('show');
-
-                }
-                
-                //closeLoadingWithMask();
-
-              });
-
-         }   // end if 
-        //////        
-    });
-    
-    inputBoxText2.append(inputTextContent2);
-    pluginForm.append(inputBoxText2);
-
-
-    /* ###[ Project ]### */
-    var inputBoxText3 = $('<div class="input-box add-order"><label>Project</label></div>');
-    var inputTextContent3 = $('<div class="input-form order-select searchIcon"></div>');
-    var projectSelected = $('<div class="selected-order"></div>');
-    var inputBox3 = $('<input type="text" placeholder="Project 입력 후 \'Enter\'로 검색" max-length="50" id="project-name" autocomplete="off" />');
-    var projectListCont = $('<div class="order-list"></div>');
-    
-    var projectListTitle = $('<span>Project 목록</span>');
-    projectListCont.append(projectListTitle);
-    
-    inputTextContent3.append(projectSelected);
-    inputTextContent3.append(inputBox3);
-    inputTextContent3.append(projectListCont);
-    
-    var orderUl3 = $('<ul></ul>');
-
-    inputBox3.on('keyup', function(e) {        
-
-        var inval = inputBox3.val();
-        console.log('key : '+inval);
-        
-        if(e.keyCode == 13) {
-            
-            if(inval.length < 2) {
-                showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
-                return;
-            }            
-            
-            // [퍼블 수정 및 추가] - order-select 스타일 변경
-            inputTextContent3.addClass('focus');
-                
-            //projectListCont.addClass('show');
-            projectListCont.removeClass('show');
-            
-            orderUl3.empty();
-            
-            //LoadingWithMask(); 
-
-            var requestParam = {
-                query: {
-                  "event": "reqItemsProjectSearchEvent"
-                },
-                payload: {
-                    BNAME: chatui.getSetting("userId"), 
-                    POST1: inval
-                }
-              };
-
-              sendChatApi(requestParam, null, function(payload){
-                //console.log('payload > ', payload);
-                var result = JSON.parse(payload.queryResult.messages[0].response);
-                console.log('result', result);
-                
-                if(result == null) {
-                  var orderLi3 = $('<li class="no-res">Project 정보가 없습니다.</li>');
-                  orderUl3.append(orderLi3);
-                  projectListCont.append(orderUl3);
-                  projectListCont.addClass('show');
-                }
-                
-                projectList = result.resultList;
-                
-                if(projectList.length == 0) {
-                  var orderLi3 = $('<li class="no-res">Project 정보가 없습니다.</li>');
-                  orderUl3.append(orderLi3);
-                  projectListCont.append(orderUl3);
-                  projectListCont.addClass('show');
-                } else {
-                  projectList.map(project => {
-                      
-                    var orderLi3 = $(
-                        '<li>'
-                            +'<p>['+project.POSID+'] '+ project.POST1 // + '()' 
-                            +'</p>'
-                        +'</li>'
-                    );
-                    
-                    // Cost AU 목록 리스트 클릭
-                    orderLi3.on('click', function() {
-                        
-                        var projectInfo = $(
-                            '<div class="data-wrap">'
-                                 +'<p>['+project.POSID+']' + project.POST1 
-                                 + '</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ project.POSID +'" id="project_code"/>'
-                              + '<input type="hidden" value="'+ project.POST1 +'" id="project_name"/>'
-                            +'</div>'
-                        );
-                        
-                        projectSelected.css('width', '100%');        // 0717 추가 
-                        projectSelected.append(projectInfo);
-                        
-                        // [퍼블 수정 및 추가]
-                        var targetHeight = projectSelected.height();
-                        inputTextContent3.removeClass('focus');
-                        console.log(targetHeight);
-                
-                        projectListCont.removeClass('show');
-                        projectListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-
-                        inputBox3.val('');
-                        scheduleorderWidth(inputTextContent3, projectSelected, inputBox3);
-                        
-                    });
-                    
-                    orderUl3.append(orderLi3);
-                  });
-                  projectListCont.append(orderUl3);
-                  projectListCont.addClass('show');
-                }
-                
-                //closeLoadingWithMask();
-
-              });
-
-         }   // end if 
-        //////        
-    });
-    
-    inputBoxText3.append(inputTextContent3);
-    
-    var note = $('<span class="input-box-note">Project 입력 시 Project로 비용이 청구됩니다.</span>');
-    inputBoxText3.append(note);
-    
-    pluginForm.append(inputBoxText3);
-
-    /* ###[ 계정 ]### */
-    var inputBoxText4 = $('<div class="input-box add-order"><div class="with-guide"><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기</a></label></div></div>');
-    var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon"></div>');
-    var accountSelected = $('<div class="selected-order"></div>');
-    var inputBox4 = $('<input type="text" placeholder="청구할 계정을 선택해 주세요." max-length="50" id="account-name" autocomplete="off" readonly disabled/>');
-    var accountListCont = $('<div class="order-list"></div>');
-    
-    var accountListTitle = $('<span>계정 목록</span>');
-    accountListCont.append(accountListTitle);
-    
-    inputTextContent4.append(accountSelected);
-    inputTextContent4.append(inputBox4);
-    inputTextContent4.append(accountListCont);
-    
-    var orderUl4 = $('<ul></ul>');
-    
-    inputBox4.on('click', function(e) {        
-
-        // [퍼블 수정 및 추가] - order-select 스타일 변경
-        inputTextContent4.addClass('focus');
-                
-        // 목록을 위로 펼치기 위해서 스타일 변경.         
-        accountListCont.css('top', 'auto').css('bottom', 'calc(100% + 2px)');       
-        
-        //accountListCont.addClass('show');
-        accountListCont.removeClass('show');
-        
-        orderUl4.empty();
-            
-        if(isNull($('#department_code').val())) {
-            
-            setTimeout(function() {
-                showSmallDialog('Department를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-            }, 100);
-            
-            return;
-        }
-        if(isNull($('#plant_code').val())) {
-            
-            setTimeout(function() {
-                showSmallDialog('Plant를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-            }, 100);
-            
-            return;
-        }
-
-        //LoadingWithMask(); 
-        var requestParam = {
-            query: {
-              "event": "reqItemsAccountSearchEvent"
-            },
-            payload: {
-                BNAME: chatui.getSetting("userId"), 
-                ZORGID: $('#department_code').val(), 
-                WERKS: $('#plant_code').val()
-            }
-          };
-
-          sendChatApi(requestParam, null, function(payload){
-                //console.log('payload > ', payload);
-                var result = JSON.parse(payload.queryResult.messages[0].response);
-                console.log('result', result);
-                
-                if(result == null) {
-                  var orderLi4 = $('<li class="no-res">계정 정보가 없습니다.</li>');
-                  orderUl4.append(orderLi4);
-                  accountListCont.append(orderUl4);
-                  accountListCont.addClass('show');
-                }
-                
-                accountList = result.resultList;
-                
-                if(accountList.length == 0) {
-                  var orderLi4 = $('<li class="no-res">계정 정보가 없습니다.</li>');
-                  orderUl4.append(orderLi4);
-                  accountListCont.append(orderUl4);
-                  accountListCont.addClass('show');
-                } else {
-                  accountList.map(account => {
-                      
-                    var orderLi4 = $(
-                        '<li>'
-                            //+'<p>['+account.ZCLSCODE+'] '+ account.ZCLCDTEXT // + '()' 
-                            //+'</p>'
-                            +'<p>'+ account.ZCLSCODE // 
-                            +'</p>'
-                            +'<p class="small">'
-                            + account.ZCLCDTEXT
-                            +'</p>'
-                        +'</li>'
-                    );
-                    
-                    // 목록 리스트 클릭
-                    orderLi4.on('click', function() {
-                        
-                        var accountInfo = $(
-                            '<div class="data-wrap">'
-                                // +'<p>['+account.ZCLSCODE+']' + account.ZCLCDTEXT 
-                                // + '</p>'
-                                +'<p>'+ account.ZCLSCODE // 
-                                +'</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ account.ZCLSCODE +'" id="account_code"/>'
-                              + '<input type="hidden" value="'+ account.ZCLCDTEXT +'" id="account_name"/>'
-                            +'</div>'
-                        );
-                        
-                        accountSelected.css('width', '100%');        // 0717 추가 
-                        accountSelected.append(accountInfo);
-                        
-                        // [퍼블 수정 및 추가]
-                        var targetHeight = accountSelected.height();
-                        inputTextContent4.removeClass('focus');
-                        console.log(targetHeight);
-                
-                        accountListCont.removeClass('show');
-                        accountListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-
-                        inputBox4.val('');
-                        scheduleorderWidth(inputTextContent4, accountSelected, inputBox4);
-
-                        nextBtnEvent();                        
-                    });
-                    
-                    orderUl4.append(orderLi4);
-                  });
-                  accountListCont.append(orderUl4);
-                  accountListCont.addClass('show');
-                }
-                
-                //closeLoadingWithMask();
-
-              });
-
-        //////        
-    });
-
-    inputBoxText4.append(inputTextContent4);
-    pluginForm.append(inputBoxText4);
-    
-    function nextBtnEvent() {
-        var deptval = departmentSelected.find('.data-wrap').text();
-        var plantval = plantSelected.find('.data-wrap').text();
-        var accountval = accountSelected.find('.data-wrap').text();
-
-        if (deptval && plantval && accountval) {
-            nextBtn.find('button').attr('disabled', false);
-        }
-        else{
-            nextBtn.find('button').attr('disabled', true);
-        }
-        
-    };
-    
-    /*  ###[ etc ]### */
-    // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
-    pluginForm.append(nextBtn);
-    pluginForm.children('.btn').find('button').on('click', function() {
-        
-        let department_code = $('#department_code').val();
-        let department_name = $('#department_name').val();
-
-        let plant_code = $('#plant_code').val();
-        let plant_name = $('#plant_name').val();
-
-        let project_code = $('#project_code').val();
-        let project_name = $('#project_name').val();
-
-        let account_code = $('#account_code').val();
-        let account_name = $('#account_name').val();
-
-        // 물품 청구 예산 조회.        
-        var requestParam = {
-            query: {
-                "event": "reqItemsBudgetInquiryEvent"
-            },
-            payload: {
-                BNAME: chatui.getSetting("userId"), 
-                ZORGID: department_code, 
-                POSID: (project_code == null)? '':project_code, 
-                ZCLSCODE: account_code
-            }
-        };        
-            
-        console.log('requestParam > ', requestParam);
-            
-        LoadingWithMask(); 
-        
-        sendChatApi(requestParam, userId, function(payload) {
-            console.log('물품 청구 예산 조회 결과 : ', payload);
-            
-            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
-                var result = JSON.parse(payload.queryResult.messages[0].response);
-                console.log('result', result);
-                var budgetInfo = result.resultList;
-                
-                if(budgetInfo.length == 0) {
-                      console.log('예산 결과 : 0건');
-                      
-                } else {
-                    console.log('예산  조회 완료 : ', budgetInfo);
-                    
-                    requestdata.valid_budget_amount = budgetInfo[0].ZREQUEST_BDJ_D;
-                    
-                    requestdata.step = 2;
-
-                    requestdata.department_code = department_code;
-                    requestdata.department_name = department_name;
-            
-                    requestdata.plant_code = plant_code;
-                    requestdata.plant_name = plant_name;
-            
-                    requestdata.project_code = project_code;
-                    requestdata.project_name = project_name;
-            
-                    requestdata.account_code = account_code;
-                    requestdata.account_name = account_name;
-            
-                    if(plant_code != selPlantCode) {
-                        delete requestdata.item_list;
-                        delete requestdata.item_cnt;
-                    }
-                    
-                    pluginForm.removeClass('show');
-                    pluginForm.remove();
-                    
-                    requestItemsInputSecond(requestdata);
-                    $('.plugin-contents').append(requestItemsInputForm);
-
-                }
-                
-                
-            }
-            else {
-                console.log('예산 조회 에러.');
-                
-                setTimeout(function() {
-                    showSmallDialog('물품 청구 예산 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                }, 500);
-                
-            }    
-            
-            closeLoadingWithMask();
-            
-        });
-        
-        
-        //console.log('2단계 닫기.');
-
-    });
-    
-    if (selDeptCode != '') {
-
-        var hiddenInfo = $(
-            '<div class="data-wrap">'
-                 +'<p>['+selDeptCode+']' + selDeptName 
-                 + '</p>'
-                 //+ deleteBtn
-                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                 + '</button>'                 
-                +'<input type="hidden" value="'+ selDeptCode +'" id="department_code"/>'
-                +'<input type="hidden" value="'+ selDeptName +'" id="department_name"/>'
-            +'</div>'
-        );
-                    
-        departmentSelected.empty();
-        departmentSelected.append(hiddenInfo);
-
-        //inputBox4.attr('placeholder', '');  
-        //inputBox4.css('width', '0px');
-        inputBox1.css('display', 'none'); 
-        
-    }
-
-    if (selPlantCode != '') {
-
-        var hiddenInfo = $(
-            '<div class="data-wrap">'
-                 +'<p>['+selPlantCode+']' + selPlantName 
-                 + '</p>'
-                 //+ deleteBtn
-                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                 + '</button>'                 
-                +'<input type="hidden" value="'+ selPlantCode +'" id="plant_code"/>'
-                +'<input type="hidden" value="'+ selPlantName +'" id="plant_name"/>'
-            +'</div>'
-        );
-                    
-        plantSelected.empty();
-        plantSelected.append(hiddenInfo);
-
-        inputBox2.css('display', 'none'); 
-        
-    }
-
-    if (selProjectCode != '') {
-
-        var hiddenInfo = $(
-            '<div class="data-wrap">'
-                 +'<p>['+selProjectCode+']' + selProjectName 
-                 + '</p>'
-                 //+ deleteBtn
-                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                 + '</button>'                 
-                +'<input type="hidden" value="'+ selProjectCode +'" id="project_code"/>'
-                +'<input type="hidden" value="'+ selProjectName +'" id="project_name"/>'
-            +'</div>'
-        );
-                    
-        projectSelected.empty();
-        projectSelected.append(hiddenInfo);
-
-        inputBox3.css('display', 'none'); 
-        
-    }
-
-    if (selAccountCode != '') {
-
-        var hiddenInfo = $(
-            '<div class="data-wrap">'
-                 +'<p>['+selAccountCode+']' + selAccountName 
-                 + '</p>'
-                 //+ deleteBtn
-                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                 + '</button>'                 
-                +'<input type="hidden" value="'+ selAccountCode +'" id="account_code"/>'
-                +'<input type="hidden" value="'+ selAccountName +'" id="account_name"/>'
-            +'</div>'
-        );
-                    
-        accountSelected.empty();
-        accountSelected.append(hiddenInfo);
-
-        inputBox4.css('display', 'none'); 
-        
-    }
-
-    selectBoxAction(inputBox4, inputTextContent4, accountSelected);
-    nextBtnEvent();
-    
-    /* #########[ popup_content_form_end ]######### */
-    requestItemsInputForm = pluginForm;
-    return pluginForm;
-}
-
-// 물품 청구 신청 입력 팝업 컨텐츠 2
-function requestItemsInputSecond(requestdata) {
-    console.log('2단계 requestdata  : ', requestdata);
-
-    //var userId = chatui.getSetting("userId"); 
-    
-    var placeholderToday = moment().format('YYYY.MM.DD');
-    var itemCnt = (requestdata.item_cnt == null)? '1':requestdata.item_cnt;
-    var itemNo = (requestdata.item_no == null)? '1':requestdata.item_no;
-    
-    var itemList = null;
-    if(requestdata.item_list == null){
-        itemList = new Array();  
-
-        var item = new Object();
-        
-        item.item_id = '';
-        item.item_qty = '';
-        item.due_date = placeholderToday;
-        item.item_name = '';
-        item.item_unit = 0;
-
-        itemList.push(item);
-        
-    } else {
-        itemList = requestdata.item_list;
-    }
-    
-    var budgetAmount = (requestdata.valid_budget_amount == null)? '0':requestdata.valid_budget_amount;
-
-    var selPlantCode = (requestdata.plant_code == null)? '':requestdata.plant_code;
-    var selPlantName = (requestdata.plant_name == null)? '':requestdata.plant_name;
-
-    var selProjectCode = (requestdata.project_code == null)? '':requestdata.project_code;
-    var selProjectName = (requestdata.project_name == null)? '':requestdata.project_name;
-
-    var textBudget = (selProjectCode != '')? 'Project':'Department';
-    
-    $('.plugin-contents').css('overflow-y', 'auto');
-    var pluginHeader = $('.plugin-header');
-    var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
-    pluginHeader.find('h1').text('물품 청구 ('+ '2' + '/' + '3' +')');
-    pluginHeader.find('.backBtn').remove();
-    pluginHeader.prepend(backBtn);
-    
-    $('.plugin-contents').focus();
- 
-    /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-second" onsubmit="return false;"></form>');
-    
-    /* #########[ popup_content ]######### */
-    var smallNote = $('<small class="note" style="font-size:12px;">※ 물품 작성 중 Plant ID 변경 시 작성하신 물품 내용이 모두 초기화됩니다.</small>');
-    pluginForm.append(smallNote);
-    
-    var inputBoxTopList = $('<h3 class="balance-box"></h3>');
-    var inputBoxTopTitle = $('<span>'+textBudget+' 예산 잔액</span>');
-    var inputBoxTopContent = $('<span class="balance">'+formatAmount(budgetAmount)+'원</span>');          // 
-    inputBoxTopList.append(inputBoxTopTitle);
-    inputBoxTopList.append(inputBoxTopContent);
-    //inputBoxTopList.append(divderLine);
-    
-    pluginForm.append(inputBoxTopList);
-    
-    var inputBoxDivder = $('<hr class="mgY10 mgT20">');
-    //var divderLine = $('<div class="divder"></div>');
-    //inputBoxDivder.append(divderLine);
-    pluginForm.append(inputBoxDivder);
-    
-    /*  ###[ tab 목록 ]### */
-    var inputBoxTabList = $('<div class="tabBtn-wrap"></div>');     // $('<div class="input-box tab"></div>');
-    var tabBtnBox = $('<div class="tabBtn-box"></div>');
-    
-    for(var t=0; t<itemCnt; t++) {
-        
-        let tabNo = t+1;
-        //let activeClass = (t==0)? ' active':'';
-        let activeClass = (tabNo==itemNo)? ' active':'';
-        
-        //var tabItem = $('<div class="tab-item'+showClass+'"></div>');
-        var tabItemHidden = $('<input type="hidden" value="'+tabNo+'" id="item_no" />');
-        var tabItemButton = $('<button class="tabBtn'+activeClass+'" type="button"><span class="prod_name">물품'+tabNo+'</span></button>');
-        //var tabItemBar = $('<span class="bar"></span>');
-        
-        tabItemButton.append(tabItemHidden);
-        tabBtnBox.append(tabItemButton);
-        //tabBtnBox.append(tabItemHidden);
-
-    }
-
-    var tabMoveBtnBox = $(
-        '<div class="tabBtn-move">'
-            +'<button class="tabBtn-move-prev" type="button" disabled>' + tabMoveBtn + '</button>'
-            +'<button class="tabBtn-move-next" type="button" disabled>' + tabMoveBtn + '</button>'
+    var hsCodeResultErrorHeader = $(
+        '<div class="importCargo-header">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" fill="#898989"></path>'
+            +'</svg>'
+            +'<h2>HS Code 조회 요청 정보</h2>'
         +'</div>'
     );
-    inputBoxTabList.append(tabMoveBtnBox);
+    hsCodeResultErrorContentWrap.append(hsCodeResultErrorHeader);
     
-    inputBoxTabList.append(tabBtnBox);  
-    
-
-//    var tabItem2 = $('<div class="tab-item"></div>');
-//    var tablItem2Name = $('<span class="item-name">물품2</span>');
-//    var tablItem2Bar = $('<span class="bar"></span>');
-
-//    tabItem2.append(tablItem2Name);
-//    tabItem2.append(tablItem2Bar);
-    
-    //inputBoxTabList.append(tabItem2);
-    
-    // tab 추가 버튼 
-    var tabItemAddBtn = $('<button class="tabBtn-add" type="button" disabled></button>');    
-    tabBtnBox.append(tabItemAddBtn);
-    
-    //var tabItemAddBtn = $('<div class="tab-item-add"></div>');              // active
-    //var tabItemAddImg = $('<div class="add-img">'+tabAddBtn+'</div>');
-    
-    //tabItemAddBtn.append(tabItemAddImg);
-    //inputBoxTabList.append(tabItemAddBtn);
-    
-    pluginForm.append(inputBoxTabList);
-    
-    /*  ###[ tab 화면  ]### */
-    var tabContentList = $('<div class="input-box tab-contents"></div>');
-    
-    for(var t=0; t<itemCnt; t++) {
-        
-        var item = itemList[t];
-        
-        let tabNo = t+1;
-        let showClass = (tabNo==itemNo)? ' show':'';
-        let delBtnShow = (itemCnt == 1)? 'disabled':'';
-        
-        let totalview = (itemCnt == 1)? 'display:none;':'';
-        
-        //let itemAmount = (item.item_qty == '')? Number(item.item_unit) * Number(item.item_qty);
-        
-        var tabContent1 = $('<div class="tab-content'+showClass+'"></div>');
-        
-        var itemIDText = $('<div class="input-box"><label><span class="prod_name">물품'+tabNo+'</span> ID <b>*</b></label></div>');
-        var itemIDBox = $('<div class="input-form"></div>');
-        var itemIDInput = $('<input type="text" placeholder="물품 ID를 입력해 주세요." max-length="50" id="item_id" value="'+item.item_id+'" name="'+item.item_id+'" autocomplete="off"/>');
-        var helpMSG = $('<span class="help-message">' + item.item_name +'</span>');
-        
-        itemIDBox.append(itemIDInput);
-        itemIDText.append(itemIDBox);
-        itemIDText.append(helpMSG);
-        
-        tabContent1.append(itemIDText);
-    
-        var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+tabNo+'</span> 수량 <b>*</b></label></div>');
-        var itemQtyBox = $('<div class="input-form"></div>');
-        var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" maxlength="15" id="item_qty" value="'+item.item_qty+'" autocomplete="off"/>');
-        var itemQtyHidden = $('<input type="hidden" id="item_unit" value="'+item.item_unit+'"/>');
-    
-        itemQtyBox.append(itemQtyInput);
-        itemQtyBox.append(itemQtyHidden);
-        itemQtyText.append(itemQtyBox);
-        
-        tabContent1.append(itemQtyText);
-    
-        var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
-        var itemDateWrap = $('<div class="schedule-wrap"></div>');
-        var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date startdate" placeholder="'+item.due_date+'" id="due_date" onclick="datepicker.open(this)" value="'+item.due_date+'" autocomplete="off"/>');
-
-        itemDateBox.append(itemDateInput);
-        
-        /*  #########[ datepicker ]#########  */
-        var datepicker = $('<div class="datepicker-chem"></div>');
-        itemDateBox.append(datepicker);
-        
-        itemDateWrap.append(itemDateBox);
-        itemDateText.append(itemDateWrap);
-        
-        tabContent1.append(itemDateText);
-    
-        var buttonBox = $('<div class="btn amount-btn mgT0"></div>');
-        var delButton = $('<button type="button" class="btn btn-default btn-big btn-del" '+delBtnShow+'><span class="prod_name">물품'+tabNo+'</span> 삭제</button>');
-        var inputButton = $('<button type="button" class="btn btn-emphasis2 btn-big btn-input" disabled><span class="prod_name">물품'+tabNo+'</span> 입력</button>');
-        
-        buttonBox.append(delButton);
-        buttonBox.append(inputButton);
-        tabContent1.append(buttonBox);
-
-        var productAmount  = 5000000;
-        var amountBox = $('<div class="amount-box"></div>');
-        var amountItem = $(
-            '<div class="amount-item item">'
-                +'<h4>' + '<span class="prod_name">물품'+tabNo + '</span> Amount</h4>'
-                +'<div class="amount">'
-                    +'<span class="amount-formula">('
-                    + '5000000'.toLocaleString() + '*' + '1000'.toLocaleString()
-                    +')</span>'
-                    +'<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
-                +'</div>'
-            +'</div>'
-        );
-        amountBox.append(amountItem);
-
-        var amountTotalBox = $(
-            '<div class="amount-item total" style="'+totalview+'">'
-                +'<h4>Total Amount</h4>'
-                +'<div class="amount">'
-                    +badgeConfirm + '<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
-                +'</div>'
-            +'</div>'
-        );
-        
-        //if(tabNo > 1) {
-            amountBox.append(amountTotalBox);
-        //}
-        
-        tabContent1.append(amountBox);
-        
-        tabContentList.append(tabContent1);
-        
-        if(requestdata.item_list != null) {
-            itemAmountCalculate(item.item_unit, inputButton);        
-        }
-    }
-
-    ///// tab content 물품 1
-
-    pluginForm.append(tabContentList);
-    
-    /*  ###[ tab 버튼  ]### */ 
-    var amountListWrap = $('<div class="input-box amount-list"></div>');
-    
-    for(var t=0; t<itemCnt; t++) {
-        let tabNo = t+1;
-        
-        var amountItemText = $('<div class="amount-item item'+tabNo+'" style="display:none"><span class="label"><b>물품'+tabNo+' Amount</b></span></div>');
-        var amountItemCont = $('<span class="cont"><b>100,000원</b></span>');
-        amountItemText.append(amountItemCont);
-        amountListWrap.append(amountItemText);
-    }
-
-    var amountTotolText = $('<div class="amount-item total" style="display:none"><span class="label"><b>Total Amount</b></span></div>');
-    var amountTotolCont = $('<span class="cont"><b>100,000원</b></span>');
-    
-    amountTotolText.append(amountTotolCont);
-    amountListWrap.append(amountTotolText);
-    
-//    pluginForm.append(amountListWrap);
-    
-    if(requestdata.item_list != null) {
-        totalAmountCalculate();
-        $(document).off('click').off('keyup');   
-    }
-    
-    /*  ###[ etc ]### */
-    // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
-    pluginForm.append(nextBtn);
-    pluginForm.children('.btn').find('button').on('click', function() {
-        /*var tabContents = pluginForm.find('.tab-content');
-        var itemList = new Array();
-        
-        for ( let i = 0; i <= (tabContents.length)-1; i++ ) {
-            let tabContent = tabContents[i];
-            
-            var item = new Object();
-            
-            item.item_id = $(tabContent).find('#item_id').val();
-            item.item_qty = $(tabContent).find('#item_qty').val();
-            item.due_date = $(tabContent).find('#due_date').val();
-            item.item_name = $(tabContent).find('.help-message').text();
-            item.item_unit = $(tabContent).find('#item_unit').val();
-
-            itemList.push(item);
-        }        
-        
-        console.log('itemList', itemList);
-        */
-        requestdata.step = 3;
-
-        //requestdata.item_list = itemList;
-        //requestdata.item_cnt = itemCnt;
-
-        pluginForm.removeClass('show');
-        pluginForm.remove();
-        
-        requestItemsInputThird(requestdata);
-        $('.plugin-contents').append(requestItemsInputForm);
-        
-    });
-
-    function inputBtnEvent() {
-        var tabCont = pluginForm.find('.tab-content.show');
-        
-        //console.log('show : ', tabCont);
-        
-        var inputObj = tabCont.find('input');   
-        //console.log('inputObj : ', inputObj);
-        
-        for ( let i = 0; i <= (inputObj.length)-1; i++ ) {
-            
-            //console.log('val : '+$(inputObj[i]).val());
-            if ($(inputObj[i]).val()) {
-                //if($(tabCont).find('.amount-box').hasClass('show')) {
-                //    tabCont.find('.btn-input').attr('disabled', true);
-                //}
-                //else{
-                    tabCont.find('.btn-input').attr('disabled', false);
-                    pluginForm.find('.tabBtn-add').attr('disabled', true);              // tab 추가 버튼 활성화.
-                    
-                    nextBtn.find('button').attr('disabled', true);
-                //}
-            }
-            else{
-                tabCont.find('.btn-input').attr('disabled', true);
-                //pluginForm.find('.tabBtn-add').attr('disabled', false); 
-                return;
-            }
-        }
-                   
-        //console.log('show : ', tabCont);
-        //var inputObj = find('input')
-    }
-    
-    function nextBtnEvent() {
-        var tabContents = pluginForm.find('.tab-content');
-
-        nextBtn.find('button').attr('disabled', false);
-        
-        for ( let i = 0; i <= (tabContents.length)-1; i++ ) {           // badge-over
-            let tabContent = tabContents[i];
-            if ($(tabContent).find('.amount-box').hasClass('show')) {
-                
-                if($(tabContent).find('.amount-box').find('.total').find('.badge-over').length > 0){
-                    nextBtn.find('button').attr('disabled', true);
-                    console.log(i+' : over hide. ');
-                }
-                else{
-                    console.log(i+' : show. ');
-                }
-            }
-            else{
-                nextBtn.find('button').attr('disabled', true);
-                console.log(i+' : hide. ');
-            }
-        }
-
-    }
-    
-    // 물품 입력 버튼 클릭시. 
-    $(document).on('click','.form-second .tab-content.show .btn-input', function(e) {
-    //pluginForm.find('.tab-content.show').find('.btn-input').on('click', function(e){
-        console.log('input ...');
-        
-        var inputBtn = $(this);
-        var tabName = $('.tabBtn-box').find('.tabBtn.active').find('.prod_name').text();
-        //itemAmountCalculate(this);
-        
-        // 물품 청구 품목 조회.        
-        var requestParam = {
-            query: {
-              "event": "reqItemsMeterialInquiryEvent"
-            },
-            payload: {
-                BNAME: chatui.getSetting("userId"), 
-                WERKS: selPlantCode, 
-                MATNR: $('#item_id').val() 
-            }
-          };
-
-        console.log('requestParam > ', requestParam);
-            
-        LoadingWithMask(); 
-        
-        sendChatApi(requestParam, userId, function(payload) {
-            console.log('물품 청구 품목조회 결과 : ', payload);
-            
-            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
-                var result = JSON.parse(payload.queryResult.messages[0].response);
-                console.log('result', result);
-                var meterialInfo = result.resultList;
-                
-                if(meterialInfo.length == 0) {
-                      console.log('품목 결과 : 0건');
-                      
-                      setTimeout(function() {
-                        showSmallDialog('유효하지 않은 물품ID입니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                      }, 100);                      
-                      return;                      
-                } else {
-                    console.log('품목  조회 완료 : ', meterialInfo);
-                    
-                    var itemUnit = meterialInfo[0].ZREQUEST_PR_D;
-                    var itemName = meterialInfo[0].MAKTX; 
-                    
-                    inputBtn.parents('.tab-content').find('#item_unit').val(itemUnit);
-                    inputBtn.parents('.tab-content').find('.help-message').text(itemName);
-                    itemAmountCalculate(itemUnit, inputBtn);
-                    var isOver = totalAmountCalculate();
-                    
-                    let productList = makeItemList();
-                    
-                    requestdata.item_list = productList;
-                    requestdata.item_cnt = itemCnt;
-                    
-                    nextBtnEvent();
-                    
-                    if(isOver) {
-                        setTimeout(function() {
-                            showSmallDialog('예산을 초과했습니다.'); 
-                        }, 100);               
-                    }else{
-                        setTimeout(function() {
-                            showSmallDialog(tabName+'이 입력되었습니다.'); 
-                        }, 100);   
-                    }
-                    
-                    
-                }
-            }
-            else {
-                console.log('품목 조회 에러.');
-                
-                setTimeout(function() {
-                    showSmallDialog('품목 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                }, 100);
-                
-            }    
-            
-            closeLoadingWithMask();
-            
-        });
-        
-        
-    });
-    
-    // 물품 삭제 버튼 클릭시. 
-    $(document).on('click','.form-second .tab-content.show .btn-del', function(e) {
-        
-        // 탭 물품명 재정리. 
-        let delTab = $('.tabBtn-box').find('.tabBtn.active');
-        let delItemNo = $(delTab).find('#item_no').val();
-        let delContent = $('.tab-contents').find('.tab-content.show');
-        
-        let delItemId = $(delContent).find('#item_id').val();
-        let delItemQty = $(delContent).find('#item_qty').val();
-        
-        let delMsg = '';
-        if(delItemId != '' && delItemQty != '') {
-            delMsg = '<br/>(물품ID : '+delItemId+',</br>수량 : '+delItemQty+')';
-        }
-        
-        var items = $('.tabBtn-box').find('.tabBtn');
-
-        var newIdx = 0;
-        for(var t=0; t<items.length; t++) {
-            let item = items[t];
-            
-            if($(item).hasClass('active') == false) {
-                newIdx = newIdx + 1;
-                
-                $(item).find('.prod_name').text('물품'+newIdx);
-                $(item).find('#item_no').val(newIdx);
-            }
-        }
-        
-        var contents = $('.tab-contents').find('.tab-content');
-        let contentCnt = contents.length;
-
-        var newIdx = 0;
-        for(var t=0; t<contents.length; t++) {
-            let content = contents[t];
-            
-            if($(content).hasClass('show') == false) {
-                newIdx = newIdx + 1;
-                
-                //prod_name
-                $(content).find('.prod_name').text('물품'+newIdx);
-            }
-        }        
-        
-        items = $('.tabBtn-box').find('.tabBtn');
-        contents = $('.tab-contents').find('.tab-content');
-
-        //console.log('items length : '+items.length);
-        var isMove = isTabMoveBtn();
-        var nextBtn = $('.tabBtn-wrap').find('.tabBtn-move-next');
-        var prevBtn = $('.tabBtn-wrap').find('.tabBtn-move-prev');
-        console.log('prevBtn', prevBtn);
-
-        if(delItemNo == 1) {
-            tabBtnNext(nextBtn, isMove);
-        }
-        else{
-            tabBtnPrev(prevBtn, isMove);
-        }
-
-        // 탭삭제 
-        $(delTab).remove();
-        
-        // content 삭제 
-        $(delContent).remove();
-
-        totalAmountCalculate();
-
-        afterTabDelete();
-        
-        //actItemNo = (delItemNo == 1)? 1:delItemNo-1;
-        //console.log('actItemNo : '+actItemNo);
-        //$(items[actItemNo-1]).addClass('active');
-        //$(contents[actItemNo-1]).addClass('show');
-        
-        itemCnt--;
-        
-        setTimeout(function() {
-            showSmallHtmlDialog('물품'+delItemNo+' 삭제했습니다.'+delMsg); // [퍼블 수정 및 추가] - 텍스트 수정
-            ascendScroll();
-        }, 100);  
-
-        // 삭제 버튼 able/disable 
-
-        if(itemCnt < maxItemCount) {
-             pluginForm.find('.tabBtn-add').css('display', '');              // tab 추가 버튼 숨김.
-        }
-        
-        //showTabMoveBtn();
-        pluginForm.find('.tabBtn-add').attr('disabled', false); 
-        if(itemCnt == 1) {
-            $('.btn-del').attr('disabled', true);              // 물품 삭제 버튼 disable.
-        }
-        
-        nextBtnEvent();
-    });
-    
-    
-    var number_patten = /[^0-9.]/;         
-    // input
-    $(document).on('keyup','.form-second input', function(e) {
-    //pluginForm.find('input').on('keyup', function(e) {
-        hblInput = e.target.value;
-        
-        if('item_qty' == e.target.id) {
-            if(number_patten.test(hblInput) == true) {
-                //console.log('e.target ...'+e.target.id);
-                setTimeout(function() {
-                    showSmallDialog('숫자와 소수점(.)만 입력해 주세요.'); 
-                }, 100);              
-            }
-        }
-        //console.log('hblInput ::: '+hblInput);
-        //console.log('keyup'+$(this).attr('name'));
-        inputBtnEvent();
-    });    
-    
-    // 탭 추가 버튼 클릭시. 
-    $(document).on('click','.form-second .tabBtn-add', function(e) {      
-    //pluginForm.find('.tab-item-add > a').on('click', function(e){
-    //pluginForm.find('.add-img').on('click', function(e){
-        console.log('clcik.'+itemCnt);
-        
-        // 마지막 탭을 선택한 상태가 아닌 경우를 대비해서. 
-        $(this).parent().find('.tabBtn').removeClass('active').addClass('disabled');
-        $(this).parent().find('.tabBtn').last().addClass('active');
-
-        itemCnt = tabAdd();
-        
-        tabContentAdd(tabContentList);
-        
-        if(itemCnt == maxItemCount) {
-             pluginForm.find('.tabBtn-add').css('display', 'none');              // tab 추가 버튼 숨김.
-        }
-        
-        //$(this).parent().removeClass('active');         // 탭 추가 버튼 비활성화. 
-        //$(this).parents().find('.amount-list').removeClass('show');                         // 물품금액 list 감추기 (outter 에 있을 때 )
-
-        $(this).attr('disabled', true);                     // 탭 추가 버튼 비활성화. 
-        $('.btn-del').attr('disabled', false);              // 물품 삭제 버튼 able.
-
-        //$(this).find('.add-img').unwrap();
-        
-        // 너비 계산해서 보여 주기 추가해야 함. 
-        var isMove = isTabMoveBtn();
-        var nextBtn = $(this).parents('.tabBtn-wrap').find('.tabBtn-move-next');
-        console.log('nextBtn', nextBtn);
-        if(nextBtn.length > 0) {
-            tabBtnNext(nextBtn, isMove);
-        }
-
-        //tabClick(false);         // 다른 탭 링크 삭제.
-        inputBtnEvent();
-        nextBtnEvent();
-    });
-    
-    // 탭 클릭시. 
-    $(document).on('click','.form-second .tabBtn', function(e) {    
-    //pluginForm.find('.tab-item > a').on('click', function(e){
-        var showContent = $('.tab-content.show');
-        console.log('amont box : '+showContent.find('.btn-input').attr('disabled'));
-        
-        if($(this).hasClass('active')) {
-            return;
-        }
-        var current_tab_no = $('.tabBtn-box').find('.tabBtn.active').find('#item_no').val();        
-        if (showContent.find('.amount-box').hasClass('show') == false || showContent.find('.btn-input').attr('disabled') != 'disabled') {
-            setTimeout(function() {
-                showSmallDialog("'물품"+current_tab_no+" 입력'을 먼저 눌러 주세요."); 
-            }, 100);               
-            return;
-        }
-        
-        let tab_no = $(this).find('#item_no').val();
-        console.log('tab click..'+tab_no);
-        
-        var tabBtnBox = $(this).parent();     
-        tabBtnBox.find('.active').removeClass('active');
-        $(this).addClass('active').focus();
-        
-        console.log('prev : '+$(this).prev().hasClass('tabBtn'));
-        console.log('next : '+$(this).next().hasClass('tabBtn'));
-        
-        if ($(this).prev().hasClass('tabBtn') == false) {
-            tabMoveBtnBox.find('.tabBtn-move-prev').attr('disabled', true);
-        }        
-        if ($(this).next().hasClass('tabBtn') == false) {
-            tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled', true);
-        }        
-        
-        viewItemData(tab_no);
-        //tabClick(true);
-    });
-    
-    // 이전 탭
-    tabMoveBtnBox.find('.tabBtn-move-prev').on('click', function() {
-        var showContent = $('.tab-content.show');
-        //console.log('amont box : '+showContent.find('.amount-box').hasClass('show'));
-        if (showContent.find('.amount-box').hasClass('show')) {
-            tabBtnPrev($(this), true);
-        } else {
-            setTimeout(function() {
-                showSmallDialog('‘' + showContent.find('.btn-input').text() + '’을 먼저 누르세요.'); 
-            },100);
-        }
-    });
-    
-    // 다음 탭
-    tabMoveBtnBox.find('.tabBtn-move-next').on('click', function() {
-        var showContent = $('.tab-content.show');
-        //console.log('amont box : '+showContent.find('.amount-box').hasClass('show'));
-        if (showContent.find('.amount-box').hasClass('show')) {
-            tabBtnNext($(this), true);
-        } else {
-            setTimeout(function() {
-                showSmallDialog('‘' + showContent.find('.btn-input').text() + '’을 먼저 누르세요.'); 
-            },100);
-        }
-    });
-    
-    /* ######### 초기값 세팅. ######## */ 
-    if(requestdata.item_list == null) {
-        inputBtnEvent();
-    } 
-    nextBtnEvent();
-
-
-    //tabClick(true);  
-    /* #########[ popup_content_form_end ]######### */
-    function makeItemList() {
-        var tabContents = pluginForm.find('.tab-content');
-        var itemList = new Array();
-        
-        for ( let i = 0; i <= (tabContents.length)-1; i++ ) {
-            let tabContent = tabContents[i];
-            
-            var item = new Object();
-            
-            item.item_id = $(tabContent).find('#item_id').val();
-            item.item_qty = $(tabContent).find('#item_qty').val();
-            item.due_date = $(tabContent).find('#due_date').val();
-            item.item_name = $(tabContent).find('.help-message').text();
-            item.item_unit = $(tabContent).find('#item_unit').val();
-
-            itemList.push(item);
-        }       
-        
-        return itemList;
-    }
-    
-    function afterTabDelete() {
-        // tab 이동 버튼 제어. 
-        var tabBtnBox = pluginForm.find('.tabBtn-box');
-        var tabMoveBtnBox = pluginForm.find('.tabBtn-wrap').find('.tabBtn-move');
-        
-        //console.log('tabBtnBox > ', tabBtnBox);
-        var isMove = isTabMoveBtn();
-
-        if(isMove == true && tabBtnBox.find('.active').prev().hasClass('tabBtn') == true) {
-            console.log('prev');
-            tabMoveBtnBox.find('.tabBtn-move-prev').attr('disabled', false);
-        }
-        else {
-            tabMoveBtnBox.find('.tabBtn-move-prev').attr('disabled', true);
-            
-        }
-        if(isMove == true && tabBtnBox.find('.active').next().hasClass('tabBtn') == true) {
-            console.log('next');
-            tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled', false);
-        }
-        else{
-            tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled', true);
-        }
-        
-    }
-    
-    function tabBtnPrev(target, isShow) {
-        var tabBtnBox = target.parents('.tabBtn-wrap').find('.tabBtn-box');
-        var activeBtnNum = 0;
-        if(isShow){
-           target.next().attr('disabled', false);
-           
-           if(tabBtnBox.find('.tabBtn').hasClass('disabled')) {
-                target.next().addClass('disabled');   
-           }
-           else{
-                target.next().removeClass('disabled');   
-           }
-           
-        }  
-        
-        if (tabBtnBox.find('.active').prev().hasClass('tabBtn')) {
-            tabBtnBox.find('.active').removeClass('active').prev().addClass('active').focus();
-            activeBtnNum = activeBtnNum + tabBtnBox.find('.tabBtn').index($('.active'));
-            let scrollMove = activeBtnNum * tabBtnBox.find('.tabBtn').width();
-            tabBtnBox.scrollLeft(scrollMove);
-            if (tabBtnBox.find('.active').prev().hasClass('tabBtn') == false) {
-                target.attr('disabled', true);
-            }
-            console.log('activeBtnNum : '+activeBtnNum);
-            viewItemData(activeBtnNum+1);
-        }
-    };
-    
-    function tabBtnNext(target, isShow) {
-        var tabBtnBox = target.parents('.tabBtn-wrap').find('.tabBtn-box');
-        var activeBtnNum = 0;
-        if(isShow){
-           target.prev().attr('disabled', false);
-           
-           if(tabBtnBox.find('.tabBtn').hasClass('disabled')) {
-                target.prev().addClass('disabled');   
-           }
-           else{
-                target.prev().removeClass('disabled');   
-           }
-        }  
-        
-        if (tabBtnBox.find('.active').next().hasClass('tabBtn')) {
-            tabBtnBox.find('.active').removeClass('active').next().addClass('active').focus();
-            activeBtnNum = activeBtnNum + tabBtnBox.find('.tabBtn').index($('.active'));
-            let scrollMove = activeBtnNum * tabBtnBox.find('.tabBtn').width();
-            tabBtnBox.scrollLeft(scrollMove);
-            if (tabBtnBox.find('.active').next().hasClass('tabBtn') == false) {
-                target.attr('disabled', true);
-            }
-            console.log('activeBtnNum : '+activeBtnNum);
-            viewItemData(activeBtnNum+1);
-            
-        }
-    }
-    
-    function itemAmountCalculate(itemUnit, inputBtn) {
-
-        var unit = Number(itemUnit);                // 나중에 api로 단가를 가지고 와야 함. 
-        var tab_content = inputBtn.parents('.tab-content');   
-        var amount_box = tab_content.find('.amount-box');   // 물품금액 list
-        var item_qty =  Number(tab_content.find('#item_qty').val());        // 입력한 물품 수량.
-        
-        console.log('tab_content : ', tab_content);
-        
-        //var amount_label = $(this).text().replace('입력', 'Amount');    
-        var amount_value = item_qty*unit;
-        var amount_formula = '('+ unit.toLocaleString() + '*' + item_qty.toLocaleString() +')';
-
-        //amount_list.find('.item').find('.label > b').text(amount_label);                    // 물품 Amount label
-        amount_box.find('.item').find('.amount-value').text(amount_value.toLocaleString()+'원');   // 물품 Amount 계산 
-        amount_box.find('.item').find('.amount-formula').text(amount_formula.toLocaleString());
-
-        //var isOver = totalAmountCalculate();
-
-
-        console.log('itemCnt : '+itemCnt+', maxItemCount : '+maxItemCount);
-        if(itemCnt < maxItemCount) { 
-            pluginForm.find('.tabBtn-add').attr('disabled', false);              // tab 추가 버튼 활성화.
-        }
-        amount_box.addClass('show'); //amount_box.css('display', 'block');              // 물품금액 list 활성화.
-        inputBtn.attr('disabled', true);                                                 // 물품 입력 버튼 disabled.
-
-        // tab 조회 기능 확인.    
-        //tabClick(true);
-        
-        //return isOver;
-    }
-    
-    function totalAmountCalculate() {
-        var amountList = pluginForm.find('.tab-content').find('.amount-box');
-        var isOver = false;
-        
-        var totalAmount = 0;
-        console.log('amountList.length : '+amountList.length);
-        
-        for(var a=0; a<amountList.length; a++) {
-            let amountValue = $(amountList[a]).find('.amount-item.item').find('.amount-value').text();
-            
-            totalAmount = totalAmount + toNumberAmount(amountValue);
-            console.log('amount : ', $(amountList[a]).find('.amount-item.item'));
-        }
-
-        let totalAmountStr = Number(totalAmount).toLocaleString()+'원';
-        var totalAmountText = badgeConfirm + '<span class="amount-value">' + totalAmountStr + '</span>';       
-        if(totalAmount > budgetAmount) {
-            isOver = true;
-            totalAmountText = badgeOver + '<span class="amount-value">' + totalAmountStr + '</span>';   
-        }
-        
-        console.log('total : '+totalAmountStr);
-        if(amountList.length == 1) {
-            amountList.find('.amount-item.total').css('display', 'none');
-        }
-        else{
-            amountList.find('.amount-item.total').css('display', '');
-        }
-        amountList.find('.amount-item.total').find('.amount').html(totalAmountText);
-        
-        pluginForm.find('.tabBtn').removeClass('disabled');
-        pluginForm.find('.tabBtn-move-prev').removeClass('disabled');
-        pluginForm.find('.tabBtn-move-next').removeClass('disabled');
-        
-        return isOver;
-    }
-    
-    function toNumberAmount(amt) {
-        let replaceAmt = amt.replace(/,/g,'').replace('원', '');
-        
-        return Number(replaceAmt);
-    }
-    
-    // 추가된 탭의 크기에 따라서 move 버튼 보여 줄지 확인 
-    function isTabMoveBtn() {
-        var tabMoveBtnBox = pluginForm.find('.tabBtn-wrap').find('.tabBtn-move');
-        var isMove = false;
-        
-        var tabBtnBox = pluginForm.find('.tabBtn-wrap').find('.tabBtn-box');
-        var items = tabBtnBox.find('.tabBtn');
-        var addBtn = tabBtnBox.find('.tabBtn-add');
-        let boxWidth = tabBtnBox.outerWidth();
-        let btnWidth = 0; //addBtn.outerWidth();
-        
-        //console.log('isTabMoveBtn / tabBtnBox: ', tabBtnBox);
-        //console.log('box width : '+tabBtnBox.width()+' / '+tabBtnBox.outerWidth());
-        
-        btnWidth = $(items[0]).outerWidth() * (items.length+1) ;
-        console.log('btnWidth : '+boxWidth+' / '+btnWidth);
-        
-        if(btnWidth > boxWidth) {
-            isMove = true;            
-        }
-        else if(items.length > 4){
-            isMove = true;            
-        }
-        
-        return isMove;
-    }
-    
-    function tabClick(istabLink) {
-        var items = pluginForm.find('.tabBtn-box').find('.tabBtn');
-        let itemCnt = items.length;
-
-        console.log('itemCnt : '+itemCnt);
-        for(var t=0; t<itemCnt; t++) {
-            let item = items[t];
-            
-            console.log('tab click : '+$(item).hasClass('active'));
-            if($(item).hasClass('active') == false) {
-                if(istabLink) {
-                    $(item).attr('disabled', false);    
-                    $(item).attr('cursor', 'hand');
-                }
-                else{
-                    $(item).attr('disabled', true);    
-                    $(item).attr('cursor', 'pointer');
-                }
-            }
-            else{
-                $(item).attr('disabled', true);    
-            }
-        }
-        
-    }
-    
-    // tab 추가 함수.
-    function tabAdd() {
-        
-        console.log('tab cnt : '+$('.tabBtn-box').find('.tabBtn').length);
-        
-        var items = $('.tabBtn-box').find('.tabBtn');
-        let itemCnt = items.length;
-        let addItemCnt = itemCnt+1;
-        
-        for(var t=0; t<itemCnt; t++) {
-            let item = items[t];
-            
-            //$(item).removeClass('active');
-        }
-        
-        let tabItemHidden = $('<input type="hidden" value="'+addItemCnt+'" id="item_no" />');
-        let tabItemButton = $('<button class="tabBtn" type="button"><span class="prod_name">물품'+addItemCnt+'</span></button>');
-        
-        tabItemButton.append(tabItemHidden);
-        
-        $('.tabBtn-box').find('.tabBtn-add').before(tabItemButton);
-        //$('.tabBtn-box').find('.tabBtn-add').before(tabItemHidden);
-        
-        return addItemCnt;
-    }
-    
-    // tab 화면 추가 함수.
-    function tabContentAdd(contentList) {
-        
-        console.log('tab content cnt : '+contentList.find('.tab-content').length);
-        
-        var contents = contentList.find('.tab-content');
-        let contentCnt = contents.length;
-        let addContentCnt = contentCnt+1;
-        
-        for(var t=0; t<contentCnt; t++) {
-            let content = contents[t];
-            
-            //$(content).removeClass('show');
-        }        
-        
-        var tabContent = $('<div class="tab-content"></div>');
-        
-        var itemIDText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> ID <b>*</b></label></div>');
-        var itemIDBox = $('<div class="input-form"></div>');
-        var itemIDInput = $('<input type="text" placeholder="물품 ID를 입력해 주세요." max-length="50" id="item_id" value="" autocomplete="off"/>');
-        var helpMSG = $('<span class="help-message">' + '' +'</span>');
-        
-        itemIDBox.append(itemIDInput);
-        itemIDText.append(itemIDBox);
-        itemIDText.append(helpMSG);
-        
-        tabContent.append(itemIDText);
-        
-        var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> 수량 <b>*</b></label></div>');
-        var itemQtyBox = $('<div class="input-form"></div>');
-        var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" maxlength="15" id="item_qty" value="" autocomplete="off"/>');
-        var itemQtyHidden = $('<input type="hidden" id="item_unit" value="0"/>');
-    
-        itemQtyBox.append(itemQtyInput);
-        itemQtyBox.append(itemQtyHidden);
-        itemQtyText.append(itemQtyBox);
-        
-        tabContent.append(itemQtyText);
-        
-        var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
-        var itemDateWrap = $('<div class="schedule-wrap"></div>');
-        var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date startdate" placeholder="'+placeholderToday+'" id="due_date" onclick="datepicker.open(this)" value="'+placeholderToday+'" autocomplete="off"/>');
-    
-        itemDateBox.append(itemDateInput);
-        
-        /*  #########[ datepicker ]#########  */
-        var datepicker = $('<div class="datepicker-chem"></div>');
-        itemDateBox.append(datepicker);
-        
-        itemDateWrap.append(itemDateBox);
-        itemDateText.append(itemDateWrap);
-        
-        tabContent.append(itemDateText);
-        
-        var buttonBox = $('<div class="btn amount-btn mgT0"></div>');
-        var delButton = $('<button type="button" class="btn btn-default btn-big btn-del"><span class="prod_name">물품'+addContentCnt+'</span> 삭제</button>');
-        var inputButton = $('<button type="button" class="btn btn-emphasis2 btn-big btn-input" disabled><span class="prod_name">물품'+addContentCnt+'</span> 입력</button>');
-        
-        buttonBox.append(delButton);
-        buttonBox.append(inputButton);
-        tabContent.append(buttonBox);
-        
-        var productAmount  = 5000000;
-        var amountBox = $('<div class="amount-box"></div>');
-        var amountItem = $(
-            '<div class="amount-item item">'
-                +'<h4>' + '<span class="prod_name">물품'+addContentCnt + '</span> Amount</h4>'
-                +'<div class="amount">'
-                    +'<span class="amount-formula">('
-                    + '5000000'.toLocaleString() + '*' + '1000'.toLocaleString()
-                    +')</span>'
-                    +'<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
-                +'</div>'
-            +'</div>'
-        );
-        amountBox.append(amountItem);
-
-        var amountTotalBox = $(
-            '<div class="amount-item total">'
-                +'<h4>Total Amount</h4>'
-                +'<div class="amount">'
-                    +badgeConfirm + '<span class="amount-value">' + '5000000000'.toLocaleString() + '원</span>'
-                +'</div>'
-            +'</div>'
-        );
-        amountBox.append(amountTotalBox);
-
-        tabContent.append(amountBox);
-
-        contentList.append(tabContent); 
-    }
-    
-    // 클릭한 탭의 내용을 조회하는 합수.
-    function viewItemData(tabNo) {
-        
-/*        var items = $('.tabBtn-box').find('.tabBtn');
-        let itemCnt = items.length;
-
-        for(var t=0; t<itemCnt; t++) {
-            let item = items[t];
-            
-            $(item).removeClass('active');
-        }
-        
-        $(items[tabNo-1]).addClass('active');   
-*/        
-        ////////////
-        var contents = $('.tab-contents').find('.tab-content');
-        let contentCnt = contents.length;
-
-        for(var t=0; t<contentCnt; t++) {
-            let content = contents[t];
-            
-            $(content).removeClass('show');
-        }        
-        
-        $(contents[tabNo-1]).addClass('show');
-    }
-    
-    // 탭 클릭 링크를 추가할지 삭제할지 결정하는 함수. 
-    /*function tabMove(istabLink) {
-        var items = $('.tab').find('.tab-item');
-        let itemCnt = items.length;
-        
-        console.log('itemCnt : '+itemCnt);
-        
-        for(var t=0; t<itemCnt; t++) {
-            let item = items[t];
-            
-            if($(item).hasClass('selected') == false) {
-                //console.log('부모요소 추가 '+istabLink);
-                if(istabLink) {
-                    if($(item).find('a').length == 0){
-                        $(item).find('.item-name').wrap('<a href="#"></a>');
-                    }
-                }
-                else{
-                    //console.log(t+' : '+$(item).find('a').length);
-                    if($(item).find('a').length > 0){
-                        $(item).find('.item-name').unwrap();
-                    }
-                }
-            }
-        }        
-        
-    }*/ 
-    
-    // back버튼
-    pluginHeader.find('.backBtn').off('click').on('click', function() {
-        
-        var delay = 0;
-        if(requestdata.item_list != null) {
-            showSmallHtmlDialog('Plant ID 변경 시</br>작성하신 물품 정보가 모두 초기화됩니다.');
-            delay = 1000;
-        }
-        setTimeout(function() {
-            requestdata.step = 1;
-            requestdata.action = 'back';
-    
-            //delete requestdata.orderType;
-    
-            pluginForm.removeClass('show');
-            pluginForm.remove();
-            requestItemsInputFirst(requestdata);
-            $('.plugin-contents').append(requestItemsInputForm);
-        }, delay);  
-    });
-     
-    ascendScroll();     
-    
-     requestItemsInputForm = pluginForm;
-    return pluginForm;
-    
-}
-
-
-// 물품 청구 신청 입력 팝업 컨텐츠 3
-function requestItemsInputThird(requestdata) {
-    console.log('3단계 requestdata  : ', requestdata);
-
-    var itemList = (requestdata.item_list == null)? new Array():requestdata.item_list;
-    var itemCnt = (requestdata.item_cnt == null)? 1:requestdata.item_cnt;
-
-    var budgetAmount = (requestdata.valid_budget_amount == null)? '0':requestdata.valid_budget_amount;
-    
-    $('.plugin-contents').css('overflow-y', 'auto');
-    var pluginHeader = $('.plugin-header');
-    var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
-    pluginHeader.find('h1').text('물품 청구 ('+ '3' + '/' + '3' +')');
-    pluginHeader.find('.backBtn').remove();
-    pluginHeader.prepend(backBtn);
-    
-    $('.plugin-contents').focus();
- 
-    /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-third" onsubmit="return false;"></form>');
-    
-    /* #########[ popup_content ]######### */
-    /* ###[ Total ]### */
-    //var poductsListCount = 5;
-    var totalCountBox = $(
-        '<h3 class="totalCount-box">'
-            +'<span>Total</span>'
-            +'<span class="totalCount">'+itemCnt+'건</span>'
-        +'</3>'
-    );
-    pluginForm.append(totalCountBox);
-    pluginForm.append($('<hr class="mgY10 mgT20">'));
-
-
-    /* ###[ ProductsList ]### */
-    var productsListWrap = $('<ul class="products-list"></ul>');
-    var sample = 1000000;
-
-    var totalAmount = 0;
-    for (var i = 1; itemCnt >= i; i++) {
-        let item = itemList[i-1];
-
-        totalAmount += Number(item.item_unit) * Number(item.item_qty);
-        
-        var productsList = $('<li class="list-item"></li>');
-        var productsTitle = $('<h4>' + '물품' + i + '</h4>');
-        productsList.append(productsTitle);
-        var productsInfor = $('<div class="infor"></div>');
-        var itemID = $('<div class="item-id"><h5>' + item.item_id + '</h5></div>');
-        var itemBtnBox = $('<div class="btn-box"></div>');
-        var btnEdit = $('<button class="edit" type="button">' + iconEdit + '</button>');
-        var btnDelete = $('<button class="delete" type="button">' + iconTrash + '</button>');
-        itemBtnBox.append(btnEdit);
-        itemBtnBox.append(btnDelete);
-        itemID.append(itemBtnBox);
-        productsInfor.append(itemID);
-
-        var itemName = $('<div class="item-name"><h6>물품명</h6><span>' + item.item_name + '</span></div>');
-        productsInfor.append(itemName);
-        var itemCount = $('<div class="item-count"><h6>수량</h6><span>' + item.item_qty + '</span></div>');
-        productsInfor.append(itemCount);
-        var itemDate = $('<div class="item-date"><h6>Due date</h6><span>' + item.due_date + '</span></div>');
-        productsInfor.append(itemDate);
-        productsList.append(productsInfor);
-        
-        var hiddenItemNo = $('<input type="hidden" value="'+i+'" id="item_no"/>');
-        var hiddenItemUnit = $('<input type="hidden" value="'+item.item_unit+'" id="item_unit"/>');
-        productsList.append(hiddenItemNo);
-        productsList.append(hiddenItemUnit);
-
-        productsListWrap.append(productsList);
-        
-        btnEdit.on('click', function() {
-            btnEditEvent($(this));
-        });
-        function btnEditEvent(target) {
-            let item_no = $(target).parents('.list-item').find('#item_no').val();
-            
-            console.log('item_no : '+item_no);
-
-            requestdata.step = 2;
-            requestdata.action = 'edit';
-    
-            requestdata.item_no = item_no;
-            
-            let itemList = toArrayAllItem();
-            
-            requestdata.item_list = itemList;
-            requestdata.item_cnt = itemList.length;
-            
-            pluginForm.removeClass('show');
-            pluginForm.remove();
-            requestItemsInputSecond(requestdata);
-            $('.plugin-contents').append(requestItemsInputForm);
-        };
-    
-        btnDelete.on('click', function() {
-            btnDeleteEvent($(this));
-        });
-        function btnDeleteEvent(target) {
-            var listCount = productsListWrap.find('.list-item').length;
-            var totalAmtValue = toNumberAmount($('.total').find('.amount-value').text());
-            if (listCount > 1) {
-                var dialogTabName = target.parents('.list-item').find('h4').text();
-                
-                var itemId = target.parents('.list-item').find('.item-id').text();
-                var itemCount = target.parents('.list-item').find('.item-count').find('span').text();
-                var itemUnit = target.parents('.list-item').find('#item_unit').val();
-                
-                let amount = Number(itemCount) * Number(itemUnit);
-                let afterTotalAmount = totalAmtValue - amount;
-                
-                setTimeout(function() {
-                    showSmallDialog(
-                        dialogTabName + ' 삭제했습니다.<br>'
-                        +'(물품ID : ' + itemId + ',<br>'
-                        +'수량 : '+itemCount+')'
-                    );
-                    var textRenew = $('.small-dialog').text().split('<br>');
-                    $('.small-dialog').html(
-                        textRenew[0] + '<br>'
-                        +textRenew[1] + '<br>'
-                        +textRenew[2]
-                    );
-                },100);
-
-                target.parents('.list-item').remove();
-                for (var i = 0; listCount > i; i++) {
-                    $(productsListWrap.find('.list-item')[i]).find('h4').text('물품' + (i + 1));
-                    $(productsListWrap.find('.list-item')[i]).find('#item_no').val((i + 1));            // item_no 재정립.
-                };
-                $('.totalCount').text((listCount - 1)+'건');
-                $('.total').find('.amount-value').text(afterTotalAmount.toLocaleString()+'원');
-            } else {
-                setTimeout(function() {
-                    showSmallDialog('신청할 물품은 1개 이상이어야합니다.');
-                },100);
-            }
-        };
-    }
-    pluginForm.append(productsListWrap);
-    
-    function toArrayAllItem() {
-        let productList = productsListWrap.find('.list-item');
-        
-        let itemList = new Array();
-    
-        for ( let i = 0; i <= (productList.length)-1; i++ ) {
-            let product = productList[i];
-            
-            let item = new Object();
-            
-            item.item_id = $(product).find('.item-id').text();
-            item.item_qty = $(product).find('.item-count').find('span').text();
-            item.due_date = $(product).find('.item-date').find('span').text();
-            item.item_name = $(product).find('.item-name').find('span').text();
-            item.item_unit = $(product).find('#item_unit').val();
-
-            itemList.push(item);
-        }        
-    
-        console.log('itemList', itemList);   
-        return itemList;
-    };
-
-    function toNumberAmount(amt) {
-        let replaceAmt = amt.replace(/,/g,'').replace('원', '');
-        
-        return Number(replaceAmt);
-    }
-    
-    /* ###[ 물품 Amount ]### */
-    var amountWrap = $('<div class="amount-wrap"></div>');
-
-    var badge;
-    //var productAmount = 5000000;
-    /*
-    var totalAmount = 0;
-    for (var i = 0; productsListWrap.find('.list-item').length > i; i++) {
-        var target = $(productsListWrap.find('.list-item')[i]);
-        var targetAmount = target.find('.item-count').find('span').text();
-        targetAmount = parseInt(targetAmount.replace(/,/g, ""));
-        totalAmount = totalAmount + targetAmount;
-    }
-    */
-
-    if(budgetAmount >= totalAmount) {
-        badge = badgeConfirm;
-        setTimeout(function() {
-            submitBtn.prop('disabled', false).removeClass('btn-disabled');
-        },100);
-    } else {
-        badge = badgeOver;
-        setTimeout(function() {
-            submitBtn.prop('disabled', true).addClass('btn-disabled');
-            showSmallDialog('예산을 초과했습니다.'); 
-        },100);
-    }
-
-    var amountBox = $('<div class="amount-box show"></div>')
-    var amountItem = $(
-        '<div class="amount-item">'
-            +'<h4>Department 예산잔액</h4>'
-            +'<div class="amount">'
-                +'<span class="amount-value">' + Number(budgetAmount).toLocaleString() + '원</span>'
-            +'</div>'
-        +'</div>'
-    );
-    amountBox.append(amountItem);
-
-    var amountTotalBox = $(
-        '<div class="amount-item total">'
-            +'<h4>Total Amount</h4>'
-            +'<div class="amount">'
-                +badge + '<span class="amount-value">' + totalAmount.toLocaleString() + '원</span>'
-            +'</div>'
-        +'</div>'
-    );
-    amountBox.append(amountTotalBox);
-    amountWrap.append(amountBox);
-
-    pluginForm.append(amountWrap);
-
-    /*  ###[ etc ]### */
-    // 타계정 주문 버튼
-    var submitBtn = $('<button disabled type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-">물품 청구 신청</button>');
-    pluginForm.append(submitBtn);
-    submitBtn.on('click', function() {
-
-        let itemList = toArrayAllItem();
-        
-        let firstProductId = itemList[0].item_id;
-        let productCnt = itemList.length;
-
-         LoadingWithMask();
-
-        var requestParam = {
-            query: {
-              "event": "requestItemsCreateEvent"
-            },
-            payload: {
-                "itemList": ''      // 추후 추가 해야 함. 
-            }
-          };
-          
-          
-          sendChatApi(requestParam, null, function(payload){
-            console.log('물품 청구 신청 결과 : ', payload);
-            
-            var createInfo = '';
-            var createModelList = null;
-            var documentRefNo = '';
-            var regSuccessYn = '';
-            var errorMessage = '';
-            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
-                var createResponse = JSON.parse(payload.queryResult.messages[0].response);
-                console.log(createResponse["successYn"]);
-                
-                if (createResponse["successYn"] == 'N') {
-                    console.log('errorMessage : '+createResponse["errorMessage"]);
-                    regSuccessYn = 'N';
-                    errorMessage = createResponse["errorMessage"];               // 에러메시지.
-                } else {
-                    regSuccessYn = 'Y';
-                    //if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].orderInfo_1) {
-                        
-                    //    createInfo = createResponse.template.outputs[0].orderInfo_1;
-                    //}
-                    //if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].apmsModelList_1) {
-                        
-                    //    createModelList = createResponse.template.outputs[0].apmsModelList_1;
-                    //}
-                    if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].resultItem) {
-                        
-                        documentRefNo = createResponse.template.outputs[0].resultItem;
-                    }
-                }
-                
-            }
-            else{
-                regSuccessYn = 'E';
-            }
-
-            console.log('createInfo : ', createInfo);
-            console.log('createModelList : ', createModelList);
-            console.log('documentRefNo : ', documentRefNo);
-            
-            if(regSuccessYn == 'N') {
-                console.log('물품 청구 신청 실패 : '+errorMessage);
-                
-                $('#products-bill').removeClass('show');
-                $('.plugin-dim').removeClass('show');
-                setTimeout(function() {
-                    $('.plugin-dim').remove();
-                    $('#products-bill').remove();
-                }, 300);
-                
-                setTimeout(function() {
-                    showSmallHtmlDialog("물품청구 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
-                }, 400);
-                
-            }
-            else if(regSuccessYn == 'E') {          // 주문 생성 요청 에러. 
-                console.log('물품청구 신청 에러 : ');
-
-                $('#products-bill').removeClass('show');
-                $('.plugin-dim').removeClass('show');
-                setTimeout(function() {
-                    $('.plugin-dim').remove();
-                    $('#products-bill').remove();
-                }, 300);
-                
-                setTimeout(function() {
-                    showSmallHtmlDialog("물품청구 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
-                }, 400);
-                
-            }
-            else{
-                 console.log('물품청구 신청 완료 : ', documentRefNo);
-                 
-                 requestdata.documentRefNo = documentRefNo;
-                 requestdata.firstProductId = firstProductId;
-                 requestdata.productCnt = productCnt;
-
-                $('#products-bill').removeClass('show');
-                $('.plugin-dim').removeClass('show');
-                setTimeout(function() {
-                    $('.plugin-dim').remove();
-                    $('#products-bill').remove();
-                }, 300);
-                
-                var msgOrderResult = '<div class="message simple-text">'
-                                 +'<p>'
-                                    +'물품 청구 내용이 통합결제로 전송되었습니다. 물품 청구 승인을 요청하려면 '
-                                    +'<span style="color: #E0205C;"><b>통합결재</b></span> 에서 최종 완료를 해야 합니다. 아래 버튼을 눌러 통합결재로 이동해 주세요.'
-                                 +'</p>'
-                                + '</div>'; 
-            
-                appendChatbotHtml(msgOrderResult, false);    
-                $('.chat-message.left').last().append(productsBillResult(requestdata));
-                $('.chat-message.left').last().append('<span class="message-date">' + moment().format("a h:mm") + '</span>');
-                
-                //var anotherGbmsResult = msgOrderResult + anotherAccountResult(orderdata);      
-                //$('.chat-message.left').last().append(anotherAccountResult(orderdata)); // 결과 메세지 (임시 확인용)
-                //appendChatbotText(anotherGbmsResult); 
-            }
-
-            closeLoadingWithMask();
-            //descendScroll();
-          });
-          
-    });
-    
-    // back버튼
-    pluginHeader.find('.backBtn').off('click').on('click', function() {
-
-        requestdata.step = 2;
-        requestdata.action = 'back';
-
-        let itemList = toArrayAllItem();
-            
-        requestdata.item_list = itemList;
-        requestdata.item_cnt = itemList.length;
-        
-        requestdata.item_no = 1;
-            
-        pluginForm.removeClass('show');
-        pluginForm.remove();
-        requestItemsInputSecond(requestdata);
-        $('.plugin-contents').append(requestItemsInputForm);
-        
-    });
-
-    ascendScroll();
-
-    requestItemsInputForm = pluginForm;
-    return pluginForm;
-    
-}
-
-// 물품 청구 결과 메세지
-function productsBillResult(requestdata) {
-    var messageWrap = $('<div class="custom-message"></div>');
-    var messageBox = $('<div class="message"></div>');
-    var contentWarp = $('<div class="content-wrap"></div>');
-    var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>물품 청구 신청</h2></div>');
-    contentWarp.append(contentHeader);
-    
-    var contentBox = $(
-        '<div class="content-box">'
-            +'<ul class="content-list-wrap">'
+    var hsCodeResultErrorContent = $(
+        '<div class="importCargo-content">'
+            +'<ul class="importCargo-list-wrap">' 
+                +'<li></li>'
                 +'<li>'
-                    +'<h4>신청 번호</h4>'
-                    +'<div class="content-list-val text"><span>' + '5205522155DD' + '</span></div>'
+                    +'<h4 style="width: 110px;">사업부 코드</h4>'
+                    +'<div class="hsCode-li-content"><span>' + data.orgId + '</span></div>'
                 +'</li>'
                 +'<li>'
-                   +'<h4>청구 물품</h4>'
-                   +'<div class="content-list-val text"><span>' + requestdata.firstProductId + ' 외 ' + (requestdata.productCnt-1) + '건</span></div>'
+                    +'<h4 style="width: 110px;">Part/Model No.</h4>'
+                    +'<div class="hsCode-li-content"><span>' + data.partNo + '</span></div>'
                 +'</li>'
+                +'<li style="align-items: flex-start;">'
+                    +'<h4 style="width: 110px; margin-top: 3px;">수출국</h4>'
+                    +'<div class="hsCode-li-content"><span>' + data.countryNameEn + '</span></div>'
+                +'</li>'
+                +'<li></li>'
             +'</ul>'
         +'</div>'
     );
 
-    var contentBtn = $(
-        '<div class="btn">'
-            +'<button type="button" class="btn btn-default btn-big">통합결재 화면 ' + iconLink + '</button>'
-        +'</div>'
-    )
-    contentBtn.on('click', function() {
-        chatui.sendMessage("타계정 주문 현황 조회");   
-    });
-    contentBox.append(contentBtn);
-    contentWarp.append(contentBox);
-    messageBox.append(contentWarp);
-    messageWrap.append(messageBox);
+    hsCodeResultErrorContentWrap.append(hsCodeResultErrorContent);
+    hsCodeResultErrorMessageWrap.append(hsCodeResultErrorContentWrap);
+    hsCodeResultError.append(hsCodeResultErrorMessageWrap);        
     
-    requestMsgScroll();
-    return messageWrap;
-}
-
-function ascendScroll() {
-	setTimeout(function() {
-        var e = document.getElementById("item-content");
-        e.scrollTop = 0;
+    
+    //simple Text
+    var msgCon = $('<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"></div>');
+    var text = $('<p>입력하신 정보로 조회되는 HS Code가 없습니다. 작성 하신 내용을 정확히 확인 후 다시 조회하거나 관세팀으로 문의해주세요.</p>');
+    
+    msgCon.append(text);
+    
+    // simple Text button 추가
+    var btnWrap = $('<div class=""btn-wrap"></div>');
+    var customBtn1 = $('<div><button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color" data-slot="N"><span>HS Code 다시 물어보기</span></button></div>')
+    
+    btnWrap.append(customBtn1);
+    msgCon.append(btnWrap);
+    hsCodeResultError.append(msgCon);
+    
+    customBtn1.click(function(){
         
-    }, 50)
+        addHsCodePopupOpen(data);
+        
+        var orgId = data.orgId;
+        var partNo = data.partNo;
+        var origCntryCode = data.origCntryCode;
+        var countryNameKo = data.countryNameKo;
+        var countryNameEn = data.countryNameEn;
+        var countryCdTrd = data.countryCdTrd;
+        var isoNum = data.isoNum;
+        var orgItems = data.orgItems;
+        
+        if(orgId != ""){
+            var $selectedOrg = $(".orgId-form").find(".selected-org");
+            var htmlStr;
+            
+            var attr2;
+            var attr4;
+            var companyCode;
+            var orgCode;
+            var orgName;
+            
+            orgItems.forEach(function(item){
+                if(item.ORGANIZATION_CODE == orgId){
+                    attr2 = item.ATTRIBUTE2
+                    attr4 = item.ATTRIBUTE4
+                    companyCode = item.COMPANY_CODE
+                    orgCode = item.ORGANIZATION_CODE
+                    orgName = item.ORGANIZATION_NAME
+                    return;
+                }
+            });
+            
+            htmlStr = '<div class="sel-org-info" style="display: none;">'
+                + '<input type="hidden" value="'+ attr2 +'" class="sel-org-atr2"/>'
+                + '<input type="hidden" value="'+ attr4 +'" class="sel-org-atr4"/>'
+                + '<input type="hidden" value="'+ companyCode +'" class="sel-org-companyCode"/>'
+                + '<input type="hidden" value="'+ orgCode +'" class="sel-org-Code"/>'
+                + '<input type="hidden" value="'+ orgName +'" class="sel-org-Name"/>'
+                +'</div>'
+            ;
+                
+            $selectedOrg.empty();
+            $selectedOrg.append(htmlStr);
+            
+            $("#hsCode_orgId").val(orgCode);
+            $("#hsCode_orgId").closest('.input-form').find('.input-val-del').addClass('show');
+        }
+        
+        if(partNo != ""){
+            $("#hsCode_partNo").val(partNo);
+            $("#hsCode_partNo").closest('.input-form').find('.input-val-del').addClass('show');
+            checkHsCodeRequire();
+        }
+        
+        if(origCntryCode != ""){
+            
+            var $memList = $(".form-hsCode").find(".selected-members");
+            var htmlStr;
+            
+            htmlStr = '<div class="member-info">'
+              + '<input type="hidden" value="'+countryNameEn+'" class="country-name"/>'
+              + '<input type="hidden" value="'+countryNameKo+'" class="country-nameKo"/>'
+              + '<input type="hidden" value="'+origCntryCode+'" class="country-code"/>'
+              + '<input type="hidden" value="'+countryCdTrd+'" class="country-codeTrd"/>'
+              + '<input type="hidden" value="'+isoNum+'" class="country-isoNum"/>'
+              +'</div>';
+              
+            $memList.append(htmlStr);
+
+            $("#attendees").val(countryNameEn);
+            $("#attendees").closest('.input-form').find('.input-val-del').addClass('show');
+        }
+    });
+
+    // quickReplies 템플릿
+    /* 
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var systemBtn = $('<span class="btn-custom-reply">GPT에게 물어보기</span>');
+    quickReplies.append(systemBtn);
+    hsCodeResultError.append(quickReplies);
+
+    systemBtn.click(function(){
+        //chatui.sendMessage("GPT에게 물어보기");    
+        activeGptBot('');
+    });
+    */
+
+    return hsCodeResultError;
 }
 
-function requestMsgScroll() {
-    setTimeout(function() {
-        var sclTarget = $('#divScroll');
-        if (sclTarget.find('.chat-message').hasClass('right')) {
-            var sclHeight = sclTarget.prop('scrollHeight');
-            var lastLeftMsg = sclTarget.find('.chat-message.left').last().height();
-            var lastRightMsg = sclTarget.find('.chat-message.right').last().height();
-            console.log('스크롤', sclHeight, lastLeftMsg, lastRightMsg);
-            sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg - 230);
+// HSCode 조회 결과 메세지 (다건)
+function hsCodeResultList(data) {
+    var items = data.items;
+    
+    var systemContetns = $('<div class="system-contents" style="width:300px;"></div>');
+    var msgCon = $('<div class="message simple-text"></div>');
+    var text = $('<p>'
+                    + '<font color="red"><b>' + data.partNo + '</b></font>로 <font color="red"><b>' + items.length + '건</b></font>'
+                    + '의 HS Code가 조회되었습니다. 상세 내용을 조회할 항목을 선택해 주세요.'
+                + '</p>'
+    );
+    
+    msgCon.append(text);
+    systemContetns.append(msgCon);
+
+    if (items instanceof Array && items.length > 0) {
+        
+        let sysListCount = 0; 
+        //var custCon = $('<div class="custom-message"></div>');    
+    	var listCon = $('<div class="message profile-list system" style="margin-left:0px;"></div>');
+    	
+    	//custCon.append(listCon);
+    	var listWrap = $('<div class="p-box"></div>');
+    	listCon.append(listWrap);
+    	
+    	var title = $('<div class="list-header-title">' + listHeaderIcon +'HS Code 조회 결과</div>'); 
+        listWrap.append(title);
+    	
+    	var listUl = $('<ul class="profile-list-wrap"></ul>'); // [퍼블 수정 및 추가] - 클래스(profile-list-wrap) 추가
+    	listWrap.append(listUl);
+        
+        items.forEach(function(item,index){
+            
+            sysListCount++;
+            
+            var listLi = $('<li class="list-box hsCode-List-box" id="listBox_' + sysListCount + '"></li>');
+            listUl.append(listLi);
+          
+            var sysInfo = $('<div class="text-box"></div>');
+            listLi.append(sysInfo);
+            
+            sysInfo.append(
+                '<div class="name">'
+                    +'<h1 class="system">'
+                        + item.hsCode
+                    +'</h1>'
+                +'</div">'
+            );
+            
+            var sysInfoList = $('<ul class="profile-info system"></ul>');
+            sysInfoList.append($(
+                '<li>'
+                    +'<img width="16" height="16" style="filter: opacity(0.5) drop-shadow(0 0 0 #8c8c8c);" src="https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/f5fda7ea-204b-43ce-a137-d94b852457f4/assets/Style=Lined.png" alt="">'
+                    +'<div style="margin-left:5px;"><span>' + item.standardItemDesc + '</span></div>'
+                +'</li>'
+            ));
+            
+            //사업부 1건일때
+            if(item.userList.length == 1){
+                sysInfoList.append($(
+                    '<li>'
+                        + iconTeam
+                        +' <div style="margin-left:5px;"><span>' + item.userList[0].organizationName + '</span></div>'
+                    +'</li>'
+                ));    
+            }else if(item.userList.length > 1){  //사업부 2건이상일때
+                sysInfoList.append($(
+                    '<li>'
+                        + iconTeam
+                        +' <div style="margin-left:5px;"><span>총 ' + item.userList.length + '개 사업부</span></div>'
+                    +'</li>'
+                ));
+            }
+            
+            sysInfo.append(sysInfoList);
+            
+            if (sysListCount > 5){
+                listLi.addClass('hide');
+            }
+            
+            arrowHtml =	'<span class="arrow">'
+                +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                +'</svg>'
+              +'</span>';    
+          
+            listLi.append(arrowHtml);
+            
+            // hidden value 추가
+            // 클릭시 hidden value 로 단건 조회 
+            
+            listLi.click(function(){
+                var liId = parseInt($(this).attr('id').split('_')[1]) - 1;
+                
+                var orgId = data.orgId;
+                var partNo = data.partNo;
+                var origCntryCode = data.origCntryCode;
+                var hsCode = items[liId].hsCode;
+            	
+            	var param = {
+            	    "ORGANIZATION_ID":orgId,
+            	    "PART_NO":partNo,
+                    "ORIG_CNTRY_CODE":origCntryCode,
+                    "HS_CODE":hsCode
+            	};
+            	
+                chatui.sendEventMessage("importedHsCodeEvent", param);
+                
+            });
+          
+        });
+   
+        if (sysListCount > 4){
+            var seeMoreBtn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            
+            listWrap.append(seeMoreBtn);
+            
+            seeMoreBtn.click(function() {
+                var currentList = $(this).parents('.profile-list').find(".hide").first().attr('id');
+                var currentLi = parseInt(currentList.split('_')[1]);
+                
+                if((currentLi+5) >= sysListCount){
+                    $(this).parents('.p-box').find(".list-box").removeClass('hide');
+                    $(this).remove();
+                }else{
+                    for(var i=0;i<5;i++){
+                        var targetLi = "#listBox_" + (currentLi + i);
+                        $(this).parents('.p-box').find(targetLi).removeClass('hide');
+                    }
+                }
+                descendScroll();
+            });
         }
-    },100);    
+        
+        systemContetns.append(listCon);
+    }
+
+    return systemContetns;
 }
+//Hs Code 조회 END
