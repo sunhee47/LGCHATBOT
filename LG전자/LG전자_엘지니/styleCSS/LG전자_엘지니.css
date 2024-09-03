@@ -7264,3 +7264,48 @@ background: #F5F5F5 !important;
     font-size: 14px;
     font-weight: 400;
 }
+
+.hsCode-List-box{
+    cursor: pointer;
+}
+
+.hsCode-li-header{
+    width: 40%;
+}
+
+.hsCode-li-content{
+    width: 60%;
+}
+
+.scrollbar-able .ui-widget.ui-widget-content::-webkit-scrollbar {
+    width: 13px !important;
+    height: 13px !important;
+    background: inherit;
+}
+
+.scrollbar-able .ui-widget.ui-widget-content::-webkit-scrollbar-thumb {
+    background: #DADADA !important;
+    border-radius: 5px;
+    width: 5px !important;
+    border-right: 4px solid white;
+    border-left: 4px solid white;
+}
+
+.scrollbar-able .ui-widget.ui-widget-content::-webkit-scrollbar-track {
+    background: transparent !important;
+    -webkit-box-shadow: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.scrollbar-able .ui-widget.ui-widget-content::-webkit-scrollbar-button:vertical:start:decrement,
+.scrollbar-able .ui-widget.ui-widget-content::-webkit-scrollbar-button:vertical:start:increment {
+    display: block;
+    height: 3px;
+}
+
+.scrollbar-able .ui-widget.ui-widget-content::-webkit-scrollbar-button:vertical:end:decrement,
+.scrollbar-able .ui-widget.ui-widget-content::-webkit-scrollbar-button:vertical:end:increment {
+    display: block;
+    height: 3px;
+}
