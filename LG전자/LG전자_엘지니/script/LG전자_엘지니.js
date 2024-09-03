@@ -3052,7 +3052,7 @@ jQuery(document).ready(function(e){
   +     '<h2>사용해 보세요!</h2>'
   +     '<div class="btns">'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">번역</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">AI Trans</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">Trans Talk</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 등록</button>'
   //+         '<button type="button" class="btn-s btn-text btn-sendtext">화상회의 등록</button>'
   //+         '<button type="button" class="btn-s btn-text btn-sendtext">월마감</button>'
