@@ -10207,7 +10207,7 @@ const setAutocompleteTeamMember = function(input, empNo) {
             console.log('result', result);
             teamMemberList = result.resultList;
             
-            //console.log('teamMemberList : ', teamMemberList);
+            console.log('teamMemberList : ', teamMemberList);
             
             if(teamMemberList) {
                 if(teamMemberList.length == 0) {
@@ -10228,6 +10228,7 @@ const setAutocompleteTeamMember = function(input, empNo) {
                  $(input).autocomplete("option", "source", keyword);
                    $(input).autocomplete("option", "appendTo", $(input).closest(".form-first").find(".autocomplete-member"));
                 
+                console.log($(input).closest(".form-first").find(".autocomplete-member"));
                 //$(this).data("uiAutocomplete").search($(this).val());
             }
 
@@ -10305,6 +10306,7 @@ const setAutocompleteTeamMember = function(input, empNo) {
           + '<input type="hidden" value="'+ui.item.employee_number+'" class="person-empNo"/>'
           +'</div>';
           
+          console.log('htmlStr > '+htmlStr);
           $memList.append(htmlStr);
           
           if($('.selected-members').height() > 110) {
@@ -17788,7 +17790,7 @@ function requestItemsInputFirst(requestdata) {
     pluginForm.append(inputBoxText3);
 
     /* ###[ 계정 ]### */
-    var inputBoxText4 = $('<div class="input-box add-order"><div ><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기</a></label></div></div>');
+    var inputBoxText4 = $('<div class="input-box add-order"><div class="with-guide"><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기</a></label></div></div>');
     var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon"></div>');
     var accountSelected = $('<div class="selected-order"></div>');
     var inputBox4 = $('<input type="text" placeholder="청구할 계정을 선택해 주세요." max-length="50" id="account-name" autocomplete="off" readonly disabled/>');

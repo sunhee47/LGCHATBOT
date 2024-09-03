@@ -7129,14 +7129,14 @@ background: #F5F5F5 !important;
   transform: translate(-50%, -50%); */
 }
 
-.plugins .add-order div {
+.plugins .add-order .with-guide {
     /*padding: 13px 0; */
     color: #2c2c2c;
     font-size: 14px;
     display: flex;
     justify-content: space-between;    
 }
-.plugins .add-order div a {
+.plugins .add-order .with-guide a {
     color: #898989;
     text-decoration-line: underline;
 }
