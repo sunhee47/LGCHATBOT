@@ -7277,6 +7277,20 @@ background: #F5F5F5 !important;
     width: 60%;
 }
 
+.hsCode-List-box .profile-info svg{
+    width: 7%;
+}
+
+.hsCode-List-box .profile-info div{
+    margin-left: 5px;
+    width: 93%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
 .scrollbar-able .ui-widget.ui-widget-content::-webkit-scrollbar {
     width: 13px !important;
     height: 13px !important;
