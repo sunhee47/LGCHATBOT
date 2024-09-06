@@ -13379,6 +13379,11 @@ function anotherAccountOrderFifth(orderdata) {
     
     var costAccountListCont = $('<div class="order-list cost_accnt_list"></div>');
     
+    var titleNote = $('<small class="note" style="font-size:12px;">※ 부서 예산(GBMS)일 경우, 예산 확보된 내역이 조회됩니다. 사용 예산은 부서 예산(GBMS) 조회를 통해 확인 가능합니다.</small>');
+    if(selApmsYN == 'YES') {    
+        inputBoxText3.append(titleNote);
+    }
+    
     var costAccountListTitle = $('<span>비용처리 계정 목록</span>');
     costAccountListCont.append(costAccountListTitle);
     //inputBox.append('<input type="text" value="" id="costau-code"/>');
@@ -15149,7 +15154,10 @@ function anotherAccountOrderSixth(orderdata) {
 function anotherAccountOrderSeventh(orderdata) {
     console.log('orderdata : ', orderdata);    
     
-    var placeholderToday = moment().format('YYYY.MM.DD');
+    var today = new Date();
+    var tomorrow = new Date(today.setDate(today.getDate()+1));
+    
+    var placeholderToday = moment(tomorrow).format('YYYY.MM.DD');
     
     var selDeliveryType = (orderdata.delivery_type == null)? 'TL':orderdata.delivery_type;
     var selInstallType = (orderdata.install_type == null)? '':orderdata.install_type;
@@ -16893,7 +16901,7 @@ function anotherAccountListViewPopupOpen(data) {
     
     /* #########[ popup_content ]######### */
     var mainNote = $('<small class="note" style="font-size:12px;">※ 오늘 기준 1개월 이내 주문건만 조회 가능합니다.</small>');
-    pluginForm.append(mainNote);
+    //pluginForm.append(mainNote);
         
     /* ###[ 조회 구분 ]### */
     var dropdownBox = $('<div class="dropdown-box dropdown-aalv"><label>조회 구분</label></div>');
@@ -16905,15 +16913,20 @@ function anotherAccountListViewPopupOpen(data) {
             +'</svg>'
         +'</i>'
     );
+
+    var gubunNote = $('<small class="note" style="font-size:12px;">*나의 주문 건일 경우, 3개월 이내 주문 중 최근 20건을 조회합니다.</small>');
+    dropdownBox.append(gubunNote);
+    
     pluginForm.append(dropdownBox);
     dropdownBox.append(dropdownMainBtn);
     dropdownMainBtn.append(dropdownArrow);
     
-    var searchTypeList = [{"searchGubun":"A", "searchName":"나의 주문 건 조회"}
-                            ,{"searchGubun":"B", "searchName":"부서 내 주문 건 조회"}
-                            ,{"searchGubun":"C", "searchName":"주문 번호로 조회"}
-                            ,{"searchGubun":"D", "searchName":"접수 번호로 조회"} ];
-    
+    var searchTypeList = [
+                            {"searchGubun":"A", "searchName":"나의 주문 건 조회"},
+                            //{"searchGubun":"B", "searchName":"부서 내 주문 건 조회"},
+                            {"searchGubun":"C", "searchName":"주문 번호로 조회"},
+                            {"searchGubun":"D", "searchName":"접수 번호로 조회"} ];
+
     // 조회 구분 메뉴 & 리스트(아이템)
     var dropdownMenuListWrap = $('<ul class="dropdown-menu"></ul>');
     var searchTypeListText = '';    
@@ -16946,7 +16959,7 @@ function anotherAccountListViewPopupOpen(data) {
 
     var inputTextContentOrderNum = $(
         '<div class="input-form">'
-            +'<input type="text" placeholder="주문 번호를 입력해 주세요." name="" id="searchNumber" value="'+searchNumber+'" max-length="50" autocomplete="off"/>'
+            +'<input type="text" placeholder="내용을 입력해 주세요." name="" id="searchNumber" value="'+searchNumber+'" max-length="50" autocomplete="off"/>'
         +'</div>'
     );
     //inputTextContentOrderNum.find('input').val('551127217');
@@ -17126,7 +17139,7 @@ function anotherAccountListViewPopupOpen(data) {
         }
         else {
             $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
-            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex').css('top', '105px');
         }
     }
     function dropdownMenuEvent(target) {
@@ -17501,6 +17514,10 @@ function gbmsResultMultiple(budgetInfo) {
                     //+'</div>'
                     +'<ul class="list-info">'
                         +'<li>'
+                            +'<h4>계정코드</h4>'
+                            +'<span class="list-info-value text">' + budgetInfo.account_code + '</span>'
+                        +'</li>'
+                        +'<li>'
                             +'<h4>계정이름</h4>'
                             +'<span class="list-info-value text">' + budgetInfo.account_name + '</span>'
                         +'</li>'
@@ -17530,7 +17547,7 @@ function gbmsResultMultiple(budgetInfo) {
     messageWrap.append(contentListWrap);
 
     // if (아이템.length > 4) {
-    if (budgetInfo.length > 4) {
+    if (budgetInfo.length > page_size) {
         var seeMoreBtn = $(
             '<div class="see-more">'
                 +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -17703,7 +17720,7 @@ function aalvResult(result) {
                         +'<ul class="list-info">'
                             +'<li>'
                                 +'<h4>주문자</h4>'
-                                +'<span class="list-info-value text">' + result.employee_name  + '</span>'
+                                +'<span class="list-info-value text">' + ((result.employee_name==null)? '-':result.employee_name)  + '</span>'
                             +'</li>'
                             +'<li>'
                                 +'<h4>접수번호</h4>'
@@ -17736,7 +17753,7 @@ function aalvResult(result) {
                             //+'</li>'
                             +'<li>'
                                 +'<h4>주문자</h4>'
-                                +'<span class="list-info-value text">' + result.employee_name + '('+index+')' + '</span>'
+                                +'<span class="list-info-value text">' + ((result.employee_name==null)? '-':result.employee_name) + '</span>'
                             +'</li>'
                             +'<li>'
                                 +'<h4>접수번호</h4>'
