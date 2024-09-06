@@ -17328,7 +17328,8 @@ function requestItemsInputFirst(requestdata) {
 
     /* #########[ popup_content_wrap_start ]######### */
     var pluginForm = $('<form class="form-first" onsubmit="return false;"></form>');
-    
+    var accountList = new Array();
+
     /* #########[ popup_content ]######### */
     /* ###[ Department ]  ]### */
     var inputBoxText1 = $('<div class="input-box add-order"><label>Department<b>*</b></label></div>');
@@ -17441,7 +17442,7 @@ function requestItemsInputFirst(requestdata) {
                         inputBox1.val('');
                         scheduleorderWidth(inputTextContent1, departmentSelected, inputBox1);
                         
-                        selectBoxAction(dropdownMainBtn, null, null);
+                        selectBoxAction(dropdownMainBtn, false, null);
                         
                         nextBtnEvent();  
                     });
@@ -17464,13 +17465,16 @@ function requestItemsInputFirst(requestdata) {
     inputBoxText1.append(inputTextContent1);
     pluginForm.append(inputBoxText1);
     
-    function selectBoxAction($input, $inputContent, $costSelected) {
+    function selectBoxAction($input, selectflag, $costSelected) {
         var deptval = departmentSelected.find('.data-wrap').text();
         var plantval = plantSelected.find('.data-wrap').text();
         
         if(deptval && plantval) {
             $input.attr('disabled', false);
+            $input.css('background-color', '').css('cursor', 'pointer');
             //$inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
+            
+            sendAccountAPI(selectflag);
         }
         else{
             // 계정 정보 초기화. 
@@ -17478,9 +17482,13 @@ function requestItemsInputFirst(requestdata) {
             //$costSelected.empty();
             //$input.css('display', 'block');
         
+            resetAccount($input);
+            $input.css('background-color', '#F5F5F5').css('cursor', 'default');
             $input.attr('disabled', true);
             //$inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
+            
         }
+        
     }
     
     function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
@@ -17502,6 +17510,95 @@ function requestItemsInputFirst(requestdata) {
         }
     };
     
+    function resetAccount(btn) {
+        //var accountListListText = '';    
+        //let dropdownListItem = $(accountListListText);
+        
+        dropdownMenuListWrap.css('bottom', 60+'px');
+        dropdownMenuListWrap.empty();
+        
+        $(btn).removeClass('active');
+        $(btn).find('span').text('옵션을 선택해 주세요.');
+    }
+    
+    function sendAccountAPI(selectflag) {
+
+        var account_list = new Array();
+        
+        if(isNull($('#department_code').val())) {
+            
+            setTimeout(function() {
+                showSmallDialog('Department를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+            }, 100);
+            
+            return;
+        }
+        if(isNull($('#plant_code').val())) {
+            
+            setTimeout(function() {
+                showSmallDialog('Plant를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+            }, 100);
+            
+            return;
+        }
+
+        LoadingWithMask(); 
+        var requestParam = {
+            query: {
+              "event": "reqItemsAccountSearchEvent"
+            },
+            payload: {
+                BNAME: chatui.getSetting("userId"), 
+                ZORGID: $('#department_code').val(), 
+                WERKS: $('#plant_code').val()
+            }
+          };
+
+          sendChatApi(requestParam, null, function(payload){
+                //console.log('payload > ', payload);
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                
+                if(result == null) {
+                    account_list = null;
+                }
+                else{
+                    account_list = result.resultList;
+                    
+                    //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
+                    var accountListListText = '';    
+                    account_list.forEach(function(account, index) {
+                        var selected = '';
+                        if(account.ZCLSCODE == selAccountCode) {
+                            selected = 'selected';
+                        }
+                
+                        accountListListText += '<li class="dropdown-item"><a href="javascript:void(0)" class="'+selected+'"><p class="code">'+account.ZCLSCODE+'</p><p class="small">'+account.ZCLCDTEXT+'</p></a>'
+                                            //+ '<span class="redidence_type" style="display:none;">'+account.ZCLSCODE+'</span>'
+                                            + '</li>';
+                    });        
+                    let dropdownListItem = $(accountListListText);
+                    
+                    dropdownMenuListWrap.append(dropdownListItem);
+                    //dropdownBox.append(dropdownMenuListWrap);
+                    
+                    if(selectflag == true) {
+                        setTimeout(function() {
+                            var selectedValue = dropdownMenuListWrap.find('li').find('.selected');
+                
+                            console.log('selectedValue : ', selectedValue);
+                            selectedValue.trigger('click');
+                        }, 100);
+                    }
+                }
+                
+                closeLoadingWithMask();
+
+             });
+
+        return account_list;
+    }
+    
     $(document).off("click").on('click', '.data-wrap .btn-delete', function(){
         console.log('delete....');
         var content = $(this).parents(".order-select");
@@ -17519,7 +17616,7 @@ function requestItemsInputFirst(requestdata) {
 
         // department, plant 값을 삭제한 경우. 
         if(label.text() == 'Department*' || label.text() == 'Plant*') {
-            selectBoxAction(inputBox4, inputTextContent4, accountSelected);
+            selectBoxAction(dropdownMainBtn, false, null);
         }
         
         nextBtnEvent();  
@@ -17645,7 +17742,7 @@ function requestItemsInputFirst(requestdata) {
                         inputBox2.val('');
                         scheduleorderWidth(inputTextContent2, plantSelected, inputBox2);
                         
-                        selectBoxAction(inputBox4, inputTextContent4, accountSelected);
+                        selectBoxAction(dropdownMainBtn, false, null);
 
                         nextBtnEvent();  
                     });
@@ -17810,8 +17907,7 @@ function requestItemsInputFirst(requestdata) {
     );
     dropdownBox.append(dropdownMainBtn);
     dropdownMainBtn.append(dropdownArrow);
-    
-    var accountList = new Array();
+
     
     var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
     var accountListListText = '';    
@@ -17828,7 +17924,8 @@ function requestItemsInputFirst(requestdata) {
     dropdownMenuListWrap.append(dropdownListItem);
     dropdownBox.append(dropdownMenuListWrap);
     
-    dropdownBox.append('<input type="hidden" value="" id="redidence_type"/>');
+    dropdownBox.append('<input type="hidden" value="" id="account_code"/>');
+    dropdownBox.append('<input type="hidden" value="" id="account_name"/>');
     
     pluginForm.append(dropdownBox);
 
@@ -17974,10 +18071,57 @@ function requestItemsInputFirst(requestdata) {
     //inputBoxText4.append(inputTextContent4);
     //pluginForm.append(inputBoxText4);
     
+/////////////////////////////////////////////////////////////////////////////////
+
+    // dropdown
+    //dropdownMainBtn.on('click', function() {
+    
+    $(document).on('click','.form-first .btn-dropdown', function(e) {
+        dropdownBtnEvent(this);
+        //nextBtnEvent($(this));
+    });
+    
+    $(document).on('click','.form-first .dropdown-menu .dropdown-item a', function(e) {
+    //dropdownListItem.find('a').on('click', function() {
+        dropdownMenuEvent(this);
+        nextBtnEvent();
+    });
+    function dropdownBtnEvent(target) {
+        if ($(target).hasClass('active')) {
+            $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+        }
+        else {
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+        }
+    }
+    function dropdownMenuEvent(target) {
+        const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).html();
+
+        let accountCode = $(target).find('.code').text();
+        let accountName = $(target).find('.small').text();
+        
+        $('#account_code').val(accountCode);
+        $('#account_name').val(accountName);
+        
+        //console.log('accountCode : '+accountCode+', accountName : '+accountName);
+        //console.log('dropBtn height before : '+$(dropBtn).outerHeight());
+        dropBtn.removeClass('default active').addClass('select').find('span').html(targetText);
+        
+        let gap = $(dropBtn).outerHeight() - 48;
+        $(dropmenu).css('bottom', 60+Number(gap)+'px');         // 드롭다운 목록 위치 설정. 
+        //$(target).parents('.dropdown-box').find('#redidence_type').val(redidence_type);
+        dropmenu.stop().slideUp().removeClass('show');
+        //console.log('dropBtn height after : '+$(dropBtn).outerHeight());
+    }
+
+    
     function nextBtnEvent() {
         var deptval = departmentSelected.find('.data-wrap').text();
         var plantval = plantSelected.find('.data-wrap').text();
-        var accountval = '';//accountSelected.find('.data-wrap').text();
+        var accountval = $('#account_code').val();  //accountSelected.find('.data-wrap').text();
 
         if (deptval && plantval && accountval) {
             nextBtn.find('button').attr('disabled', false);
@@ -18155,7 +18299,13 @@ function requestItemsInputFirst(requestdata) {
     }
 
     if (selAccountCode != '') {
-
+        
+        setTimeout(function() {
+            selectBoxAction(dropdownMainBtn, true, null);
+            
+        }, 100);
+        
+/*
         var hiddenInfo = $(
             '<div class="data-wrap">'
                  +'<p>['+selAccountCode+']' + selAccountName 
@@ -18173,10 +18323,14 @@ function requestItemsInputFirst(requestdata) {
         accountSelected.append(hiddenInfo);
 
         inputBox4.css('display', 'none'); 
-        
+*/
+
+    }
+    else{
+        selectBoxAction(dropdownMainBtn, false, null);
     }
 
-    selectBoxAction(dropdownMainBtn, null, null);
+    //selectBoxAction(dropdownMainBtn, null, null);
     nextBtnEvent();
     
     /* #########[ popup_content_form_end ]######### */
