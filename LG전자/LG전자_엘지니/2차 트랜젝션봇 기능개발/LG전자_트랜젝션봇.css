@@ -7137,8 +7137,9 @@ background: #F5F5F5 !important;
     justify-content: space-between;    
 }
 .plugins .add-order .with-guide a {
-    color: #898989;
+    color: #767676;
     text-decoration-line: underline;
+    font-weight: 400;
 }
 
 .plugins .input-box .input-form input[type=text]:disabled {
@@ -7768,7 +7769,7 @@ color: var(--color-gray-900, #2c2c2c);
   flex: 1;
 }
 .products-bill .products-list {
-  max-height: 426px;
+  /*max-height: 426px; */
   margin: 10px 0;
   overflow: auto;
 }
@@ -7891,4 +7892,10 @@ color: var(--color-gray-900, #2c2c2c);
 }
 .mgT20 {
   margin-top: 20px !important;
+}
+.plugins p.text {
+  margin-top: 5px;
+}
+.plugins p.small.text {
+  margin-top: 0px;
 }
