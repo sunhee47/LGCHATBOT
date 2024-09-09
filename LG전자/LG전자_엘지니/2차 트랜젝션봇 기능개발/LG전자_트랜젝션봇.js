@@ -12146,7 +12146,11 @@ function anotherAccountOrderFifth(orderdata) {
     /* #########[ popup_content ]######### */
     /* ###[ 예산/비용의 계정 정보를 입력해 주세요. ]### */
     var inputBoxText = $('<div class="input-box top-note"><label>예산/비용의 계정 정보를 입력해 주세요.<b>*</b></label></div>');
-    var titleNote = $('<small class="note" style="font-size:12px;">※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</small>');
+    var titleNote = $('<small class="note" style="font-size:12px;">'
+                        +'※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</br>'
+                        +'※ 부서 예산(GBMS)일 경우, 예산 확보된 내역이 조회됩니다. </br>'
+                        +'사용 예산은 부서 예산(GBMS) 조회를 통해 확인 가능합니다.'
+                        +'</small>');
     inputBoxText.append(titleNote);
     pluginForm.append(inputBoxText);
 
@@ -12567,7 +12571,7 @@ function anotherAccountOrderFifth(orderdata) {
     
     var titleNote = $('<small class="note" style="font-size:12px;">※ 부서 예산(GBMS)일 경우, 예산 확보된 내역이 조회됩니다. 사용 예산은 부서 예산(GBMS) 조회를 통해 확인 가능합니다.</small>');
     if(selApmsYN == 'YES') {    
-        inputBoxText3.append(titleNote);
+    //    inputBoxText3.append(titleNote);
     }
     
     var costAccountListTitle = $('<span>비용처리 계정 목록</span>');
@@ -19582,9 +19586,9 @@ function requestItemsInputThird(requestdata) {
     console.log('3단계 requestdata  : ', requestdata);
 
     var itemList = (requestdata.item_list == null)? new Array():requestdata.item_list;
-    var itemCnt = (requestdata.item_cnt == null)? 2:requestdata.item_cnt;
+    var itemCnt = (requestdata.item_cnt == null)? 1:requestdata.item_cnt;
 
-    if(requestdata.item_list == null){
+    /*if(requestdata.item_list == null){
         itemList = new Array();  
 
         var item = new Object();
@@ -19609,7 +19613,7 @@ function requestItemsInputThird(requestdata) {
         
     } else {
         itemList = requestdata.item_list;
-    }
+    }*/
 
     var budgetAmount = (requestdata.valid_budget_amount == null)? '0':requestdata.valid_budget_amount;
     
