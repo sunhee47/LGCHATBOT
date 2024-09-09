@@ -10595,24 +10595,38 @@ function importCargoResult(data) {
                     +'</div>'
                 +'</li>'
             +'</ul>'
-            // +'<div class="btn">'
-            //     +'<button type="button" class="btn btn-default move_n-erp">'
-            //         +'N-ERP Portal'
-            //         +'<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
-            //             +'<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
-            //         +'</svg>'
-            //     +'</button>'
-            // +'</div>'
         +'</div>'
     );
 
+    var nerpPortalBtn = $('<div class="btn">'
+                 +'<button type="button" class="btn btn-default move_n-erp">'
+                     +'N-ERP Portal'
+                     +'<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                         +'<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#333333" stroke-linecap="round"></path><path d="M16.3394 14.9355L24.5962 7.00098" stroke="#333333" stroke-linecap="round"></path><path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#333333" stroke-linecap="round"></path>'
+                     +'</svg>'
+                 +'</button>'
+             +'</div>');
+    
+    importCargoResultContent.append(nerpPortalBtn);
+    
     importCargoResultContentWrap.append(importCargoResultContent);
     importCargoResultMessageWrap.append(importCargoResultContentWrap);
     importCargoResult.append(importCargoResultMessageWrap);        
 
-    // $('.move_n-erp').on('click', function() {
-    //     window.open('', '_blank');
-    // });
+     nerpPortalBtn.on('click', function() {
+         //window.open('', '_blank');
+         let url = 'https://nerpdev.lge.com/sap/bc/gui/sap/its/webgui/';    // N-ERP portal
+         let paramVal1 = '*ZMIMR0509 P_HBLNO='+data.hblNo+';P_YEAR='+data.etprDt;
+         let params = {
+                    "~transaction": paramVal1, 
+                    "~nosplash": "1",
+                    "~singletransaction": "1",
+                    "sap-client": "210", 
+                    "sap-language": "EN"
+                };
+               
+         openDeepLink(url, params);
+     });
 
     return importCargoResult;
 }
@@ -17644,6 +17658,60 @@ function memberCheck() {
 }
 
 /* ########### 타계정 추가 End ########### */
+
+/*
+ * N-ERP 용 Deep Link 공통 함수.
+*/
+function openDeepLink(link, params) {
+    console.log(link +' / ', params);
+    if($('#deep_form').length) {
+        var paramForm = $('#deep_form');
+        
+        var url = link; 
+        window.open("", "LGenieWin1", "width=1200,height=900", "_blank");
+        
+        //console.log('child : '+children.length);
+        $(paramForm).attr('action', url);
+        $(paramForm).attr('target', "LGenieWin1");
+        $(paramForm).attr('method', 'post');
+        
+        $(paramForm).find('input').remove();
+        
+        $.each(params, function(key, value){            
+            let obj = document.createElement("input");
+            obj.setAttribute("type", "hidden");
+            obj.setAttribute("name", key);
+            obj.setAttribute("value", value);
+            
+            $(paramForm).append(obj);
+        });  
+        
+        paramForm.submit();        
+    }
+    else{ 
+        var paramForm = document.createElement("form");
+        var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
+        window.open("", "LGenieWin1", "width=1200,height=900", "_blank");
+        
+        $(paramForm).attr('id', "deep_form");
+        $(paramForm).attr('action', url);
+        $(paramForm).attr('target', "LGenieWin1");
+        $(paramForm).attr('method', 'post');
+    
+        $.each(params, function(key, value){            
+            let obj = document.createElement("input");
+            obj.setAttribute("type", "hidden");
+            obj.setAttribute("name", key);
+            obj.setAttribute("value", value);
+            
+            paramForm.appendChild(obj);
+        });  
+
+        document.body.appendChild(paramForm);
+        paramForm.submit();
+    }
+    
+}
 
 /*
 title : HsCode 조회
