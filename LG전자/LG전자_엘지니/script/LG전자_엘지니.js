@@ -11322,6 +11322,71 @@ function closeLoadingWithMask() {
     $('#loadingImg').remove();
 }
 
+function errorWithMask() {
+    //화면의 높이와 너비를 구합니다.
+    var windowHeight = $(document).height();
+    var maskWidth = window.document.body.clientWidth;
+    
+    var contHeight = $('.plugin-contents').height();        // 챗봇 팝업 화면 높이. 
+    
+    maskTop = windowHeight - contHeight;                    // 마스크 top 위치 : 챗봇 창 - 팝업 화면 높이
+    maskHeight = contHeight;                                // 마스크 높이 : 팝업 화면 높이
+    
+    console.log('contents height : '+$('.plugin-contents').height()+', '+windowHeight);
+
+    var _left = Math.ceil(maskWidth/2);
+    var _top = Math.ceil(windowHeight/2);
+    
+    var imgWidth = Math.ceil(307/2);        // 로딩이미지 너비/2 -> 가운데 위치 시키기 위해서. 
+
+    //화면에 출력할 마스크를 설정해줍니다.
+    var errorMask = '';
+    errorMask += "<div id='errorMask' style='position:absolute; z-index:9000; background-color:#ffffff; display:block; left:0; top:0;text-align:center;'>"
+            + "<br/><br/><div>"
+            + "<h2 style='font-weight:500;'>일시적인 오류가 발생했습니다.</h2>"
+            + "<p style='font-size:13px;'>이용에 불편을 드려 죄송합니다.</p>"
+            + "<p style='font-size:13px;'>잠시 후 다시 시도해 주세요. </p>"
+            + "</div></div>";
+    var loadingImg = '';
+    loadingImg += "<div id='loadingImg' style='position:absolute;left:0; top:0;z-index:9010;'>";
+    loadingImg += " <img src='"+imgPurBaseUrl+"/images/loading_alert.gif.gif' style='position: relative; display: block; margin: 0px auto;'/>";
+    //loadingImg += " <img src='"+imgPurBaseUrl+"/images/loading-1.gif' style='position: relative; display: block; margin: 0px auto;'/>";
+    //loadingImg += " <img src='"+imgPurBaseUrl+"/images/loading_message-1.png' style='position: relative; display: block; margin: 0px auto;'/>";
+    loadingImg += "</div>";
+    
+    //화면에 레이어 추가
+    $('body')
+        .append(errorMask);
+        //.append(loadingImg);
+    
+    //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채웁니다. -> 팝업 화면만 채우게 수정함. 
+    $('#errorMask').css({
+        'width' : maskWidth
+        , 'height': maskHeight
+       // , 'opacity' : '0.2'
+        , 'top' : maskTop
+    }); 
+    
+    $('#loadingImg').css({
+        'top' : _top
+        , 'left' : _left-imgWidth
+        });
+        
+    //마스크 표시
+    $('#errorMask').show();
+    
+    //로딩중 이미지 표시
+    //$('#loadingImg').show();
+
+}
+
+function closeErrorWithMask() {
+    $('#errorMask').hide();
+    //$('#loadingImg').hide()
+    $('#errorMask').remove();
+    //$('#loadingImg').remove();
+}
+
 function appendChatbotHtml(message, isTime) {
   var chatMessage = $('<div class="chat-message left"></div');
   var profile = $('<div class="profile"><img class="img-circle" src="'+imgBaseUrl+'/images/Profile%20(1).png"></div>');         // /images/chem-profile.png
@@ -11422,7 +11487,8 @@ function anotherAccountPopupOpen(orderdata) {
             $('#another-account-order').remove();
             
             closeLoadingWithMask();
-        }, 300);
+            closeErrorWithMask();
+        }, 100);
     }
 
     /* #########[ popup_content_wrap ]######### */
@@ -12966,7 +13032,11 @@ function anotherAccountOrderFifth(orderdata) {
     /* #########[ popup_content ]######### */
     /* ###[ 예산/비용의 계정 정보를 입력해 주세요. ]### */
     var inputBoxText = $('<div class="input-box top-note"><label>예산/비용의 계정 정보를 입력해 주세요.<b>*</b></label></div>');
-    var titleNote = $('<small class="note" style="font-size:12px;">※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</small>');
+    var titleNote = $('<small class="note" style="font-size:12px;">'
+                        +'※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</br>'
+                        +'※ 부서 예산(GBMS)일 경우, 예산 확보된 내역이 조회됩니다. </br>'
+                        +'사용 예산은 부서 예산(GBMS) 조회를 통해 확인 가능합니다.'
+                        +'</small>');
     inputBoxText.append(titleNote);
     pluginForm.append(inputBoxText);
 
@@ -13381,7 +13451,7 @@ function anotherAccountOrderFifth(orderdata) {
     
     var titleNote = $('<small class="note" style="font-size:12px;">※ 부서 예산(GBMS)일 경우, 예산 확보된 내역이 조회됩니다. 사용 예산은 부서 예산(GBMS) 조회를 통해 확인 가능합니다.</small>');
     if(selApmsYN == 'YES') {    
-        inputBoxText3.append(titleNote);
+    //    inputBoxText3.append(titleNote);
     }
     
     var costAccountListTitle = $('<span>비용처리 계정 목록</span>');
@@ -13454,6 +13524,12 @@ function anotherAccountOrderFifth(orderdata) {
 
           sendChatApi(requestParam, null, function(payload){
             console.log('payload > ', payload);
+
+            if(payload.queryResult.messages.length == 0) {
+                closeLoadingWithMask();
+                errorWithMask();
+                return;
+            }
 
             // 비용처리 계정 조회 Not Push Start            
             var result = JSON.parse(payload.queryResult.messages[0].response);
@@ -16888,8 +16964,9 @@ function anotherAccountListViewPopupOpen(data) {
             $('.plugin-dim').remove();
             $('#aalvPopup').remove();
             
+            closeErrorWithMask();
             closeLoadingWithMask();
-        }, 300);
+        }, 100);
     }
 
     /* #########[ popup_content_wrap_start ]######### */
@@ -17005,6 +17082,12 @@ function anotherAccountListViewPopupOpen(data) {
         
         sendChatApi(requestParam, userId, function(payload) {
             console.log('타계정 주문 현황 조회 결과 : ', payload);
+            
+            if(payload.queryResult.messages.length == 0) {
+                closeLoadingWithMask();
+                errorWithMask();
+                return;
+            }            
             
             var searchInfo = '';
             var regSuccessYn = '';
