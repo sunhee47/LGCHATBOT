@@ -13033,9 +13033,9 @@ function anotherAccountOrderFifth(orderdata) {
     /* ###[ 예산/비용의 계정 정보를 입력해 주세요. ]### */
     var inputBoxText = $('<div class="input-box top-note"><label>예산/비용의 계정 정보를 입력해 주세요.<b>*</b></label></div>');
     var titleNote = $('<small class="note" style="font-size:12px;">'
-                        +'※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</br>'
+                        +'※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</br></br>'
                         +'※ 부서 예산(GBMS)일 경우, 예산 확보된 내역이 조회됩니다. </br>'
-                        +'사용 예산은 부서 예산(GBMS) 조회를 통해 확인 가능합니다.'
+                        +'가용 예산은 부서 예산(GBMS) 조회를 통해 확인 가능합니다.'
                         +'</small>');
     inputBoxText.append(titleNote);
     pluginForm.append(inputBoxText);
@@ -14003,9 +14003,9 @@ function anotherAccountOrderFifth(orderdata) {
     pluginForm.append(inputBoxText5);
 
     /* ###[ Activity Name ]### */
-    var inputBoxTextA = $('<div class="input-box"><label>Activity Name<b>*</b></label></div>');
+    var inputBoxTextA = $('<div class="input-box"><label>Asset Name<b>*</b></label></div>');
     var inputTextContentA = $('<div class="input-form"></div>');
-    var inputBoxA = $('<input type="text" placeholder="Activity Name을 입력해 주세요." max-length="50" id="Asset_name" class="inText" autocomplete="off"/>');
+    var inputBoxA = $('<input type="text" placeholder="Asset Name을 입력해 주세요." max-length="50" id="Asset_name" class="inText" autocomplete="off"/>');
     inputTextContentA.append(inputBoxA);
     inputBoxTextA.append(inputTextContentA);
     
@@ -17000,7 +17000,7 @@ function anotherAccountListViewPopupOpen(data) {
     
     var searchTypeList = [
                             {"searchGubun":"A", "searchName":"나의 주문 건 조회"},
-                            //{"searchGubun":"B", "searchName":"부서 내 주문 건 조회"},
+                            {"searchGubun":"B", "searchName":"부서 내 주문 건 조회"},
                             {"searchGubun":"C", "searchName":"주문 번호로 조회"},
                             {"searchGubun":"D", "searchName":"접수 번호로 조회"} ];
 
@@ -18048,6 +18048,8 @@ function hsCodeResultErrorPage(data) {
 }
 
 //Hs Code 조회 START
+var checkBtnClicked = false;
+var hsCodeLoading = false;
 function makeHsCodeCard(data) {
     var hsCodeCard = $('<div class="message simple-text"></div>');
         var hsCodeText = $(
@@ -18072,10 +18074,19 @@ function makeHsCodeCard(data) {
         //addHsCodePopupOpen(data);
     }
     
+    // 다시 물어보기 클릭시
+    if(checkBtnClicked == true) {
+        addHsCodePopupOpen(data);
+        checkBtnClicked = false;
+    }
+    
     return hsCodeCard;
 }
 
 function addHsCodePopupClose() {
+    
+    closeLoadingWithMask();
+
     $('#addHsCode').removeClass('show');
     $('.plugin-dim').removeClass('show');
     setTimeout(function() {
@@ -18360,13 +18371,24 @@ function addHsCodePopupOpen(data) {
     countryInput.on('focus keyup', function(e) {
         countryInputVal = e.target.value;
         checkHsCodeRequire();
-
+        
         if (countryInputVal) {
             $(this).find('.input-val-del').addClass('show');
         } else {
             $(this).find('.input-val-del').removeClass('show');
         };
         
+    });
+    
+    countryInput.on('keyup', function(e) {
+        countryInputVal = e.target.value;
+        if(countryInputVal.length > 0){
+            var check = /^[a-zA-Z\s]/g;
+            if(!check.test(countryInputVal)){
+                showSmallDialog("영어만 입력해주세요.");
+                $('#attendees').focus();
+            }
+        }
     });
     
     countryInput.on('blur', function(e) {
@@ -18382,6 +18404,9 @@ function addHsCodePopupOpen(data) {
     addHsCode.append(addHsCodeFoot);
     
     addHsCodeSubmit.on('click', function() {
+        //로딩관련
+        LoadingWithMask();
+        
         var orgId = $('#hsCode_orgId').val().toUpperCase();
         var partNo = $('#hsCode_partNo').val();
         var countryCd = $('.country-code').val();
@@ -18415,6 +18440,9 @@ function addHsCodePopupOpen(data) {
                     chatui.sendEventMessage("importedHsCodeEvent", param);
                 }else{
                     if(result.HsCodeApiResultMessage == "Organization code is invalid"||result.HsCodeApiResultMessage == "Part No is not exits.") {
+                        
+                        hsCodeLoading = false;
+                        $('#btn-hsCode').removeClass('btn-loading');
                         
                         result = JSON.parse(response);
                 
@@ -18497,6 +18525,8 @@ const setAutocompleteCountry = function(input, items) {
      
      items.forEach(function(item){
         var ctrNmEn = item.ctrNmEn;
+        var ctrCd = item.ctrCd;
+
         var country = {
             label:"",
             type:"",
@@ -18517,7 +18547,7 @@ const setAutocompleteCountry = function(input, items) {
         }else{
             var ctrNmStr = ctrNmEn.substr(0,inpLength).toUpperCase();
             
-            if (ctrNmStr.indexOf(inputVal) != -1) {
+            if (ctrNmStr.indexOf(inputVal) != -1||ctrCd.indexOf(inputVal) != -1) {
                 country.label = ctrNmEn;
                 country.type = "person";
                 country.labelKo = item.ctrNmKo;
@@ -18597,6 +18627,19 @@ const setAutocompleteCountry = function(input, items) {
       },
         response: function( event, ui ) {
             var contents = ui.content;
+            if(contents.length == 0&&keyword.length > 0) {
+                keyword.forEach(function(item){
+                    var content = {};
+                    content.label   = item.label; 
+                    content.type    = item.type; 
+                    content.labelKo = item.labelKo; 
+                    content.code    = item.code; 
+                    content.codeTrd = item.codeTrd; 
+                    content.isoNum  = item.isoNum; 
+                    contents.push(content);
+                })
+            }
+
             var dataSize = contents.length;
             
             var heightSize = "";
@@ -18659,10 +18702,6 @@ const setAutocompleteCountry = function(input, items) {
       $(this).autocomplete("search", $(this).val());
       
   }).autocomplete("instance")._renderItem = function( ul, item ) {
-      var searchMask = this.element.val();
-      var regEx = new RegExp(searchMask, "ig");
-      var replaceMask = "<strong>$&</strong>";
-      var labelStr = item.label.replace(regEx, replaceMask);
       var htmlStr;
 
       if (item.type == "person") {
@@ -18782,7 +18821,8 @@ function hsCodeResult(data) {
         hsCodeResultLiCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수출국</h4><div class="hsCode-li-content"><span>' + data.countryNameEn + '</span></div></li>';
     }
    
-    var hsCodeResultLiUserBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 및 담당자 조회</button></li>');
+    var hsCodeResultLiUserBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 조회</button></li>');
+    var hsCodeResultLiUserBtnNEEP = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 및 담당자 조회</button></li>');
     
     var hsCodeResultContent = $('<div class="importCargo-content"></div>');
 
@@ -18808,7 +18848,8 @@ function hsCodeResult(data) {
                 +hsCodeResultLiUser
                 +'<li>'
                     +'<div class="importCargo-remain">'
-                        +'<div>* 본 품목에 대한 세율 및 HS Code는 ERP상 확정 데이터입니다.</div>'
+                        //+'<div>* 본 품목에 대한 세율 및 HS Code는 ERP상 확정 데이터입니다.</div>'
+                        +'<div>* GERP HS Code Master 데이터 조회결과입니다.</div>'
                         +'<div>* 관세혜택을 받으려면 원산지 결정기준을 충족하고 원산지 증명서를 제출해야 합니다.</div>'
                     +'</div>'
                 +'</li>'
@@ -18845,6 +18886,7 @@ function hsCodeResult(data) {
     hsCodeResult.append(quickReplies);
     
     systemBtnHsCodeRe.click(function(){
+        checkBtnClicked = true;
         chatui.sendMessage("HS Code 조회");    
     });
     /* 
@@ -18874,7 +18916,8 @@ function addHsCodeSeachUserPopupOpen(data) {
     var addHsCode = $('<div class="plugins" id="addHsCode"></div>');
 
     /* #########[ popup_header ]######### */
-    var addHsCodeHeader = $('<div class="plugin-header"><h1>사업부 및 담당자 조회</h1></div>');
+    var addHsCodeHeader = $('<div class="plugin-header"><h1>사업부 조회</h1></div>');
+    var addHsCodeHeaderNERP = $('<div class="plugin-header"><h1>사업부 및 담당자 조회</h1></div>');
     var addHsCodeClose = $(
         '<span class="close-plugin">'
             +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
