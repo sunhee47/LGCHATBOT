@@ -3058,8 +3058,8 @@ jQuery(document).ready(function(e){
   //+         '<button type="button" class="btn-s btn-text btn-sendtext">월마감</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">예산 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문</button>'
   +     '</div>'
-  
   +     '<h2>주요 메뉴</h2>'
   +     '<div class="btns">'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">날씨</button>'
@@ -11436,6 +11436,9 @@ function makeAnotherAccountOrderCard() {
 
     guideBtn.on('click', function() {
         console.log('타계정 주문 절차 및 가이드 클릭');
+        var outlink = 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/3ace0979-8ff0-49f3-814b-84c500f5fbef/response/%EC%B1%97%EB%B4%87%EC%9D%84%20%ED%86%B5%ED%95%9C%20%ED%83%80%EA%B3%84%EC%A0%95%20%EC%A3%BC%EB%AC%B8%20%EB%B0%9C%ED%96%89%20%EA%B0%80%EC%9D%B4%EB%93%9C_VER1_0910.pdf';
+        //window.parent.location.href = weblink;
+         window.open(outlink, '_blank');
     })
     gbmsBtn.on('click', function() { // console.log('부서 예산(GBMS) 조회 클릭');
         //$('.chat-message.left').last().append(makeCardGBMS());
@@ -16991,7 +16994,7 @@ function anotherAccountListViewPopupOpen(data) {
         +'</i>'
     );
 
-    var gubunNote = $('<small class="note" style="font-size:12px;">*나의 주문 건일 경우, 3개월 이내 주문 중 최근 20건을 조회합니다.</small>');
+    var gubunNote = $('<small class="note" style="font-size:12px;">*나의 주문 건, 부서 내 주문 건 조회의 경우, 3개월 이내 주문 중 최근 20건을 조회합니다.</small>');
     dropdownBox.append(gubunNote);
     
     pluginForm.append(dropdownBox);
@@ -17114,8 +17117,6 @@ function anotherAccountListViewPopupOpen(data) {
                 errorMessage = 'server error!!!';               // 에러메시지.
             }
             
-            thisPluginClose();
-
             if(regSuccessYn == 'N') {
                 
                 console.log('타계정 주문 현황 조회 실패 : ');
@@ -17136,6 +17137,8 @@ function anotherAccountListViewPopupOpen(data) {
                     anotherAccountListViewPopupOpen(reviewParam);
                 });
                 
+                thisPluginClose();
+
             }   
             else{
             
@@ -17158,11 +17161,14 @@ function anotherAccountListViewPopupOpen(data) {
                     appendChatbotHtml(msgSearchResult, false);
                     $('.chat-message.left').last().append(aalvResult(searchInfo));
                     $('.chat-message.left').last().append('<span class="message-date">' + moment().format("a h:mm") + '</span>');
+                    
+                    thisPluginClose();
+
                 }
                 else{
                     console.log('타계정 주문 현황 조회 : 0건.');
                     setTimeout(function() {
-                        showSmallDialog('타계정 주문 현황 조회 건수가 없습니다. 다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+                        showSmallHtmlDialog('타계정 주문 현황 조회 건수가 없습니다.</br> 다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
                     }, 100);                    
                 }
                 
@@ -17815,7 +17821,7 @@ function aalvResult(result) {
                             +'</li>'
                             +'<li>'
                                 +'<h4>실패사유</h4>'
-                                +'<span class="list-info-value text">' + '' + '</span>'
+                                +'<span class="list-info-value text">' + ((result.error_text.trim() == "")? '-':result.error_text) + '</span>'
                             +'</li>'
                         +'</ul>'
                     +'</li>'
