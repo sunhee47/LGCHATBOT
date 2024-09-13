@@ -7128,7 +7128,7 @@ background: #F5F5F5 !important;
   top: 50%;
   transform: translate(-50%, -50%); */
 }
-
+/* 물품 청구 */
 .plugins .add-order .with-guide {
     /*padding: 13px 0; */
     color: #2c2c2c;
@@ -7141,6 +7141,7 @@ background: #F5F5F5 !important;
     text-decoration-line: underline;
     font-weight: 400;
 }
+/* 물품 청구 */
 
 .plugins .input-box .input-form input[type=text]:disabled {
   background-color: #F5F5F5;

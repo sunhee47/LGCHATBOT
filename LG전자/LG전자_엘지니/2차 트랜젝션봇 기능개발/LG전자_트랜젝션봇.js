@@ -14457,7 +14457,7 @@ function anotherAccountListViewPopupOpen(data) {
     
     var searchTypeList = [
                             {"searchGubun":"A", "searchName":"나의 주문 건 조회"},
-                            //{"searchGubun":"B", "searchName":"부서 내 주문 건 조회"},
+                            {"searchGubun":"B", "searchName":"부서 내 주문 건 조회"},
                             {"searchGubun":"C", "searchName":"주문 번호로 조회"},
                             {"searchGubun":"D", "searchName":"접수 번호로 조회"} ];
     
@@ -15593,7 +15593,7 @@ $(function () {
     
 }
 
-/* #################### [ 물품 청구 신청] #################### */
+/* #################### [ 물품 청구 신청 (NERP) Start] #################### */
 var tabAddBtn =  '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">'
                 + '<path d="M5 0V10" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"/>'
                 + '<path d="M0 5L10 5" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"/>'
@@ -17915,7 +17915,8 @@ function requestItemsInputThird(requestdata) {
     var itemList = (requestdata.item_list == null)? new Array():requestdata.item_list;
     var itemCnt = (requestdata.item_cnt == null)? 1:requestdata.item_cnt;
 
-    /*if(requestdata.item_list == null){
+    /*
+    if(requestdata.item_list == null){
         itemList = new Array();  
 
         var item = new Object();
@@ -17937,10 +17938,20 @@ function requestItemsInputThird(requestdata) {
         item.item_unit = 50000;
 
         itemList.push(item);
+
+        item = new Object();
         
+        item.item_id = 'abcd333';
+        item.item_qty = '70';
+        item.due_date = '2024.09.04';
+        item.item_name = '물품명3';
+        item.item_unit = 50000;
+
+        itemList.push(item);
+
     } else {
         itemList = requestdata.item_list;
-    }*/
+    } */ 
 
     var budgetAmount = (requestdata.valid_budget_amount == null)? '0':requestdata.valid_budget_amount;
     
@@ -17976,7 +17987,8 @@ function requestItemsInputThird(requestdata) {
 
 
     /* ###[ ProductsList ]### */
-    var productsListCont = $('<div id="products-content" style="max-height:250px; height:349px; overflow-y:auto;"></div>');
+    var productsListCont = $('<div id="products-content" style="overflow-y:auto;"></div>');
+    //var productsListCont = $('<div id="products-content" style="max-height:250px; overflow-y:auto;"></div>');
     var productsListWrap = $('<ul class="products-list"></ul>');
     var sample = 1000000;
 
@@ -18173,8 +18185,10 @@ function requestItemsInputThird(requestdata) {
     
     /*  ###[ etc ]### */
     // 타계정 주문 버튼
+    var submitDiv = $('<div style="position:fixed; bottom:0px;width: calc(100% - 36px);"></div>')
     var submitBtn = $('<button disabled type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-">물품 청구 신청</button>');   // style="position:fixed; bottom:0px;"
-    pluginForm.append(submitBtn);
+    submitDiv.append(submitBtn);
+    pluginForm.append(submitDiv);
     submitBtn.on('click', function() {
 
         let itemList = toArrayAllItem();
@@ -18334,7 +18348,7 @@ function requestItemsInputThird(requestdata) {
     function getMaxHeight() {
         setTimeout(function() {
             let contentH = $('#item-content').outerHeight();
-            let scrollHeight =  contentH - 90 - 50 - 10;
+            let scrollHeight =  contentH - (52+38) - 50 -10; //contentH - (52+38) - 50 - 10;
             
             let prodContH = $('#products-content').outerHeight();
             
@@ -18342,15 +18356,15 @@ function requestItemsInputThird(requestdata) {
             let amountH = $('.amount-wrap').outerHeight();
             let productH = prodListH+amountH;
             
-            //console.log('content H : '+contentH+', scrollHeight : '+scrollHeight+', prodContH : '+prodContH);
+            console.log('content H : '+contentH+', scrollHeight : '+scrollHeight+', prodContH : '+prodContH);
             //console.log('prodListH : '+prodListH+', amountH : '+amountH+', productH : '+productH);
             
-            if(scrollHeight > productH) {
-                $('#products-content').css('height', '349px');
-            }
-            else{
+            //if(scrollHeight > productH) {
+            //    $('#products-content').css('height', '349px');
+            //}
+            //else{
                 $('#products-content').css('max-height', scrollHeight+'px'); 
-            }
+            //}
         }, 50);
     }
     
@@ -19500,7 +19514,7 @@ function requestItemsInputGERPFirst(requestdata) {
 ///////////////////////////////////////////////////////
 
 // 물품 청구 신청 입력 팝업 컨텐츠 3
-function requestItemsInputThird(requestdata) {
+function requestItemsInputGERPThird(requestdata) {
     console.log('3단계 requestdata  : ', requestdata);
 
     var itemList = (requestdata.item_list == null)? new Array():requestdata.item_list;
