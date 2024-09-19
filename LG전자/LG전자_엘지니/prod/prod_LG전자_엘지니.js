@@ -4191,7 +4191,7 @@ const setDatepicker = function() {
   }
 
   // open
-  function dpOpen(btn, target, callback){
+  function dpOpen(btn, target, callback, refreshdate){
     var $input;
     
 
@@ -4279,6 +4279,9 @@ const setDatepicker = function() {
 
     if($initEl.find('.selected-date').length == 0) {
       var selectedDate = new Date();
+      if(refreshdate) {
+            selectedDate = refreshdate;
+      }
       $initEl.find('.dp-header').append('<div class="selected-date">' + moment(selectedDate).format('YYYY.MM.DD') + '</div>');
     }
         
@@ -4286,8 +4289,11 @@ const setDatepicker = function() {
       $initEl.find('.dp-header').append('<div class="dtpicker-refresh">초기화</div>');
     }
 
-    $('.dtpicker-refresh').on('click', function(){
+    $('.dtpicker-refresh').off('click').on('click', function(){
       var newDt = new Date();
+        if(refreshdate) {
+            newDt = refreshdate;
+        }
       var selectedDate = moment(newDt).format('YYYY.MM.DD');
       $initEl.datepicker("setDate", selectedDate);
       $initEl.find('.selected-date').text(selectedDate);
@@ -15117,11 +15123,12 @@ function anotherAccountOrderSeventh(orderdata) {
     var today = new Date();
     var tomorrow = new Date(today.setDate(today.getDate()+1));
     
-    var placeholderToday = moment(tomorrow).format('YYYY.MM.DD');
+    //var placeholderToday = moment(today).format('YYYY.MM.DD');
+    var placeholderTomorrow = moment(tomorrow).format('YYYY.MM.DD');
     
     var selDeliveryType = (orderdata.delivery_type == null)? 'TL':orderdata.delivery_type;
     var selInstallType = (orderdata.install_type == null)? '':orderdata.install_type;
-    var selArrivalDate = (orderdata.arrival_date == null)? placeholderToday:orderdata.arrival_date;
+    var selArrivalDate = (orderdata.arrival_date == null)? placeholderTomorrow:orderdata.arrival_date;
     
     var selApiDate = (orderdata.api_date == null)? '':orderdata.api_date;
 
@@ -15267,12 +15274,14 @@ function anotherAccountOrderSeventh(orderdata) {
     var inputTimeBox = $('<div class="input-box"><label>도착 날짜<b>*</b></label></div>');
     var dateTimeWrap = $('<div class="schedule-wrap"></div>');
     var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-    var dateTodayInput = $('<input type="hidden" class="input-schedule-date startdate" placeholder="'+placeholderToday+'" />');
-    var dateStartInput = $('<input type="text" class="input-schedule-date enddate arrival-date" placeholder="'+placeholderToday+'" autocomplete="off"/>');
-    dateTimeStartBox.append(dateTodayInput);
+    //var dateTodayInput = $('<input type="hidden" class="input-schedule-date startdate" placeholder="'+placeholderToday+'" />');
+    var dateStartInput = $('<input type="text" class="input-schedule-date startdate arrival-date" placeholder="'+placeholderTomorrow+'" autocomplete="off"/>');
+    //var dateStartInput = $('<input type="text" class="input-schedule-date startdate arrival-date" placeholder="'+placeholderToday+'" id="due_date" onclick="datepicker.open(this)" value="'+placeholderToday+'" autocomplete="off"/>');
+    
+    //dateTimeStartBox.append(dateTodayInput);    
     dateTimeStartBox.append(dateStartInput);
 
-    dateTodayInput.val(placeholderToday);
+    //dateTodayInput.val(placeholderToday);
     dateStartInput.on('click', function() {
         //console.log('click....');
         
@@ -15287,7 +15296,7 @@ function anotherAccountOrderSeventh(orderdata) {
         }
         
         //window.datepicker.fulldate('20240831');
-        window.datepicker.open(this, null, function() { checkRequestDate(); });
+        window.datepicker.open(this, null, function() { checkRequestDate(); }, placeholderTomorrow);
     });
 
     /*  #########[ datepicker ]#########  */
@@ -15838,13 +15847,13 @@ function anotherAccountOrderEighth(orderdata) {
         submitBtn.find('button').attr('disabled', false);
     }
     
-    inputBoxText.focus();
-    $(document).off('keydown').on('keydown', function(e) {
-        if (e.keyCode == 13) {
-            console.log('step8 .');
-            $('#btn-anotheAccountOrder').click();
-        }
-    });    
+    // inputBoxText.focus();
+    // $(document).off('keydown').on('keydown', function(e) {
+    //     if (e.keyCode == 13) {
+    //         console.log('step8 .');
+    //         $('#btn-anotheAccountOrder').click();
+    //     }
+    // });    
     
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
@@ -15870,7 +15879,7 @@ function gbmsPopupOpen(data) {
     var input = (data.input != null && data.input != '')? data.input:"";
     
     // 임시로. 나중에 지워야함. 
-    deptExtraCode = (deptExtraCode == "79668")? "79665":deptExtraCode;
+    //deptExtraCode = (deptExtraCode == "79668")? "79665":deptExtraCode;
     
     //var today = moment().format('YYYYMMDD');
     //console.log(today.substr(4));
@@ -15891,6 +15900,7 @@ function gbmsPopupOpen(data) {
     pluginHeader.append(pluginClose);
     addPlugin.append(pluginHeader);
     function thisPluginClose() {
+        $(document).off('keydown');        
         $('#gbmsPopup').removeClass('show');
         $('.plugin-dim').removeClass('show');
         setTimeout(function() {
@@ -15903,7 +15913,7 @@ function gbmsPopupOpen(data) {
 
     /* #########[ popup_content_wrap_start ]######### */
     var pluginContents = $('<div class="plugin-contents"></div>');
-    var pluginForm = $('<form class="form-gbms"></form>');
+    var pluginForm = $('<form class="form-gbms" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ Cost AU ]### */
@@ -16327,6 +16337,17 @@ function gbmsPopupOpen(data) {
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
         
+        if($('#au_code').val() == null || $('#au_code').val() == '') {
+            showSmallDialog("Cost Au를 검색해 주세요.");
+            textFocusStyle(inputTextContent1);
+            return;
+        }
+        if($('#costdept_code').val() == null || $('#costdept_code').val() == '') {
+            showSmallDialog("비용 처리 부서를 검색해 주세요.");
+            textFocusStyle(inputTextContent2);
+            return;
+        }
+        
         //$('.chat-message.left').last().append(gbmsResult()); // 결과 메세지 (임시 확인용)
         LoadingWithMask();
         
@@ -16598,6 +16619,16 @@ function gbmsPopupOpen(data) {
     
     btnValueCheck();
     
+    $(document).off('keydown').on('keydown', function(e) {
+        console.log('gbms keydown on .... ');
+        if (e.keyCode == 13) {
+            console.log('gbms enter key. ');
+            //if(e.target.id == 'attendees')  return;
+            if(e.target.type == 'text')     return; 
+            $('#btn-gbms').click();
+        }
+    });        
+    
 };
 
 function apmsPluginClose() {
@@ -16629,6 +16660,7 @@ function apmsPopupOpen(data) {
     pluginHeader.append(pluginClose);
     addPlugin.append(pluginHeader);
     function thisPluginClose() {
+        $(document).off('keydown');         
         $('#apmsPopup').removeClass('show');
         $('.plugin-dim').removeClass('show');
         setTimeout(function() {
@@ -16641,7 +16673,7 @@ function apmsPopupOpen(data) {
 
     /* #########[ popup_content_wrap_start ]######### */
     var pluginContents = $('<div class="plugin-contents"></div>');
-    var pluginForm = $('<form class="form-apms"></form>');
+    var pluginForm = $('<form class="form-apms" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ 광고 판촉비(APMS) 폼의 번호 ]### */
@@ -16671,6 +16703,12 @@ function apmsPopupOpen(data) {
         //thisPluginClose();
         //$('.chat-message.left').last().append(apmsResult()); // 결과 메세지 (임시 확인용)
         
+        if($('#apms-no').val() == "") {
+            showSmallDialog("광고판촉비(APMS) 품의번호를 입력하세요. ");
+            $('#apms-no').focus();
+            return;
+        }
+
         LoadingWithMask();
         
         var reviewParam = {
@@ -16811,6 +16849,17 @@ function apmsPopupOpen(data) {
         };
     };
     btnValueCheck();
+
+    $(document).off('keydown').on('keydown', function(e) {
+    //pluginForm.on('keyup', function(e) {
+        console.log('apms keydown on .... ');
+        if (e.keyCode == 13) {
+            console.log('apms enter key. ');
+            //if(e.target.id == 'attendees')  return;
+            $('#btn-apms').click();
+        }
+    });  
+
 };
 
 // [ 타계정 주문 현황 조회 팝업 ]
@@ -16842,6 +16891,7 @@ function anotherAccountListViewPopupOpen(data) {
     pluginHeader.append(pluginClose);
     addPlugin.append(pluginHeader);
     function thisPluginClose() {
+        $(document).off('keydown');        
         $('#aalvPopup').removeClass('show');
         $('.plugin-dim').removeClass('show');
         setTimeout(function() {
@@ -16855,7 +16905,7 @@ function anotherAccountListViewPopupOpen(data) {
 
     /* #########[ popup_content_wrap_start ]######### */
     var pluginContents = $('<div class="plugin-contents"></div>');
-    var pluginForm = $('<form class="form-aalv"></form>');
+    var pluginForm = $('<form class="form-aalv" onsubmit="return false;"></form>');
     
     //pluginContents.css('overflow-y', 'auto');
     //addPlugin.css('height', '500px');
@@ -16937,6 +16987,21 @@ function anotherAccountListViewPopupOpen(data) {
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
         
+        if($('#search_type').val() == '') {
+            showSmallDialog("조회 구분을 선택해 주세요.");
+            //dropdownBox.focus();
+            textFocusStyle(dropdownMainBtn);
+            return;
+        }
+
+        if($('#search_type').val() == 'C' || $('#search_type').val() == 'D') {
+            if($('#searchNumber').val() == '') {
+                let gbntext = ($('#search_type').val() == 'C')? '조회번호':'접수번호'; 
+                showSmallDialog(gbntext+"를 입력해 주세요.");
+                $('#searchNumber').focus();
+                return;
+            }            
+        }
         
         LoadingWithMask();
         
@@ -17174,6 +17239,15 @@ function anotherAccountListViewPopupOpen(data) {
         
         selectedSearchType.trigger('click');
     }    
+    
+    $(document).off('keydown').on('keydown', function(e) {
+        console.log('list keydown on .... ');
+        if (e.keyCode == 13) {
+            console.log('list enter key. ');
+            //if(e.target.id == 'attendees')  return;
+            $('#btn-aalv').click();
+        }
+    });    
 };
 
 /* ##### [ 타계정 조회 메세지 ] ##### */
