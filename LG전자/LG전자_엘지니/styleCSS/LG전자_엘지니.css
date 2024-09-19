@@ -7239,6 +7239,12 @@ background: #F5F5F5 !important;
 	border-width: 20px 24px 40px 24px;			
 }
 
+/* 오늘 날짜 색깔 변경. */
+.datepicker-chem .ui-datepicker .ui-datepicker-calendar .ui-state-disabled.ui-datepicker-today span, .ui-widget-content .ui-state-disabled.ui-datepicker-today span {
+  background-color: #2C2C2C;
+  color: white;    
+}
+
 /* 달력 창 사이즈 변경.  */
 
 /* 신규 추가 (HSCode 관련)*/
