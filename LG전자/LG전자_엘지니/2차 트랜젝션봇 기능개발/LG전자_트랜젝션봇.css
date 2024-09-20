@@ -5201,7 +5201,8 @@ body {
     transform: rotate(0deg);
 }
 .dropdown-box .btn-dropdown.default {
-    color: #999;
+/*    color: #999; */
+    color: #848484;
 }
 .dropdown-box .btn-dropdown.accent {
     border-color: #F55D8D;
@@ -7146,6 +7147,7 @@ background: #F5F5F5 !important;
 .plugins .input-box .input-form input[type=text]:disabled {
   background-color: #F5F5F5;
   border:none;
+  padding-left: 0;
 }
 
 .stepper-wrap li .model-list {
