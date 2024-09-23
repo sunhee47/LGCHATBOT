@@ -7923,3 +7923,19 @@ color: var(--color-gray-900, #2c2c2c);
 .test-panel .btn button.btn-emphasis.disabled:hover {
   background-color: #fff;
 }
+
+.plugins .item-contents::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+.plugins .item-contents::-webkit-scrollbar-track {
+  background: black;
+  border-radius: 10px !important;
+  box-shadow: inset 0px 0px 5px white !important;
+}
+.plugins .item-contents::-webkit-scrollbar-thumb {
+  background: pink;
+  background-clip: padding-box !important;
+  border: 2px solid transparent !important;
+  border-radius: 10px !important;
+}
