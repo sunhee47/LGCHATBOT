@@ -15668,6 +15668,7 @@ function requestMsgScroll() {
 /* #################### [ 물품 청구 신청 (NERP) End] #################### */
 
 /* #################### [ 물품 청구 신청 (GERP) Start] #################### */
+var isQuick = false;
 function makeRequestItemsInputGERP(requestdata) {
     var messageWrap = $('<div class="custom-message"></div>');
     //var messageWrap = $('<div class=""></div>');
@@ -15705,8 +15706,11 @@ function makeRequestItemsInputGERP(requestdata) {
         console.log('물품 청구 내역');
     });
     
-    if(checkChatHistory == false) {
-        //requestItemsPopupOpen(quickBtnBox);
+    if(isQuick == true) {
+        requestdata.step = 1;
+        requestItemsPopupOpenGERP(requestdata);
+        
+        isQuick = false;
     }
     
     messageWrap.append(messageTextWrap);
@@ -15727,7 +15731,7 @@ function requestItemsPopupOpenGERP(requestdata) {
     var addPlugin = $('<div class="plugins products-bill" id="products-bill"></div>');
 
     /* #########[ popup_header ]######### */
-    var pluginHeader = $('<div class="plugin-header"><h1>물품 청구[GERP] ('+ '1' + '/' + '4' +')</h1></div>');
+    var pluginHeader = $('<div class="plugin-header"><h1>물품 청구 ('+ '1' + '/' + '4' +')</h1></div>');
     var pluginClose = $('<span class="close-plugin">' + iconPopupClose + '</span>');
     pluginClose.on('click', function() {
         thisPluginClose();
@@ -15735,6 +15739,7 @@ function requestItemsPopupOpenGERP(requestdata) {
     pluginHeader.append(pluginClose);
     addPlugin.append(pluginHeader);
     function thisPluginClose() {
+        $(document).off('click');
         $('#products-bill').removeClass('show');
         $('.plugin-dim').removeClass('show');
         setTimeout(function() {
@@ -15747,7 +15752,7 @@ function requestItemsPopupOpenGERP(requestdata) {
     /* #########[ popup_content_wrap ]######### */
     var pluginContents = $('<div class="plugin-contents" id="item-content" style="height: 100%; scrollbar-width:auto;"></div>');
     var requestForm = requestItemsInputGERPFirst(requestdata);
-    //var requestForm = requestItemsInputGERPFourth(requestdata);
+    //var requestForm = requestItemsInputGERPSecond(requestdata);
     pluginContents.append(requestForm);
     addPlugin.append(pluginContents);
 
@@ -15795,7 +15800,7 @@ function requestItemsInputGERPFirst(requestdata) {
 
 
     /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-first" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-first2" onsubmit="return false;"></form>');
     var accountList = new Array();
 
     /* #########[ popup_content ]######### */
@@ -15818,7 +15823,7 @@ function requestItemsInputGERPFirst(requestdata) {
     var orderUl1 = $('<ul></ul>');
     
     var engNum_pattern = /[^a-zA-Z0-9]/g;
-    inputBox1.on('keyup', function(e) {        
+    inputBox1.off('keyup').on('keyup', function(e) {        
 
         var inval = inputBox1.val();
         console.log('key : '+inval);
@@ -15837,8 +15842,8 @@ function requestItemsInputGERPFirst(requestdata) {
             
         if(e.keyCode == 13) {
             
-            if(inval.length < 3) {
-                showSmallDialog("검색어 3글자 입력해 주세요.");
+            if(inval.length < 3 || inval.length > 3) {
+                showSmallDialog("검색어를 3글자로 입력해 주세요.");
                 return;
             }            
             
@@ -16035,9 +16040,9 @@ function requestItemsInputGERPFirst(requestdata) {
         //var accountListListText = '';    
         //let dropdownListItem = $(accountListListText);
         
-        //dropdownMenuListWrap.css('bottom', 60+'px');
-        dropdownMenuListWrap.css('top', 'auto');
-        dropdownMenuListWrap.empty();
+        //dropdownMenuListWrap.css('bottom', 60+'px');filter: opacity(0%);
+        dropdownMenuListWrap.css('top', 'auto');    // .css('filter','opacity(0%)');
+        dropdownMenuListWrap.remove();
         
         $(btn).removeClass('active');
         $(btn).find('span').text('청구할 계정을 선택해 주세요.');
@@ -16090,8 +16095,13 @@ function requestItemsInputGERPFirst(requestdata) {
                 else{
                     account_list = result.resultList;
                     
-                    //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
+                    dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
+                    //dropdownMenuListWrap.css('filter','');
+                    
                     var accountListListText = '';    
+                    if(account_list.length == 0) {
+                        accountListListText = '<li class="dropdown-item" style="font-size: 14px;">계정 정보가 없습니다. </li>';
+                    }
                     account_list.forEach(function(account, index) {
                         var selected = '';
                         if(account.account_code == selAccountCode) {
@@ -16105,7 +16115,7 @@ function requestItemsInputGERPFirst(requestdata) {
                     let dropdownListItem = $(accountListListText);
                     
                     dropdownMenuListWrap.append(dropdownListItem);
-                    //dropdownBox.append(dropdownMenuListWrap);
+                    dropdownBox.append(dropdownMenuListWrap);
                     
                     if(selectflag == true) {
                         setTimeout(function() {
@@ -16164,6 +16174,18 @@ function requestItemsInputGERPFirst(requestdata) {
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             $('.order-select').removeClass('focus');
         }
+        
+        //console.log('length : '+$('.dropdown-box').has(e.target).length+' / '+$('.dropdown-box').length+' / ', e.target);
+        for(var i=0; i<$('.dropdown-box').length; i++) {
+            let dropdownBox = $('.dropdown-box')[i];
+            
+            if($(dropdownBox).has(e.target).length === 0 || e.target.id == 'account-title') {
+                if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
+                    dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
+                }
+            }            
+        }
+        
     });
     
     /* ###[ department ]### */
@@ -16182,7 +16204,7 @@ function requestItemsInputGERPFirst(requestdata) {
     
     var orderUl2 = $('<ul></ul>');
     
-    inputBox2.on('click', function() {
+    inputBox2.off('click').on('click', function() {
         console.log('plant_id : '+$("#plant_id").val());
 
         if(isNull($("#plant_id").val())) {
@@ -16195,7 +16217,7 @@ function requestItemsInputGERPFirst(requestdata) {
         }
     });
     
-    inputBox2.on('keyup', function(e) {        
+    inputBox2.off('keyup').on('keyup', function(e) {        
 
         var inval = inputBox2.val();
         console.log('key : '+inval);
@@ -16311,7 +16333,7 @@ function requestItemsInputGERPFirst(requestdata) {
     pluginForm.append(inputBoxText2);
 
     /* ###[ 계정 ]### */
-    var dropdownBox = $('<div class="dropdown-box dropdown-housing input-box add-order"><div class="with-guide"><label>계정<b>*</b></label></div></div>');
+    var dropdownBox = $('<div class="dropdown-box dropdown-housing input-box add-order"><div class="with-guide" id="account-title"><label>계정<b>*</b></label></div></div>');
     var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>청구할 계정을 선택해 주세요.</span></button>');
     var dropdownArrow = $(
         '<i class="icons">'
@@ -16349,12 +16371,12 @@ function requestItemsInputGERPFirst(requestdata) {
     // dropdown
     //dropdownMainBtn.on('click', function() {
     
-    $(document).on('click','.form-first .btn-dropdown', function(e) {
+    $(document).on('click','.form-first2 .btn-dropdown', function(e) {
         dropdownBtnEvent(this);
         //nextBtnEvent($(this));
     });
     
-    $(document).on('click','.form-first .dropdown-menu .dropdown-item a', function(e) {
+    $(document).on('click','.form-first2 .dropdown-menu .dropdown-item a', function(e) {
     //dropdownListItem.find('a').on('click', function() {
         dropdownMenuEvent(this);
         nextBtnEvent();
@@ -16410,7 +16432,7 @@ function requestItemsInputGERPFirst(requestdata) {
     
     var orderUl3 = $('<ul></ul>');
 
-    inputBox3.on('keyup', function(e) {        
+    inputBox3.off('keyup').on('keyup', function(e) {        
 
         var inval = inputBox3.val();
         console.log('key : '+inval);
@@ -16545,7 +16567,7 @@ function requestItemsInputGERPFirst(requestdata) {
     // 다음버튼
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
     pluginForm.append(nextBtn);
-    pluginForm.children('.btn').find('button').on('click', function() {
+    pluginForm.children('.btn').find('button').off('click').on('click', function() {
         
         let department_code = $('#department_code').val();
         let department_id = $('#department_id').val();
@@ -16591,7 +16613,7 @@ function requestItemsInputGERPFirst(requestdata) {
                       console.log('예산 결과 : 0건');
                      
                      // 추후 삭제해야 함. start 
-                    requestdata.valid_budget_amount = 120000000;    //budgetInfo[0].account_budget;
+                    requestdata.valid_budget_amount = 12000000;    //budgetInfo[0].account_budget;
                     
                     requestdata.step = 2;
 
@@ -16854,6 +16876,7 @@ function requestItemsInputGERPSecond(requestdata) {
     pluginHeader.prepend(backBtn);
     
     $('.plugin-contents').focus();
+    $(document).off('click');
 
 function onlyNumber(obj) {
     $(obj).keyup(function(){
@@ -16862,7 +16885,7 @@ function onlyNumber(obj) {
 }   
 
     /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-second" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-second2" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     var smallNote = $('<small class="note" style="font-size:12px;">※물품 작성 중 ORG Code 변경 시 작성하신 물품 내용이 모두 초기화됩니다.</small>');
@@ -16924,7 +16947,7 @@ function onlyNumber(obj) {
     //inputBoxTabList.append(tabItem2);
     
     // tab 추가 버튼 
-    var tabItemAddBtn = $('<button class="tabBtn-add" type="button" disabled></button>');    
+    var tabItemAddBtn = $('<button class="tabBtn-add disabled" type="button" readonly></button>');    
     
     if(itemCnt != 10) {
         tabBtnBox.append(tabItemAddBtn);
@@ -16973,7 +16996,7 @@ function onlyNumber(obj) {
         tabContent1.append(itemIDText);
     
         ////// market code 
-        var dropdownBox = $('<div class="dropdown-box dropdown-housing input-box add-order"><div class="with-guide"><label>Market Code<b>*</b></label></div></div>');
+        var dropdownBox = $('<div class="dropdown-box dropdown-housing input-box add-order"><div class="with-guide" id="market-title"><label>Market Code<b>*</b></label></div></div>');
         var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>옵션을 선택해 주세요.</span></button>');
         var dropdownArrow = $(
             '<i class="icons">'
@@ -17020,7 +17043,7 @@ function onlyNumber(obj) {
         var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
         var itemDateWrap = $('<div class="schedule-wrap"></div>');
         var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date startdate" placeholder="'+item.due_date+'" id="due_date" onclick="datepicker.open(this)" value="'+item.due_date+'" autocomplete="off"/>');
+        var itemDateInput = $('<input type="text" class="input-schedule-date startdate" placeholder="'+item.due_date+'" id="due_date" onclick="datepicker.open(this);" readonly value="'+item.due_date+'" autocomplete="off"/>');
 
         itemDateBox.append(itemDateInput);
         
@@ -17126,14 +17149,25 @@ function onlyNumber(obj) {
 
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
 
+        var showContent = $('.tab-content.show');
+        var current_tab_no = $('.tabBtn-box').find('.tabBtn.active').find('#item_no').val(); 
+        if (showContent.find('.amount-box').hasClass('show') == false || showContent.find('.btn-input').attr('disabled') != 'disabled') {
+            setTimeout(function() {
+                showSmallDialog("'물품"+current_tab_no+" 입력'을 먼저 눌러 주세요."); 
+            }, 100);               
+            return;
+        }
+
         requestdata.step = 3;
 
-        //requestdata.item_list = itemList;
-        //requestdata.item_cnt = itemCnt;
+        let productList = makeItemList();
+        
+        requestdata.item_list = productList;
+        requestdata.item_cnt = itemCnt;
 
         pluginForm.removeClass('show');
         pluginForm.remove();
@@ -17162,9 +17196,9 @@ function onlyNumber(obj) {
                 //console.log('value : '+ $(inputObj[i]).val());
                 
                 tabCont.find('.btn-input').attr('disabled', false);
-                pluginForm.find('.tabBtn-add').attr('disabled', true);              // tab 추가 버튼 활성화.
+                pluginForm.find('.tabBtn-add').attr('readonly', true).addClass('disabled');              // tab 추가 버튼 활성화.
                     
-                nextBtn.find('button').attr('disabled', true);
+                nextBtn.find('button').attr('readonly', true).addClass('disabled');
                     
                 $('.tabBtn-box').find('.tabBtn').not('.active').addClass('disabled');
                 $('.tabBtn-move').find('.tabBtn-move-prev').addClass('disabled');
@@ -17185,14 +17219,14 @@ function onlyNumber(obj) {
     function nextBtnEvent() {
         var tabContents = pluginForm.find('.tab-content');
 
-        nextBtn.find('button').attr('disabled', false);
+        nextBtn.find('button').attr('readonly', false).removeClass('disabled');
         
         for ( let i = 0; i <= (tabContents.length)-1; i++ ) {           // badge-over
             let tabContent = tabContents[i];
             if ($(tabContent).find('.amount-box').hasClass('show')) {
                 
                 if($(tabContent).find('.amount-box').find('.total').find('.badge-over').length > 0){
-                    nextBtn.find('button').attr('disabled', true);
+                    nextBtn.find('button').attr('readonly', true).addClass('disabled');
                     console.log(i+' : over hide. ');
                 }
                 else{
@@ -17200,26 +17234,35 @@ function onlyNumber(obj) {
                 }
             }
             else{
-                nextBtn.find('button').attr('disabled', true);
+                nextBtn.find('button').attr('readonly', true).addClass('disabled');
                 console.log(i+' : hide. ');
             }
         }
 
     }
-    
-    $(document).on('click','.form-second .btn-dropdown', function(e) {
+
+    var orgDropDownVal = '';
+    $(document).on('click','.form-second2 .btn-dropdown', function(e) {
         dropdownBtnEvent(this);
         //nextBtnEvent($(this));
+        orgDropDownVal = dropDownValue(this);
         initCombo = false;
     });
     
-    $(document).on('click','.form-second .dropdown-menu .dropdown-item a', function(e) {
+    $(document).on('click','.form-second2 .dropdown-menu .dropdown-item a', function(e) {
     //dropdownListItem.find('a').on('click', function() {
         dropdownMenuEvent(this);
         //nextBtnEvent();
-        if(initCombo == false) {
+        var selectValue = dropDownValue(this);
+        
+        console.log(initCombo+' / '+orgDropDownVal+' / '+selectValue);
+        if(orgDropDownVal != selectValue && initCombo == false) {
+            console.log('change...');
             inputBtnEvent();
         }
+        // if(initCombo == false) {
+        //     inputBtnEvent();
+        // }
     });
     function dropdownBtnEvent(target) {
         if ($(target).hasClass('active')) {
@@ -17243,9 +17286,31 @@ function onlyNumber(obj) {
         dropmenu.stop().slideUp().removeClass('show');
     }
     
+    function dropDownValue(target) {
+        let market_code = $(target).parents('.dropdown-box').find('#market_code').val();
+        //console.log('before MaketCode : '+market_code);
+        return market_code;
+    }
+    
+    // dropdown box 열려 있으면 닫기. 
+    $(document).on('click', function(e) {
+        //console.log('length : '+$('.dropdown-box').has(e.target).length+' / '+$('.dropdown-box').length+' / ', e.target);
+        //console.log('dropdown : '+$('.dropdown-box').length);
+        for(var i=0; i<$('.dropdown-box').length; i++) {
+            let dropdownBox = $('.dropdown-box')[i];
+            
+            //console.log('dropdown1 : '+$(dropdownBox).has(e.target).length);
+            //console.log(e.target.id);
+            if($(dropdownBox).has(e.target).length === 0 || e.target.id == 'market-title') {
+                if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
+                    dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
+                }
+            }            
+        }
+    });
     
     // 물품 입력 버튼 클릭시. 
-    $(document).on('click','.form-second .tab-content.show .btn-input', function(e) {
+    $(document).on('click','.form-second2 .tab-content.show .btn-input', function(e) {
     //pluginForm.find('.tab-content.show').find('.btn-input').on('click', function(e){
         console.log('input ...');
         
@@ -17302,7 +17367,7 @@ function onlyNumber(obj) {
                     inputBtn.parents('.tab-content').find('.help-message').text(itemName);
                     inputBtn.parents('.tab-content').find('#inventory_item_id').val(inventItemId);
                     
-                    itemAmountCalculate(itemUnit, inputBtn);
+                    var isItemOver = itemAmountCalculate(itemUnit, inputBtn);
                     var isOver = totalAmountCalculate();
                     
                     let productList = makeItemList();
@@ -17312,7 +17377,7 @@ function onlyNumber(obj) {
                     
                     nextBtnEvent();
                     
-                    if(isOver) {
+                    if(isOver || isItemOver) {
                         setTimeout(function() {
                             showSmallDialog('예산을 초과했습니다.'); 
                         }, 100);               
@@ -17342,7 +17407,7 @@ function onlyNumber(obj) {
     });
     
     // 물품 삭제 버튼 클릭시. 
-    $(document).on('click','.form-second .tab-content.show .btn-del', function(e) {
+    $(document).on('click','.form-second2 .tab-content.show .btn-del', function(e) {
         
         // 탭 물품명 재정리. 
         let delTab = $('.tabBtn-box').find('.tabBtn.active');
@@ -17401,7 +17466,7 @@ function onlyNumber(obj) {
         else{
             tabBtnPrev(prevBtn, isMove);
         }
-
+        
         // 탭삭제 
         $(delTab).remove();
         
@@ -17412,9 +17477,14 @@ function onlyNumber(obj) {
 
         let isDelMove = afterTabDelete();
         
-        if(isDelMove == true) {
-            afterTabSelect();            
+        console.log('isDelMove : '+isDelMove);
+        if(isDelMove == true && delItemNo == 1) {
+            //afterTabSelect();  
+            console.log('첫번째...');
+            tabMoveBtnBox.find('.tabBtn-move-next').trigger('click');
+            tabMoveBtnBox.find('.tabBtn-move-prev').trigger('click');
         }
+
         //actItemNo = (delItemNo == 1)? 1:delItemNo-1;
         //console.log('actItemNo : '+actItemNo);
         //$(items[actItemNo-1]).addClass('active');
@@ -17435,7 +17505,7 @@ function onlyNumber(obj) {
         }
         
         //showTabMoveBtn();
-        pluginForm.find('.tabBtn-add').attr('disabled', false); 
+        pluginForm.find('.tabBtn-add').attr('readonly', false).removeClass('disabled'); 
         if(itemCnt == 1) {
             $('.btn-del').attr('disabled', true);              // 물품 삭제 버튼 disable.
         }
@@ -17453,7 +17523,7 @@ function onlyNumber(obj) {
     //var number_patten = /([0–9]*\.?[0–9]+)/; //^([1-9]{1}\d{0,1}|0{1});
     //var number_patten = /[^0-9][-\s\.]{1}[^0-9]/;
     // input
-    $(document).on('keyup','.form-second input', function(e) {
+    $(document).on('keyup','.form-second2 input', function(e) {
     //pluginForm.find('input').on('keyup', function(e) {
         hblInput = e.target.value;
         
@@ -17496,10 +17566,20 @@ function onlyNumber(obj) {
     });    
     
     // 탭 추가 버튼 클릭시. 
-    $(document).on('click','.form-second .tabBtn-add', function(e) {      
+    $(document).on('click','.form-second2 .tabBtn-add', function(e) {      
     //pluginForm.find('.tab-item-add > a').on('click', function(e){
     //pluginForm.find('.add-img').on('click', function(e){
         console.log('clcik.'+itemCnt);
+        
+        var showContent = $('.tab-content.show');
+        var current_tab_no = $('.tabBtn-box').find('.tabBtn.active').find('#item_no').val(); 
+        if (showContent.find('.amount-box').hasClass('show') == false || showContent.find('.btn-input').attr('disabled') != 'disabled') {
+            setTimeout(function() {
+                showSmallDialog("'물품"+current_tab_no+" 입력'을 먼저 눌러 주세요."); 
+            }, 100);               
+            return;
+        }
+        
         
         // 마지막 탭을 선택한 상태가 아닌 경우를 대비해서. 
         $(this).parent().find('.tabBtn').removeClass('active').addClass('disabled');
@@ -17517,7 +17597,7 @@ function onlyNumber(obj) {
         //$(this).parent().removeClass('active');         // 탭 추가 버튼 비활성화. 
         //$(this).parents().find('.amount-list').removeClass('show');                         // 물품금액 list 감추기 (outter 에 있을 때 )
 
-        $(this).attr('disabled', true);                     // 탭 추가 버튼 비활성화. 
+        $(this).attr('readonly', true).addClass('disabled');                     // 탭 추가 버튼 비활성화. 
         $('.btn-del').attr('disabled', false);              // 물품 삭제 버튼 able.
 
         //$(this).find('.add-img').unwrap();
@@ -17536,7 +17616,7 @@ function onlyNumber(obj) {
     });
     
     // 탭 클릭시. 
-    $(document).on('click','.form-second .tabBtn', function(e) {    
+    $(document).on('click','.form-second2 .tabBtn', function(e) {    
     //pluginForm.find('.tab-item > a').on('click', function(e){
         var showContent = $('.tab-content.show');
         console.log('amont box : '+showContent.find('.btn-input').attr('disabled'));
@@ -17773,6 +17853,8 @@ function onlyNumber(obj) {
         var amount_box = tab_content.find('.amount-box');   // 물품금액 list
         var item_qty =  Number(tab_content.find('#item_qty').val());        // 입력한 물품 수량.
         
+        var isOver = false;
+        
         console.log('tab_content : ', tab_content);
         
         //var amount_label = $(this).text().replace('입력', 'Amount');    
@@ -17780,6 +17862,16 @@ function onlyNumber(obj) {
         var amount_formula = '('+ unit.toLocaleString() + '*' + item_qty.toLocaleString() +')';
 
         //amount_list.find('.item').find('.label > b').text(amount_label);                    // 물품 Amount label
+        amount_box.find('.item').find('.badge').remove();
+        if(itemCnt == 1) {
+            if(amount_value > budgetAmount) {
+                isOver = true;
+                amount_box.find('.item').find('.amount-value').before(badgeOver);
+            }
+            else{
+                amount_box.find('.item').find('.amount-value').before(badgeConfirm);
+            }
+        }
         amount_box.find('.item').find('.amount-value').text(amount_value.toLocaleString()+'원');   // 물품 Amount 계산 
         amount_box.find('.item').find('.amount-formula').text(amount_formula.toLocaleString());
 
@@ -17788,15 +17880,15 @@ function onlyNumber(obj) {
 
         console.log('itemCnt : '+itemCnt+', maxItemCount : '+maxItemCount);
         if(itemCnt < maxItemCount) { 
-            pluginForm.find('.tabBtn-add').attr('disabled', false);              // tab 추가 버튼 활성화.
+            pluginForm.find('.tabBtn-add').attr('readonly', false).removeClass('disabled');              // tab 추가 버튼 활성화.
         }
         amount_box.addClass('show'); //amount_box.css('display', 'block');              // 물품금액 list 활성화.
         inputBtn.attr('disabled', true);                                                 // 물품 입력 버튼 disabled.
 
         // tab 조회 기능 확인.    
         //tabClick(true);
-        
-        //return isOver;
+
+        return isOver;
     }
     
     function totalAmountCalculate() {
@@ -17825,6 +17917,8 @@ function onlyNumber(obj) {
             amountList.find('.amount-item.total').css('display', 'none');
         }
         else{
+            $(amountList[0]).find('.amount-item.item').find('.badge').remove();
+            
             amountList.find('.amount-item.total').css('display', '');
         }
         amountList.find('.amount-item.total').find('.amount').html(totalAmountText);
@@ -17954,7 +18048,7 @@ function onlyNumber(obj) {
         
         
         ////// market code 
-        var dropdownBox = $('<div class="dropdown-box dropdown-housing input-box add-order"><div class="with-guide"><label>Market Code<b>*</b></label></div></div>');
+        var dropdownBox = $('<div class="dropdown-box dropdown-housing input-box add-order"><div class="with-guide" id="market-title"><label>Market Code<b>*</b></label></div></div>');
         var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>옵션을 선택해 주세요.</span></button>');
         var dropdownArrow = $(
             '<i class="icons">'
@@ -18186,7 +18280,7 @@ function requestItemsInputGERPThird(requestdata) {
     $('.plugin-contents').focus();
  
     /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-third" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-third2" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ Total ]### */
@@ -18234,7 +18328,7 @@ function requestItemsInputGERPThird(requestdata) {
 
         var itemName = $('<div class="item-name"><h6>물품명</h6><span>' + item.item_name + '</span></div>');
         productsInfor.append(itemName);
-        var itemCount = $('<div class="item-count"><h6>수량</h6><span>' + item.item_qty + '</span></div>');
+        var itemCount = $('<div class="item-count"><h6>수량</h6><span>' + Number(item.item_qty).toLocaleString() + '</span></div>');
         productsInfor.append(itemCount);
         var itemDate = $('<div class="item-date"><h6>Due date</h6><span>' + item.due_date + '</span></div>');
         productsInfor.append(itemDate);
@@ -18244,11 +18338,13 @@ function requestItemsInputGERPThird(requestdata) {
         var hiddenItemUnit = $('<input type="hidden" value="'+item.item_unit+'" id="item_unit"/>');
         var hiddenItemMarket = $('<input type="hidden" value="'+item.market_code+'" id="market_code"/>');
         var hiddenInventItemId = $('<input type="hidden" value="'+item.inventory_item_id+'" id="inventory_item_id"/>');
+        var hiddenItemQty = $('<input type="hidden" value="'+item.item_qty+'" id="item_qty"/>');
         
         productsList.append(hiddenItemNo);
         productsList.append(hiddenItemUnit);
         productsList.append(hiddenItemMarket);
         productsList.append(hiddenInventItemId);
+        productsList.append(hiddenItemQty);
 
         productsListWrap.append(productsList);
         
@@ -18286,7 +18382,8 @@ function requestItemsInputGERPThird(requestdata) {
                 var dialogTabName = target.parents('.list-item').find('h4').text();
                 
                 var itemId = target.parents('.list-item').find('.item-id').text();
-                var itemCount = target.parents('.list-item').find('.item-count').find('span').text();
+                //var itemCount = target.parents('.list-item').find('.item-count').find('span').text();
+                var itemCount = target.parents('.list-item').find('#item_qty').val();
                 var itemUnit = target.parents('.list-item').find('#item_unit').val();
                 
                 let amount = Number(itemCount) * Number(itemUnit);
@@ -18352,7 +18449,7 @@ function requestItemsInputGERPThird(requestdata) {
             let item = new Object();
             
             item.item_id = $(product).find('.item-id').text();
-            item.item_qty = $(product).find('.item-count').find('span').text();
+            item.item_qty = $(product).find('#item_qty').val();    //$(product).find('.item-count').find('span').text();
             item.due_date = $(product).find('.item-date').find('span').text();
             item.item_name = $(product).find('.item-name').find('span').text();
             item.item_unit = $(product).find('#item_unit').val();
@@ -18564,7 +18661,7 @@ function requestItemsInputGERPFourth(requestdata) {
     $('.plugin-contents').focus();
  
     /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-fourth" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-fourth2" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     var inputBoxText = $('<div class="input-box"><label>물품 청구 사유<b>*</b></label></div>');
@@ -18600,14 +18697,14 @@ function requestItemsInputGERPFourth(requestdata) {
         }
         
         console.log(`글자 수: ${text_num.totalCount}`);
-        if (textareaContent.find('textarea').val() && overflag == false) {
-            submitBtn.removeClass('btn-disabled');
-            submitBtn.attr('disabled', false);
-        }
-        else{
-            submitBtn.addClass('btn-disabled');
-            submitBtn.attr('disabled', true);
-        }
+        // if (textareaContent.find('textarea').val() && overflag == false) {
+        //     submitBtn.removeClass('btn-disabled');
+        //     submitBtn.attr('disabled', false);
+        // }
+        // else{
+        //     submitBtn.addClass('btn-disabled');
+        //     submitBtn.attr('disabled', true);
+        // }
     });
     
     /* ###[ ProductsList ]### */
@@ -18714,19 +18811,19 @@ function requestItemsInputGERPFourth(requestdata) {
 
     //물품 청구 신청 버튼
     // var submitDiv = $('<div style="position:fixed; bottom:0px;width: calc(100% - 36px);"></div>')
-    var submitBtn = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-">물품 청구 신청</button>');   // style="position:fixed; bottom:0px;"
+    var submitBtn = $('<button type="button" class="btn btn-plugin btn-apply" id="btn-">물품 청구 신청</button>');   // style="position:fixed; bottom:0px;"
     // submitDiv.append(submitBtn);
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
 
         requestdata.remark = $('#remark').val();
         
-        if(requestdata.remark == '') {
-            showSmallDialog("승인 요청에 필요한 문구를 입력해 주세요.");
-            //$('#remark').focus();
-            textFocusStyle($('#remark'));
-            return;
-        }
+        // if(requestdata.remark == '') {
+        //     showSmallDialog("승인 요청에 필요한 문구를 입력해 주세요.");
+        //     //$('#remark').focus();
+        //     textFocusStyle($('#remark'));
+        //     return;
+        // }
 
         let firstProductId = item_list[0].item_id;
         let productCnt = productList.length;
@@ -18939,6 +19036,9 @@ function productsBillResult(requestdata) {
     });
     create.on('click', function() {
         console.log('신규 물품 청구');
+        
+        isQuick = true;
+        chatui.sendMessage("물품 청구 신청");  
     });
     
     messageWrap.append(messageTextWrap2);
