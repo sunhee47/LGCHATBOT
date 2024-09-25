@@ -166,6 +166,11 @@ var iconNewWindow = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
 +'<path d="M3.66797 3.13317C3.00523 3.13317 2.46797 3.67043 2.46797 4.33317V12.3332C2.46797 12.9959 3.00523 13.5332 3.66797 13.5332H11.668C12.3307 13.5332 12.868 12.9959 12.868 12.3332V8.99977C12.868 8.77886 13.0471 8.59977 13.268 8.59977C13.4889 8.59977 13.668 8.77886 13.668 8.99977V12.3332C13.668 13.4377 12.7725 14.3332 11.668 14.3332H3.66797C2.5634 14.3332 1.66797 13.4377 1.66797 12.3332V4.33317C1.66797 3.2286 2.5634 2.33317 3.66797 2.33317H7.0013C7.22222 2.33317 7.4013 2.51226 7.4013 2.73317C7.4013 2.95408 7.22222 3.13317 7.0013 3.13317H3.66797Z" fill="#2C2C2C"/>'
 +'</svg>';
 
+var iconNewWindowPink = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path d="M9.5345 2.0665C9.5345 1.84559 9.71359 1.6665 9.9345 1.6665H12.9345C13.7077 1.6665 14.3345 2.29331 14.3345 3.0665V6.0665C14.3345 6.28742 14.1554 6.4665 13.9345 6.4665C13.7136 6.4665 13.5345 6.28742 13.5345 6.0665V3.0665C13.5345 3.0553 13.5342 3.04416 13.5336 3.0331L7.95075 8.61595C7.79454 8.77216 7.54127 8.77216 7.38506 8.61595C7.22885 8.45974 7.22885 8.20647 7.38506 8.05026L12.9679 2.46742C12.9568 2.46681 12.9457 2.4665 12.9345 2.4665H9.9345C9.71359 2.4665 9.5345 2.28742 9.5345 2.0665Z" fill="#E0205C"/>'
++'<path d="M3.66797 3.13317C3.00523 3.13317 2.46797 3.67043 2.46797 4.33317V12.3332C2.46797 12.9959 3.00523 13.5332 3.66797 13.5332H11.668C12.3307 13.5332 12.868 12.9959 12.868 12.3332V8.99977C12.868 8.77886 13.0471 8.59977 13.268 8.59977C13.4889 8.59977 13.668 8.77886 13.668 8.99977V12.3332C13.668 13.4377 12.7725 14.3332 11.668 14.3332H3.66797C2.5634 14.3332 1.66797 13.4377 1.66797 12.3332V4.33317C1.66797 3.2286 2.5634 2.33317 3.66797 2.33317H7.0013C7.22222 2.33317 7.4013 2.51226 7.4013 2.73317C7.4013 2.95408 7.22222 3.13317 7.0013 3.13317H3.66797Z" fill="#E0205C"/>'
++'</svg>';
+
 var wSunny = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
  +'<path d="M22 16C22 19.3137 19.3137 22 16 22C12.6863 22 10 19.3137 10 16C10 12.6863 12.6863 10 16 10C19.3137 10 22 12.6863 22 16Z" fill="#F3A73F"/>'
  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M16 21C18.7614 21 21 18.7614 21 16C21 13.2386 18.7614 11 16 11C13.2386 11 11 13.2386 11 16C11 18.7614 13.2386 21 16 21ZM16 22C19.3137 22 22 19.3137 22 16C22 12.6863 19.3137 10 16 10C12.6863 10 10 12.6863 10 16C10 19.3137 12.6863 22 16 22Z" fill="#D69133"/>'
@@ -4178,7 +4183,23 @@ var loadEl = {
                   '</div>';
 
       return html;
-  }
+  },
+  'pop_selfReject_confirm': function(popTitle, msg) {
+        var html = '<div class="pop-wrapper dialog">' +
+                    '<h2>' + popTitle + '</h2>' +
+                    '<span class="dialog-close" onclick="pop.close(this);">' + 
+                        iconPopupClose +
+                    '</span>' +
+                    '<p class="section-message">' +
+                        msg +
+                    '</p>' +         
+                    '<div class="dialog-btns">' +
+                        '<button type="button" onclick="pop.close(this);" class="cancel">취소</button>' +
+                        '<button type="button" id="btnConfirm" class="delete">확인</button>' +
+                    '</div>' +
+                    '</div>';
+        return html;
+    }
 }
 
 
@@ -4424,6 +4445,206 @@ const setDatepicker = function() {
 };
 
 window.datepicker = setDatepicker();
+
+//Datepicker Module 물품청구 용
+const setDatepickerArticleRequest = function() {
+    var $initEl;
+  
+    // 날짜 한글 변환
+    function fullDate(val, target) {
+        var today;
+        var strWeek = ["일요일","월요일","화요일", "수요일","목요일","금요일","토요일"]
+        var fullDate;
+
+        if (target) {
+        today = new Date($(target).val());
+        } else {
+        today = new Date(val);
+        }
+
+        fullDate = today.getFullYear() +'년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 ' + strWeek[today.getDay()]
+        return fullDate;
+    }
+
+    // open
+    function dpOpen(btn, target, callback){
+      var $input;
+      
+      var newDt = new Date();
+      var newDate = moment(newDt).format('YYYY.MM.DD');
+      var oneMonthAgo = new Date(newDt.setMonth(newDt.getMonth() - 1));
+      var oneMonthAgoDate = moment(oneMonthAgo).format('YYYY.MM.DD');
+
+      if ($(btn).closest(".schedule-input-wrap").length > 0) {
+        $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
+        $(".datepicker-chem:visible").not($initEl).fadeOut('fast', function(){
+          $(this).removeClass("show");
+        });
+      } else {
+        $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
+      }
+  
+      if (target) {
+        $input = $(target);
+      } else {
+        if ($(btn).closest(".schedule-wrap")) {
+          $input = $(btn).closest(".schedule-input-wrap").find(".input-schedule-date");
+        } else {
+          $input = $(btn).prev("input[type=text]");
+        }
+      }
+  
+      var minDate = '';
+      var maxDate = newDate;
+  
+      if($(btn).hasClass('startdate')) {
+      }
+  
+      if($(btn).hasClass('enddate')) {
+        minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
+      }
+  
+      if ($initEl.is(':visible')) {
+        dpClose();
+      } else {
+        $initEl.datepicker({
+          formatDate: "ATOM",
+          minDate: minDate,
+          maxDate: maxDate,
+          dateFormat: "yy.mm.dd",
+          defaultDate: $input.val(),
+          showOn: "",
+          buttonImageOnly: true,
+          showMonthAfterYear: true,
+          monthNames: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+          monthNamesShort: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+          dayNamesMin: ['일','월','화','수','목','금','토'], 
+          showButtonPanel: true,
+          closeText: "close",
+          altField: "",
+          beforeShow: function() {
+          },
+          onChangeMonthYear: function() {
+  
+          },
+          onSelect: function() {
+            $initEl.find('.selected-date').text(this.value);
+            $(btn).val(this.value);
+
+            $("#datepickerEnd").datepicker("option", "minDate", $('.startdate').val());
+
+            var endDt = moment($('.enddate').val()).format('YYYYMMDD');
+            var startDt = moment($('.startdate').val()).format('YYYYMMDD');
+            if(endDt < startDt) {
+              $('#datepickerEnd').find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
+              $('#datepickerEnd').find('.ui-state-active').removeClass('ui-state-active');
+            }
+
+            if (callback){
+              eval(callback);
+            }
+          },
+          onClose: function() {
+              $(btn).focus();
+          },
+        });
+  
+        if(!$initEl.find('.dp-header').text()) {
+          if($(btn).hasClass('startdate')) {
+              $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>조회 시작일을 선택해 주세요.</p></div>');
+          }
+          if($(btn).hasClass('enddate')) {
+              $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>조회 종료일을 선택해 주세요.</p></div>');
+          }
+        }
+              
+        if($initEl.find('.plugin-select-dim').length == 0) {
+          $initEl.prepend('<div class="plugin-select-dim"></div>');
+        }
+  
+        if($initEl.find('.selected-date').length == 0) {
+          $initEl.find('.dp-header').append('<div class="selected-date"></div>');
+        }
+            
+        if($initEl.find('.dtpicker-refresh').length == 0) {
+          $initEl.find('.dp-header').append('<div class="dtpicker-refresh">초기화</div>');
+        }
+
+        $initEl.find('.dtpicker-refresh').on('click', function(){
+          $initEl.datepicker("setDate", newDate);
+          $initEl.find('.selected-date').text("");
+          $(btn).val("");
+          $initEl.find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
+          $initEl.find('.ui-state-active').removeClass('ui-state-active');
+        });
+
+        if($initEl.find('.btn-datepicker').length == 0) {
+          $initEl.append('<button type="button" class="btn-plugin btn-datepicker btn-datepicker-close" onclick="datepicker.close();">취소</button>');  
+          $initEl.append('<button type="button" class="btn-plugin btn-datepicker btn-datepicker-confirm" onclick="datepicker.close();">확인</button>'); 
+          
+          $initEl.find('.btn-datepicker-close').on('click', function(){
+            var inputVal;
+
+            if($(btn).hasClass('startdate')) {
+              inputVal = $('#startDateValue').val();
+            }
+        
+            if($(btn).hasClass('enddate')) {
+              inputVal = $('#endDateValue').val();
+            }
+
+            if(inputVal != ""){
+              $initEl.datepicker("setDate", inputVal);
+              $initEl.find('.selected-date').text(inputVal);
+              $(btn).val(inputVal);
+            }else{
+              $initEl.datepicker("setDate", newDate);
+              $initEl.find('.selected-date').text("");
+              $(btn).val("");
+              $initEl.find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
+              $initEl.find('.ui-state-active').removeClass('ui-state-active');
+            }
+          });
+
+          $initEl.find('.btn-datepicker-confirm').on('click', function(){
+            if($(btn).hasClass('startdate')) {
+              $('#startDateValue').val($(btn).val());
+            }
+        
+            if($(btn).hasClass('enddate')) {
+              $('#endDateValue').val($(btn).val());
+            }
+          });
+        }
+  
+        $initEl.fadeIn('fast', function(){  
+          $(this).find('.plugin-select-dim').addClass('show');
+          $(this).addClass("show");
+        });
+
+        if($(btn).val() == ""){
+            $initEl.find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
+            $initEl.find('.ui-state-active').removeClass('ui-state-active');
+        }
+
+      }
+      $initEl.find('.dp-header').addClass('article-dp-header');
+      $initEl.find('.selected-date').addClass('article-selected-date');
+      $initEl.find('.ui-datepicker-inline').addClass('article-content');
+    }
+  
+    function dpClose() {
+      $(".datepicker-chem").fadeOut('fast', function(){
+        $(this).removeClass("show");
+      })
+    }
+
+    return {
+      open: dpOpen,
+      close: dpClose,
+      fulldate: fullDate
+    }
+};
 
 function setTimePicker(timeinput) {
   
@@ -8308,6 +8529,25 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'requestItemsInput') {                    // 물품 청구 신청
           messageCard = makeRequestItemsInput(message.data);
     	}
+    	else if(message.type == 'articleRequestList') {
+            messageCard = articleRequestList(message.data); //물품청구 내역 조회
+            
+            if(message.data.items.length == 0&&message.data.researchYn == "Y"){
+                showHtmlSmallDialog('<div>조회된 청구 내역이 없습니다.</br>조회 필터를 다시 설정해 주세요.</div>');
+            }else{
+                addArtReqFilterPopupClose();
+            }
+        }
+        else if(message.type == 'articleRequestListError') {
+            messageCard = articleRequestListError(message.data); //물품청구 내역 조회(예외처리)
+        }
+        else if(message.type == 'articleRequestProcess') {
+          messageCard = articleRequestProcess(message.data); //물품청구 가이드 - 프로세스
+        }
+        else if(message.type == 'articleRequestStatus') {
+          messageCard = articleRequestStatus(message.data); //물품청구 가이드 - 상태정의
+        }
+        
         else {
           console.log(message.type);
         }
@@ -11504,7 +11744,7 @@ function requestItemsPopupOpen(requestdata) {
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
     //var addPlugin = $('<div class="plugins another-account-order" id="request-items"></div>');
-    var addPlugin = $('<div class="plugins products-bill" id="products-bill" style="height: 100%;max-height: calc(100% - 38px);"></div>');
+    var addPlugin = $('<div class="plugins products-bill" id="products-bill"></div>');
 
     /* #########[ popup_header ]######### */
     var pluginHeader = $('<div class="plugin-header"><h1>물품 청구 ('+ '1' + '/' + '3' +')</h1></div>');
@@ -11524,7 +11764,7 @@ function requestItemsPopupOpen(requestdata) {
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents" id="item-content" style="height: 100%; max-height: calc(100vh - 100px); scrollbar-width:auto;"></div>');
+    var pluginContents = $('<div class="plugin-contents" id="item-content" style="height: 100%; scrollbar-width:auto;"></div>');
     var requestForm = requestItemsInputFirst(requestdata);
     //var requestForm = requestItemsInputThird(requestdata);
     pluginContents.append(requestForm);
@@ -11561,6 +11801,7 @@ function requestItemsInputFirst(requestdata) {
     var selAccountCode = (requestdata.account_code == null)? '':requestdata.account_code;
     var selAccountName = (requestdata.account_name == null)? '':requestdata.account_name;
 
+    $('#products-bill').css('height', '').css('max-height', '');
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     pluginHeader.find('h1').text('물품 청구 ('+ '1' + '/' + '3' +')');
@@ -12624,6 +12865,7 @@ function requestItemsInputSecond(requestdata) {
 
     var textBudget = (selProjectCode != '')? 'Project':'Department';
     
+    $('#products-bill').css('height', '').css('max-height', '');    
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
@@ -13760,6 +14002,9 @@ function requestItemsInputThird(requestdata) {
 
     var budgetAmount = (requestdata.valid_budget_amount == null)? '0':requestdata.valid_budget_amount;
     
+    //height: 100%;max-height: calc(100% - 38px);
+    $('#products-bill').css('height', '100%').css('max-height', 'calc(100% - 38px)');
+    
     $('.plugin-contents').css('overflow-y', 'hidden');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
@@ -14144,8 +14389,9 @@ function requestItemsInputThird(requestdata) {
     });
 
     $(window).resize(function() {
-    
-        getMaxHeight();
+        if($('#products-content').find('.products-list').length > 0) {
+            getMaxHeight();
+        }
     });
       
     ascendScroll();
@@ -14153,7 +14399,7 @@ function requestItemsInputThird(requestdata) {
     function getMaxHeight() {
         setTimeout(function() {
             let contentH = $('#item-content').outerHeight();
-            let scrollHeight =  contentH - (52+38) - 50 -10; //contentH - (52+38) - 50 - 10;
+            let scrollHeight =  contentH - (52+38) + 10; //contentH - (52+38) - 50 - 10;
             
             let prodContH = $('#products-content').outerHeight();
             
@@ -14243,3 +14489,1190 @@ function requestMsgScroll() {
 }
 
 /* #################### [ 물품 청구 신청 (NERP) End] #################### */
+/* #################### [ 물품 청구 조회 (NERP) End] #################### */
+
+// 물품청구 내역 조회 예외응답
+function articleRequestListError(data) {
+    // system contents start
+    var articleRequestListError = $('<div class="system-contents" style="width: 300px;"></div>');
+    // 상위 문구 조회필터 버튼 영역
+    var msgCon = $('<div class="message simple-text"></div>');
+
+    var text = $('<p>'
+            + '시스템 오류로 인해 조회되지 않았어요.'
+            + '<br><br>'
+            + '아래 버튼을 눌러 물품 청구 내역을 다시 조회해 보세요.'
+        + '</p>'
+    );
+    
+    msgCon.append(text);    
+    
+    // simple Text button 추가
+    var btnWrap = $('<div class="btn"></div>');
+    var customBtn = $('<button class="btn btn-emphasis">물품 청구 내역 조회</button>')
+
+    btnWrap.append(customBtn);
+    msgCon.append(btnWrap);
+
+    articleRequestListError.append(msgCon);
+
+    // simple Text button event
+    customBtn.click(function(){
+        chatui.sendMessage("물품 청구 내역 조회");
+    });
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var artReqGuideBtn = $('<span class="btn-custom-reply">물품 청구 가이드</span>');
+    quickReplies.append(artReqGuideBtn);
+    var artReqNewBtn = $('<span class="btn-custom-reply">신규 물품 청구</span>');
+    quickReplies.append(artReqNewBtn);
+    articleRequestListError.append(quickReplies);
+
+    artReqGuideBtn.click(function(){
+        chatui.sendMessage("물품 청구 가이드");    
+    });
+    
+    artReqNewBtn.click(function(){
+        chatui.sendMessage("물품 청구 신청");    
+    });
+
+    return articleRequestListError;
+}
+
+// 물품청구 내역 조회
+function articleRequestList(data) {
+    var items = data.items;
+
+    var reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+    var reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+
+    // system contents start
+    var articleRequestListContents = $('<div class="system-contents" style="width: 300px;"></div>');
+    // 상위 문구 조회필터 버튼 영역
+    var msgCon = $('<div class="message simple-text"></div>');
+    var text;
+    if(items.length == 0){
+        text = $('<p>'
+                + '<font color="#E0205C"><b>' + data.userName + '님</b></font>의 물품 청구 내역은 <font color="#E0205C"><b>' + items.length + '건</b></font>이예요. '
+                + '팀청구내역, 조회기간, 상태 등 조회 필터를 설정해 청구 내역을 조회해보세요! 참고로 엘지니는 한 번에 최대 20건의 내역을 조회해 드릴 수 있어요.'
+            + '</p>'
+        );
+        if(data.researchYn == "Y"){
+            articleRequestListContents.parent().css("display","none");
+            var articleTop = articleRequestListContents.parent();
+        }
+    }else{
+        if(data.researchYn != "Y"){
+            text = $('<p>'
+                    + '<font color="#E0205C"><b>' + data.userName + '님</b></font>의 물품 청구 내역은 <font color="#E0205C"><b>' + items.length + '건</b></font>이예요. '
+                    + '엘지니는 최대 20건의 내역을 조회해 드릴 수 있고 팀 청구내역, 조회기간, 상태 등 조회 필터를 설정할 수 있어요!'
+                + '</p>'
+            );
+        }else{
+            if(data.ISDEPARTMENT == "내 청구 내역"){
+                if(data.ZREQDATE_FR == "" || data.ZREQDATE_TO == ""){
+                    text = $('<p>'
+                            + '<b style="color: #333333;">' + data.userName + ', ' + data.STATUS_NAME + '</b> '
+                            + '물품 청구 내역은 총 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
+                        + '</p>'
+                    );  
+                }else {
+                    text = $('<p>'
+                            + '<b style="color: #333333;">' + data.userName + ', ' + reqDateFr + ' - ' + reqDateTo + ', ' + data.STATUS_NAME + '</b> '
+                            + '물품 청구 내역은 총 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
+                        + '</p>'
+                    );  
+                }
+            }else if(data.ISDEPARTMENT = "팀 청구 내역"){
+                if(data.ZREQDATE_FR == "" || data.ZREQDATE_TO == ""){
+                    text = $('<p>'
+                            + '<b style="color: #333333;">' + data.loginDeptName + ', ' + data.STATUS_NAME + '</b> '
+                            + '물품 청구 내역은 총 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
+                        + '</p>'
+                    );  
+                }else {
+                    text = $('<p>'
+                            + '<b style="color: #333333;">' + data.loginDeptName + ', ' + reqDateFr + ' - ' + reqDateTo + ', ' + data.STATUS_NAME + '</b> '
+                            + '물품 청구 내역은 총 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
+                        + '</p>'
+                    );  
+                }
+            }
+        }
+    }
+    
+    msgCon.append(text);    
+    
+    // simple Text button 추가
+    var btnWrap = $('<div class="btn"></div>');
+    var customBtn = $('<button class="btn btn-emphasis">조회 필터 설정</button>')
+
+    btnWrap.append(customBtn);
+    msgCon.append(btnWrap);
+
+    articleRequestListContents.append(msgCon);
+
+    // simple Text button event
+    customBtn.click(function(){
+        addArticleReqFilterPopupOpen(data);
+    });
+
+    // 하단 내역 조회 카드
+    if (Object.prototype.toString.call(items) && Array.isArray(items) && items.length > 0) {
+        
+        var listContents = $('<div class="message profile-list system" style="margin-left: 0px;"></div>');
+    	
+    	var listWrap = $('<div class="p-box"></div>');
+    	listContents.append(listWrap);
+    	
+    	var listUl = $('<ul class="profile-list-wrap"></ul>');
+    	listWrap.append(listUl);
+    	
+    	// 최대 20건
+    	if(items.length > 20){
+    	    items.splice(20, items.length - 20);
+    	}
+        
+        items.forEach(function(item,index){
+            
+            listCount = index + 1;
+            
+            var listLi = $('<li class="list-box Request-List-box" id="listBox_' + listCount + '"></li>');
+            listUl.append(listLi);
+          
+            var sysInfo = $('<div class="text-box"></div>');
+            listLi.append(sysInfo);
+            
+            /* 
+            대표 청구 물품ID 및 물품 수 (MATNR)
+            해당 건의 첫번째 물품 ID과 총 물품 수 출력
+                - 물품이 1건일 때 
+                    - $물품ID$
+                - 물품이 2건 이상일 때
+                    - $첫번째 물품 ID$ 외 $물품 개수$ - 1$ 건
+            */ 
+            sysInfo.append(
+                '<div class="name">'
+                    +'<h1 class="system articleRequestList-h1">'
+                        + item.title
+                    +'</h1>'
+                +'</div">'
+            );
+            
+            var sysInfoList = $('<ul class="profile-info system"></ul>');
+            
+            // 청구상태 (ZSTATUS)
+            var liStatus;
+            if(item.DDTEXT == "New" || item.DDTEXT == "Saved" || item.DDTEXT == "Requested"){ // 핑크 badge
+                liStatus = '<span class="badge-base badge-pink">' + item.DDTEXT + '</span>';
+            }else if(item.DDTEXT == "Approved"){ // 노랑 badge
+                liStatus = '<span class="badge-base badge-yellow">' + item.DDTEXT + '</span>';
+            }else if(item.DDTEXT == "Confirmed"){ // 초록 badge
+                liStatus = '<span class="badge-base badge-green">' + item.DDTEXT + '</span>';
+            }else{ // 회색 badge
+                liStatus = '<span class="badge-base badge-gray">' + item.DDTEXT + '</span>';
+            }
+            
+            sysInfoList.append($(
+                '<li class="articleRequestList-li">'
+                    +'<h4>청구 상태</h4>'
+                    //+'<div><span>' + item.DDTEXT + '</span></div>'
+                    +liStatus
+                +'</li>'
+            ));
+            
+            /* 
+            청구부서 (ZCLSTEXT or POST1)
+            청구 시 Project를 선택했다면 Project명
+            청구 시 Project를 선택하지 않았다면 Department명
+            최대 2줄까지 출력 이후 말줄임표
+            
+            팀 청구 내역으로 조회시 : 신청자
+            내 청구 내역으로 조회시 : 청구 부서
+            */
+            if(data.ISDEPARTMENT == "내 청구 내역"){
+                if(item.POSID != ""){
+                    sysInfoList.append($(
+                        '<li class="articleRequestList-li">'
+                            +'<h4>청구 부서</h4>'
+                            +'<div class="result-item-reqTitle"><span>' + item.POST1 + '</span></div>'
+                        +'</li>'
+                    ));
+                }else{
+                    sysInfoList.append($(
+                        '<li class="articleRequestList-li">'
+                            +'<h4>청구 부서</h4>'
+                            +'<div class="result-item-reqTitle"><span>' + item.ZORGNAME + '</span></div>'
+                        +'</li>'
+                    ));
+                }
+            }else if(data.ISDEPARTMENT = "팀 청구 내역"){
+                sysInfoList.append($(
+                    '<li class="articleRequestList-li">'
+                        +'<h4>신청자</h4>'
+                        +'<div class="result-item-reqTitle"><span>' + item.ZREQUESTOR + '</span></div>'
+                    +'</li>'
+                ));
+            }
+
+            // 신청일 (ZREQDATE) - 물품청구 요청 넣은 날짜
+            sysInfoList.append($(
+                '<li class="articleRequestList-li">'
+                    +'<h4>신청일</h4>'
+                    +'<div><span>' + item.ZREQDATE + '</span></div>'
+                +'</li>'
+            ));
+            
+            sysInfo.append(sysInfoList);
+            
+            if (listCount > 4){
+                listLi.addClass('hide');
+            }
+            
+            arrowHtml =	'<span class="arrow">'
+                +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                +'</svg>'
+              +'</span>';    
+          
+            listLi.append(arrowHtml);
+            
+            // hidden value 추가
+            // 클릭시 hidden value 로 단건 조회 
+            listLi.click(function(){
+                /*
+                var liId = parseInt($(this).attr('id').split('_')[1]) - 1;
+                
+                var orgId = data.orgId;
+                var partNo = data.partNo;
+                var origCntryCode = data.origCntryCode;
+                var hsCode = items[liId].hsCode;
+            	
+            	var param = {
+            	    "ORGANIZATION_ID":orgId,
+            	    "PART_NO":partNo,
+                    "ORIG_CNTRY_CODE":origCntryCode,
+                    "HS_CODE":hsCode
+            	};
+            	
+                chatui.sendEventMessage("importedHsCodeEvent", param);
+                */
+
+                addArticleReqDetailPopupOpen(item);
+            });
+          
+        });
+   
+        /* 
+        더보기 버튼
+        청구물품이 4건 초과일때 출력
+        클릭시 4건씩 추가 노출
+        */
+        if (listCount > 4){
+            var seeMoreBtn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            
+            listWrap.append(seeMoreBtn);
+            
+            seeMoreBtn.click(function() {
+                var currentList = $(this).parents('.profile-list').find(".hide").first().attr('id');
+                var currentLi = parseInt(currentList.split('_')[1]);
+                
+                if((currentLi+4) >= listCount){
+                    $(this).parents('.p-box').find(".list-box").removeClass('hide');
+                    $(this).remove();
+                }else{
+                    for(var i=0;i<4;i++){
+                        var targetLi = "#listBox_" + (currentLi + i);
+                        $(this).parents('.p-box').find(targetLi).removeClass('hide');
+                    }
+                }
+                descendScrollCustom();
+            });
+        }
+        
+        articleRequestListContents.append(listContents);
+    }
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var artReqGuideBtn = $('<span class="btn-custom-reply">물품 청구 가이드</span>');
+    quickReplies.append(artReqGuideBtn);
+    var artReqNewBtn = $('<span class="btn-custom-reply">신규 물품 청구</span>');
+    quickReplies.append(artReqNewBtn);
+    articleRequestListContents.append(quickReplies);
+
+    artReqGuideBtn.click(function(){
+        chatui.sendMessage("물품 청구 가이드");    
+    });
+    
+    artReqNewBtn.click(function(){
+        chatui.sendMessage("물품 청구 신청");    
+    });
+
+    return articleRequestListContents;
+}
+
+function addArtReqFilterPopupClose() {
+    window.datepicker = setDatepicker();
+    $('#addArtReqFilter').removeClass('show');
+    $('.plugin-dim').removeClass('show');
+    setTimeout(function() {
+        $('.plugin-dim').remove();
+        $('#addArtReqFilter').remove();
+    }, 300);
+}
+
+/**
+ * '더보기용 내리기' 함수
+ */
+function descendScrollCustom() {
+	setTimeout(function() {
+        var e = document.getElementById("divScroll");
+        var dd = e.scrollHeight - 650;
+        console.log(e.scrollTop,e.scrollHeight,dd);
+        e.scrollTop = dd;
+    }, 50)
+}
+
+// 물품 청구 내역 조회 필터 설정
+function addArticleReqFilterPopupOpen(data){
+    /* #########[ popup_wrap_start ]######### */
+    window.datepicker = setDatepickerArticleRequest();
+    
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addArtReqFilter = $('<div class="plugins" id="addArtReqFilter"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addArtReqFilterHeader = $('<div class="plugin-header"><h1>물품 청구 내역 조회</h1></div>');
+    var addArtReqFilterClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    
+    addArtReqFilterClose.on('click', function() {
+        addArtReqFilterPopupClose();
+    })
+    addArtReqFilterHeader.append(addArtReqFilterClose);
+    addArtReqFilter.append(addArtReqFilterHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addArtReqFilterContents = $('<div class="plugin-contents articleRequestFilter-contents"></div>');
+    var addArtReqFilterForm = $('<form class="form-artReqFilter"></form>');
+
+    /* #########[ popup_content ]######### */
+    /*  ###[ 조회 유형 ]###  */
+    var listTypeDropdownBox = $(
+        '<div class="dropdown-box dropdown-listType">'
+            +'<label>조회 유형</label>'
+        +'</div>'
+    );
+
+    var listTypeDropdown = $('<button type="button" class="btn btn-dropdown select" id="artReqFilter_isDepartment"><span>' + data.ISDEPARTMENT + '</span></button>');
+    var listTypeDropdownArrow = $(
+        '<i class="icons">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</i>'
+    );
+    addArtReqFilterForm.append(listTypeDropdownBox);
+    listTypeDropdownBox.append(listTypeDropdown);
+    listTypeDropdown.append(listTypeDropdownArrow);
+
+    // 조회 유형 드롭다운메뉴 & 리스트
+    var listTypeDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+    var listTypeArry = ["내 청구 내역","팀 청구 내역"];
+    
+    listTypeArry.forEach(function(arr) {
+        let listTypeDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr + '</a></li>');
+        listTypeDropdownListWrap.append(listTypeDropdownList)
+    });
+
+    listTypeDropdownBox.append(listTypeDropdownListWrap);
+    
+    $(document).on('click', function(e) {
+        if (e.target.id != "artReqFilter_isDepartment") {
+            listTypeDropdown.removeClass('active');
+			listTypeDropdownListWrap.removeClass('show');
+			listTypeDropdownListWrap.css("display","none");
+        }
+    });
+    
+    var reqDateFr = "";
+    var reqDateTo = "";
+    if(data.ZREQDATE_FR != "") reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+    if(data.ZREQDATE_TO != "") reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+
+    /*  ###[ 조회 기간 ]###  */
+    var defaultFormat = "YYYY.MM.DD";
+    var timeInputBox = $('<div class="input-box"><label>조회 기간</label></div>');
+    
+    var dateTimeWrap = $('<div class="schedule-wrap schedule-wrap-filter"></div>');
+    
+    var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="start-date-box"></div>');
+    var dateStartInput = $('<input type="text" placeholder="'+defaultFormat+'" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var datepickerStart = $('<div class="datepicker-chem" id="datepickerStart"></div>');
+    var dateStartVal = $('<input type="hidden" id="startDateValue" value=""/>');
+    var spliter = $('<div class="font-Xlarge"> - </div>');
+    var dateTimeEndBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="end-date-box"></div>');
+    var dateEndInput = $('<input type="text" placeholder="'+defaultFormat+'" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var dateEndVal = $('<input type="hidden" id="endDateValue" value=""/>');
+    var datepickerEnd = $('<div class="datepicker-chem" id="datepickerEnd"></div>');
+
+    var smail = $('<small style="font-size: 12px;color: #828282;">물품 청구 신청 일을 기준으로 조회합니다. 조회 기간을 입력하지 않으면 최근 청구 내역을 조회합니다.</small>');
+
+    dateTimeStartBox.append(dateStartInput);
+    dateTimeStartBox.append(datepickerStart);
+    dateTimeStartBox.append(dateStartVal);
+    dateTimeEndBox.append(dateEndInput);
+    dateTimeEndBox.append(datepickerEnd);
+    dateTimeEndBox.append(dateEndVal);
+    dateTimeWrap.append(dateTimeStartBox);
+    dateTimeWrap.append(spliter);
+    dateTimeWrap.append(dateTimeEndBox);
+
+    timeInputBox.append(dateTimeWrap);
+    timeInputBox.append(smail);
+    addArtReqFilterForm.append(timeInputBox);
+
+    /*  ###[ 조회 상태 ]###  */
+    var listStatusDropdownBox = $(
+        '<div class="dropdown-box dropdown-listStatus">'
+            +'<label>조회 유형</label>'
+        +'</div>'
+    );
+    var listStatusDropdown = $('<button type="button" class="btn btn-dropdown select" id="artReqFilter_statusId"><span>' + data.STATUS_NAME + '</span><input type="hidden" id="statusId" value="' + data.STATUS_ID + '"/></button>');
+    var listStatusDropdownArrow = $(
+        '<i class="icons">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</i>'
+    );
+    addArtReqFilterForm.append(listStatusDropdownBox);
+    listStatusDropdownBox.append(listStatusDropdown);
+    listStatusDropdown.append(listStatusDropdownArrow);
+
+    // 조회 유형 드롭다운메뉴 & 리스트
+    var listStatusDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+    var listStatusArry = data.requestStatusList;
+    
+    let listStatusDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">전체</a><input type="hidden" name="statusCode" value=""/></li>');
+    listStatusDropdownListWrap.append(listStatusDropdownList)
+
+    listStatusArry.forEach(function(arr) {
+        let listStatusDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.RequestStatusText + '</a><input type="hidden" name="statusCode" value="' + arr.RequestStatus + '"/></li>');
+        listStatusDropdownListWrap.append(listStatusDropdownList)
+    });
+
+    listStatusDropdownBox.append(listStatusDropdownListWrap);
+
+    addArtReqFilterContents.append(addArtReqFilterForm);
+    addArtReqFilter.append(addArtReqFilterContents);
+    
+    $(document).on('click', function(e) {
+        if (e.target.id != "artReqFilter_statusId") {
+            listStatusDropdown.removeClass('active');
+			listStatusDropdownListWrap.removeClass('show');
+			listStatusDropdownListWrap.css("display","none");
+            listStatusDropdownBox.css('padding-bottom', "10px");
+        }
+    });
+    
+    var addArtReqFilterFoot = $('<div class="articleRequestFilter-footer"></div>');
+    var addArtReqFilterSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-artReqFilter">확인</button>');
+    addArtReqFilterFoot.append(addArtReqFilterSubmit);
+    addArtReqFilter.append(addArtReqFilterFoot);
+    
+    addArtReqFilterSubmit.on('click', function() {
+        
+        var abledFlag = $(this).hasClass("btn-disabled");
+        
+        if(!abledFlag){
+            var startDt = moment($('.startdate').val()).format('YYYYMMDD');
+            var endDt = moment($('.enddate').val()).format('YYYYMMDD');
+
+            if(startDt > endDt){
+                showHtmlSmallDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
+                return;
+            }
+            
+            var isDepartment = $('#artReqFilter_isDepartment').find('span').text();
+            var zReqdateFrom = $('#start-date').val();
+            var zReqdateTo = $('#end-date').val();
+            var statusId = $('#artReqFilter_statusId').find('input').val();
+            var statusName = $('#artReqFilter_statusId').find('span').text();
+
+            var requestParam = {
+                query: {
+                    "event": "importedartReqFilterEvent"
+                },
+                payload:{
+                    "ISDEPARTMENT":isDepartment,
+                    "ZREQDATE_FR":zReqdateFrom,
+                    "ZREQDATE_TO":zReqdateTo,
+                    "STATUS_ID":statusId,
+                    "STATUS_NAME":statusName,
+                    "userName":data.userName,
+                    "loginDeptId":data.loginDeptId
+                }
+            };
+
+            sendChatApi(requestParam, null, function(payload){
+                var message = payload.queryResult.messages[0];
+                var response = message.response;
+                var result = JSON.parse(response);
+                
+                if(result == null){
+                    articleRequestListError(data);
+                    addArtReqFilterPopupClose();
+                }
+
+                var itemLength = result.template.outputs[0].data.items.length;
+
+                if(itemLength == 0){
+                    showHtmlSmallDialog('<div>조회된 청구 내역이 없습니다.</br>조회 필터를 다시 설정해 주세요.</div>');
+                    return;
+                }else{
+                    console.log(isDepartment,zReqdateFrom,zReqdateTo,statusId);
+
+                    var param = {
+                        "ISDEPARTMENT":isDepartment,
+                        "ZREQDATE_FR":zReqdateFrom,
+                        "ZREQDATE_TO":zReqdateTo,
+                        "STATUS_ID":statusId,
+                        "STATUS_NAME":statusName,
+                        "researchYn":"Y"
+                    }
+                                        
+                    chatui.sendEventMessage("importedartReqFilterEvent", param);
+                    addArtReqFilterPopupClose();
+                }
+            });
+        }
+    });
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addArtReqFilter);
+    $('.plugin-dim').css('display', 'block');
+    $('#addArtReqFilter').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addArtReqFilter').addClass('show');
+    }, 100);
+
+    /*  #########[ dropdown ]#########  */
+    $('.btn-dropdown').on('click', function() {
+        dropdownBtnEvent(this);
+    });
+    $('.dropdown-menu a').on('click', function() {
+        dropdownMenuEvent(this);
+    });
+
+    function dropdownBtnEvent(target) {
+        if (target.id == "artReqFilter_statusId"){
+            if ($(target).hasClass('active')) {
+                listStatusDropdown.removeClass('active');
+                listStatusDropdownListWrap.removeClass('show');
+                listStatusDropdownListWrap.css("display","none");
+                listStatusDropdownBox.css('padding-bottom', "10px");
+            }
+            else {
+                listStatusDropdown.addClass('active');
+                listStatusDropdownListWrap.addClass('show');
+                listStatusDropdownListWrap.css("display","flex");
+                listStatusDropdownBox.css('padding-bottom', "160px");
+                listStatusDropdown.closest('.plugin-contents').scrollTop(500);
+            }
+        }else{
+            if ($(target).hasClass('active')) {
+                listTypeDropdown.removeClass('active');
+                listTypeDropdownListWrap.removeClass('show');
+                listTypeDropdownListWrap.css("display","none");
+            }
+            else {
+                listTypeDropdown.addClass('active');
+                listTypeDropdownListWrap.addClass('show');
+                listTypeDropdownListWrap.css("display","flex");
+            }
+        }
+    }
+    
+    function dropdownMenuEvent(target) {
+        const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).text();
+        let targetCode = $(target).next().val();
+        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        dropBtn.find('input').val(targetCode);
+        dropmenu.removeClass('show');
+        $(target).closest('.dropdown-listStatus').css('padding-bottom', "10px");
+    }
+
+    /*  #########[ input-form ]#########  */
+    $('.input-val-del').on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+        }
+    });
+
+    $('#start-date').val(reqDateFr);
+    $('#end-date').val(reqDateTo);
+    
+    // btn-disabled validation
+    fncObserverBtnAbledCheck('artReqFilter_isDepartment',data);
+    fncObserverBtnAbledCheck('datepickerStart',data);
+    fncObserverBtnAbledCheck('datepickerEnd',data);
+    fncObserverBtnAbledCheck('artReqFilter_statusId',data);
+
+    /*
+    $(document).on('DOMNodeInserted','#artReqFilter_isDepartment', function() {
+        checkArticleRequire(data);
+    });
+
+    $(document).on('DOMNodeInserted','.datepicker-chem', function() {
+        checkArticleRequire(data)
+    });
+
+    $(document).on('DOMNodeInserted','#artReqFilter_statusId', function() {
+        checkArticleRequire(data);
+    });
+    */
+    checkArticleRequire(data);
+};
+
+// 감시함수
+function fncObserverBtnAbledCheck(targetId,data){
+    const target = document.getElementById(targetId);
+
+    const callback = (mutationList, observer) => {
+        checkArticleRequire(data);
+    };
+
+    const observer = new MutationObserver(callback);
+
+    const config = { 
+        attributes: true,
+        childList: true,
+        characterData: true
+    };
+
+    observer.observe(target, config);
+}
+
+// 물품 청구 내역 필터 유효화
+function checkArticleRequire(data) {
+    var department = $('#artReqFilter_isDepartment').find('span').text();
+    var statusId = $('#artReqFilter_statusId').find('input').val();
+    var startDate = $('#start-date').val();
+    var endDate = $('#end-date').val();
+    var reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+    var reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+    
+    if(data.ZREQDATE_FR == "") reqDateFr = "";
+    if(data.ZREQDATE_TO == "") reqDateTo = "";
+
+    var departmentFlag = false;
+    var dateFlag = false;
+    var statusFlag = false;
+    if(department != data.ISDEPARTMENT){
+        departmentFlag = true;
+    }else {
+        departmentFlag = false;
+    }
+
+    if(startDate != reqDateFr||endDate != reqDateTo){
+        dateFlag = true;
+    }else{
+        dateFlag = false;
+    }
+
+    if(statusId != data.STATUS_ID){
+        statusFlag = true;
+    }else{
+        statusFlag = false;
+    }
+
+    var btnArtReqFilter = $('#btn-artReqFilter');
+    
+    if(departmentFlag == false&&dateFlag == false&&statusFlag == false){
+        btnArtReqFilter.addClass('btn-disabled');
+    }else{
+        btnArtReqFilter.removeClass('btn-disabled');
+    }
+}
+
+// 물품 청구 내역 조회 상세 
+function addArticleReqDetailPopupOpen(data){
+        /* #########[ popup_wrap_start ]######### */
+    
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addArtReqDetail = $('<div class="plugins" id="addArtReqDetail" style="max-height: calc(100% - 44px);"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addArtReqDetailHeader = $('<div class="plugin-header"><h1>' + data.ZREQNO + '</h1></div>');
+    var addArtReqDetailClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    
+    addArtReqDetailClose.on('click', function() {
+        addArtReqDetailPopupClose();
+    })
+    addArtReqDetailHeader.append(addArtReqDetailClose);
+    addArtReqDetail.append(addArtReqDetailHeader);
+
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var deepValiArray = ['New','Saved'];
+    var selfRejValiArray = ['New','Saved','Requested'];
+    
+    var addArtReqDetailContents = $('<div class="plugin-contents articleRequestDetail-contents"></div>');
+    
+    if(['New','Saved'].includes(data.DDTEXT)){
+        addArtReqDetailContents.addClass('articleRequestDetail-contents-NS');
+    }else if(['Requested'].includes(data.DDTEXT)){
+        addArtReqDetailContents.addClass('articleRequestDetail-contents-R');
+    }else{
+        addArtReqDetailContents.addClass('articleRequestDetail-contents-other');
+    }
+        
+    var addArtReqDetailForm = $('<form class="form-artReqDetail"></form>');
+
+
+    /* #########[ popup_content ]######### */
+    var articleReqSubInfo = $('<div class="articleReqSubInfo"></div>');
+
+    var articleReqSubInfoUi = $('<ul class="articleReq-list-sub-wrap"></ul>');
+
+    var liStatus;
+    if(data.DDTEXT == "New" || data.DDTEXT == "Saved" || data.DDTEXT == "Requested"){ // 핑크 badge
+        liStatus = '<span class="badge-base badge-detali-card badge-pink">' + data.DDTEXT + '</span>';
+    }else if(data.DDTEXT == "Approved"){ // 노랑 badge
+        liStatus = '<span class="badge-base badge-detali-card badge-yellow">' + data.DDTEXT + '</span>';
+    }else if(data.DDTEXT == "Confirmed"){ // 초록 badge
+        liStatus = '<span class="badge-base badge-detali-card badge-green">' + data.DDTEXT + '</span>';
+    }else{ // 회색 badge
+        liStatus = '<span class="badge-base badge-detali-card badge-gray">' + data.DDTEXT + '</span>';
+    }
+
+    var statusInfo = $('<li>' + liStatus + '</li>');
+    articleReqSubInfoUi.append(statusInfo);
+
+    var departmentInfo =$('<li class="subInfo-li">'
+        +'<h5>Department</h5>'
+        +'<p>' + data.ZORGNAME +'</p>' 
+        +'</li>'
+    );
+    articleReqSubInfoUi.append(departmentInfo);
+
+    var plantInfo =$('<li class="subInfo-li">'
+        +'<h5>Plant ID</h5>'
+        +'<p>' + data.WERKS +'</p>' 
+        +'</li>'
+    );
+    articleReqSubInfoUi.append(plantInfo);
+    
+    if(data.POST1 != ""){
+        var projectInfo =$('<li class="subInfo-li">'
+            +'<h5>Project</h5>'
+            +'<p>' + data.POST1 +'</p>' 
+            +'</li>'
+        );
+        articleReqSubInfoUi.append(projectInfo);
+    }
+
+    var classInfo =$('<li class="subInfo-li">'
+        +'<h5>계정</h5>'
+        +'<p>' + data.CLSTEXT +'</p>' 
+        +'</li>'
+    );
+    articleReqSubInfoUi.append(classInfo);
+
+    var reqDateInfo =$('<li class="subInfo-li">'
+        +'<h5>신청일</h5>'
+        +'<p>' + data.ZREQDATE +'</p>' 
+        +'</li>'
+    );
+    articleReqSubInfoUi.append(reqDateInfo);
+
+    articleReqSubInfo.append(articleReqSubInfoUi);
+    addArtReqDetailForm.append(articleReqSubInfo);
+
+    var articleTotalCnt = $(
+        '<div class="totalCnt">'
+        +'<h5>Total</h5>'
+        +'<h5>' + data.prdCount + '건</h5>'
+        +'</div>'
+    );
+    addArtReqDetailForm.append(articleTotalCnt);
+    
+    /* Item Area */
+    var articleReqItemList = $('<div class="articleReqItemList"></div>');
+    var articleReqItemListUi = $('<ul class="articleReq-list-wrap"></ul>');
+
+    var items = data.productList;
+    var articleReqItemLiHtml = "";
+    items.forEach(function(item,index){
+        articleReqItemLiHtml += '<li>'
+            +'<div class="item-count"><h5><font color="#E0205C">물품 ' + (index+1) + '</h5></font></div>'
+            +'<div class="item-name">'
+                +'<h5>' + item.MATNR + '</h5>'
+                +'<div class="item-box">'
+                    +'<div class="item-info">'
+                        +'<p><font color="#898989">물품명</font></p>'
+                        +'<p>' + item.MAKTX + '</p>'
+                    +'</div>'
+                    +'<div class="item-info">'
+                        +'<p><font color="#898989">수량</font></p>'
+                        +'<p>' + item.BDMNG + '</p>'
+                    +'</div>'
+                    +'<div class="item-info">'
+                        +'<p><font color="#898989">Due date</font></p>'
+                        +'<p>' + item.DBTER + '</p>'
+                    +'</div>'
+                +'</div>'
+            +'</div>'
+        +'</li>'
+    });
+    var articleReqItemLi = $(articleReqItemLiHtml);
+    articleReqItemListUi.append(articleReqItemLi);
+    articleReqItemList.append(articleReqItemListUi);
+    addArtReqDetailForm.append(articleReqItemList);
+
+    addArtReqDetailContents.append(addArtReqDetailForm);
+    addArtReqDetail.append(addArtReqDetailContents);
+
+    /* #########[ popup_footer ]######### */
+    var addArticleReqFoot = $('<div class="articleRequestDetail-footer"></div>');
+    var addTotalAmount = $(
+        '<div class="total-amount">'
+            +'<p><font color="#E0205C">Total Amount</font></p>'
+            +'<p>' + data.totalAmount + '원</p>'
+        +'</div>'
+    );
+    addArticleReqFoot.append(addTotalAmount);
+
+    
+    if(deepValiArray.includes(data.DDTEXT)){
+        var articleReqDeepLinkBtn = $(
+            '<button type="button" class="btn btn-plugin move_link btn-border-pink" data-outlink="' + data.ZDEEPLINKID + '" id="btn-deepLink">'
+                +'통합결재 화면&nbsp;'
+                + iconNewWindowPink
+            +'</button>'
+        );
+        addArticleReqFoot.append(articleReqDeepLinkBtn);
+
+        articleReqDeepLinkBtn.on('click', function() {
+            var outlink = $(this).data('outlink');
+    
+            if(!outlink){
+                showHtmlSmallDialog('통합결재 URL이 유효하지 않습니다.');
+                return false;
+            }
+    
+            window.open(outlink, '_blank');
+        });
+    }
+
+    if(selfRejValiArray.includes(data.DDTEXT)){
+        var articleReqSelfRejectBtn = $('<button type="button" class="btn btn-plugin btn-border-pink" id="btn-selfReject">Self Reject 하기</button>');
+        addArticleReqFoot.append(articleReqSelfRejectBtn);
+
+        articleReqSelfRejectBtn.on('click', function() {
+            pop.open(
+                'create',
+                $(this),
+                'Pop_SelfReject_ArticleRequest',
+                'loadEl.pop_selfReject_confirm("Self Reject", "Self Reject 시 해당 청구건은 자체적으로 반려되며<br />수정 및 재작성이 불가합니다.<br /><br />Self Reject 하시겠습니까?")'
+            );
+            $("#btnConfirm").click(function(){     
+                var reqNo = data.ZREQNO;
+                var requestParam = {
+                    query: {
+                        "event": "selfRejectEvent"
+                    },
+                    payload: {
+                        "ZREQNO" : reqNo
+                    }
+                };
+                sendChatApi(requestParam, null, function(payload){
+                    console.log("selfRejectEvent :: "+ JSON.stringify(payload));
+                    var message = payload.queryResult.messages[0];
+                    var response = message.response;
+                    var result = JSON.parse(response);
+
+                    var smallDialogStr = "";
+
+                    var restSuccessYn = result.restSuccessYn;
+                    var restErrorMessage = result.restErrorMessage;
+                    var ZREQNO = result.ZREQNO;
+
+                    if(restSuccessYn == "Y"){
+                        smallDialogStr = '<div>' + ZREQNO + '<div>Self Reject 했습니다.</div></div>';
+                    }else{
+                        smallDialogStr = restErrorMessage;
+                    }
+
+                    setTimeout(function() {
+                        showHtmlSmallDialog(smallDialogStr);
+                        pop.close($("#Pop_SelfReject_ArticleRequest"));
+                    }, 500);
+                });
+            });
+        });
+    }
+
+    var articleReqCheckBtn = $('<button type="button" class="btn btn-plugin btn-apply btn-check-close" id="btn-check">확인</button>');
+    addArticleReqFoot.append(articleReqCheckBtn);
+
+    articleReqCheckBtn.on('click', function() {
+        addArtReqDetailPopupClose();
+    });
+
+    addArtReqDetail.append(addArticleReqFoot);
+
+    function addArtReqDetailPopupClose() {
+        $('#addArtReqDetail').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#addArtReqDetail').remove();
+        }, 300);
+    }
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addArtReqDetail);
+    $('.plugin-dim').css('display', 'block');
+    $('#addArtReqDetail').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addArtReqDetail').addClass('show');
+    }, 100);
+};
+
+// 물품청구 가이드 - 프로세스
+function articleRequestProcess(data) {
+
+    // system contents start
+    var articleRequestProcess = $('<div class="system-contents" style="width: 300px;"></div>');
+    // 상위 문구 조회필터 버튼 영역
+    var msgCon = $(
+        '<div class="message simple-text">'
+            +'<p>물품 청구는 엘지니에서 입력 후 <font color="#E0205C"><b>통합결재</b></font>에서 승인 요청을 해야 완료됩니다.</p>'
+        +'</div>'
+    );
+    
+    articleRequestProcess.append(msgCon);
+
+    var listContents = $('<div class="message simple-text art-guide-process"></div>');
+    var listTitle = $('<h2 class="art-guide-h2">물품 청구 프로세스</h2>');
+    listContents.append(listTitle);
+
+    var listUl = $('<ul></ul>');
+    listContents.append(listUl);
+
+    var items = data.list;
+
+    items.forEach(function(item){
+        var listLi = $('<li></li>');
+        var listText = $('<div>' + item.text + '</div>');
+
+        var listDcp = $('<h6 style="margin-left: 0px; font-size: 13px;">' + item.description + '</h6>');
+        listLi.append(listText);
+        listLi.append(listDcp);
+        listUl.append(listLi);
+    });
+
+    // simple Text button 추가
+    var buttons = data.buttons;
+    var btnWrap = $('<div class="btn"></div>');
+    
+    var customBtn = $('<button class="btn btn-emphasis">물품 청구하기</button>')
+    btnWrap.append(customBtn);
+    
+    // simple Text button event
+    customBtn.click(function(){
+        chatui.sendMessage("물품 청구하기");
+    });
+
+    listContents.append(btnWrap);
+    articleRequestProcess.append(listContents);
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var artReqGuideBtn = $('<span class="btn-custom-reply">물품 청구 상태 정의</span>');
+    quickReplies.append(artReqGuideBtn);
+    var artReqNewBtn = $('<span class="btn-custom-reply">물품 청구 내역</span>');
+    quickReplies.append(artReqNewBtn);
+    articleRequestProcess.append(quickReplies);
+
+    artReqGuideBtn.click(function(){
+        chatui.sendMessage("물품 청구 상태 정의");    
+    });
+    
+    artReqNewBtn.click(function(){
+        chatui.sendMessage("물품 청구 내역");    
+    });
+
+    return articleRequestProcess;
+}
+
+// 물품청구 가이드 - 상태 정의
+function articleRequestStatus(data) {
+    // system contents start
+    var articleRequestStatus = $('<div class="system-contents" style="width: 300px;"></div>');
+    var msgCon = $(
+        '<div class="message simple-text art-guide-status-text">'
+            +'<p>믈품 청구는 10개의 상태가 있어요.</p>'
+        +'</div>'
+    );
+    articleRequestStatus.append(msgCon);
+
+    var listContents = $('<div class="carousel-box art-guide-status"></div>');
+    var listSlider = $('<div class="variable-width"></div>');
+
+    listSlider.append(data.htmlStr)
+    listContents.append(listSlider);
+    articleRequestStatus.append(listContents);
+
+    // slick area
+    listSlider.each(function() {
+        var cWidth = $('.chat-panel').width();
+        var contents = $(this).find('.re-content');
+
+        var biggestHeight = 0;
+
+        contents.each(function (index, element) {
+           var currentBoxHeight = $(this).outerHeight();
+           biggestHeight = currentBoxHeight >= biggestHeight ? currentBoxHeight : biggestHeight;
+        });
+
+        var carouselWidth = (contents.length * 265) - 10;
+        
+        if(carouselWidth < cWidth) {
+           //$(this).width(carouselWidth);
+           $(this).width(1000);
+           $(this).addClass('not-carousel');
+           $(this).parent().height(465);
+           
+        } else {
+           $(this).css("width", cWidth + 12);
+           $(this).removeClass('not-carousel');
+           $(this).slick({
+              dots: false,
+              infinite: false,
+              speed: 300,
+              slidesToShow: 1,
+              variableWidth: true
+           });  
+
+
+           $(this).find('.slick-prev').empty().append('<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+           + '<path d="M20 6L11.6021 15.331C11.2598 15.7113 11.2598 16.2887 11.6021 16.669L20 26" stroke-width="1.2" stroke-linecap="round"/>'
+           +'</svg>'); 
+           
+           $(this).find('.slick-next').empty().append('<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+              +'<path d="M12 6L20.3979 15.331C20.7402 15.7113 20.7402 16.2887 20.3979 16.669L12 26" stroke-width="1.2" stroke-linecap="round"/>'
+           +'</svg>');
+
+           $(this).parent().height(465);
+        }
+        
+    });
+    
+    // 물품 청구 상태 정의 관련 리사이즈
+    $(window).resize(function() {
+        fncCarouselRisizing();
+    });
+    
+    // slick area End
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply" style="width:150%"></div>');
+    var artReqProcessBtn = $('<span class="btn-custom-reply">물품 청구 프로세스</span>');
+    quickReplies.append(artReqProcessBtn);
+    var artReqListBtn = $('<span class="btn-custom-reply">물품 청구 내역</span>');
+    quickReplies.append(artReqListBtn);
+    var artReqNewBtn = $('<span class="btn-custom-reply">신규 물품 청구</span>');
+    quickReplies.append(artReqNewBtn);
+    articleRequestStatus.append(quickReplies);
+
+    artReqProcessBtn.click(function(){
+        chatui.sendMessage("물품 청구 프로세스");    
+    });
+    artReqListBtn.click(function(){
+        chatui.sendMessage("물품 청구 내역");    
+    });
+    artReqNewBtn.click(function(){
+        chatui.sendMessage("물품 청구 신청");    
+    });
+
+    return articleRequestStatus;
+}
+
+function fncCarouselRisizing(){
+    var cWidth = $('.chat-panel').width();
+    $(".variable-width").each(function() {
+        var contents = $(this).find('.re-content');
+        var carouselWidth = (contents.length * 265) - 10;
+        
+        var biggestHeight = 0;
+
+        contents.each(function (index, element) {
+            var currentBoxHeight = $(this).outerHeight();
+            biggestHeight = currentBoxHeight >= biggestHeight ? currentBoxHeight : biggestHeight;
+        });
+        
+        if(carouselWidth < cWidth) {
+            $(this).filter('.slick-initialized').slick('unslick');
+            $(this).width(1000);
+            //$(this).width(carouselWidth);
+            $(this).addClass('not-carousel');
+            $(this).parent().height(biggestHeight);
+        } else {
+            $(this).css("width", cWidth + 12);
+            $(this).removeClass('not-carousel');
+            
+            var slickOptions = {
+                dots: false,
+                infinite: false,
+                speed: 300,
+                slidesToShow: 1,
+                variableWidth: true
+            };  
+            
+            $(this).not('.slick-initialized').slick(slickOptions); 	
+
+            $(this).find('.slick-prev').empty().append('<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+           + '<path d="M20 6L11.6021 15.331C11.2598 15.7113 11.2598 16.2887 11.6021 16.669L20 26" stroke-width="1.2" stroke-linecap="round"/>'
+           +'</svg>'); 
+           
+           $(this).find('.slick-next').empty().append('<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+              +'<path d="M12 6L20.3979 15.331C20.7402 15.7113 20.7402 16.2887 20.3979 16.669L12 26" stroke-width="1.2" stroke-linecap="round"/>'
+           +'</svg>');
+           
+            $(this).parent().height(biggestHeight);
+        } 
+    });
+}
+/* #################### [ 물품 청구 조회 (NERP) End] #################### */
