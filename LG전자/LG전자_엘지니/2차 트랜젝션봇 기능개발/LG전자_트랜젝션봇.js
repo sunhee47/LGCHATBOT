@@ -15781,7 +15781,7 @@ function requestItemsInputGERPFirst(requestdata) {
     
     var selDeptCode = (requestdata.department_code == null)? '':requestdata.department_code;
     var selDeptName = (requestdata.department_name == null)? '':requestdata.department_name;
-    var selDeptId = (requestdata.plant_name == null)? '':requestdata.department_id;
+    var selDeptId = (requestdata.department_id == null)? '':requestdata.department_id;
     
     var selPlantCode = (requestdata.plant_code == null)? '':requestdata.plant_code;
     var selPlantName = (requestdata.plant_name == null)? '':requestdata.plant_name;
@@ -17167,6 +17167,13 @@ function onlyNumber(obj) {
             setTimeout(function() {
                 showSmallDialog("'물품"+current_tab_no+" 입력'을 먼저 눌러 주세요."); 
             }, 100);               
+            return;
+        }
+
+        let overflag = showContent.find('.amount-box').find('.badge-over').length;
+        if(overflag > 0) {
+            console.log('예산 초과...');
+            
             return;
         }
 
@@ -19159,4 +19166,4 @@ function fn_checkByte(obj){
             
     }
 }
-/* #################### [ 물품 청구 신청 (GERP) Start] #################### */
+/* #################### [ 물품 청구 신청 (GERP) End] #################### */
