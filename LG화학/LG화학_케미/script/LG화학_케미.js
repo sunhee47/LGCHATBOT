@@ -1179,7 +1179,7 @@ const autoSearchEmployees = function(inputVal) {
       //var inputVal = $(this).val();
       var searchVal = "'" + inputVal + "'";
  
-      //console.log('searchVal : '+searchVal);
+      console.log('searchVal : '+searchVal);
       if ($frmWrap.hasClass("search-where") || $frmWrap.hasClass("search-dict")) {
           if ($.trim(inputVal) == "") {
               resetInputMsg();
@@ -1407,6 +1407,8 @@ const setAutocompleteJoinMember = function(input) {
       var inputVal = $(input).val();
       var searchVal = "'" + inputVal + "'";
       var sessionId = $(input).closest(".form-schedule").attr("data-sessionId");
+      
+      console.log('chem searchVal : '+searchVal);      
       
      // 임직원 검색
      var options = {
@@ -4330,6 +4332,7 @@ function addSchedulePopupOpen(data) {
   memberInputBox.append(memberList);
   addScheduleForm.append(memberInputBox);
 
+console.log('aaaaa');
   var placeInputBox = $('<div class="input-box add-schedule-place"><label>장소</label></div>');
   
   var placeSelectBox = $('<div class="place-select"></div>');

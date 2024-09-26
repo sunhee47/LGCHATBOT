@@ -1108,14 +1108,79 @@ const setAutocomplete = function() {
   }
 
   // Set Autocomplete
+  $(".btn-search-where").on('click', function(e){
+      resetInputMsg();
+      $(".chat-footer-form").addClass("search-where");
+      $(".test-sentence-input").val('/where '); //공백추가
+      $(".test-sentence-input").focus();
+ 
+  });
+  $(".btn-search-dict").on('click', function(e){
+      resetInputMsg();
+      $(".chat-footer-form").addClass("search-dict");
+      $(".test-sentence-input").val('/dict '); //공백추가
+      $(".test-sentence-input").focus();
+  });
+   $(".btn-search-mrc").on('click', function(e){
+      userId = chatui.getSetting("userId"); 
+      intentEvent(null, 'mrc', "'"+userId+"'");
+      e.preventDefault ? e.preventDefault() : (e.returnValue = false);
+          
+  });
+  
+  // Close Autocomplete
+  $(document).on('click', function(e){
+      var $frmWrap = $(".chat-footer-form");
+ 
+      if (!($frmWrap.hasClass("search-person") || $frmWrap.hasClass("search-total"))) {
+        // 위치검색, 용어검색 메뉴 위치 변경으로 ".small-menu" 클래스로 변경.
+          if ($(".form-group, .small-menu").has(e.target).length == 0) {
+              resetInputMsg();
+          }
+      } else {
+          $(".search-title").removeClass("on");
+      }
+  });
+ 
+  $(".btn-person-search").on('click', function(e){
+      resetInputMsg();
+      $(".chat-footer-form").attr('data-mode','search').addClass("search-person");
+      $(".test-sentence-input").focus();
+  });
+ 
+  $(".btn-total-search").on('click', function(e){
+      resetInputMsg();
+      $(".chat-footer-form").attr('data-mode','search').addClass("search-total");
+      $(".test-sentence-input").focus();
+  });
+ 
+  $(".btn-form-reset").on('click', function(){
+      resetInputMsg();
+  });
+ };
+ 
+
+const autoSearchEmployees = function(inputVal) {
+  // Reset Input Message
+  function resetInputMsg() {
+  // activeAutoComplete('N');
+      $(".chat-footer-form").removeClass('search-where search-dict search-person search-total');
+      $(".autocomplete-wrap .search-title").removeClass("keyword person on");
+      $(".autocomplete-wrap .btn-goSearch").removeClass("show");
+      $(".autocomplete-wrap .btn-goSearch span").text('');
+      $(".chat-footer-form").attr('data-mode','message');
+      $(".test-sentence-input").val('');
+  }
+    
+  // Set Autocomplete
   var keyword = [];
  
-  $(".test-sentence-input").on('keyup', function(e) {
-    
+
       var $frmWrap = $(".chat-footer-form");
-      var inputVal = $(this).val();
+      //var inputVal = $(this).val();
       var searchVal = "'" + inputVal + "'";
  
+      //console.log('searchVal : '+searchVal);
       if ($frmWrap.hasClass("search-where") || $frmWrap.hasClass("search-dict")) {
           if ($.trim(inputVal) == "") {
               resetInputMsg();
@@ -1165,7 +1230,8 @@ const setAutocomplete = function() {
           }
     });
 
-  }).autocomplete({
+
+  $(".test-sentence-input").autocomplete({
       appendTo: ".form-group .autocomplete-wrap",
       autofocus: true,
       delay: 300,
@@ -1289,58 +1355,9 @@ const setAutocomplete = function() {
               .append(htmlStr)
               .appendTo(ul);
   };
- 
-  $(".btn-search-where").on('click', function(e){
-      resetInputMsg();
-      $(".chat-footer-form").addClass("search-where");
-      $(".test-sentence-input").val('/where '); //공백추가
-      $(".test-sentence-input").focus();
- 
-  });
-  $(".btn-search-dict").on('click', function(e){
-      resetInputMsg();
-      $(".chat-footer-form").addClass("search-dict");
-      $(".test-sentence-input").val('/dict '); //공백추가
-      $(".test-sentence-input").focus();
-  });
-   $(".btn-search-mrc").on('click', function(e){
-      userId = chatui.getSetting("userId"); 
-      intentEvent(null, 'mrc', "'"+userId+"'");
-      e.preventDefault ? e.preventDefault() : (e.returnValue = false);
-          
-  });
-  
-  // Close Autocomplete
-  $(document).on('click', function(e){
-      var $frmWrap = $(".chat-footer-form");
- 
-      if (!($frmWrap.hasClass("search-person") || $frmWrap.hasClass("search-total"))) {
-        // 위치검색, 용어검색 메뉴 위치 변경으로 ".small-menu" 클래스로 변경.
-          if ($(".form-group, .small-menu").has(e.target).length == 0) {
-              resetInputMsg();
-          }
-      } else {
-          $(".search-title").removeClass("on");
-      }
-  });
- 
-  $(".btn-person-search").on('click', function(e){
-      resetInputMsg();
-      $(".chat-footer-form").attr('data-mode','search').addClass("search-person");
-      $(".test-sentence-input").focus();
-  });
- 
-  $(".btn-total-search").on('click', function(e){
-      resetInputMsg();
-      $(".chat-footer-form").attr('data-mode','search').addClass("search-total");
-      $(".test-sentence-input").focus();
-  });
- 
-  $(".btn-form-reset").on('click', function(){
-      resetInputMsg();
-  });
- };
- 
+    
+};
+
 
 
 function sendWelcomeEvent() {
@@ -3143,6 +3160,10 @@ jQuery(document).ready(function(e){
       }
     }
     if(val.length > 0) {
+        
+        // 입력된 메시지에 대한 자동완성 기능. 
+        autoSearchEmployees(val);
+        
       if(val == '/') {
         $('.search-guides').css('display', 'block');
         $('.autocomplete-wrap li').css('display', 'none!important');
