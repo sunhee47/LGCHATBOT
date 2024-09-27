@@ -15962,6 +15962,9 @@ function requestItemsInputGERPFirst(requestdata) {
         var plantval = orgCodeSelected.find('.data-wrap').text();
         var deptval = departmentSelected.find('.data-wrap').text();
         var accntval = $('#account_code').val();
+        var accntinterflag = $('#interface_flag').val();
+        
+        console.log('accntinterflag : '+accntinterflag);
 
         if($selected != null) {
             if($selected.find('.data-wrap').length > 0) {
@@ -16005,17 +16008,21 @@ function requestItemsInputGERPFirst(requestdata) {
             }
         }
         if(thisobj == 'account') {
-            if(plantval && deptval && accntval) {
+            if(plantval && deptval && accntval && accntinterflag == 'Y') {
                 inputBox3.attr('disabled', false);
                 inputTextContent3.removeClass('disable-searchIcon').addClass('searchIcon');
+                
+                inputBoxText3.find('label').html('Project<b>*</b>');
             }
             else{
-                //console.log('delete plant & department & account.');
+                console.log('delete plant & department & account.');
                 
                 inputBox3.val('');
                 
                 inputBox3.attr('disabled', true);
                 inputTextContent3.removeClass('searchIcon').addClass('disable-searchIcon');
+                
+                inputBoxText3.find('label').html('Projet');
             }
         }
         
@@ -16025,7 +16032,7 @@ function requestItemsInputGERPFirst(requestdata) {
         let orderSelectWidth = $inputTextContent.width();
         let selectedorderWidth = $costSelected.width();
         
-        //console.log('inputTextContent width : '+orderSelectWidth+', selected width : '+selectedorderWidth);
+        console.log('inputTextContent width : '+orderSelectWidth+', selected width : '+selectedorderWidth);
         let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
         $inputId.css('width', scheduleorderWidth + "px");
         if ($inputId.width() === 0) {
@@ -16112,7 +16119,7 @@ function requestItemsInputGERPFirst(requestdata) {
                             selected = 'selected';
                         }
                 
-                        accountListListText += '<li class="dropdown-item"><a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><p class="code text">'+account.account_code+'</p><p class="small text">'+account.account_name+'</p></a>'
+                        accountListListText += '<li class="dropdown-item"><a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><span style="display:none;">'+account.interface_flag+'</span><p class="code text">'+account.account_code+'</p><p class="small text">'+account.account_name+'</p></a>'
                                             //+ '<span class="redidence_type" style="display:none;">'+account.ZCLSCODE+'</span>'
                                             + '</li>';
                     });        
@@ -16149,7 +16156,7 @@ function requestItemsInputGERPFirst(requestdata) {
         //input.attr('placeholder', plageHoderMsg);
         content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
         $(this).closest(".data-wrap").remove();
-        selected.css('width', '0px');
+        selected.css('width', '0px').css('height', '0px');
         
         scheduleorderWidth(content, selected, input);
 
@@ -16241,6 +16248,7 @@ function requestItemsInputGERPFirst(requestdata) {
             
             orderUl2.empty();
             
+            inputBox2.blur();
             LoadingWithMask(); 
 
             var requestParam = {
@@ -16351,6 +16359,7 @@ function requestItemsInputGERPFirst(requestdata) {
 
     dropdownBox.append('<input type="hidden" value="" id="account_code"/>');
     dropdownBox.append('<input type="hidden" value="" id="account_name"/>');
+    dropdownBox.append('<input type="hidden" value="" id="interface_flag"/>');
 
     var dropdownMenuListWrap = $('<ul class="dropdown-menu"></ul>');
     var accountListListText = '';    
@@ -16400,9 +16409,11 @@ function requestItemsInputGERPFirst(requestdata) {
 
         let accountCode = $(target).find('.code').text();
         let accountName = $(target).find('.small').text();
+        let interfaceFlag = $(target).find('span').text();
         
         $('#account_code').val(accountCode);
         $('#account_name').val(accountName);
+        $('#interface_flag').val(interfaceFlag);
         
         selectBoxAction('account', false);
         //console.log('accountCode : '+accountCode+', accountName : '+accountName);
@@ -16455,6 +16466,7 @@ function requestItemsInputGERPFirst(requestdata) {
             
             orderUl3.empty();
             
+            inputBox3.blur();
             LoadingWithMask(); 
 
             var requestParam = {
@@ -16528,6 +16540,7 @@ function requestItemsInputGERPFirst(requestdata) {
                         inputBox3.val('');
                         scheduleorderWidth(inputTextContent3, projectSelected, inputBox3);
                         
+                        nextBtnEvent();
                     });
                     
                     orderUl3.append(orderLi3);
@@ -16556,9 +16569,23 @@ function requestItemsInputGERPFirst(requestdata) {
         var plantval = orgCodeSelected.find('.data-wrap').text();
         var deptval = departmentSelected.find('.data-wrap').text();
         var accntval = $('#account_code').val();
+        var accntinterflag = $('#interface_flag').val();
+        var projectval = projectSelected.find('.data-wrap').text();
 
         if (deptval && plantval && accntval) {
-            nextBtn.find('button').attr('disabled', false);
+            if(accntinterflag == 'Y') {             // interface_flag == Y and projectval 있다면 다음 활성화, 그렇지 않으면 비활성화. 
+                if(projectval) {
+                    console.log('project 있다');
+                    nextBtn.find('button').attr('disabled', false);
+                }
+                else{
+                    console.log('project 없다');
+                    nextBtn.find('button').attr('disabled', true);
+                }
+            }
+            else{
+                nextBtn.find('button').attr('disabled', false);
+            }
         }
         else{
             nextBtn.find('button').attr('disabled', true);
