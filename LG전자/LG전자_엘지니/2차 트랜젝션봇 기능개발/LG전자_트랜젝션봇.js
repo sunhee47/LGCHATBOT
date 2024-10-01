@@ -14510,124 +14510,169 @@ function anotherAccountListViewPopupOpen(data) {
     pluginForm.append(submitBtn);
     submitBtn.on('click', function() {
         
+        let api_url = 'https://apigw-int.lge.com:7211/gateway/gerp/api2api/rest/gerpRest/XXOMDS/ChatbotOrderInquiry';   // 운영.
+                    // 'http://dev-apigw-int.lge.com:7220/gateway/gerp/api2api/rest/gerpRest/XXOMDS/ChatbotOrderInquiry';
+        let api_method = 'POST';
+        let api_header = {
+                            "Content-Type": "application/json",
+                            "x-Gateway-APIKey": "37f90096-4f19-49ba-8987-e749f119750d"
+                        };
+                        
+        let api_body = {
+			  "header" : {
+				"SYSTEM_CODE" : "XXOMDS",
+				"PROCESS_NAME" : "ChatbotOrderInquiry"
+			  },
+			  "body" : {
+				"INPUT_DATA1":
+					 [{
+						"p_company_code": userId,
+						"p_employee_number": empNumber,
+						"p_gubun": $('#search_type').val(),
+						"p_order_number": ($('#search_type').val() == 'C')? $('#searchNumber').val():'0',
+						"p_orig_sys_document_ref" : ($('#search_type').val() == 'D')? $('#searchNumber').val():'0'
+					 }]
+			  }
+			};                        
         
-        LoadingWithMask();
+        let api_header_str = JSON.stringify(api_header);        
+        let api_body_str = JSON.stringify(api_body);        
         
-        console.log('search_type : '+$('#search_type').val());
-        
-        var reviewParam = {
-                userId:userId,
-                re_employee_number : empNumber, 
-                re_order_number : ($('#search_type').val() == 'C')? $('#searchNumber').val():'0',
-                re_regist_number : ($('#search_type').val() == 'D')? $('#searchNumber').val():'0',
-                re_order_gubun : $('#search_type').val()
+        var apiPushParam = {
+                userId: userId,
+                pushType: 'pushOrderInquiry', 
+                sessionId: chatui.getSessionId(),  
+                chatbotId: chatui.getSetting("chatbotId"), 
+                api_url : api_url, 
+                api_method : api_method, 
+                api_header : api_header_str,  
+                api_body : api_body_str
         }
         
-        var requestParam = {
-            query: {
-                "event": "anotherOrderInquiryEvent"
-            },
-            payload: {
-                userId:userId,
-                employee_number : empNumber, 
-                order_number : ($('#search_type').val() == 'C')? $('#searchNumber').val():'0',
-                regist_number : ($('#search_type').val() == 'D')? $('#searchNumber').val():'0',
-                gubun : $('#search_type').val()
-            }
-        };  
+        console.log('타계정 주문 조회 : ', apiPushParam);
         
-        console.log('requestParam > ', requestParam);
+        chatui.sendEventMessage("callAPI",apiPushParam);
         
-        sendChatApi(requestParam, userId, function(payload) {
-            console.log('타계정 주문 현황 조회 결과 : ', payload);
+        //---------------------------------------------------------------------        
+        
+        // LoadingWithMask();
+        
+        // console.log('search_type : '+$('#search_type').val());
+        
+        // var reviewParam = {
+        //         userId:userId,
+        //         re_employee_number : empNumber, 
+        //         re_order_number : ($('#search_type').val() == 'C')? $('#searchNumber').val():'0',
+        //         re_regist_number : ($('#search_type').val() == 'D')? $('#searchNumber').val():'0',
+        //         re_order_gubun : $('#search_type').val()
+        // }
+        
+        // var requestParam = {
+        //     query: {
+        //         "event": "anotherOrderInquiryEvent"
+        //     },
+        //     payload: {
+        //         userId:userId,
+        //         employee_number : empNumber, 
+        //         order_number : ($('#search_type').val() == 'C')? $('#searchNumber').val():'0',
+        //         regist_number : ($('#search_type').val() == 'D')? $('#searchNumber').val():'0',
+        //         gubun : $('#search_type').val()
+        //     }
+        // };  
+        
+        // console.log('requestParam > ', requestParam);
+        
+        // sendChatApi(requestParam, userId, function(payload) {
+        //     console.log('타계정 주문 현황 조회 결과 : ', payload);
             
-            if(payload.queryResult.messages.length == 0) {
-                closeLoadingWithMask();
-                errorWithMask();
-                return;
-            }            
-            var searchInfo = '';
-            var regSuccessYn = '';
-            var errorMessage = '';
-            if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
-                var searchResponse = JSON.parse(payload.queryResult.messages[0].response);
-                console.log(searchResponse["successYn"]);
+        //     if(payload.queryResult.messages.length == 0) {
+        //         closeLoadingWithMask();
+        //         errorWithMask();
+        //         return;
+        //     }            
+        //     var searchInfo = '';
+        //     var regSuccessYn = '';
+        //     var errorMessage = '';
+        //     if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+        //         var searchResponse = JSON.parse(payload.queryResult.messages[0].response);
+        //         console.log(searchResponse["successYn"]);
                 
-                if (searchResponse["successYn"] == 'N') {
-                    console.log('errorMessage : '+searchResponse["errorMessage"]);
-                    regSuccessYn = 'N';
-                    errorMessage = searchResponse["errorMessage"];               // 에러메시지.
-                } else {
-                    regSuccessYn = 'Y';
-                    if (searchResponse.template && searchResponse.template.outputs.length > 0 && searchResponse.template.outputs[0] && searchResponse.template.outputs[0].resultItem) {
+        //         if (searchResponse["successYn"] == 'N') {
+        //             console.log('errorMessage : '+searchResponse["errorMessage"]);
+        //             regSuccessYn = 'N';
+        //             errorMessage = searchResponse["errorMessage"];               // 에러메시지.
+        //         } else {
+        //             regSuccessYn = 'Y';
+        //             if (searchResponse.template && searchResponse.template.outputs.length > 0 && searchResponse.template.outputs[0] && searchResponse.template.outputs[0].resultItem) {
                         
-                        searchInfo = searchResponse.template.outputs[0].resultItem;
-                    }
-                }
+        //                 searchInfo = searchResponse.template.outputs[0].resultItem;
+        //             }
+        //         }
                 
-            }
-            else{
-                regSuccessYn = 'N';
-                errorMessage = 'server error!!!';               // 에러메시지.
-            }
+        //     }
+        //     else{
+        //         regSuccessYn = 'N';
+        //         errorMessage = 'server error!!!';               // 에러메시지.
+        //     }
             
-            thisPluginClose();
+        //     thisPluginClose();
 
-            if(regSuccessYn == 'N') {
+        //     if(regSuccessYn == 'N') {
                 
-                console.log('타계정 주문 현황 조회 실패 : ');
+        //         console.log('타계정 주문 현황 조회 실패 : ');
                 
-                var anotherSearchResult = '<div class="message simple-text">'
-                                 +'<p>'
-                                    +'시스템 오류로 인해 조회되지 않았어요.<br><br>'
-                                    +'아래 버튼을 눌러 타계정 주문 현황을 다시 조회해 보세요.'
-                                 +'</p>'
-                                +'<div class="btn">'
-                                    +'<button type="button" class="btn btn-default btn-big reload-search">다시 조회하기</button>'
-                                +'</div>'
-                                + '</div>'; 
+        //         var anotherSearchResult = '<div class="message simple-text">'
+        //                          +'<p>'
+        //                             +'시스템 오류로 인해 조회되지 않았어요.<br><br>'
+        //                             +'아래 버튼을 눌러 타계정 주문 현황을 다시 조회해 보세요.'
+        //                          +'</p>'
+        //                         +'<div class="btn">'
+        //                             +'<button type="button" class="btn btn-default btn-big reload-search">다시 조회하기</button>'
+        //                         +'</div>'
+        //                         + '</div>'; 
                                 
-                appendChatbotText(anotherSearchResult);
+        //         appendChatbotText(anotherSearchResult);
                 
-                $('.reload-search').on('click', function() {
-                    anotherAccountListViewPopupOpen(reviewParam);
-                });
+        //         $('.reload-search').on('click', function() {
+        //             anotherAccountListViewPopupOpen(reviewParam);
+        //         });
                 
-            }   
-            else{
+        //     }   
+        //     else{
             
-                console.log('타계정 주문 현황 조회 완료 : ', searchInfo);
+        //         console.log('타계정 주문 현황 조회 완료 : ', searchInfo);
                 
-                var msgSearchResult = '<div class="message simple-text">'
-                                 +'<p>'
-                                    +'타계정 주문 내역을 조회했어요.<br> '
-                                    +'<small class="note" style="color: #898989; font-size:12px;">나의 주문 건, 부서 내 주문 건 조회시 </br>'
-                                    +'오늘 기준 1개월 이내 주문 건만 조회 가능하며, </br>'
-                                    +'주문 발행 일자를 기준으로 최근 20건을 보여 줍니다.</br>'
-                                    +'</small></br>'
-                                    +'<small class="note" style="color: #898989; font-size:12px;">※ 특정 주문 건 조회 시 주문 번호 또는 접수 번호로 조회해 주세요.</br>'
-                                 +'</p>'
-                                + '</div>'; 
+        //         var msgSearchResult = '<div class="message simple-text">'
+        //                          +'<p>'
+        //                             +'타계정 주문 내역을 조회했어요.<br> '
+        //                             +'<small class="note" style="color: #898989; font-size:12px;">나의 주문 건, 부서 내 주문 건 조회시 </br>'
+        //                             +'오늘 기준 1개월 이내 주문 건만 조회 가능하며, </br>'
+        //                             +'주문 발행 일자를 기준으로 최근 20건을 보여 줍니다.</br>'
+        //                             +'</small></br>'
+        //                             +'<small class="note" style="color: #898989; font-size:12px;">※ 특정 주문 건 조회 시 주문 번호 또는 접수 번호로 조회해 주세요.</br>'
+        //                          +'</p>'
+        //                         + '</div>'; 
                 
-                var anotherSearchResult = '';
-                if(searchInfo.length > 0) {            // 타계정 주문 현황 조회
-                    //var anotherSearchResult = msgSearchResult + aalvResult(searchInfo);
-                    appendChatbotHtml(msgSearchResult, false);
-                    $('.chat-message.left').last().append(aalvResult(searchInfo));
-                    $('.chat-message.left').last().append('<span class="message-date">' + moment().format("a h:mm") + '</span>');
-                }
-                else{
-                    console.log('타계정 주문 현황 조회 : 0건.');
-                    setTimeout(function() {
-                        showSmallDialog('타계정 주문 현황 조회 건수가 없습니다. 다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-                    }, 100);                    
-                }
+        //         var anotherSearchResult = '';
+        //         if(searchInfo.length > 0) {            // 타계정 주문 현황 조회
+        //             //var anotherSearchResult = msgSearchResult + aalvResult(searchInfo);
+        //             appendChatbotHtml(msgSearchResult, false);
+        //             $('.chat-message.left').last().append(aalvResult(searchInfo));
+        //             $('.chat-message.left').last().append('<span class="message-date">' + moment().format("a h:mm") + '</span>');
+        //         }
+        //         else{
+        //             console.log('타계정 주문 현황 조회 : 0건.');
+        //             setTimeout(function() {
+        //                 showSmallDialog('타계정 주문 현황 조회 건수가 없습니다. 다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+        //             }, 100);                    
+        //         }
                 
-            }   
+        //     }   
             
-            closeLoadingWithMask();
-        });
+        //     closeLoadingWithMask();
+        // });
         
+        //---------------------------------------------------------------------        
         
         //thisPluginClose();
         //appendChatbotText(aalvResult());
