@@ -1673,222 +1673,222 @@ function closeSMSPopup() {
   }, 300);
 }
 
-function sendSMSPopupOpen(data, targetName, targetDept, targetMobileNum) {
+// function sendSMSPopupOpen(data, targetName, targetDept, targetMobileNum) {
 
-  var userId = null;
+//   var userId = null;
 
-  if(data) {
-    userId = data.userId;  
-  } else {
-    userId = chatui.getSetting("userId");
-  }
+//   if(data) {
+//     userId = data.userId;  
+//   } else {
+//     userId = chatui.getSetting("userId");
+//   }
 
-  var pulginDim = $('<div class="plugin-dim"></div>');
+//   var pulginDim = $('<div class="plugin-dim"></div>');
 
-  var smsPopup = $('<div class="plugins" id="sendSms"></div>');
-  var smsPoupHeader = $('<div class="plugin-header">'
-   +'<h1>SMS 발송</h1>'
-   +'<span class="close-plugin" onclick="closeSMSPopup()">'
-   +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
-   +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
-   + '</svg>'
-   +'</span>'
-   + '</div>'); 
+//   var smsPopup = $('<div class="plugins" id="sendSms"></div>');
+//   var smsPoupHeader = $('<div class="plugin-header">'
+//   +'<h1>SMS 발송</h1>'
+//   +'<span class="close-plugin" onclick="closeSMSPopup()">'
+//   +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//   +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+//   + '</svg>'
+//   +'</span>'
+//   + '</div>'); 
 
-  smsPopup.append(smsPoupHeader);
+//   smsPopup.append(smsPoupHeader);
 
-  var smsPopupContetns = $('<div class="plugin-contents"></div>');
-  var smsPopUpForm = $('<div class="form-sms form-schedule" data-userId="' + userId +'"></div>');
+//   var smsPopupContetns = $('<div class="plugin-contents"></div>');
+//   var smsPopUpForm = $('<div class="form-sms form-schedule" data-userId="' + userId +'"></div>');
  
-  var smsPopUpType = $('<div class="input-box"><label>구분<b>*</b></label></div>');
-  var smsPopUpTypeRadio = $('<ul class="radio-list"></ul>');
-  var smsPopupTypePerson = $('<li>'
-  +'<label class="input-radio">'
-  +'<input type="radio" name="voice-select" id="person" value="person" checked="checked"  />'
-  +'<span class="radiomark"></span>'
-  +'개인'
-  +'</label>'
-  +'</li>');
+//   var smsPopUpType = $('<div class="input-box"><label>구분<b>*</b></label></div>');
+//   var smsPopUpTypeRadio = $('<ul class="radio-list"></ul>');
+//   var smsPopupTypePerson = $('<li>'
+//   +'<label class="input-radio">'
+//   +'<input type="radio" name="voice-select" id="person" value="person" checked="checked"  />'
+//   +'<span class="radiomark"></span>'
+//   +'개인'
+//   +'</label>'
+//   +'</li>');
 
-  smsPopupTypePerson.on('click', function() {
-    $('.selected-members').empty();
-    $('#attendees').removeClass('hide');
-    $('#department').addClass('hide');
-  });
+//   smsPopupTypePerson.on('click', function() {
+//     $('.selected-members').empty();
+//     $('#attendees').removeClass('hide');
+//     $('#department').addClass('hide');
+//   });
 
-  smsPopUpTypeRadio.append(smsPopupTypePerson);
-  var smsPopUpTypeGroup = $('<li>'
-  +'<label class="input-radio">'
-  +'<input type="radio" name="voice-select" id="group" value="group" />'
-  +'<span class="radiomark"></span> 조직'
-  +'</label>'
-  +'</li>');
+//   smsPopUpTypeRadio.append(smsPopupTypePerson);
+//   var smsPopUpTypeGroup = $('<li>'
+//   +'<label class="input-radio">'
+//   +'<input type="radio" name="voice-select" id="group" value="group" />'
+//   +'<span class="radiomark"></span> 조직'
+//   +'</label>'
+//   +'</li>');
 
-  smsPopUpTypeGroup.on('click', function() {
-    $('.selected-members').empty();
-    $('#attendees').addClass('hide');
-    $('#department').removeClass('hide');
-  });
-  smsPopUpTypeRadio.append(smsPopUpTypeGroup);
-  smsPopUpType.append(smsPopUpTypeRadio);
-  smsPopUpForm.append(smsPopUpType);
+//   smsPopUpTypeGroup.on('click', function() {
+//     $('.selected-members').empty();
+//     $('#attendees').addClass('hide');
+//     $('#department').removeClass('hide');
+//   });
+//   smsPopUpTypeRadio.append(smsPopUpTypeGroup);
+//   smsPopUpType.append(smsPopUpTypeRadio);
+//   smsPopUpForm.append(smsPopUpType);
   
-  var smsPopupMemberInputBox = $('<div class="input-box"><label>받는 사람<b>*</b></label></div>');
-  var memberList = $('<div class="schedule-join-member"></div>');
-  var selectedMembersFold = $('<span class="member-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#6B6B6B"/>'
-  +'</svg></span>');
+//   var smsPopupMemberInputBox = $('<div class="input-box"><label>받는 사람<b>*</b></label></div>');
+//   var memberList = $('<div class="schedule-join-member"></div>');
+//   var selectedMembersFold = $('<span class="member-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#6B6B6B"/>'
+//   +'</svg></span>');
 
-  selectedMembersFold.on('click',function() {
-    if($(this).parent().find('.selected-members').hasClass('long')) {
-      $(this).parent().find('.selected-members').removeClass('long');
-      $(this).addClass('unfold');
-    } else {
-      $(this).parent().find('.selected-members').addClass('long');
-      $(this).removeClass('unfold');
-    }
-  });
-  memberList.append(selectedMembersFold);
-  var selectedMembers = $('<div class="selected-members fold"></div>');
+//   selectedMembersFold.on('click',function() {
+//     if($(this).parent().find('.selected-members').hasClass('long')) {
+//       $(this).parent().find('.selected-members').removeClass('long');
+//       $(this).addClass('unfold');
+//     } else {
+//       $(this).parent().find('.selected-members').addClass('long');
+//       $(this).removeClass('unfold');
+//     }
+//   });
+//   memberList.append(selectedMembersFold);
+//   var selectedMembers = $('<div class="selected-members fold"></div>');
 
-  if(targetName && targetDept && targetMobileNum) {
-    var targetMemberInfo = $('<div class="member-info">'
-    +targetName
-          + '<button type="button" class="btn btn-delete">' 
-            +  '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-            +  '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-            +  '</svg>'
-          + '</button>'
-        +'<div class="auto-detail-tooltip">'+targetDept+'</div>'
-        + '<input type="hidden" value="'+targetMobileNum+'" class="person-mobile"/>'
-        + '<input type="hidden" value="'+targetName+'" class="person-name"/>'
-    +'</div>');
-    selectedMembers.append(targetMemberInfo);
-  };
+//   if(targetName && targetDept && targetMobileNum) {
+//     var targetMemberInfo = $('<div class="member-info">'
+//     +targetName
+//           + '<button type="button" class="btn btn-delete">' 
+//             +  '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//             +  '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+//             +  '</svg>'
+//           + '</button>'
+//         +'<div class="auto-detail-tooltip">'+targetDept+'</div>'
+//         + '<input type="hidden" value="'+targetMobileNum+'" class="person-mobile"/>'
+//         + '<input type="hidden" value="'+targetName+'" class="person-name"/>'
+//     +'</div>');
+//     selectedMembers.append(targetMemberInfo);
+//   };
 
-  memberList.append(selectedMembers);
-  var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-3" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
-  memberList.append(autocompleteMember);
-  var memberInput = $('<input type="text" placeholder="이름을 입력해 주세요." id="attendees" class="search-input" />');
-  setAutocompleteJoinMember(memberInput);
-  memberList.append(memberInput);
+//   memberList.append(selectedMembers);
+//   var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-3" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
+//   memberList.append(autocompleteMember);
+//   var memberInput = $('<input type="text" placeholder="이름을 입력해 주세요." id="attendees" class="search-input" />');
+//   setAutocompleteJoinMember(memberInput);
+//   memberList.append(memberInput);
 
-  var groupInput = $('<input type="text" placeholder="조직명을 입력해 주세요." id="department" class="search-input hide" />');
-  setAutocompleteJoinGroup(groupInput);
-  memberList.append(groupInput);
+//   var groupInput = $('<input type="text" placeholder="조직명을 입력해 주세요." id="department" class="search-input hide" />');
+//   setAutocompleteJoinGroup(groupInput);
+//   memberList.append(groupInput);
 
-  smsPopupMemberInputBox.append(memberList);
-  smsPopUpForm.append(smsPopupMemberInputBox);
+//   smsPopupMemberInputBox.append(memberList);
+//   smsPopUpForm.append(smsPopupMemberInputBox);
 
-  var smsPopupContetnBox = $('<div class="input-box"><label>내용<b>*</b></label>');
-  var smsPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" name="smsMessage" id="smsMessage"></textarea>');
-  smsPopupTextArea.on('keyup', function() {
-    smsContent = $(this).val();
-    smsCheck();
-  });
-  smsPopupContetnBox.append(smsPopupTextArea);
-  smsPopUpForm.append(smsPopupContetnBox);
+//   var smsPopupContetnBox = $('<div class="input-box"><label>내용<b>*</b></label>');
+//   var smsPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" name="smsMessage" id="smsMessage"></textarea>');
+//   smsPopupTextArea.on('keyup', function() {
+//     smsContent = $(this).val();
+//     smsCheck();
+//   });
+//   smsPopupContetnBox.append(smsPopupTextArea);
+//   smsPopUpForm.append(smsPopupContetnBox);
 
-  var isMobile = Mobile();
+//   var isMobile = Mobile();
 
-  if(!isMobile) {
-    var smsDetailLink = $('<p class="detail-submit">'
-    +'<a href="http://gportal.lgchem.com/support/sms/sms.do?gubun=&receiverId=" target="_blank">예약문자 등 상세 기능을 이용하려면 여기를 클릭해 주세요.</a>'
-    + '</p>');
-    smsPopUpForm.append(smsDetailLink);
-  }
+//   if(!isMobile) {
+//     var smsDetailLink = $('<p class="detail-submit">'
+//     +'<a href="http://gportal.lgchem.com/support/sms/sms.do?gubun=&receiverId=" target="_blank">예약문자 등 상세 기능을 이용하려면 여기를 클릭해 주세요.</a>'
+//     + '</p>');
+//     smsPopUpForm.append(smsDetailLink);
+//   }
   
-  var smsPopupSubmitButton = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-sms">발송</button>');
+//   var smsPopupSubmitButton = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-sms">발송</button>');
 
-  smsPopupSubmitButton.on('click', function(){
-    if(!$(this).hasClass('btn-disabled')) {
-      closeSMSPopup();
+//   smsPopupSubmitButton.on('click', function(){
+//     if(!$(this).hasClass('btn-disabled')) {
+//       closeSMSPopup();
      
-      var sendNumbers = '';
-      var sendNames = '';
+//       var sendNumbers = '';
+//       var sendNames = '';
       
-      var numberInputs = $(this).parents(".form-sms").find('.person-mobile');
+//       var numberInputs = $(this).parents(".form-sms").find('.person-mobile');
       
-      for(var i = 0; i<numberInputs.length; i++) {
-        if(i == numberInputs.length-1) {
-          sendNumbers += $(numberInputs[i]).val();
-        } else {
-          sendNumbers += $(numberInputs[i]).val() + ',';
-        } 
-      };
+//       for(var i = 0; i<numberInputs.length; i++) {
+//         if(i == numberInputs.length-1) {
+//           sendNumbers += $(numberInputs[i]).val();
+//         } else {
+//           sendNumbers += $(numberInputs[i]).val() + ',';
+//         } 
+//       };
   
-      var nameInputs = $(this).parents(".form-sms").find('.person-name');
+//       var nameInputs = $(this).parents(".form-sms").find('.person-name');
      
-      for(var k=0; k < nameInputs.length; k++) {
-        if(k == nameInputs.length-1) {
-          sendNames += $(nameInputs[k]).val()
-        } else {
-          sendNames += $(nameInputs[k]).val() + ','
-        }
-      }
+//       for(var k=0; k < nameInputs.length; k++) {
+//         if(k == nameInputs.length-1) {
+//           sendNames += $(nameInputs[k]).val()
+//         } else {
+//           sendNames += $(nameInputs[k]).val() + ','
+//         }
+//       }
 
-      var targetType = $(this).closest('.form-sms').find("input[name='voice-select']:checked").val();
-      var depNames = $(this).parent('.form-sms').find('.dept-name');
+//       var targetType = $(this).closest('.form-sms').find("input[name='voice-select']:checked").val();
+//       var depNames = $(this).parent('.form-sms').find('.dept-name');
 
-      for(var k=0; k < depNames.length; k++) {
-        if(k == depNames.length-1) {
-          sendNames += $(depNames[k]).val()
-        } else {
-          sendNames += $(depNames[k]).val() + ','
-        }
-      }
+//       for(var k=0; k < depNames.length; k++) {
+//         if(k == depNames.length-1) {
+//           sendNames += $(depNames[k]).val()
+//         } else {
+//           sendNames += $(depNames[k]).val() + ','
+//         }
+//       }
       
-      smsNames = sendNames;
+//       smsNames = sendNames;
 
-      if(targetType == 'group') {
+//       if(targetType == 'group') {
 
-        var depInputs = $(this).parent('.form-sms').find('.dept-id');
+//         var depInputs = $(this).parent('.form-sms').find('.dept-id');
      
-        for(var j=0; j<depInputs.length; j++) {
-          var depId = $(depInputs[j]).val();
-          var payload = 
-            {
-              "subject" : '',
-              "targetList" : depId,
-              "targetDiv" : targetType,
-              "message": smsContent
-            };
+//         for(var j=0; j<depInputs.length; j++) {
+//           var depId = $(depInputs[j]).val();
+//           var payload = 
+//             {
+//               "subject" : '',
+//               "targetList" : depId,
+//               "targetDiv" : targetType,
+//               "message": smsContent
+//             };
             
-          chatui.sendEventMessage('sendSmsNew', payload);
-        }
+//           chatui.sendEventMessage('sendSmsNew', payload);
+//         }
         
-      } else {
+//       } else {
 
-        var payload = {
-          "subject" : '',
-          "targetList" : sendNumbers,
-          "targetDiv" : targetType,
-          "message": smsContent
-        }
+//         var payload = {
+//           "subject" : '',
+//           "targetList" : sendNumbers,
+//           "targetDiv" : targetType,
+//           "message": smsContent
+//         }
         
-        chatui.sendEventMessage('sendSmsNew', payload);
-      }
+//         chatui.sendEventMessage('sendSmsNew', payload);
+//       }
 
-    } else {
-      return;
-    }
-  });
+//     } else {
+//       return;
+//     }
+//   });
   
-  smsPopUpForm.append(smsPopupSubmitButton);
-  smsPopupContetns.append(smsPopUpForm);
-  smsPopup.append(smsPopupContetns);
+//   smsPopUpForm.append(smsPopupSubmitButton);
+//   smsPopupContetns.append(smsPopUpForm);
+//   smsPopup.append(smsPopupContetns);
 
-  $('.test-panel').append(pulginDim);
-  $('.test-panel').append(smsPopup);
+//   $('.test-panel').append(pulginDim);
+//   $('.test-panel').append(smsPopup);
 
-  $('.plugin-dim').css('display', 'block');
-  $('#sendSms').css('display', 'block');
+//   $('.plugin-dim').css('display', 'block');
+//   $('#sendSms').css('display', 'block');
 
-  setTimeout(function() {
-    $('.plugin-dim').addClass('show');
-    $('#sendSms').addClass('show');
-  }, 100);
-};
+//   setTimeout(function() {
+//     $('.plugin-dim').addClass('show');
+//     $('#sendSms').addClass('show');
+//   }, 100);
+// };
 
 function closeSettingPopup() {
   $('#notiSetting').removeClass('show');
@@ -2482,50 +2482,50 @@ function welcomeAppend(welcomeMessage) {
 
 var smsNames = '';
 
-function sendSmsNewAppend(data) {
+// function sendSmsNewAppend(data) {
 
-  var parameters = data.parameters;
+//   var parameters = data.parameters;
 
-    $('.chat-message.left').last().remove();
+//     $('.chat-message.left').last().remove();
     
-    var message = '<div class="custom-message"><div class="message category-list">'
-      +'<div class="list-header-title">'
-        +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-          +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00004 13.8673C11.2401 13.8673 13.8667 11.2407 13.8667 8.00065C13.8667 4.76058 11.2401 2.13398 8.00004 2.13398C4.75997 2.13398 2.13337 4.76058 2.13337 8.00065C2.13337 11.2407 4.75997 13.8673 8.00004 13.8673ZM8.00004 14.6673C11.6819 14.6673 14.6667 11.6825 14.6667 8.00065C14.6667 4.31875 11.6819 1.33398 8.00004 1.33398C4.31814 1.33398 1.33337 4.31875 1.33337 8.00065C1.33337 11.6825 4.31814 14.6673 8.00004 14.6673Z" fill="#2C2C2C"/>'
-          +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10.9503 6.38447C11.1065 6.54068 11.1065 6.79395 10.9503 6.95016L7.61692 10.2835C7.46073 10.4397 7.2075 10.4397 7.05128 10.2835L5.05058 8.28354C4.89434 8.12736 4.8943 7.87409 5.05048 7.71786C5.20666 7.56162 5.45993 7.56158 5.61617 7.71776L7.33403 9.43502L10.3846 6.38447C10.5408 6.22827 10.794 6.22827 10.9503 6.38447Z" fill="#2C2C2C"/>'
-        +'</svg>'
-        +'<span>' + data.messages[0].message + '</span>'
-      +'</div>'
-      +'<div class="category-text">'
-        +'<dl>'
-          +'<dt>구분</dt>'
-          +'<dd>' + ( parameters.targetDiv == 'person' ? '개인' : '그룹' ) + '</dd>'
-        +'</dl>'
-        +'<dl>'
-          +'<dt>받는사람</dt>'
-          +'<dd>' + smsNames + '</dd>'
-        +'</dl>'
-        +'<dl>'
-          +'<dt>내용</dt>'
-          +'<dd>' + parameters.message + '</dd>'
-        +'</dl>'
-      +'</div>'
-    +'</div>'
-    +'</div>';
+//     var message = '<div class="custom-message"><div class="message category-list">'
+//       +'<div class="list-header-title">'
+//         +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//           +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00004 13.8673C11.2401 13.8673 13.8667 11.2407 13.8667 8.00065C13.8667 4.76058 11.2401 2.13398 8.00004 2.13398C4.75997 2.13398 2.13337 4.76058 2.13337 8.00065C2.13337 11.2407 4.75997 13.8673 8.00004 13.8673ZM8.00004 14.6673C11.6819 14.6673 14.6667 11.6825 14.6667 8.00065C14.6667 4.31875 11.6819 1.33398 8.00004 1.33398C4.31814 1.33398 1.33337 4.31875 1.33337 8.00065C1.33337 11.6825 4.31814 14.6673 8.00004 14.6673Z" fill="#2C2C2C"/>'
+//           +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10.9503 6.38447C11.1065 6.54068 11.1065 6.79395 10.9503 6.95016L7.61692 10.2835C7.46073 10.4397 7.2075 10.4397 7.05128 10.2835L5.05058 8.28354C4.89434 8.12736 4.8943 7.87409 5.05048 7.71786C5.20666 7.56162 5.45993 7.56158 5.61617 7.71776L7.33403 9.43502L10.3846 6.38447C10.5408 6.22827 10.794 6.22827 10.9503 6.38447Z" fill="#2C2C2C"/>'
+//         +'</svg>'
+//         +'<span>' + data.messages[0].message + '</span>'
+//       +'</div>'
+//       +'<div class="category-text">'
+//         +'<dl>'
+//           +'<dt>구분</dt>'
+//           +'<dd>' + ( parameters.targetDiv == 'person' ? '개인' : '그룹' ) + '</dd>'
+//         +'</dl>'
+//         +'<dl>'
+//           +'<dt>받는사람</dt>'
+//           +'<dd>' + smsNames + '</dd>'
+//         +'</dl>'
+//         +'<dl>'
+//           +'<dt>내용</dt>'
+//           +'<dd>' + parameters.message + '</dd>'
+//         +'</dl>'
+//       +'</div>'
+//     +'</div>'
+//     +'</div>';
     
-    var sendMoreCustoms = $('<div class="custom-quick-reply"></div>');
+//     var sendMoreCustoms = $('<div class="custom-quick-reply"></div>');
 
-    var sendMore = $('<span class="btn-custom-reply" data-message="추가 발송">추가발송</span>');
-    sendMore.on('click', function() {
-      sendSMSPopupOpen();
-    })
-    sendMoreCustoms.append(sendMore);
+//     var sendMore = $('<span class="btn-custom-reply" data-message="추가 발송">추가발송</span>');
+//     sendMore.on('click', function() {
+//       sendSMSPopupOpen();
+//     })
+//     sendMoreCustoms.append(sendMore);
   
 
-    var customMessage = $(message);
-    customMessage.append(sendMoreCustoms);
-    appendChatbotText2(customMessage);
-}
+//     var customMessage = $(message);
+//     customMessage.append(sendMoreCustoms);
+//     appendChatbotText2(customMessage);
+// }
 
 
 function searchActiveFalse() {
@@ -3583,10 +3583,11 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       return;
     }
 
-    if(resp.response.query.event == 'sendSmsNew') {
-      sendSmsNewAppend(resp.response.queryResult);
-      return;
-    }
+    // SMS 기능 삭제.
+    // if(resp.response.query.event == 'sendSmsNew') {
+    //   sendSmsNewAppend(resp.response.queryResult);
+    //   return;
+    // }
 
     for(var i = 0; i < resp.response.queryResult.messages.length; i++) {
       var message = resp.response.queryResult.messages[i];
@@ -5915,12 +5916,13 @@ function connectMessenger(userId, targetId){
       +'</span><span class="b-text">메신저</span></button>';
     }
 		
-     dpContactHtml +=	'<button type="button" class="icon-btn" onClick="sendSMSPopupOpen(null,\''+data.userNm+'\',\''+data.deptNm+'\',\''+data.empMobile+'\')">'
-     +'<span class="b-icon">'
-     +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-     +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5 4.2C4.00703 4.2 3.2 5.0061 3.2 6.00304V19.4955C3.2 19.7664 3.52435 19.8967 3.7117 19.7091L6.81171 16.606C7.31813 16.099 8.0053 15.8142 8.72186 15.8142H19C19.993 15.8142 20.8 15.0081 20.8 14.0111V6.00304C20.8 5.0061 19.993 4.2 19 4.2H5ZM2 6.00304C2 4.34451 3.34315 3 5 3H19C20.6569 3 22 4.34451 22 6.00304V14.0111C22 15.6697 20.6569 17.0142 19 17.0142H8.72186C8.32377 17.0142 7.94201 17.1724 7.66067 17.4541L4.56066 20.5572C3.61571 21.5031 2 20.8332 2 19.4955V6.00304Z" fill="#6B6B6B"/>'
-     +'</svg>')
-      +'</span><span class="b-text">문자</span></button>';
+    // SMS 기능 삭제.		
+    //  dpContactHtml +=	'<button type="button" class="icon-btn" onClick="sendSMSPopupOpen(null,\''+data.userNm+'\',\''+data.deptNm+'\',\''+data.empMobile+'\')">'
+    //  +'<span class="b-icon">'
+    //  +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5 4.2C4.00703 4.2 3.2 5.0061 3.2 6.00304V19.4955C3.2 19.7664 3.52435 19.8967 3.7117 19.7091L6.81171 16.606C7.31813 16.099 8.0053 15.8142 8.72186 15.8142H19C19.993 15.8142 20.8 15.0081 20.8 14.0111V6.00304C20.8 5.0061 19.993 4.2 19 4.2H5ZM2 6.00304C2 4.34451 3.34315 3 5 3H19C20.6569 3 22 4.34451 22 6.00304V14.0111C22 15.6697 20.6569 17.0142 19 17.0142H8.72186C8.32377 17.0142 7.94201 17.1724 7.66067 17.4541L4.56066 20.5572C3.61571 21.5031 2 20.8332 2 19.4955V6.00304Z" fill="#6B6B6B"/>'
+    //  +'</svg>')
+    //   +'</span><span class="b-text">문자</span></button>';
 			
     if(!isMobile) {
      dpContactHtml +=	'<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
@@ -6362,25 +6364,25 @@ return messageWeather;
  * 'SMS발송 공통 카드 생성' 함수
  * @param {object} SMS 형 응답 데이터
  */
- function makeSmsSendCardNew(data) {
-  var smsCard = $('<div class="message simple-text"></div>');
-  var smsText = $('<p>SMS를 발송하시려면 아래 버튼을 눌러주세요!</p>');
-  smsCard.append(smsText);
-  if(checkChatHistory == false) {
-    sendSMSPopupOpen(data);
-  }
+//  function makeSmsSendCardNew(data) {
+//   var smsCard = $('<div class="message simple-text"></div>');
+//   var smsText = $('<p>SMS를 발송하시려면 아래 버튼을 눌러주세요!</p>');
+//   smsCard.append(smsText);
+//   if(checkChatHistory == false) {
+//     sendSMSPopupOpen(data);
+//   }
 
-  var smsBtns = $('<div class="btns"></div>')
-  var smsBtn = $('<button type="button" class="btn btn-emphasis">SMS 발송</button>');
-  smsBtn.on('click', function() {
-    sendSMSPopupOpen(data);
-  })
+//   var smsBtns = $('<div class="btns"></div>')
+//   var smsBtn = $('<button type="button" class="btn btn-emphasis">SMS 발송</button>');
+//   smsBtn.on('click', function() {
+//     sendSMSPopupOpen(data);
+//   })
 
-  smsBtns.append(smsBtn);
-  smsCard.append(smsBtns); 
+//   smsBtns.append(smsBtn);
+//   smsCard.append(smsBtns); 
 
-  return smsCard;
-}
+//   return smsCard;
+// }
 
 /** 
  * 메일 연결
@@ -7375,8 +7377,8 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
           messageCard = makeAnniversaryCard(message.data.items);
         } else if(message.type == 'sms') { // sms발송
           messageCard  = makeSmsSendCard(message.data);
-        } else if(message.type == 'smsNew') { // sms발송(새로운 타입)
-            messageCard  = makeSmsSendCardNew(message.data);
+        // } else if(message.type == 'smsNew') { // sms발송(새로운 타입)
+        //     messageCard  = makeSmsSendCardNew(message.data);
         } else if(message.type == 'email') { // 메일 발송
             if (isHistory != true ) {
                 messageCard = connectEmail(message.data);

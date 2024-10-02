@@ -19822,7 +19822,7 @@ function requestItemsPopupOpenGERP(requestdata) {
     /* #########[ popup_content_wrap ]######### */
     var pluginContents = $('<div class="plugin-contents item-contents" id="item-content" style="height: 100%; scrollbar-width:auto;"></div>');
     var requestForm = requestItemsInputGERPFirst(requestdata);
-    //var requestForm = requestItemsInputGERPSecond(requestdata);
+    //var requestForm = requestItemsInputGERPFourth(requestdata);
     pluginContents.append(requestForm);
     addPlugin.append(pluginContents);
 
@@ -20558,6 +20558,8 @@ function requestItemsInputGERPFirst(requestdata) {
                   orderUl3.append(orderLi3);
                   projectListCont.append(orderUl3);
                   projectListCont.addClass('show');
+                  
+                  closeLoadingWithMask();
                 }
                 
                 projectList = result.resultList;
@@ -22740,6 +22742,8 @@ function requestItemsInputGERPThird(requestdata) {
 function requestItemsInputGERPFourth(requestdata) {
     console.log('4단계 requestdata  : ', requestdata);
 
+    var testerableEmpNo = '315632';     // 신청 테스트 가능한 사번. 
+    
     var itemList = (requestdata.item_list == null)? new Array():requestdata.item_list;
     
     var selProjectCode = (requestdata.project_code == null)? '':requestdata.project_code;
@@ -22935,8 +22939,17 @@ function requestItemsInputGERPFourth(requestdata) {
     //물품 청구 신청 버튼
     // var submitDiv = $('<div style="position:fixed; bottom:0px;width: calc(100% - 36px);"></div>')
     var submitBtn = $('<button type="button" class="btn btn-plugin btn-apply" id="btn-">물품 청구 신청</button>');   // style="position:fixed; bottom:0px;"
+    var DisableBtn = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-" disabled>물품 청구 신청</button>');   // style="position:fixed; bottom:0px;"
     // submitDiv.append(submitBtn);
-    pluginForm.append(submitBtn);
+    
+    // 물품 청구 신청이 가능한 사번에 한해서만 버튼 활성화.  
+    if(requestdata.empNo == testerableEmpNo) {
+        pluginForm.append(submitBtn);
+    }
+    else{
+        pluginForm.append(DisableBtn);
+    }
+    
     submitBtn.on('click', function() {
 
         requestdata.remark = $('#remark').val();
@@ -23089,6 +23102,8 @@ function requestItemsInputGERPFourth(requestdata) {
 
         requestdata.step = 3;
         requestdata.action = 'back';
+
+        requestdata.remark = $('#remark').val();
 
         pluginForm.removeClass('show');
         pluginForm.remove();
