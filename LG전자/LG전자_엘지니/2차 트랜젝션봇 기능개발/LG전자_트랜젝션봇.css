@@ -7521,7 +7521,8 @@ color: var(--color-gray-900, #2c2c2c);
 .tabBtn-wrap {
   width: 100%;
   margin-bottom: 20px;
-  padding-right: 28px;
+/*  padding-right: 28px;    */
+  padding-right: 17px;    
   display: flex;
   align-items: center;
   position: relative;
@@ -7939,3 +7940,193 @@ color: var(--color-gray-900, #2c2c2c);
   border: 2px solid transparent !important;
   border-radius: 10px !important;
 }
+
+/* UIT GERP Start */
+/* UIT 공통 */
+.badge-base {
+    padding: 0.4px 5px;
+    border: 1.5px solid #2c2c2c;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    font-size: 12px !important;
+    text-align: right;
+    font-weight: 500;
+}
+
+.uit-update.plugins .plugin-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.uit-update.plugins .plugin-header h1 {
+  line-height: 28px;
+}
+.uit-update.plugins .plugin-header .close-plugin {
+  top: 16px;
+}
+.uit-update hr {
+  border: 0; border-top: 1px solid #e8e8e8;
+}
+.uit-update h3 {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.uit-update h3.balance-box {
+  font-weight: 500;
+}
+.uit-update h3 .balance {
+  font-weight: 400;
+}
+.uit-update .help-message {
+  color: #898989;
+  font-size: 12px;
+}
+
+.backBtn {
+  cursor: pointer;
+}
+
+
+.uit-update-item-box{
+  border-radius: 10px;
+  padding: 15px 10px 20px 10px;
+  background: #F7F7F7;
+  margin-bottom: 10px;
+}
+.uit-update-item-box>.badge-base {
+  padding: 2.4px 6.4px 2.4px 6.4px;
+  border: 0.6px solid #2c2c2c;
+  border-radius: 22px;
+  text-align: center;
+  font-size: 10px !important;
+  font-weight: 500;
+  display: flex;
+  margin-bottom: 5px;
+}
+.uit-update-item-box>.badge-green {
+  border-color: #04B395;
+  color: #04B395;
+  width: 70px;
+  height: 18px;
+}
+.uit-update-item-box>.badge-pink {
+  border-color: #F94B50;
+  color: #F94B50;
+  width: 82px;
+  height: 18px;
+}
+.uit-update-item-box div{
+  justify-content: space-between;
+  display: flex;
+  font-size: 14px;
+  font-weight: 400;
+}
+.uit-update-item-box .uit-content-label-bold{
+  font-weight: 700;
+}
+.uit-update-item-box .uit-content-label{
+  color: #898989;
+}
+.uit-update-item-box .uit-item{
+  width: 60%;
+  word-wrap: break-word;
+  text-align: right;
+}
+
+.uit-update-msg_box{
+  padding-top: 10px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.uit-update-msg_box .uit-title{
+  color: #F94B50;
+  font-weight: 700;
+}
+.uit-update-msg_box .uit-sub-title{
+  color: #6B6B6B;
+}
+
+.uit-update-btn{
+  border-color: #E0205C;
+  color: #FFFFFF;
+  background: #E0205C;
+}
+
+.uit-content-header{
+  background: #424242;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  height: 34px;
+  align-items: center;
+  display: flex;
+}
+
+.uit-content-header p{
+  color: #FFFFFF !important;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.uit-content-header font{
+  font-weight: 700;
+  margin-left: 5px;
+}
+
+.uit-content-box{
+  display: flex;
+  justify-content: space-between;
+}
+.uit-content-box ul{
+  width: 100%;
+  padding-top: 15px;
+}
+.uit-content-box li{
+  height: 28px;
+  display: flex;
+  justify-content: space-between;
+}
+.uit-content-box .item-header{
+  width: 37%;
+  padding: 0px 0px 0px 12px;
+  color: #898989 !important;
+  align-items: center;
+  display: flex;
+}
+.uit-content-box .item-content{
+  width: 68%;
+  margin: 0px !important;
+  padding: 0px 0px 0px 6px;
+  align-items: center;
+  display: flex;
+}
+.uit-content-box .status-chip{
+  justify-content: left;
+}
+.uit-content-box .status-chip svg{
+  margin: 0px 5px;
+}
+.uit-content-box .status-chip .badge-base {
+  padding: 1px 5px 2px 5px;
+  border: 0.75px solid #2c2c2c;
+  border-radius: 27px;
+  text-align: center;
+  font-size: 11px !important;
+  display: flex;
+  width: 18px;
+  height: 18px;
+}
+.uit-content-box .status-chip .badge-gray {
+  border-color: #6B6B6B;
+  color: #6B6B6B;
+}
+.uit-content-box .status-chip .badge-pink {
+  border-color: #E0205C;
+  color: #E0205C;
+}
+
+/* UIT GERP END */
