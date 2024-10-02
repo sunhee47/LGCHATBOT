@@ -19838,6 +19838,7 @@ function requestItemsPopupOpenGERP(requestdata) {
     }, 100);
 }
 
+var backflag = false;
 // 물품 청구 신청 입력 팝업 컨텐츠 1
 function requestItemsInputGERPFirst(requestdata) {
     console.log('requestdata : ', requestdata);
@@ -20197,7 +20198,8 @@ function requestItemsInputGERPFirst(requestdata) {
                     if(selectflag == true) {
                         setTimeout(function() {
                             var selectedValue = dropdownMenuListWrap.find('li').find('.selected');
-                
+                            
+                            backflag = true;
                             console.log('selectedValue : ', selectedValue);
                             selectedValue.trigger('click');
                         }, 100);
@@ -20300,6 +20302,9 @@ function requestItemsInputGERPFirst(requestdata) {
         console.log('key : '+inval);
         
         if(e.keyCode == 13) {
+            
+            inval = inval.trim();
+            inputBox2.val(inval);
             
             if(inval.length < 2) {
                 showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
@@ -20481,7 +20486,13 @@ function requestItemsInputGERPFirst(requestdata) {
         $('#account_name').val(accountName);
         $('#interface_flag').val(interfaceFlag);
         
-        selectBoxAction('account', false);
+        if(backflag == true) {
+            selectBoxAction('account', false);
+            backflag = false;
+        }
+        else{
+            selectBoxAction('account', false, projectSelected);
+        }
         //console.log('accountCode : '+accountCode+', accountName : '+accountName);
         //console.log('dropBtn height before : '+$(dropBtn).outerHeight());
         dropBtn.removeClass('default active').addClass('select').find('span').html(accountCode).css('font-weight', '500');
@@ -20518,6 +20529,9 @@ function requestItemsInputGERPFirst(requestdata) {
         console.log('key : '+inval);
         
         if(e.keyCode == 13) {
+            
+            inval = inval.trim();
+            inputBox3.val(inval);
             
             if(inval.length < 2) {
                 showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
@@ -21433,6 +21447,11 @@ function onlyNumber(obj) {
         
         console.log('itemId : '+itemId+', marketCode : '+marketCode+', itemQty : '+itemQty);
         
+        itemId = itemId.trim();
+        itemQty = itemQty.trim();
+        $(this).parents('.tab-content.show').find('#item_id').val(itemId);
+        $(this).parents('.tab-content.show').find('#item_qty').val(itemQty);
+        
         // 물품 청구 품목 조회.        
         var requestParam = {
             query: {
@@ -21461,6 +21480,8 @@ function onlyNumber(obj) {
                 
                 if(meterialInfo.length == 0) {
                       console.log('품목 결과 : 0건');
+                      
+                      inputBtn.parents('.tab-content').find('.help-message').text('');          // 물품명 초기화. 
                       
                       setTimeout(function() {
                         showSmallDialog('유효하지 않은 물품ID입니다.'); // [퍼블 수정 및 추가] - 텍스트 수정

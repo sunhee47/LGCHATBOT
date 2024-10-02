@@ -7617,7 +7617,8 @@ color: var(--color-gray-900, #2c2c2c);
 .tabBtn-wrap {
   width: 100%;
   margin-bottom: 20px;
-  padding-right: 28px;
+/*  padding-right: 28px;    */
+  padding-right: 17px;    
   display: flex;
   align-items: center;
   position: relative;
