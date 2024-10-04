@@ -21782,6 +21782,8 @@ function onlyNumber(obj) {
             tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled', true);
         } */
         
+        afterTabSelect();
+        
         afterTabDelete();
         
         viewItemData(tab_no);
