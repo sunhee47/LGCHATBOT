@@ -3064,6 +3064,7 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">예산 조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구 신청</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">물품청구 내역 조회</button>'
   +     '</div>'
   
   +     '<h2>주요 메뉴</h2>'
@@ -11595,8 +11596,8 @@ function openDeepLink(link, params) {
         var paramForm = $('#deep_form');
         
         var url = link; 
-        window.open("", "LGenieWin1", "width=1200,height=900", "_blank");
-        
+        var openWin = window.open("", "LGenieWin1", "width=1200,height=900", "_blank");
+
         //console.log('child : '+children.length);
         $(paramForm).attr('action', url);
         $(paramForm).attr('target', "LGenieWin1");
@@ -11618,8 +11619,8 @@ function openDeepLink(link, params) {
     else{ 
         var paramForm = document.createElement("form");
         var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
-        window.open("", "LGenieWin1", "width=1200,height=900", "_blank");
-        
+        var openWin = window.open("", "LGenieWin1", "width=1200,height=900", "_blank");
+
         $(paramForm).attr('id', "deep_form");
         $(paramForm).attr('action', url);
         $(paramForm).attr('target', "LGenieWin1");
@@ -11652,7 +11653,7 @@ var tabMoveBtn = (
     +'</svg>'
 );
 var badgeConfirm = (
-    '<span class="badge-confirm">'
+    '<span class="badge-confirm badge">'
         +'<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">'
             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10 5C10 7.76142 7.76142 10 5 10C2.23858 10 0 7.76142 0 5C0 2.23858 2.23858 0 5 0C7.76142 0 10 2.23858 10 5ZM7.21346 4.21086C7.33062 4.0937 7.33062 3.90376 7.21346 3.7866C7.09631 3.66944 6.90636 3.66944 6.7892 3.7866L4.5013 6.0745L3.2129 4.78656C3.09572 4.66942 2.90577 4.66946 2.78864 4.78664C2.6715 4.90381 2.67153 5.09376 2.78871 5.2109L4.28924 6.7109C4.4064 6.82802 4.59632 6.828 4.71346 6.71086L7.21346 4.21086Z" fill="#04B395"/>'
         +'</svg>'
@@ -11660,7 +11661,7 @@ var badgeConfirm = (
     +'</span>'
 );
 var badgeOver = (
-    '<span class="badge-over">'
+    '<span class="badge-over badge">'
         +'<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">'
             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M11.3166 6.00008C11.3166 8.95032 8.92493 11.342 5.97469 11.342C3.02445 11.342 0.632812 8.95032 0.632812 6.00008C0.632812 3.04984 3.02445 0.658203 5.97469 0.658203C8.92493 0.658203 11.3166 3.04984 11.3166 6.00008ZM4.5995 4.17161C4.47433 4.04644 4.27139 4.04644 4.14622 4.17161C4.02105 4.29678 4.02105 4.49972 4.14622 4.62489L5.52215 6.00081L4.14622 7.37674C4.02105 7.50191 4.02105 7.70485 4.14622 7.83001C4.27139 7.95518 4.47433 7.95518 4.5995 7.83001L5.97542 6.45409L7.35135 7.83001C7.47652 7.95518 7.67946 7.95518 7.80462 7.83001C7.92979 7.70485 7.92979 7.50191 7.80462 7.37674L6.4287 6.00081L7.80462 4.62489C7.92979 4.49972 7.92979 4.29678 7.80462 4.17161C7.67946 4.04644 7.47652 4.04644 7.35135 4.17161L5.97542 5.54754L4.5995 4.17161Z" fill="#F94B50"/>'
         +'</svg>'
@@ -11687,6 +11688,7 @@ var iconLink = (
     +'</svg>'
 );
 var maxItemCount = 10;
+var isQuick = false;
 // 물품 청구 신청 메세지
 function makeRequestItemsInput(requestdata) {
     var messageWrap = $('<div class="custom-message"></div>');
@@ -11720,15 +11722,22 @@ function makeRequestItemsInput(requestdata) {
     
     guide.on('click', function() {
         console.log('물품 청구 가이드');
+        
+        chatui.sendMessage("물품청구 가이드");                
     });
     history.on('click', function() {
         console.log('물품 청구 내역');
+        
+        chatui.sendMessage("물품청구 내역 조회");        
     });
     
-    if(checkChatHistory == false) {
-        //requestItemsPopupOpen(quickBtnBox);
+    if(isQuick == true) {
+        requestdata.step = 1;
+        requestItemsPopupOpen(requestdata);
+        
+        isQuick = false;
     }
-    
+
     messageWrap.append(messageTextWrap);
     messageWrap.append(messageTextWrap2);
 
@@ -11755,16 +11764,18 @@ function requestItemsPopupOpen(requestdata) {
     pluginHeader.append(pluginClose);
     addPlugin.append(pluginHeader);
     function thisPluginClose() {
+        $(document).off('click');        
         $('#products-bill').removeClass('show');
         $('.plugin-dim').removeClass('show');
         setTimeout(function() {
             $('.plugin-dim').remove();
             $('#products-bill').remove();
+            requestDataInit(requestdata);
         }, 300);
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents" id="item-content" style="height: 100%; scrollbar-width:auto;"></div>');
+    var pluginContents = $('<div class="plugin-contents item-contents" id="item-content" style="height: 100%; scrollbar-width:auto;"></div>');
     var requestForm = requestItemsInputFirst(requestdata);
     //var requestForm = requestItemsInputThird(requestdata);
     pluginContents.append(requestForm);
@@ -11812,7 +11823,7 @@ function requestItemsInputFirst(requestdata) {
 
 
     /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-first" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-first2" onsubmit="return false;"></form>');
     var accountList = new Array();
 
     /* #########[ popup_content ]######### */
@@ -11841,6 +11852,7 @@ function requestItemsInputFirst(requestdata) {
         
         if(e.keyCode == 13) {
             
+            inval = inval.trim();
             if(inval.length < 2) {
                 showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
                 return;
@@ -12100,7 +12112,7 @@ function requestItemsInputFirst(requestdata) {
         scheduleorderWidth(content, selected, input);
 
         // department, plant 값을 삭제한 경우. 
-        if(label.text() == 'Department*' || label.text() == 'Plant*') {
+        if(label.text() == 'Department*' || label.text() == 'Plant ID*') {
             selectBoxAction(dropdownMainBtn, false, null);
         }
         
@@ -12118,7 +12130,7 @@ function requestItemsInputFirst(requestdata) {
     });
     
     /* ###[ Plant ]### */
-    var inputBoxText2 = $('<div class="input-box add-order"><label>Plant<b>*</b></label></div>');
+    var inputBoxText2 = $('<div class="input-box add-order"><label>Plant ID<b>*</b></label></div>');
     var inputTextContent2 = $('<div class="input-form order-select searchIcon"></div>');
     var plantSelected = $('<div class="selected-order"></div>');
     var inputBox2 = $('<input type="text" placeholder="Plant ID 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
@@ -12140,6 +12152,7 @@ function requestItemsInputFirst(requestdata) {
         
         if(e.keyCode == 13) {
             
+            inval = inval.trim();
             if(inval.length < 2) {
                 showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
                 return;
@@ -12274,6 +12287,7 @@ function requestItemsInputFirst(requestdata) {
         
         if(e.keyCode == 13) {
             
+            inval = inval.trim();
             if(inval.length < 2) {
                 showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
                 return;
@@ -12383,7 +12397,8 @@ function requestItemsInputFirst(requestdata) {
     /* ###[ 계정 ]### */
     //var inputBoxText4 = $('<div class="input-box add-order"><div class="with-guide"><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기</a></label></div></div>');
     
-    var dropdownBox = $('<div class="dropdown-box dropdown-housing input-box add-order"><div class="with-guide"><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기 &gt;</a></label></div></div>');
+    var dropdownBox = $('<div class="dropdown-box dropdown-housing input-box add-order"></div>');
+    var dropdownTitle = $('<div class="with-guide"><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기 &gt;</a></label></div>');
     var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>청구할 계정을 선택해 주세요.</span></button>');
     var dropdownArrow = $(
         '<i class="icons">'
@@ -12392,6 +12407,7 @@ function requestItemsInputFirst(requestdata) {
             +'</svg>'
         +'</i>'
     );
+    dropdownBox.append(dropdownTitle);
     dropdownBox.append(dropdownMainBtn);
     dropdownMainBtn.append(dropdownArrow);
 
@@ -12416,6 +12432,23 @@ function requestItemsInputFirst(requestdata) {
     
     pluginForm.append(dropdownBox);
 
+    dropdownTitle.find('a').on('click', function() {
+        let url = 'https://clink.dev.nerp.lge.com:9090/PclHttp.dll';    // 계정 가이드 
+         let params = {
+            "get": "", 
+            "pVersion": "0047", 
+            "contRep": "ZD", 
+            "docId": "CF3657C22D5E1EEF99D5CB464CDB4BD1", 
+            "compId": "%25EC%2597%25B0%25EA%25B5%25AC%25EC%2586%258C_%25EB%25AC%25BC%25ED%2592%2588%25EC%25B2%25AD%25EA%25B5%25AC_%25EC%25B1%2597%25EB%25B4%2587_%25EA%25B3%2584%25EC%25A0%2595%25EC%2584%25A4%25EB%25AA%2585.xlsx", 
+            "accessMode": "r", 
+            "authId": "CN%3dS4D%2cOU%3dSAP-HEC%2cC%3dDE", 
+            "expiration": "99991231235959", 
+            "secKey": "MIIBGgYJKoZIhvcNAQcCoIIBCzCCAQcCAQExCzAJBgUrDgMCGgUAMAsGCSqGSIb3DQEHATGB5zCB5AIBATA5MC0xCzAJBgNVBAYTAkRFMRAwDgYDVQQLEwdTQVAtSEVDMQwwCgYDVQQDEwNTNEQCCAogIxECFkcBMAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4MzAwOTAyMjRaMCMGCSqGSIb3DQEJBDEWBBRI27uH%2fKGSrqHkc2fP2L4fz27A4jAJBgcqhkjOOAQDBC8wLQIVAKAxFakoEjdejXnRU%2baECqBBEr%2flAhQD%2fDL%2b%2fG5%2b4woXUbNoqJ17eYvP4w%3d%3d"
+                };
+               
+         openDeepLink(url, params);        
+    });
+    
     //var inputBoxText4 = $('<div class="input-box add-order"><div class="with-guide"><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기</a></label></div></div>');
     //var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon"></div>');
     //var accountSelected = $('<div class="selected-order"></div>');
@@ -12563,12 +12596,12 @@ function requestItemsInputFirst(requestdata) {
     // dropdown
     //dropdownMainBtn.on('click', function() {
     
-    $(document).on('click','.form-first .btn-dropdown', function(e) {
+    $(document).on('click','.form-first2 .btn-dropdown', function(e) {
         dropdownBtnEvent(this);
         //nextBtnEvent($(this));
     });
     
-    $(document).on('click','.form-first .dropdown-menu .dropdown-item a', function(e) {
+    $(document).on('click','.form-first2 .dropdown-menu .dropdown-item a', function(e) {
     //dropdownListItem.find('a').on('click', function() {
         dropdownMenuEvent(this);
         nextBtnEvent();
@@ -12671,6 +12704,7 @@ function requestItemsInputFirst(requestdata) {
                     console.log('예산  조회 완료 : ', budgetInfo);
                     
                     requestdata.valid_budget_amount = budgetInfo[0].ZREQUEST_BDJ_D;
+                    requestdata.currency_code = 'KRW';
                     
                     requestdata.step = 2;
 
@@ -12856,7 +12890,8 @@ function requestItemsInputSecond(requestdata) {
     }
     
     var budgetAmount = (requestdata.valid_budget_amount == null)? '0':requestdata.valid_budget_amount;
-
+    var budgetCurrency = (requestdata.currency_code == null)? '':requestdata.currency_code;
+    
     var selPlantCode = (requestdata.plant_code == null)? '':requestdata.plant_code;
     var selPlantName = (requestdata.plant_name == null)? '':requestdata.plant_name;
 
@@ -12874,7 +12909,8 @@ function requestItemsInputSecond(requestdata) {
     pluginHeader.prepend(backBtn);
     
     $('.plugin-contents').focus();
-
+    $(document).off('click');
+    
 function onlyNumber(obj) {
     $(obj).keyup(function(){
          $(this).val($(this).val().replace(/[^0-9]/g,""));
@@ -12882,7 +12918,7 @@ function onlyNumber(obj) {
 }   
 
     /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-second" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-second2" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     var smallNote = $('<small class="note" style="font-size:12px;">※ 물품 작성 중 Plant ID 변경 시 작성하신 물품 내용이 모두 초기화됩니다.</small>');
@@ -12890,7 +12926,7 @@ function onlyNumber(obj) {
     
     var inputBoxTopList = $('<h3 class="balance-box"></h3>');
     var inputBoxTopTitle = $('<span>'+textBudget+' 예산 잔액</span>');
-    var inputBoxTopContent = $('<span class="balance">'+formatAmount(budgetAmount)+'원</span>');          // 
+    var inputBoxTopContent = $('<span class="balance">'+formatAmount(budgetAmount)+' '+budgetCurrency+'</span>');          // 
     inputBoxTopList.append(inputBoxTopTitle);
     inputBoxTopList.append(inputBoxTopContent);
     //inputBoxTopList.append(divderLine);
@@ -12944,9 +12980,11 @@ function onlyNumber(obj) {
     //inputBoxTabList.append(tabItem2);
     
     // tab 추가 버튼 
-    var tabItemAddBtn = $('<button class="tabBtn-add" type="button" disabled></button>');    
-    tabBtnBox.append(tabItemAddBtn);
-    
+    var tabItemAddBtn = $('<button class="tabBtn-add disabled" type="button" readonly></button>');    
+    if(itemCnt != 10) {
+        tabBtnBox.append(tabItemAddBtn);
+    }
+
     //var tabItemAddBtn = $('<div class="tab-item-add"></div>');              // active
     //var tabItemAddImg = $('<div class="add-img">'+tabAddBtn+'</div>');
     
@@ -12987,9 +13025,11 @@ function onlyNumber(obj) {
         var itemQtyBox = $('<div class="input-form"></div>');
         var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" maxlength="15" id="item_qty" value="'+item.item_qty+'" oninput="this.value=this.value.replace(/[^a-zA-Z-_0-9.]/g, \'\');" autocomplete="off"/>');
         var itemQtyHidden = $('<input type="hidden" id="item_unit" value="'+item.item_unit+'"/>');
+        var itemCurrencyHidden = $('<input type="hidden" id="item_currency_code" value="'+item.currency_code+'"/>');
     
         itemQtyBox.append(itemQtyInput);
         itemQtyBox.append(itemQtyHidden);
+        itemQtyBox.append(itemCurrencyHidden);
         itemQtyText.append(itemQtyBox);
         
         tabContent1.append(itemQtyText);
@@ -13051,7 +13091,7 @@ function onlyNumber(obj) {
         tabContentList.append(tabContent1);
         
         if(requestdata.item_list != null) {
-            itemAmountCalculate(item.item_unit, inputButton);        
+            itemAmountCalculate(item.item_unit, inputButton, item.currency_code);        
         }
     }
 
@@ -13086,9 +13126,26 @@ function onlyNumber(obj) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big">다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
+        
+        var showContent = $('.tab-content.show');
+        var current_tab_no = $('.tabBtn-box').find('.tabBtn.active').find('#item_no').val(); 
+        if (showContent.find('.amount-box').hasClass('show') == false || showContent.find('.btn-input').attr('disabled') != 'disabled') {
+            setTimeout(function() {
+                showSmallDialog("'물품"+current_tab_no+" 입력'을 먼저 눌러 주세요."); 
+            }, 100);               
+            return;
+        }
+        
+        let overflag = showContent.find('.amount-box').find('.badge-over').length;
+        if(overflag > 0) {
+            console.log('예산 초과...');
+            
+            return;
+        }
+        
         /*var tabContents = pluginForm.find('.tab-content');
         var itemList = new Array();
         
@@ -13110,8 +13167,10 @@ function onlyNumber(obj) {
         */
         requestdata.step = 3;
 
-        //requestdata.item_list = itemList;
-        //requestdata.item_cnt = itemCnt;
+        let productList = makeItemList();
+        
+        requestdata.item_list = productList;
+        requestdata.item_cnt = itemCnt;
 
         pluginForm.removeClass('show');
         pluginForm.remove();
@@ -13138,9 +13197,13 @@ function onlyNumber(obj) {
                 //}
                 //else{
                     tabCont.find('.btn-input').attr('disabled', false);
-                    pluginForm.find('.tabBtn-add').attr('disabled', true);              // tab 추가 버튼 활성화.
+                    pluginForm.find('.tabBtn-add').attr('readonly', true).addClass('disabled');               // tab 추가 버튼 활성화.
                     
-                    nextBtn.find('button').attr('disabled', true);
+                    nextBtn.find('button').attr('readonly', true).addClass('disabled');
+                        
+                    $('.tabBtn-box').find('.tabBtn').not('.active').addClass('disabled');
+                    $('.tabBtn-move').find('.tabBtn-move-prev').addClass('disabled');
+                    $('.tabBtn-move').find('.tabBtn-move-next').addClass('disabled');
                 //}
             }
             else{
@@ -13157,14 +13220,14 @@ function onlyNumber(obj) {
     function nextBtnEvent() {
         var tabContents = pluginForm.find('.tab-content');
 
-        nextBtn.find('button').attr('disabled', false);
+        nextBtn.find('button').attr('readonly', false).removeClass('disabled');
         
         for ( let i = 0; i <= (tabContents.length)-1; i++ ) {           // badge-over
             let tabContent = tabContents[i];
             if ($(tabContent).find('.amount-box').hasClass('show')) {
                 
                 if($(tabContent).find('.amount-box').find('.total').find('.badge-over').length > 0){
-                    nextBtn.find('button').attr('disabled', true);
+                    nextBtn.find('button').attr('readonly', true).addClass('disabled');
                     console.log(i+' : over hide. ');
                 }
                 else{
@@ -13172,7 +13235,7 @@ function onlyNumber(obj) {
                 }
             }
             else{
-                nextBtn.find('button').attr('disabled', true);
+                nextBtn.find('button').attr('readonly', true).addClass('disabled');
                 console.log(i+' : hide. ');
             }
         }
@@ -13180,13 +13243,23 @@ function onlyNumber(obj) {
     }
     
     // 물품 입력 버튼 클릭시. 
-    $(document).on('click','.form-second .tab-content.show .btn-input', function(e) {
+    $(document).on('click','.form-second2 .tab-content.show .btn-input', function(e) {
     //pluginForm.find('.tab-content.show').find('.btn-input').on('click', function(e){
         console.log('input ...');
         
         var inputBtn = $(this);
         var tabName = $('.tabBtn-box').find('.tabBtn.active').find('.prod_name').text();
         //itemAmountCalculate(this);
+        
+        let itemId = $(this).parents('.tab-content.show').find('#item_id').val();
+        let itemQty = $(this).parents('.tab-content.show').find('#item_qty').val();
+        
+        //console.log('itemId : '+itemId+', marketCode : '+marketCode+', itemQty : '+itemQty);
+        
+        itemId = itemId.trim();
+        itemQty = itemQty.trim();
+        $(this).parents('.tab-content.show').find('#item_id').val(itemId);
+        $(this).parents('.tab-content.show').find('#item_qty').val(itemQty);
         
         // 물품 청구 품목 조회.        
         var requestParam = {
@@ -13196,7 +13269,7 @@ function onlyNumber(obj) {
             payload: {
                 BNAME: chatui.getSetting("userId"), 
                 WERKS: selPlantCode, 
-                MATNR: $('#item_id').val() 
+                MATNR: itemId 
             }
           };
 
@@ -13215,19 +13288,23 @@ function onlyNumber(obj) {
                 if(meterialInfo.length == 0) {
                       console.log('품목 결과 : 0건');
                       
+                      inputBtn.parents('.tab-content').find('.help-message').text('');          // 물품명 초기화. 
                       setTimeout(function() {
                         showSmallDialog('유효하지 않은 물품ID입니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                       }, 100);                      
-                      return;                      
+                      //return;                      
                 } else {
                     console.log('품목  조회 완료 : ', meterialInfo);
                     
                     var itemUnit = meterialInfo[0].ZREQUEST_PR_D;
                     var itemName = meterialInfo[0].MAKTX; 
+                    var currencyCode = 'KRW'; //meterialInfo[0].currency_code; 
                     
                     inputBtn.parents('.tab-content').find('#item_unit').val(itemUnit);
                     inputBtn.parents('.tab-content').find('.help-message').text(itemName);
-                    itemAmountCalculate(itemUnit, inputBtn);
+                    inputBtn.parents('.tab-content').find('#item_currency_code').val(currencyCode);
+                    
+                    var isItemOver = itemAmountCalculate(itemUnit, inputBtn, currencyCode);                    
                     var isOver = totalAmountCalculate();
                     
                     let productList = makeItemList();
@@ -13237,13 +13314,13 @@ function onlyNumber(obj) {
                     
                     nextBtnEvent();
                     
-                    if(isOver) {
+                    if(isOver || isItemOver) {
                         setTimeout(function() {
                             showSmallDialog('예산을 초과했습니다.'); 
                         }, 100);               
                     }else{
                         setTimeout(function() {
-                            showSmallDialog(tabName+'이 입력되었습니다.'); 
+                            showSmallDialog(tabName+'이(가) 입력되었습니다.'); 
                         }, 100);   
                     }
                     
@@ -13267,7 +13344,7 @@ function onlyNumber(obj) {
     });
     
     // 물품 삭제 버튼 클릭시. 
-    $(document).on('click','.form-second .tab-content.show .btn-del', function(e) {
+    $(document).on('click','.form-second2 .tab-content.show .btn-del', function(e) {
         
         // 탭 물품명 재정리. 
         let delTab = $('.tabBtn-box').find('.tabBtn.active');
@@ -13335,7 +13412,15 @@ function onlyNumber(obj) {
 
         totalAmountCalculate();
 
-        afterTabDelete();
+        let isDelMove = afterTabDelete();  
+        
+        console.log('isDelMove : '+isDelMove);
+        if(isDelMove == true && delItemNo == 1) {
+            //afterTabSelect();  
+            console.log('첫번째...');
+            tabMoveBtnBox.find('.tabBtn-move-next').trigger('click');
+            tabMoveBtnBox.find('.tabBtn-move-prev').trigger('click');
+        }
         
         //actItemNo = (delItemNo == 1)? 1:delItemNo-1;
         //console.log('actItemNo : '+actItemNo);
@@ -13345,22 +13430,29 @@ function onlyNumber(obj) {
         itemCnt--;
         
         setTimeout(function() {
-            showSmallHtmlDialog('물품'+delItemNo+' 삭제했습니다.'+delMsg); // [퍼블 수정 및 추가] - 텍스트 수정
+            showSmallHtmlDialog('물품'+delItemNo+'을(를) 삭제했습니다.'+delMsg); // [퍼블 수정 및 추가] - 텍스트 수정
             ascendScroll();
         }, 100);  
 
         // 삭제 버튼 able/disable 
 
         if(itemCnt < maxItemCount) {
-             pluginForm.find('.tabBtn-add').css('display', '');              // tab 추가 버튼 숨김.
+             //pluginForm.find('.tabBtn-add').css('display', '');              // tab 추가 버튼 숨김.
+            pluginForm.find('.tabBtn-add').css('filter', '');
         }
         
         //showTabMoveBtn();
-        pluginForm.find('.tabBtn-add').attr('disabled', false); 
+        pluginForm.find('.tabBtn-add').attr('readonly', false).removeClass('disabled'); 
         if(itemCnt == 1) {
             $('.btn-del').attr('disabled', true);              // 물품 삭제 버튼 disable.
         }
+
+        // 삭제시도 물품 정보 저장.         
+        let productList = makeItemList();
         
+        requestdata.item_list = productList;
+        requestdata.item_cnt = itemCnt;
+
         nextBtnEvent();
     });
     
@@ -13368,7 +13460,7 @@ function onlyNumber(obj) {
     //var number_patten = /([0–9]*\.?[0–9]+)/; //^([1-9]{1}\d{0,1}|0{1});
     //var number_patten = /[^0-9][-\s\.]{1}[^0-9]/;
     // input
-    $(document).on('keyup','.form-second input', function(e) {
+    $(document).on('keyup','.form-second2 input', function(e) {
     //pluginForm.find('input').on('keyup', function(e) {
         hblInput = e.target.value;
         
@@ -13411,10 +13503,20 @@ function onlyNumber(obj) {
     });    
     
     // 탭 추가 버튼 클릭시. 
-    $(document).on('click','.form-second .tabBtn-add', function(e) {      
+    $(document).on('click','.form-second2 .tabBtn-add', function(e) {      
     //pluginForm.find('.tab-item-add > a').on('click', function(e){
     //pluginForm.find('.add-img').on('click', function(e){
         console.log('clcik.'+itemCnt);
+        
+        var showContent = $('.tab-content.show');
+        var current_tab_no = $('.tabBtn-box').find('.tabBtn.active').find('#item_no').val(); 
+        if (showContent.find('.amount-box').hasClass('show') == false || showContent.find('.btn-input').attr('disabled') != 'disabled') {
+            setTimeout(function() {
+                showSmallDialog("'물품"+current_tab_no+" 입력'을 먼저 눌러 주세요."); 
+            }, 100);               
+            return;
+        }
+        
         
         // 마지막 탭을 선택한 상태가 아닌 경우를 대비해서. 
         $(this).parent().find('.tabBtn').removeClass('active').addClass('disabled');
@@ -13425,13 +13527,14 @@ function onlyNumber(obj) {
         tabContentAdd(tabContentList);
         
         if(itemCnt == maxItemCount) {
-             pluginForm.find('.tabBtn-add').css('display', 'none');              // tab 추가 버튼 숨김.
+             //pluginForm.find('.tabBtn-add').css('display', 'none');              // tab 추가 버튼 숨김.
+            pluginForm.find('.tabBtn-add').css('filter', 'opacity(0%)');             
         }
         
         //$(this).parent().removeClass('active');         // 탭 추가 버튼 비활성화. 
         //$(this).parents().find('.amount-list').removeClass('show');                         // 물품금액 list 감추기 (outter 에 있을 때 )
 
-        $(this).attr('disabled', true);                     // 탭 추가 버튼 비활성화. 
+        $(this).attr('readonly', true).addClass('disabled');                      // 탭 추가 버튼 비활성화. 
         $('.btn-del').attr('disabled', false);              // 물품 삭제 버튼 able.
 
         //$(this).find('.add-img').unwrap();
@@ -13450,7 +13553,7 @@ function onlyNumber(obj) {
     });
     
     // 탭 클릭시. 
-    $(document).on('click','.form-second .tabBtn', function(e) {    
+    $(document).on('click','.form-second2 .tabBtn', function(e) {    
     //pluginForm.find('.tab-item > a').on('click', function(e){
         var showContent = $('.tab-content.show');
         console.log('amont box : '+showContent.find('.btn-input').attr('disabled'));
@@ -13476,12 +13579,17 @@ function onlyNumber(obj) {
         console.log('prev : '+$(this).prev().hasClass('tabBtn'));
         console.log('next : '+$(this).next().hasClass('tabBtn'));
         
+        /*
         if ($(this).prev().hasClass('tabBtn') == false) {
             tabMoveBtnBox.find('.tabBtn-move-prev').attr('disabled', true);
         }        
         if ($(this).next().hasClass('tabBtn') == false) {
             tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled', true);
-        }        
+        } */
+        
+        afterTabSelect();
+        
+        afterTabDelete();        
         
         viewItemData(tab_no);
         //tabClick(true);
@@ -13491,11 +13599,20 @@ function onlyNumber(obj) {
     tabMoveBtnBox.find('.tabBtn-move-prev').on('click', function() {
         var showContent = $('.tab-content.show');
         //console.log('amont box : '+showContent.find('.amount-box').hasClass('show'));
+        
+        if($(this).hasClass('disabled')) {
+            setTimeout(function() {
+                showSmallDialog("'" + showContent.find('.btn-input').text() + "'을 먼저 눌러 주세요."); 
+            },100);
+            
+            return;
+        }   
+        
         if (showContent.find('.amount-box').hasClass('show')) {
             tabBtnPrev($(this), true);
         } else {
             setTimeout(function() {
-                showSmallDialog('‘' + showContent.find('.btn-input').text() + '’을 먼저 누르세요.'); 
+                showSmallDialog("'" + showContent.find('.btn-input').text() + "'을 먼저 눌러 주세요."); 
             },100);
         }
     });
@@ -13504,11 +13621,20 @@ function onlyNumber(obj) {
     tabMoveBtnBox.find('.tabBtn-move-next').on('click', function() {
         var showContent = $('.tab-content.show');
         //console.log('amont box : '+showContent.find('.amount-box').hasClass('show'));
+        
+        if($(this).hasClass('disabled')) {
+            setTimeout(function() {
+                showSmallDialog("'" + showContent.find('.btn-input').text() + "'을 먼저 눌러 주세요."); 
+            },100);
+            
+            return;
+        }   
+
         if (showContent.find('.amount-box').hasClass('show')) {
             tabBtnNext($(this), true);
         } else {
             setTimeout(function() {
-                showSmallDialog('‘' + showContent.find('.btn-input').text() + '’을 먼저 누르세요.'); 
+                showSmallDialog("'" + showContent.find('.btn-input').text() + "'을 먼저 눌러 주세요."); 
             },100);
         }
     });
@@ -13517,6 +13643,15 @@ function onlyNumber(obj) {
     if(requestdata.item_list == null) {
         inputBtnEvent();
     } 
+    else{
+        setTimeout(function() {
+            let isMove = afterTabDelete();
+            
+            if(isMove == true) {
+                afterTabSelect();
+            }
+        },100);   
+    }
     nextBtnEvent();
 
 
@@ -13536,11 +13671,32 @@ function onlyNumber(obj) {
             item.due_date = $(tabContent).find('#due_date').val();
             item.item_name = $(tabContent).find('.help-message').text();
             item.item_unit = $(tabContent).find('#item_unit').val();
+            item.currency_code = $(tabContent).find('#item_currency_code').val();
 
             itemList.push(item);
         }       
         
         return itemList;
+    }
+    
+    function afterTabSelect() {
+        var tabBtnBox = pluginForm.find('.tabBtn-box');
+        
+        var current_tab_no = tabBtnBox.find('.tabBtn.active').find('#item_no').val();
+        
+        console.log(tabMoveBtnBox.find('.tabBtn-move-prev').attr('disabled')+':'+tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled'));
+        if(current_tab_no > 4 && current_tab_no < itemCnt) {
+            tabMoveBtnBox.find('.tabBtn-move-next').trigger('click');
+            tabMoveBtnBox.find('.tabBtn-move-prev').trigger('click');
+        }
+        else if (current_tab_no == itemCnt) {
+            tabMoveBtnBox.find('.tabBtn-move-prev').trigger('click');
+            tabMoveBtnBox.find('.tabBtn-move-next').trigger('click');
+        }
+        else if(current_tab_no == 1) {
+            tabMoveBtnBox.find('.tabBtn-move-next').trigger('click');
+            tabMoveBtnBox.find('.tabBtn-move-prev').trigger('click');
+        }
     }
     
     function afterTabDelete() {
@@ -13566,6 +13722,8 @@ function onlyNumber(obj) {
         else{
             tabMoveBtnBox.find('.tabBtn-move-next').attr('disabled', true);
         }
+        
+        return isMove;
         
     }
     
@@ -13625,12 +13783,14 @@ function onlyNumber(obj) {
         }
     }
     
-    function itemAmountCalculate(itemUnit, inputBtn) {
+    function itemAmountCalculate(itemUnit, inputBtn, currencyCode) {
 
         var unit = Number(itemUnit);                // 나중에 api로 단가를 가지고 와야 함. 
         var tab_content = inputBtn.parents('.tab-content');   
         var amount_box = tab_content.find('.amount-box');   // 물품금액 list
         var item_qty =  Number(tab_content.find('#item_qty').val());        // 입력한 물품 수량.
+        
+        var isOver = false;
         
         console.log('tab_content : ', tab_content);
         
@@ -13639,7 +13799,7 @@ function onlyNumber(obj) {
         var amount_formula = '('+ unit.toLocaleString() + '*' + item_qty.toLocaleString() +')';
 
         //amount_list.find('.item').find('.label > b').text(amount_label);                    // 물품 Amount label
-        amount_box.find('.item').find('.amount-value').text(amount_value.toLocaleString()+'원');   // 물품 Amount 계산 
+        amount_box.find('.item').find('.amount-value').text(amount_value.toLocaleString()+' '+currencyCode);   // 물품 Amount 계산 
         amount_box.find('.item').find('.amount-formula').text(amount_formula.toLocaleString());
 
         //var isOver = totalAmountCalculate();
@@ -13647,7 +13807,7 @@ function onlyNumber(obj) {
 
         console.log('itemCnt : '+itemCnt+', maxItemCount : '+maxItemCount);
         if(itemCnt < maxItemCount) { 
-            pluginForm.find('.tabBtn-add').attr('disabled', false);              // tab 추가 버튼 활성화.
+            pluginForm.find('.tabBtn-add').attr('readonly', false).removeClass('disabled');              // tab 추가 버튼 활성화.
         }
         amount_box.addClass('show'); //amount_box.css('display', 'block');              // 물품금액 list 활성화.
         inputBtn.attr('disabled', true);                                                 // 물품 입력 버튼 disabled.
@@ -13655,7 +13815,7 @@ function onlyNumber(obj) {
         // tab 조회 기능 확인.    
         //tabClick(true);
         
-        //return isOver;
+        return isOver;
     }
     
     function totalAmountCalculate() {
@@ -13672,7 +13832,7 @@ function onlyNumber(obj) {
             console.log('amount : ', $(amountList[a]).find('.amount-item.item'));
         }
 
-        let totalAmountStr = Number(totalAmount).toLocaleString()+'원';
+        let totalAmountStr = Number(totalAmount).toLocaleString()+' '+budgetCurrency;
         var totalAmountText = badgeConfirm + '<span class="amount-value">' + totalAmountStr + '</span>';       
         if(totalAmount > budgetAmount) {
             isOver = true;
@@ -13681,9 +13841,15 @@ function onlyNumber(obj) {
         
         console.log('total : '+totalAmountStr);
         if(amountList.length == 1) {
+             $(amountList[0]).find('.amount-item.item').find('.badge').remove();
+             
+            var badge = (isOver)?badgeOver:badgeConfirm;
+            $(amountList[0]).find('.amount-item.item').find('.amount-formula').before(badge);        // 물품이 한개 일때 
             amountList.find('.amount-item.total').css('display', 'none');
         }
         else{
+            $(amountList[0]).find('.amount-item.item').find('.badge').remove();
+            
             amountList.find('.amount-item.total').css('display', '');
         }
         amountList.find('.amount-item.total').find('.amount').html(totalAmountText);
@@ -13696,7 +13862,7 @@ function onlyNumber(obj) {
     }
     
     function toNumberAmount(amt) {
-        let replaceAmt = amt.replace(/,/g,'').replace('원', '');
+        let replaceAmt = amt.replace(/,/g,'').replace(budgetCurrency, '');
         
         return Number(replaceAmt);
     }
@@ -13812,9 +13978,11 @@ function onlyNumber(obj) {
         var itemQtyBox = $('<div class="input-form"></div>');
         var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" maxlength="15" id="item_qty" value="" oninput="this.value=this.value.replace(/[^a-zA-Z-_0-9.]/g, \'\');" autocomplete="off"/>');
         var itemQtyHidden = $('<input type="hidden" id="item_unit" value="0"/>');
-    
+        var itemCurrencyHidden = $('<input type="hidden" id="item_currency_code" value="'+item.currency_code+'"/>');
+        
         itemQtyBox.append(itemQtyInput);
         itemQtyBox.append(itemQtyHidden);
+        itemQtyBox.append(itemCurrencyHidden);        
         itemQtyText.append(itemQtyBox);
         
         tabContent.append(itemQtyText);
@@ -13876,17 +14044,6 @@ function onlyNumber(obj) {
     // 클릭한 탭의 내용을 조회하는 합수.
     function viewItemData(tabNo) {
         
-/*        var items = $('.tabBtn-box').find('.tabBtn');
-        let itemCnt = items.length;
-
-        for(var t=0; t<itemCnt; t++) {
-            let item = items[t];
-            
-            $(item).removeClass('active');
-        }
-        
-        $(items[tabNo-1]).addClass('active');   
-*/        
         ////////////
         var contents = $('.tab-contents').find('.tab-content');
         let contentCnt = contents.length;
@@ -13962,6 +14119,10 @@ function requestItemsInputThird(requestdata) {
     var itemList = (requestdata.item_list == null)? new Array():requestdata.item_list;
     var itemCnt = (requestdata.item_cnt == null)? 1:requestdata.item_cnt;
 
+    var selProjectCode = (requestdata.project_code == null)? '':requestdata.project_code;
+
+    var textBudget = (selProjectCode != '')? 'Project':'Department';
+
     /*
     if(requestdata.item_list == null){
         itemList = new Array();  
@@ -14001,6 +14162,7 @@ function requestItemsInputThird(requestdata) {
     } */ 
 
     var budgetAmount = (requestdata.valid_budget_amount == null)? '0':requestdata.valid_budget_amount;
+    var budgetCurrency = (requestdata.currency_code == null)? '':requestdata.currency_code;
     
     //height: 100%;max-height: calc(100% - 38px);
     $('#products-bill').css('height', '100%').css('max-height', 'calc(100% - 38px)');
@@ -14015,7 +14177,7 @@ function requestItemsInputThird(requestdata) {
     $('.plugin-contents').focus();
  
     /* #########[ popup_content_wrap_start ]######### */
-    var pluginForm = $('<form class="form-third" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-third2" onsubmit="return false;"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ Total ]### */
@@ -14063,7 +14225,7 @@ function requestItemsInputThird(requestdata) {
 
         var itemName = $('<div class="item-name"><h6>물품명</h6><span>' + item.item_name + '</span></div>');
         productsInfor.append(itemName);
-        var itemCount = $('<div class="item-count"><h6>수량</h6><span>' + item.item_qty + '</span></div>');
+        var itemCount = $('<div class="item-count"><h6>수량</h6><span>' + Number(item.item_qty).toLocaleString() + '</span></div>');
         productsInfor.append(itemCount);
         var itemDate = $('<div class="item-date"><h6>Due date</h6><span>' + item.due_date + '</span></div>');
         productsInfor.append(itemDate);
@@ -14071,8 +14233,13 @@ function requestItemsInputThird(requestdata) {
         
         var hiddenItemNo = $('<input type="hidden" value="'+i+'" id="item_no"/>');
         var hiddenItemUnit = $('<input type="hidden" value="'+item.item_unit+'" id="item_unit"/>');
+        var hiddenItemQty = $('<input type="hidden" value="'+item.item_qty+'" id="item_qty"/>');
+        var hiddenItemCurrency = $('<input type="hidden" value="'+item.currency_code+'" id="item_currency_code"/>');
+        
         productsList.append(hiddenItemNo);
         productsList.append(hiddenItemUnit);
+        productsList.append(hiddenItemQty);
+        productsList.append(hiddenItemCurrency);
 
         productsListWrap.append(productsList);
         
@@ -14110,7 +14277,8 @@ function requestItemsInputThird(requestdata) {
                 var dialogTabName = target.parents('.list-item').find('h4').text();
                 
                 var itemId = target.parents('.list-item').find('.item-id').text();
-                var itemCount = target.parents('.list-item').find('.item-count').find('span').text();
+                //var itemCount = target.parents('.list-item').find('.item-count').find('span').text();
+                var itemCount = target.parents('.list-item').find('#item_qty').val();                
                 var itemUnit = target.parents('.list-item').find('#item_unit').val();
                 
                 let amount = Number(itemCount) * Number(itemUnit);
@@ -14118,7 +14286,7 @@ function requestItemsInputThird(requestdata) {
                 
                 setTimeout(function() {
                     showSmallDialog(
-                        dialogTabName + ' 삭제했습니다.<br>'
+                        dialogTabName + '을(를) 삭제했습니다.<br>'
                         +'(물품ID : ' + itemId + ',<br>'
                         +'수량 : '+itemCount+')'
                     );
@@ -14135,8 +14303,26 @@ function requestItemsInputThird(requestdata) {
                     $(productsListWrap.find('.list-item')[i]).find('h4').text('물품' + (i + 1));
                     $(productsListWrap.find('.list-item')[i]).find('#item_no').val((i + 1));            // item_no 재정립.
                 };
+                
+                let delBadge;
+                if(budgetAmount >= afterTotalAmount) {
+                    delBadge = badgeConfirm;
+                    //nextBtn.find('button').prop('disabled', false);    //.removeClass('btn-disabled');
+                    submitBtn.prop('disabled', false).removeClass('btn-disabled');
+                } else {
+                    delBadge = badgeOver;
+                    //nextBtn.find('button').prop('disabled', true);     // .addClass('btn-disabled');
+                    submitBtn.prop('disabled', true).addClass('btn-disabled');
+                }
+                
+                //console.log('total', $('.total').find('.amount'));
+                $('.total').find('.amount').find('.badge').remove();
+                //$('.total').find('.amount').find('.badge-confirm').remove();
+                
+                $('.total').find('.amount-value').before(delBadge);
+                
                 $('.totalCount').text((listCount - 1)+'건');
-                $('.total').find('.amount-value').text(afterTotalAmount.toLocaleString()+'원');
+                $('.total').find('.amount-value').text(afterTotalAmount.toLocaleString()+' '+budgetCurrency);
                 
                 getMaxHeight();
             } else {
@@ -14160,10 +14346,11 @@ function requestItemsInputThird(requestdata) {
             let item = new Object();
             
             item.item_id = $(product).find('.item-id').text();
-            item.item_qty = $(product).find('.item-count').find('span').text();
+            item.item_qty = $(product).find('#item_qty').val();    //$(product).find('.item-count').find('span').text();
             item.due_date = $(product).find('.item-date').find('span').text();
             item.item_name = $(product).find('.item-name').find('span').text();
             item.item_unit = $(product).find('#item_unit').val();
+            item.currency_code = $(product).find('#item_currency_code').val();
 
             itemList.push(item);
         }        
@@ -14173,7 +14360,7 @@ function requestItemsInputThird(requestdata) {
     };
 
     function toNumberAmount(amt) {
-        let replaceAmt = amt.replace(/,/g,'').replace('원', '');
+        let replaceAmt = amt.replace(/,/g,'').replace(budgetCurrency, '');
         
         return Number(replaceAmt);
     }
@@ -14209,9 +14396,9 @@ function requestItemsInputThird(requestdata) {
     var amountBox = $('<div class="amount-box show"></div>')
     var amountItem = $(
         '<div class="amount-item">'
-            +'<h4>Department 예산잔액</h4>'
+            +'<h4>'+textBudget+' 예산잔액</h4>'
             +'<div class="amount">'
-                +'<span class="amount-value">' + Number(budgetAmount).toLocaleString() + '원</span>'
+                +'<span class="amount-value">' + Number(budgetAmount).toLocaleString() +' ' + budgetCurrency+ '</span>'
             +'</div>'
         +'</div>'
     );
@@ -14221,7 +14408,7 @@ function requestItemsInputThird(requestdata) {
         '<div class="amount-item total">'
             +'<h4>Total Amount</h4>'
             +'<div class="amount">'
-                +badge + '<span class="amount-value">' + totalAmount.toLocaleString() + '원</span>'
+                +badge + '<span class="amount-value">' + totalAmount.toLocaleString() +' ' + budgetCurrency+ '</span>'
             +'</div>'
         +'</div>'
     );
@@ -14335,6 +14522,7 @@ function requestItemsInputThird(requestdata) {
                  requestdata.documentRefNo = documentRefNo;
                  requestdata.firstProductId = firstProductId;
                  requestdata.productCnt = productCnt;
+                 requestdata.deepLink = '';
 
                 $('#products-bill').removeClass('show');
                 $('.plugin-dim').removeClass('show');
@@ -14345,7 +14533,7 @@ function requestItemsInputThird(requestdata) {
                 
                 var msgOrderResult = '<div class="message simple-text">'
                                  +'<p>'
-                                    +'물품 청구 내용이 통합결제로 전송되었습니다. 물품 청구 승인을 요청하려면 '
+                                    +'물품 청구 내용이 통합결재로 전송되었습니다. 물품 청구 승인을 요청하려면 '
                                     +'<span style="color: #E0205C;"><b>통합결재</b></span> 에서 최종 완료를 해야 합니다. 아래 버튼을 눌러 통합결재로 이동해 주세요.'
                                  +'</p>'
                                 + '</div>'; 
@@ -14430,10 +14618,14 @@ function requestItemsInputThird(requestdata) {
 // 물품 청구 결과 메세지
 function productsBillResult(requestdata) {
     var messageWrap = $('<div class="custom-message"></div>');
+    
+    var messageTextWrap = $('<div class="message simple-text"></div>');    
     var messageBox = $('<div class="message"></div>');
     var contentWarp = $('<div class="content-wrap"></div>');
-    var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>물품 청구 신청</h2></div>');
+    var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>물품 청구 신청 완료</h2></div>');
     contentWarp.append(contentHeader);
+    
+    var etcText = (requestdata.productCnt == 1)? '':' 외 ' + (requestdata.productCnt-1) + '건';
     
     var contentBox = $(
         '<div class="content-box">'
@@ -14444,7 +14636,7 @@ function productsBillResult(requestdata) {
                 +'</li>'
                 +'<li>'
                    +'<h4>청구 물품</h4>'
-                   +'<div class="content-list-val text"><span>' + requestdata.firstProductId + ' 외 ' + (requestdata.productCnt-1) + '건</span></div>'
+                   +'<div class="content-list-val text"><span>' + requestdata.firstProductId + etcText + '</span></div>'
                 +'</li>'
             +'</ul>'
         +'</div>'
@@ -14452,17 +14644,60 @@ function productsBillResult(requestdata) {
 
     var contentBtn = $(
         '<div class="btn">'
-            +'<button type="button" class="btn btn-default btn-big">통합결재 화면 ' + iconLink + '</button>'
+            //+'<button type="button" class="btn btn-default btn-big">물품청구 내역 조회</button>'
+            //+'<button type="button" class="btn btn-plugin move_link btn-border-pink" data-outlink="" id="btn-deepLink">'
+            + '<button type="button" class="btn btn-default btn-big" data-outlink="' + requestdata.deepLink +'" id="btn-deepLink">'
+                +'통합결재 화면&nbsp;'
+                + iconNewWindowPink            
+            +'</button>'
         +'</div>'
     )
     contentBtn.on('click', function() {
-        //chatui.sendMessage("타계정 주문 현황 조회");   
+        var outlink = $(this).data('outlink');
+    
+        if(!outlink){
+            showHtmlSmallDialog('통합결재 URL이 유효하지 않습니다.');
+            return false;
+        }     
+        window.open(outlink, '_blank');
+        //chatui.sendMessage("물품청구 내역 조회");          
     });
     contentBox.append(contentBtn);
     contentWarp.append(contentBox);
-    messageBox.append(contentWarp);
-    messageWrap.append(messageBox);
+    messageTextWrap.append(contentWarp);
+    messageWrap.append(messageTextWrap);
     
+    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
+    var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
+    var list = $('<button type="button" class="btn-quick-reply btn-basic">물품청구 내역 조회</button>');
+    var guide = $('<button type="button" class="btn-quick-reply btn-basic">물품 청구 가이드</button>');
+    var create = $('<button type="button" class="btn-quick-reply btn-basic">신규 물품 청구</button>');
+    quickBtnBox.append(list);
+    quickBtnBox.append(create);
+    quickBtnBox.append(guide);
+    messageTextWrap2.append(quickBtnBox);
+
+    requestDataInit(requestdata);       // 물품 입력내용 초기화. 
+
+    list.on('click', function() {
+        //console.log('물품 청구 가이드');
+        
+        chatui.sendMessage("물품청구 내역 조회");  
+    });
+    guide.on('click', function() {
+        console.log('물품 청구 가이드');
+        
+        chatui.sendMessage("물품청구 가이드");  
+    });
+    create.on('click', function() {
+        console.log('신규 물품 청구');
+        
+        isQuick = true;
+        chatui.sendMessage("물품 청구 신청");  
+    });
+    
+    messageWrap.append(messageTextWrap2);
+
     requestMsgScroll();
     return messageWrap;
 }
@@ -14486,6 +14721,33 @@ function requestMsgScroll() {
             sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg - 230);
         }
     },100);    
+}
+
+function requestDataInit(requestdata) {
+
+    delete requestdata.plant_id;
+    delete requestdata.plant_name;
+    delete requestdata.plant_code;
+
+    delete requestdata.department_id;
+    delete requestdata.department_name;
+    delete requestdata.department_code;
+
+    delete requestdata.account_code;
+    delete requestdata.account_name;
+    delete requestdata.valid_budget_amount;
+
+    delete requestdata.project_code;
+    delete requestdata.project_name;
+
+    delete requestdata.remark;
+    delete requestdata.total_amount;
+    delete requestdata.item_cnt;
+    delete requestdata.item_list;
+    delete requestdata.item_no;
+    
+    requestdata.step = 1;
+
 }
 
 /* #################### [ 물품 청구 신청 (NERP) End] #################### */
@@ -14554,9 +14816,12 @@ function articleRequestList(data) {
     var text;
     if(items.length == 0){
         text = $('<p>'
-                + '<font color="#E0205C"><b>' + data.userName + '님</b></font>의 물품 청구 내역은 <font color="#E0205C"><b>' + items.length + '건</b></font>이예요. '
-                + '팀청구내역, 조회기간, 상태 등 조회 필터를 설정해 청구 내역을 조회해보세요! 참고로 엘지니는 한 번에 최대 20건의 내역을 조회해 드릴 수 있어요.'
+                + '<font color="#E0205C"><b>' + data.userName + '님</b></font>의 물품 청구 내역은 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요. '
+                + '팀청구내역, 조회기간, 상태 등 조회 필터를 설정해 청구 내역을 다시 조회해보세요!'
             + '</p>'
+            + '<p style="font-size: 12px;color: #898989;">'
+                + '엘지니는 최대 20건의 내역을 보여드릴 수 있어요.' 
+              + '</p>'            
         );
         if(data.researchYn == "Y"){
             articleRequestListContents.parent().css("display","none");
@@ -14565,9 +14830,12 @@ function articleRequestList(data) {
     }else{
         if(data.researchYn != "Y"){
             text = $('<p>'
-                    + '<font color="#E0205C"><b>' + data.userName + '님</b></font>의 물품 청구 내역은 <font color="#E0205C"><b>' + items.length + '건</b></font>이예요. '
-                    + '엘지니는 최대 20건의 내역을 조회해 드릴 수 있고 팀 청구내역, 조회기간, 상태 등 조회 필터를 설정할 수 있어요!'
+                    + '<font color="#E0205C"><b>' + data.userName + '님</b></font>의 물품 청구 내역은 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요. '
+                    + '팀 청구내역, 조회기간, 상태 등 조회 필터를 설정할 수 있어요!'
                 + '</p>'
+                + '<p style="font-size: 12px;color: #898989;">'
+                + '엘지니는 최대 20건의 내역을 보여드릴 수 있어요.' 
+                  + '</p>'            
             );
         }else{
             if(data.ISDEPARTMENT == "내 청구 내역"){
@@ -15218,6 +15486,7 @@ function checkArticleRequire(data) {
 
 // 물품 청구 내역 조회 상세 
 function addArticleReqDetailPopupOpen(data){
+    console.log('data  : ', data);
         /* #########[ popup_wrap_start ]######### */
     
     var pulginDim = $('<div class="plugin-dim show"></div>');

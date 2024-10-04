@@ -7159,6 +7159,7 @@ background: #F5F5F5 !important;
 .plugins .input-box .input-form input[type=text]:disabled {
   background-color: #F5F5F5;
   border:none;
+  padding-left: 0;  
 }
 
 .stepper-wrap li .model-list {
@@ -7638,6 +7639,17 @@ color: var(--color-gray-900, #2c2c2c);
   transition: background-color 0.2s ease-in-out;
   cursor: pointer;
 }
+.tabBtn-add.disabled {
+  filter: opacity(30%);
+  cursor: not-allowed;
+}
+.tabBtn-add.disabled:hover:not(:disabled) {
+  background-color: #fff; 
+}
+.tabBtn-add.disabled:hover:not(:disabled)::before,
+.tabBtn-add.disabled:hover:not(:disabled)::after {
+  background-color: #f55d8d;
+}
 .tabBtn-add:disabled,
 .tabBtn-remove:disabled {
   filter: opacity(30%);
@@ -7738,6 +7750,7 @@ color: var(--color-gray-900, #2c2c2c);
   min-width: 150px;
   flex: 1;
   font-weight: 500;
+  margin: auto;         /* 물품청구 금액 text 위치 조절. */  
 }
 .amount-item.total h4 {
   color: #E0205C;
@@ -7912,7 +7925,32 @@ color: var(--color-gray-900, #2c2c2c);
 .plugins p.small.text {
   margin-top: 0px;
 }
-/* 물품 청구 */
+.test-panel .btn button.btn-emphasis.disabled {
+  border-color: #FEBBD0;
+  color: #FEBBD0;
+  cursor: not-allowed;
+}
+.test-panel .btn button.btn-emphasis.disabled:hover {
+  background-color: #fff;
+}
+
+.plugins .item-contents::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+.plugins .item-contents::-webkit-scrollbar-track {
+  background: black;
+  border-radius: 10px !important;
+  box-shadow: inset 0px 0px 5px white !important;
+}
+.plugins .item-contents::-webkit-scrollbar-thumb {
+  background: pink;
+  background-clip: padding-box !important;
+  border: 2px solid transparent !important;
+  border-radius: 10px !important;
+}
+/* 물품 청구 신청 End */
+
 /* 물품청구 조회 START*/
 .articleRequestList-h1{
     width: 215px;
