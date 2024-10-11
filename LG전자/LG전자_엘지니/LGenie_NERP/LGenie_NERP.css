@@ -8625,4 +8625,57 @@ li::marker {
     margin-top: 9px;
 }
 
+.toast-dialog {
+  padding: 8px 12px;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 4px;
+  background: rgba(44, 44, 44, 0.8);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #F5F5F5;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 200;
+
+  /* [퍼블 수정 및 추가] - width: max-content; 추가 */
+  width: max-content;
+}
+.toast-dialog.show {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.dropdown-uit .dropdown-menu::-webkit-scrollbar-button:vertical:start:decrement,
+.dropdown-uit .dropdown-menu::-webkit-scrollbar-button:vertical:start:increment {
+    display: block;
+    height: 3px;
+}
+
+.dropdown-uit .dropdown-menu::-webkit-scrollbar-button:vertical:end:decrement,
+.dropdown-uit .dropdown-menu::-webkit-scrollbar-button:vertical:end:increment {
+    display: block;
+    height: 3px;
+}
+
+.plugins .uit-contents::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+.plugins .uit-contents::-webkit-scrollbar-track {
+  background: black;
+  border-radius: 10px !important;
+  box-shadow: inset 0px 0px 5px white !important;
+}
+.plugins .uit-contents::-webkit-scrollbar-thumb {
+  background: pink;
+  background-clip: padding-box !important;
+  border: 2px solid transparent !important;
+  border-radius: 10px !important;
+}
+
 /* UIT NERP END */

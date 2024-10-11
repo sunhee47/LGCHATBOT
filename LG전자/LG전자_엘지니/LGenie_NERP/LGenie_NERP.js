@@ -4478,6 +4478,9 @@ const setDatepickerArticleRequest = function() {
       var oneMonthAgo = new Date(newDt.setMonth(newDt.getMonth() - 1));
       var oneMonthAgoDate = moment(oneMonthAgo).format('YYYY.MM.DD');
 
+      const startDate = new Date($('.startdate').val());
+      const startDateTrdOneDateAgo = moment(startDate.setDate(startDate.getDate() + 31)).format('YYYY.MM.DD');
+
       if ($(btn).closest(".schedule-input-wrap").length > 0) {
         $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
         $(".datepicker-chem:visible").not($initEl).fadeOut('fast', function(){
@@ -4505,6 +4508,7 @@ const setDatepickerArticleRequest = function() {
   
       if($(btn).hasClass('enddate')) {
         minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
+        maxDate = startDateTrdOneDateAgo;
       }
   
       if ($initEl.is(':visible')) {
@@ -4524,7 +4528,7 @@ const setDatepickerArticleRequest = function() {
           dayNamesMin: ['일','월','화','수','목','금','토'], 
           showButtonPanel: true,
           closeText: "close",
-          altField: "",
+          altField: target,
           beforeShow: function() {
           },
           onChangeMonthYear: function() {
@@ -4541,6 +4545,8 @@ const setDatepickerArticleRequest = function() {
             if(endDt < startDt) {
               $('#datepickerEnd').find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
               $('#datepickerEnd').find('.ui-state-active').removeClass('ui-state-active');
+              
+              $('.enddate').val($('.startdate').val());
             }
 
             if (callback){
@@ -4567,6 +4573,12 @@ const setDatepickerArticleRequest = function() {
   
         if($initEl.find('.selected-date').length == 0) {
           $initEl.find('.dp-header').append('<div class="selected-date"></div>');
+          
+          if($(btn).hasClass('enddate')) {
+              console.log('btn : '+$(btn).val());
+            $initEl.find('.dp-header').append('<div class="selected-date">' + $(btn).val() + '</div>');
+          //$initEl.find('.dp-header').append('<div class="selected-date">' + newDate + '</div>');
+          }          
         }
             
         if($initEl.find('.dtpicker-refresh').length == 0) {
@@ -12156,10 +12168,24 @@ function requestItemsInputFirst(requestdata) {
     
     var orderUl2 = $('<ul></ul>');
     
+    var engNum_pattern = /[^a-zA-Z0-9]/g;
+    
     inputBox2.on('keyup', function(e) {        
 
         var inval = inputBox2.val();
         console.log('key : '+inval);
+        
+        if(engNum_pattern.test(inval) == true) {
+            //console.log('e.target ...'+e.key);
+                
+            //setTimeout(function() {
+            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = inval.replace(engNum_pattern, '');
+
+            $(this).val(replaceVal);            
+        }
         
         if(e.keyCode == 13) {
             
@@ -12992,9 +13018,13 @@ function onlyNumber(obj) {
     
     // tab 추가 버튼 
     var tabItemAddBtn = $('<button class="tabBtn-add disabled" type="button" readonly></button>');    
-    if(itemCnt != 10) {
-        tabBtnBox.append(tabItemAddBtn);
+    if(itemCnt > 1 && itemCnt < 10) {
+//        tabItemAddBtn.attr('readonly', false).removeClass('disabled');        
     }
+    else if(itemCnt == 10) {
+        tabItemAddBtn.css('filter', 'opacity(0%)').css('cursor', 'default');
+    }
+    tabBtnBox.append(tabItemAddBtn);
 
     //var tabItemAddBtn = $('<div class="tab-item-add"></div>');              // active
     //var tabItemAddImg = $('<div class="add-img">'+tabAddBtn+'</div>');
@@ -13021,7 +13051,7 @@ function onlyNumber(obj) {
         
         var tabContent1 = $('<div class="tab-content'+showClass+'"></div>');
         
-        var itemIDText = $('<div class="input-box"><label><span class="prod_name">물품'+tabNo+'</span> ID <b>*</b></label></div>');
+        var itemIDText = $('<div class="input-box"><label>물품 ID <b>*</b></label></div>');
         var itemIDBox = $('<div class="input-form"></div>');
         var itemIDInput = $('<input type="text" placeholder="물품 ID를 입력해 주세요." max-length="50" id="item_id" value="'+item.item_id+'" name="'+item.item_id+'" autocomplete="off"/>');
         var helpMSG = $('<span class="help-message">' + item.item_name +'</span>');
@@ -13032,7 +13062,7 @@ function onlyNumber(obj) {
         
         tabContent1.append(itemIDText);
     
-        var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+tabNo+'</span> 수량 <b>*</b></label></div>');
+        var itemQtyText = $('<div class="input-box"><label>물품 수량 <b>*</b></label></div>');
         var itemQtyBox = $('<div class="input-form"></div>');
         var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" maxlength="15" id="item_qty" value="'+item.item_qty+'" oninput="this.value=this.value.replace(/[^a-zA-Z-_0-9.]/g, \'\');" autocomplete="off"/>');
         var itemQtyHidden = $('<input type="hidden" id="item_unit" value="'+item.item_unit+'"/>');
@@ -13396,6 +13426,7 @@ function onlyNumber(obj) {
                 
                 //prod_name
                 $(content).find('.prod_name').text('물품'+newIdx);
+                //$(content).find('.prod_name').text('물품');
             }
         }        
         
@@ -13519,6 +13550,9 @@ function onlyNumber(obj) {
     //pluginForm.find('.add-img').on('click', function(e){
         console.log('clcik.'+itemCnt);
         
+        if(itemCnt == 10) {
+            return;
+        }
         var showContent = $('.tab-content.show');
         var current_tab_no = $('.tabBtn-box').find('.tabBtn.active').find('#item_no').val(); 
         if (showContent.find('.amount-box').hasClass('show') == false || showContent.find('.btn-input').attr('disabled') != 'disabled') {
@@ -13539,7 +13573,7 @@ function onlyNumber(obj) {
         
         if(itemCnt == maxItemCount) {
              //pluginForm.find('.tabBtn-add').css('display', 'none');              // tab 추가 버튼 숨김.
-            pluginForm.find('.tabBtn-add').css('filter', 'opacity(0%)');             
+            pluginForm.find('.tabBtn-add').css('filter', 'opacity(0%)').css('cursor', 'default');             
         }
         
         //$(this).parent().removeClass('active');         // 탭 추가 버튼 비활성화. 
@@ -13974,7 +14008,7 @@ function onlyNumber(obj) {
         
         var tabContent = $('<div class="tab-content"></div>');
         
-        var itemIDText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> ID <b>*</b></label></div>');
+        var itemIDText = $('<div class="input-box"><label>물품 ID <b>*</b></label></div>');
         var itemIDBox = $('<div class="input-form"></div>');
         var itemIDInput = $('<input type="text" placeholder="물품 ID를 입력해 주세요." max-length="50" id="item_id" value="" autocomplete="off"/>');
         var helpMSG = $('<span class="help-message">' + '' +'</span>');
@@ -13985,7 +14019,7 @@ function onlyNumber(obj) {
         
         tabContent.append(itemIDText);
         
-        var itemQtyText = $('<div class="input-box"><label><span class="prod_name">물품'+addContentCnt+'</span> 수량 <b>*</b></label></div>');
+        var itemQtyText = $('<div class="input-box"><label>물품 수량 <b>*</b></label></div>');
         var itemQtyBox = $('<div class="input-form"></div>');
         var itemQtyInput = $('<input type="text" placeholder="물품 수량을 입력해 주세요." max-length="50" maxlength="15" id="item_qty" value="" oninput="this.value=this.value.replace(/[^a-zA-Z-_0-9.]/g, \'\');" autocomplete="off"/>');
         var itemQtyHidden = $('<input type="hidden" id="item_unit" value="0"/>');
@@ -14633,7 +14667,7 @@ function productsBillResult(requestdata) {
     var messageTextWrap = $('<div class="message simple-text"></div>');    
     var messageBox = $('<div class="message"></div>');
     var contentWarp = $('<div class="content-wrap"></div>');
-    var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>물품 청구 신청 완료</h2></div>');
+    var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>물품 청구 신청</h2></div>');
     contentWarp.append(contentHeader);
     
     var etcText = (requestdata.productCnt == 1)? '':' 외 ' + (requestdata.productCnt-1) + '건';
@@ -14678,9 +14712,9 @@ function productsBillResult(requestdata) {
     messageTextWrap.append(contentWarp);
     messageWrap.append(messageTextWrap);
     
-    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
+    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px; max-width:400px; width:400px;"></div>');
     var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
-    var list = $('<button type="button" class="btn-quick-reply btn-basic">물품청구 내역 조회</button>');
+    var list = $('<button type="button" class="btn-quick-reply btn-basic">물품청구 내역</button>');
     var guide = $('<button type="button" class="btn-quick-reply btn-basic">물품 청구 가이드</button>');
     var create = $('<button type="button" class="btn-quick-reply btn-basic">신규 물품 청구</button>');
     quickBtnBox.append(list);
@@ -14996,10 +15030,11 @@ function articleRequestList(data) {
             }
 
             // 신청일 (ZREQDATE) - 물품청구 요청 넣은 날짜
+            let reqDate = (item.ZREQDATE=='')? '-':item.ZREQDATE;
             sysInfoList.append($(
                 '<li class="articleRequestList-li">'
                     +'<h4>신청일</h4>'
-                    +'<div><span>' + item.ZREQDATE + '</span></div>'
+                    +'<div><span>' + reqDate + '</span></div>'
                 +'</li>'
             ));
             
@@ -15200,12 +15235,12 @@ function addArticleReqFilterPopupOpen(data){
     var dateTimeWrap = $('<div class="schedule-wrap schedule-wrap-filter"></div>');
     
     var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="start-date-box"></div>');
-    var dateStartInput = $('<input type="text" placeholder="'+defaultFormat+'" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var dateStartInput = $('<input type="text" placeholder="'+defaultFormat+'" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" autocomplete="off" readonly/>');
     var datepickerStart = $('<div class="datepicker-chem" id="datepickerStart"></div>');
     var dateStartVal = $('<input type="hidden" id="startDateValue" value=""/>');
     var spliter = $('<div class="font-Xlarge"> - </div>');
     var dateTimeEndBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="end-date-box"></div>');
-    var dateEndInput = $('<input type="text" placeholder="'+defaultFormat+'" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var dateEndInput = $('<input type="text" placeholder="'+defaultFormat+'" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" autocomplete="off" readonly/>');
     var dateEndVal = $('<input type="hidden" id="endDateValue" value=""/>');
     var datepickerEnd = $('<div class="datepicker-chem" id="datepickerEnd"></div>');
 
@@ -15282,16 +15317,22 @@ function addArticleReqFilterPopupOpen(data){
             var startDt = moment($('.startdate').val()).format('YYYYMMDD');
             var endDt = moment($('.enddate').val()).format('YYYYMMDD');
 
-            if(startDt > endDt){
-                showHtmlSmallDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
-                return;
-            }
-            
             var isDepartment = $('#artReqFilter_isDepartment').find('span').text();
             var zReqdateFrom = $('#start-date').val();
             var zReqdateTo = $('#end-date').val();
             var statusId = $('#artReqFilter_statusId').find('input').val();
             var statusName = $('#artReqFilter_statusId').find('span').text();
+
+            if((zReqdateFrom != '' && zReqdateTo == '') 
+                || zReqdateTo != '' && zReqdateFrom == '') {
+                showHtmlSmallDialog('<div>조회 시작일과 종료일을 모두 입력해 주세요.</div>');
+                return;
+            }
+            
+            if(startDt > endDt){
+                showHtmlSmallDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
+                return;
+            }
 
             var requestParam = {
                 query: {
@@ -15462,8 +15503,11 @@ function checkArticleRequire(data) {
     var reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
     var reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
     
+    //console.log('data : ', data)
     if(data.ZREQDATE_FR == "") reqDateFr = "";
     if(data.ZREQDATE_TO == "") reqDateTo = "";
+
+    console.log(department+' / '+statusId+' / '+startDate+' / '+endDate+' / '+reqDateFr+' / '+reqDateTo);
 
     var departmentFlag = false;
     var dateFlag = false;
@@ -15504,7 +15548,7 @@ function addArticleReqDetailPopupOpen(data){
     var addArtReqDetail = $('<div class="plugins" id="addArtReqDetail" style="max-height: calc(100% - 44px);"></div>');
 
     /* #########[ popup_header ]######### */
-    var addArtReqDetailHeader = $('<div class="plugin-header"><h1>' + data.ZREQNO + '</h1></div>');
+    var addArtReqDetailHeader = $('<div class="plugin-header"><h1>신청번호 ' + data.ZREQNO + '</h1></div>');
     var addArtReqDetailClose = $(
         '<span class="close-plugin">'
             +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -15586,9 +15630,10 @@ function addArticleReqDetailPopupOpen(data){
     );
     articleReqSubInfoUi.append(classInfo);
 
+    let reqDate = (data.ZREQDATE=='')? '-':data.ZREQDATE;
     var reqDateInfo =$('<li class="subInfo-li">'
         +'<h5>신청일</h5>'
-        +'<p>' + data.ZREQDATE +'</p>' 
+        +'<p>' + reqDate +'</p>' 
         +'</li>'
     );
     articleReqSubInfoUi.append(reqDateInfo);
@@ -15610,7 +15655,12 @@ function addArticleReqDetailPopupOpen(data){
 
     var items = data.productList;
     var articleReqItemLiHtml = "";
+    
+    var currency = '';
     items.forEach(function(item,index){
+        if(index == 0) {
+            currency = item.WAERS;
+        }
         articleReqItemLiHtml += '<li>'
             +'<div class="item-count"><h5><font color="#E0205C">물품 ' + (index+1) + '</h5></font></div>'
             +'<div class="item-name">'
@@ -15645,7 +15695,7 @@ function addArticleReqDetailPopupOpen(data){
     var addTotalAmount = $(
         '<div class="total-amount">'
             +'<p><font color="#E0205C">Total Amount</font></p>'
-            +'<p>' + data.totalAmount + '원</p>'
+            +'<p>' + data.totalAmount + ' '+currency+'</p>'
         +'</div>'
     );
     addArticleReqFoot.append(addTotalAmount);
@@ -16042,7 +16092,7 @@ function uitUpdatePopupOpenNERP(uitdata) {
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents" id="item-content"></div>');
+    var pluginContents = $('<div class="plugin-contents uit-contents" id="item-content" style="scrollbar-width:auto;"></div>');
     var requestForm = uitUpdateInputFirstNERP(uitdata);
     pluginContents.append(requestForm);
     addPlugin.append(pluginContents);
@@ -16095,22 +16145,29 @@ function uitUpdateInputFirstNERP(uitdata){
     plantInputBox.append(plantInput);
     pluginForm.append(plantInputBox);
     
+    var engNum_pattern = /[^a-zA-Z0-9]/g;
+    
+    //plantInput.off('keyup').on('keyup', function(e) {
     plantInput.on('blur keyup', function(e) {
         var input = e.target.value;
+
+        if(engNum_pattern.test(input) == true) {
+            //console.log('e.target ...'+e.key);
+            
+            $('.small-dialog').remove();    
+            //setTimeout(function() {
+            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = input.replace(engNum_pattern, '');
+
+            $(this).find('input').val(replaceVal);
+        }
+        
         var inputVal = input.toUpperCase();
         var inputLength = inputVal.length;
 
-        var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g; // /[a-zA-Z1-9]/g;
         inputVal = inputVal.trim(); 
-        
-        if(check.test(inputVal)){
-            $('.small-dialog').remove();
-            showSmallDialog("영어, 숫자만 입력해주세요.");
-            $('#plant').val('');
-            $('#plant').focus();
-            nextBtnEvent();
-            return;
-        }
 
         if(inputVal){
             $(this).find('.input-val-del').addClass('show');
@@ -16143,21 +16200,25 @@ function uitUpdateInputFirstNERP(uitdata){
     
     materialInput.on('blur keyup', function(e) {
         var input = e.target.value;
+        
+        if(engNum_pattern.test(input) == true) {
+            //console.log('e.target ...'+e.key);
+            
+            $('.small-dialog').remove();    
+            //setTimeout(function() {
+            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = input.replace(engNum_pattern, '');
+
+            $(this).find('input').val(replaceVal);
+        }
+        
         var inputVal = input.toUpperCase();
         var inputLength = inputVal.length;
 
-        var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g; // /[a-zA-Z1-9]/g;
         inputVal = inputVal.trim(); 
         
-        if(check.test(inputVal)){
-            $('.small-dialog').remove();
-            showSmallDialog("영어, 숫자만 입력해주세요.");
-            $('#material').val('');
-            $('#material').focus();
-            nextBtnEvent();
-            return;
-        }
-
         if(inputVal){
             $(this).find('.input-val-del').addClass('show');
             nextBtnEvent();
@@ -16212,7 +16273,7 @@ function uitUpdateInputFirstNERP(uitdata){
                       console.log('품목 결과 : 0건');
                       
                       setTimeout(function() {
-                        showSmallDialog('Pant, Meterial가 유효하지 않습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        showHtmlToastDialog('Plant, Meterial no.가 유효하지 않습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                       }, 100);                      
                       //return;                      
                 } else {
@@ -16874,7 +16935,7 @@ function uitUpdateListNERP(data) {
                 sysInfo.append(
                     '<div class="name">'
                         +'<h1 class="system articleRequestList-h1">'
-                            + item.material_no
+                            + item.meterial_name
                         +'</h1>'
                     +'</div">'
                 );
@@ -17295,7 +17356,7 @@ function addDateSettingPopupOpenNERP(data){
             var itemLength = result.template.outputs[0].data.items.length;
 
             if(itemLength == 0){
-                showHtmlSmallDialog('<div>조회된 UIT 수정 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
+                showHtmlToastDialog('<div>조회된 UIT 수정 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
                 isLoading = false;
                 return;
             }else{
@@ -17389,7 +17450,7 @@ function addUITDetailPopupOpenNERP(data){
     uitSubInfoUi.append(meterialNameInfo);
 
     var plantInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>Plant</h5>'
+        +'<h5>Plant ID</h5>'
         +'<p>' + data.plant_code +'</p>' 
         +'</li>'
     );
@@ -17475,6 +17536,20 @@ function addUITDetailPopupOpenNERP(data){
         $('#addUITDetail').addClass('show');
     }, 100);
 };
+
+function showHtmlToastDialog(msg) {
+  //$('.test-panel').append('<div class="small-dialog"></div>');
+  $('.plugins').append('<div class="toast-dialog"></div>');
+  $('.toast-dialog').html(msg);
+  $('.toast-dialog').addClass('show');
+  setTimeout(function() {
+    $('.toast-dialog').removeClass('show');
+  }, 2000);
+
+  setTimeout(function() {
+    $('.toast-dialog').remove();
+  }, 5000);
+}
 
 /* #################### [ UIT 수정 내역조회 (NERP) End] #################### */
 
