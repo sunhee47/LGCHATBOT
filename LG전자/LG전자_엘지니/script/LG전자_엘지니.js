@@ -4436,231 +4436,6 @@ const setDatepicker = function() {
   }
 };
 
-//Datepicker Module 물품청구 GERP 용
-const setDatepickerGERP = function() {
-    var $initEl;
-  
-    // 날짜 한글 변환
-    function fullDate(val, target) {
-      var today;
-      var strWeek = ["일요일","월요일","화요일", "수요일","목요일","금요일","토요일"]
-      var fullDate;
-  
-      if (target) {
-        today = new Date($(target).val());
-      } else {
-        today = new Date(val);
-      }
-  
-      fullDate = today.getFullYear() +'년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 ' + strWeek[today.getDay()]
-      return fullDate;
-    }
-  
-    // open
-    function dpOpen(btn, target, callback){
-      var $input;
-      
-      var newDt = new Date();
-      var newDate = moment(newDt).format('YYYY.MM.DD');
-      var thirtyOneDaysAgo = new Date(newDt.setDate(newDt.getDate() - 31));
-      var thirtyOneDaysAgoDate = moment(thirtyOneDaysAgo).format('YYYY.MM.DD');
-      var oneMonthAgo = new Date(newDt.setMonth(newDt.getMonth() - 1));
-      var oneMonthAgoDate = moment(oneMonthAgo).format('YYYY.MM.DD');
-      
-      const startDate = new Date($('.startdate').val());
-      const startDateTrdOneDateAgo = moment(startDate.setDate(startDate.getDate() + 31)).format('YYYY.MM.DD');
-  
-      if ($(btn).closest(".schedule-input-wrap").length > 0) {
-        $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
-        $(".datepicker-chem:visible").not($initEl).fadeOut('fast', function(){
-          $(this).removeClass("show");
-        });
-      } else {
-        $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
-      }
-  
-      if (target) {
-        $input = $(target);
-      } else {
-        if ($(btn).closest(".schedule-wrap")) {
-          $input = $(btn).closest(".schedule-input-wrap").find(".input-schedule-date");
-        } else {
-          $input = $(btn).prev("input[type=text]");
-        }
-      }
-  
-      var minDate = '';
-      var maxDate = newDate;
-  
-      if($(btn).hasClass('startdate')) {
-      }
-  
-      if($(btn).hasClass('enddate')) {
-        minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
-        maxDate = startDateTrdOneDateAgo;
-      }
-  
-      if ($initEl.is(':visible')) {
-        dpClose();
-      } else {
-        $initEl.datepicker({
-          formatDate: "ATOM",
-          minDate: minDate,
-          maxDate: maxDate,
-          dateFormat: "yy.mm.dd",
-          defaultDate: $input.val(),
-          showOn: "",
-          buttonImageOnly: true,
-          showMonthAfterYear: true,
-          monthNames: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
-          monthNamesShort: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
-          dayNamesMin: ['일','월','화','수','목','금','토'], 
-          altField: target,
-          showButtonPanel: true,
-          closeText: "close",
-          beforeShow: function() {
-          },
-          onChangeMonthYear: function() {
-          },
-          onSelect: function() {
-            $initEl.find('.selected-date').text(this.value);
-            $(btn).val(this.value);
-            
-            var endDt = moment($('.enddate').val()).format('YYYYMMDD');
-            var startDt = moment($('.startdate').val()).format('YYYYMMDD');
-            if(endDt < startDt) {
-                $('.enddate').val($('.startdate').val());
-            }
-            
-            // 31일 초과시 메시지 호출 종료일 = 시작일 + 31
-            const endDate = new Date($('.enddate').val());
-            const startDate = new Date($('.startdate').val());
-			
-            const diffDate = endDate.getTime() - startDate.getTime();
-              
-            var limitDate = Math.abs(diffDate / (1000 * 60 * 60 * 24));
-
-			var newDt = new Date();
-            var newDate = moment(newDt).format('YYYY.MM.DD');
-			var newLimitDt = moment(newDt).format('YYYYMMDD');
-            var startDateTrdOneDateAgo = startDate.setDate(startDate.getDate() + 31);
-			var thirtyOneDaysAgoDt = moment(thirtyOneDaysAgo).format('YYYYMMDD');
-			  
-            if(limitDate > 31){
-                $('.small-dialog').remove();
-                showHtmlSmallDialog('<div>최대 조회 기간은 1개월입니다.</div>');
-                
-				
-                if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
-                    $('.enddate').val(newDate);
-    				$('#datepickerEnd').datepicker("setDate", newDate);
-    				$('#datepickerEnd').find('.dp-header').find('.selected-date').text(newDate);
-                }else{
-    				$('.enddate').val(moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
-    				$('#datepickerEnd').datepicker("setDate", moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
-    				$('#datepickerEnd').find('.dp-header').find('.selected-date').text(moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
-                }
-				
-            }
-            
-            // 시작일 변경시 마지막일 disabled 31일 and 오늘 이후
-            $("#datepickerEnd").datepicker("option", "minDate", $('.startdate').val());
-            
-            if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
-                $("#datepickerEnd").datepicker("option", "maxDate", newDate);
-            }else{
-                $("#datepickerEnd").datepicker("option", "maxDate", moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
-            }
-
-            if (callback){
-              eval(callback);
-            }
-            
-          },
-          onClose: function() {
-              $(btn).focus();
-          }
-      });
-  
-      if(!$initEl.find('.dp-header').text()) {
-        if($(btn).hasClass('startdate')) {
-            $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>조회 시작일을 선택해 주세요.</p></div>');
-        }
-        if($(btn).hasClass('enddate')) {
-            $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>조회 종료일을 선택해 주세요.</p></div>');
-        }
-      }
-             
-      if($initEl.find('.plugin-select-dim').length == 0) {
-        $initEl.prepend('<div class="plugin-select-dim"></div>');
-      }
-  
-      if($initEl.find('.selected-date').length == 0) {
-        if($(btn).hasClass('startdate')) {
-          $initEl.find('.dp-header').append('<div class="selected-date">' + thirtyOneDaysAgoDate + '</div>');
-        }
-    
-        if($(btn).hasClass('enddate')) {
-          $initEl.find('.dp-header').append('<div class="selected-date">' + $(btn).val() + '</div>');
-          //$initEl.find('.dp-header').append('<div class="selected-date">' + newDate + '</div>');
-        }
-      }
-          
-      if($initEl.find('.dtpicker-refresh').length == 0) {
-        $initEl.find('.dp-header').append('<div class="dtpicker-refresh">초기화</div>');
-      }
-  
-      $('.dtpicker-refresh').on('click', function(){
-          $('#datepickerStart').datepicker("setDate", thirtyOneDaysAgoDate);
-          $('#datepickerStart').find('.selected-date').text(thirtyOneDaysAgoDate);
-          $('.startdate').val(thirtyOneDaysAgoDate);
-          
-          $("#datepickerEnd").datepicker("option", "minDate", thirtyOneDaysAgoDate);
-          $("#datepickerEnd").datepicker("option", "maxDate", newDate);
-          $('#datepickerEnd').datepicker("setDate", newDate);
-          $('#datepickerEnd').find('.selected-date').text(newDate);
-          $('.enddate').val(newDate);
-         /*
-        if($(btn).hasClass('startdate')) {
-          $(btn).val(thirtyOneDaysAgoDate);
-          $('#datepickerStart').datepicker("setDate", thirtyOneDaysAgoDate);
-          $('#datepickerStart').find('.selected-date').text(thirtyOneDaysAgoDate);
-        }
-    
-        if($(btn).hasClass('enddate')) {
-          $("#datepickerEnd").datepicker("option", "minDate", thirtyOneDaysAgoDate);
-          $("#datepickerEnd").datepicker("option", "maxDate", newDate);
-          $('#datepickerEnd').datepicker("setDate", newDate);
-          $('#datepickerEnd').find('.selected-date').text(newDate);
-          $(btn).val(newDate);
-        }
-        */
-      });
-  
-      if($initEl.find('.btn-datepicker').length == 0) {
-        $initEl.append('<button type="button" class="btn-plugin btn-datepicker" onclick="datepicker.close();">확인</button>');  
-      }
-  
-      $initEl.fadeIn('fast', function(){  
-        $(this).find('.plugin-select-dim').addClass('show');
-        $(this).addClass("show");
-      });
-    }
-    }
-  
-    function dpClose() {
-      $(".datepicker-chem").fadeOut('fast', function(){
-        $(this).removeClass("show");
-      })
-    }
-  
-    return {
-      open: dpOpen,
-      close: dpClose,
-      fulldate: fullDate
-    }
-};
-
 window.datepicker = setDatepicker();
 
 function setTimePicker(timeinput) {
@@ -19659,7 +19434,9 @@ function hsCodeResultList(data) {
 }
 //Hs Code 조회 END
 
-/* #################### [ 물품 청구 신청 (NERP) Start] #################### */
+/*** ------------------------- 물품 청구 (GERP) Start ------------------------- ***/
+
+/* #################### [ 물품 청구 신청 (공통) Start] #################### */
 var tabAddBtn =  '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">'
                 + '<path d="M5 0V10" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"/>'
                 + '<path d="M0 5L10 5" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"/>'
@@ -19706,9 +19483,6 @@ var iconLink = (
     +'</svg>'
 );
 var maxItemCount = 10;
-/******* RequestItem(NERP).js ****/
-
-/******* RequestItem(NERP).js ****/
 
 function ascendScroll() {
 	setTimeout(function() {
@@ -19731,7 +19505,7 @@ function requestMsgScroll() {
     },100);    
 }
 
-/* #################### [ 물품 청구 신청 (NERP) End] #################### */
+/* #################### [ 물품 청구 신청 (공통) End] #################### */
 
 /* #################### [ 물품 청구 신청 (GERP) Start] #################### */
 var isQuick = false;
@@ -24366,3 +24140,232 @@ function gerpRequestStatus(data) {
     return gerpRequestStatus;
 }
 /* #################### [ 물품 청구 조회 (GERP) End] #################### */
+
+//Datepicker Module 물품청구 GERP 용 Start
+const setDatepickerGERP = function() {
+    var $initEl;
+  
+    // 날짜 한글 변환
+    function fullDate(val, target) {
+      var today;
+      var strWeek = ["일요일","월요일","화요일", "수요일","목요일","금요일","토요일"]
+      var fullDate;
+  
+      if (target) {
+        today = new Date($(target).val());
+      } else {
+        today = new Date(val);
+      }
+  
+      fullDate = today.getFullYear() +'년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 ' + strWeek[today.getDay()]
+      return fullDate;
+    }
+  
+    // open
+    function dpOpen(btn, target, callback){
+      var $input;
+      
+      var newDt = new Date();
+      var newDate = moment(newDt).format('YYYY.MM.DD');
+      var thirtyOneDaysAgo = new Date(newDt.setDate(newDt.getDate() - 31));
+      var thirtyOneDaysAgoDate = moment(thirtyOneDaysAgo).format('YYYY.MM.DD');
+      var oneMonthAgo = new Date(newDt.setMonth(newDt.getMonth() - 1));
+      var oneMonthAgoDate = moment(oneMonthAgo).format('YYYY.MM.DD');
+      
+      const startDate = new Date($('.startdate').val());
+      const startDateTrdOneDateAgo = moment(startDate.setDate(startDate.getDate() + 31)).format('YYYY.MM.DD');
+  
+      if ($(btn).closest(".schedule-input-wrap").length > 0) {
+        $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
+        $(".datepicker-chem:visible").not($initEl).fadeOut('fast', function(){
+          $(this).removeClass("show");
+        });
+      } else {
+        $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
+      }
+  
+      if (target) {
+        $input = $(target);
+      } else {
+        if ($(btn).closest(".schedule-wrap")) {
+          $input = $(btn).closest(".schedule-input-wrap").find(".input-schedule-date");
+        } else {
+          $input = $(btn).prev("input[type=text]");
+        }
+      }
+  
+      var minDate = '';
+      var maxDate = newDate;
+  
+      if($(btn).hasClass('startdate')) {
+      }
+  
+      if($(btn).hasClass('enddate')) {
+        minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
+        maxDate = startDateTrdOneDateAgo;
+      }
+  
+      if ($initEl.is(':visible')) {
+        dpClose();
+      } else {
+        $initEl.datepicker({
+          formatDate: "ATOM",
+          minDate: minDate,
+          maxDate: maxDate,
+          dateFormat: "yy.mm.dd",
+          defaultDate: $input.val(),
+          showOn: "",
+          buttonImageOnly: true,
+          showMonthAfterYear: true,
+          monthNames: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+          monthNamesShort: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+          dayNamesMin: ['일','월','화','수','목','금','토'], 
+          altField: target,
+          showButtonPanel: true,
+          closeText: "close",
+          beforeShow: function() {
+          },
+          onChangeMonthYear: function() {
+          },
+          onSelect: function() {
+            $initEl.find('.selected-date').text(this.value);
+            $(btn).val(this.value);
+            
+            var endDt = moment($('.enddate').val()).format('YYYYMMDD');
+            var startDt = moment($('.startdate').val()).format('YYYYMMDD');
+            if(endDt < startDt) {
+                $('.enddate').val($('.startdate').val());
+            }
+            
+            // 31일 초과시 메시지 호출 종료일 = 시작일 + 31
+            const endDate = new Date($('.enddate').val());
+            const startDate = new Date($('.startdate').val());
+			
+            const diffDate = endDate.getTime() - startDate.getTime();
+              
+            var limitDate = Math.abs(diffDate / (1000 * 60 * 60 * 24));
+
+			var newDt = new Date();
+            var newDate = moment(newDt).format('YYYY.MM.DD');
+			var newLimitDt = moment(newDt).format('YYYYMMDD');
+            var startDateTrdOneDateAgo = startDate.setDate(startDate.getDate() + 31);
+			var thirtyOneDaysAgoDt = moment(thirtyOneDaysAgo).format('YYYYMMDD');
+			  
+            if(limitDate > 31){
+                $('.small-dialog').remove();
+                showHtmlSmallDialog('<div>최대 조회 기간은 1개월입니다.</div>');
+                
+				
+                if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
+                    $('.enddate').val(newDate);
+    				$('#datepickerEnd').datepicker("setDate", newDate);
+    				$('#datepickerEnd').find('.dp-header').find('.selected-date').text(newDate);
+                }else{
+    				$('.enddate').val(moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+    				$('#datepickerEnd').datepicker("setDate", moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+    				$('#datepickerEnd').find('.dp-header').find('.selected-date').text(moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+                }
+				
+            }
+            
+            // 시작일 변경시 마지막일 disabled 31일 and 오늘 이후
+            $("#datepickerEnd").datepicker("option", "minDate", $('.startdate').val());
+            
+            if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
+                $("#datepickerEnd").datepicker("option", "maxDate", newDate);
+            }else{
+                $("#datepickerEnd").datepicker("option", "maxDate", moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+            }
+
+            if (callback){
+              eval(callback);
+            }
+            
+          },
+          onClose: function() {
+              $(btn).focus();
+          }
+      });
+  
+      if(!$initEl.find('.dp-header').text()) {
+        if($(btn).hasClass('startdate')) {
+            $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>조회 시작일을 선택해 주세요.</p></div>');
+        }
+        if($(btn).hasClass('enddate')) {
+            $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>조회 종료일을 선택해 주세요.</p></div>');
+        }
+      }
+             
+      if($initEl.find('.plugin-select-dim').length == 0) {
+        $initEl.prepend('<div class="plugin-select-dim"></div>');
+      }
+  
+      if($initEl.find('.selected-date').length == 0) {
+        if($(btn).hasClass('startdate')) {
+          $initEl.find('.dp-header').append('<div class="selected-date">' + thirtyOneDaysAgoDate + '</div>');
+        }
+    
+        if($(btn).hasClass('enddate')) {
+          $initEl.find('.dp-header').append('<div class="selected-date">' + $(btn).val() + '</div>');
+          //$initEl.find('.dp-header').append('<div class="selected-date">' + newDate + '</div>');
+        }
+      }
+          
+      if($initEl.find('.dtpicker-refresh').length == 0) {
+        $initEl.find('.dp-header').append('<div class="dtpicker-refresh">초기화</div>');
+      }
+  
+      $('.dtpicker-refresh').on('click', function(){
+          $('#datepickerStart').datepicker("setDate", thirtyOneDaysAgoDate);
+          $('#datepickerStart').find('.selected-date').text(thirtyOneDaysAgoDate);
+          $('.startdate').val(thirtyOneDaysAgoDate);
+          
+          $("#datepickerEnd").datepicker("option", "minDate", thirtyOneDaysAgoDate);
+          $("#datepickerEnd").datepicker("option", "maxDate", newDate);
+          $('#datepickerEnd').datepicker("setDate", newDate);
+          $('#datepickerEnd').find('.selected-date').text(newDate);
+          $('.enddate').val(newDate);
+         /*
+        if($(btn).hasClass('startdate')) {
+          $(btn).val(thirtyOneDaysAgoDate);
+          $('#datepickerStart').datepicker("setDate", thirtyOneDaysAgoDate);
+          $('#datepickerStart').find('.selected-date').text(thirtyOneDaysAgoDate);
+        }
+    
+        if($(btn).hasClass('enddate')) {
+          $("#datepickerEnd").datepicker("option", "minDate", thirtyOneDaysAgoDate);
+          $("#datepickerEnd").datepicker("option", "maxDate", newDate);
+          $('#datepickerEnd').datepicker("setDate", newDate);
+          $('#datepickerEnd').find('.selected-date').text(newDate);
+          $(btn).val(newDate);
+        }
+        */
+      });
+  
+      if($initEl.find('.btn-datepicker').length == 0) {
+        $initEl.append('<button type="button" class="btn-plugin btn-datepicker" onclick="datepicker.close();">확인</button>');  
+      }
+  
+      $initEl.fadeIn('fast', function(){  
+        $(this).find('.plugin-select-dim').addClass('show');
+        $(this).addClass("show");
+      });
+    }
+    }
+  
+    function dpClose() {
+      $(".datepicker-chem").fadeOut('fast', function(){
+        $(this).removeClass("show");
+      })
+    }
+  
+    return {
+      open: dpOpen,
+      close: dpClose,
+      fulldate: fullDate
+    }
+};
+
+//Datepicker Module 물품청구 GERP 용 End
+
+/*** ------------------------- 물품 청구 (GERP) End ------------------------- ***/
