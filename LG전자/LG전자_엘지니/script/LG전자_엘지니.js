@@ -3059,6 +3059,7 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">예산 조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구</button>'
   +     '</div>'
   +     '<h2>주요 메뉴</h2>'
   +     '<div class="btns">'
