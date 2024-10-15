@@ -4478,8 +4478,8 @@ const setDatepickerArticleRequest = function() {
       var oneMonthAgo = new Date(newDt.setMonth(newDt.getMonth() - 1));
       var oneMonthAgoDate = moment(oneMonthAgo).format('YYYY.MM.DD');
 
-      const startDate = new Date($('.startdate').val());
-      const startDateTrdOneDateAgo = moment(startDate.setDate(startDate.getDate() + 31)).format('YYYY.MM.DD');
+      //const startDate = new Date($('.startdate').val());
+      //const startDateTrdOneDateAgo = moment(startDate.setDate(startDate.getDate() + 31)).format('YYYY.MM.DD');
 
       if ($(btn).closest(".schedule-input-wrap").length > 0) {
         $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
@@ -4508,7 +4508,7 @@ const setDatepickerArticleRequest = function() {
   
       if($(btn).hasClass('enddate')) {
         minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
-        maxDate = startDateTrdOneDateAgo;
+        //maxDate = startDateTrdOneDateAgo;
       }
   
       if ($initEl.is(':visible')) {
@@ -4543,8 +4543,8 @@ const setDatepickerArticleRequest = function() {
             var endDt = moment($('.enddate').val()).format('YYYYMMDD');
             var startDt = moment($('.startdate').val()).format('YYYYMMDD');
             if(endDt < startDt) {
-              $('#datepickerEnd').find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
-              $('#datepickerEnd').find('.ui-state-active').removeClass('ui-state-active');
+              //$('#datepickerEnd').find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
+              //$('#datepickerEnd').find('.ui-state-active').removeClass('ui-state-active');
               
               $('.enddate').val($('.startdate').val());
             }
@@ -4575,7 +4575,15 @@ const setDatepickerArticleRequest = function() {
           $initEl.find('.dp-header').append('<div class="selected-date"></div>');
           
           if($(btn).hasClass('enddate')) {
-              console.log('btn : '+$(btn).val());
+              //console.log('btn : '+$(btn).val());
+            $initEl.find('.dp-header').append('<div class="selected-date">' + $(btn).val() + '</div>');
+          //$initEl.find('.dp-header').append('<div class="selected-date">' + newDate + '</div>');
+          }          
+        }
+        else{
+            //console.log('selected : '+$initEl.find('.selected-date').val()+' btn : '+$(btn).val());
+          if($(btn).hasClass('enddate')) {
+              $initEl.find('.dp-header').find('.selected-date').remove();
             $initEl.find('.dp-header').append('<div class="selected-date">' + $(btn).val() + '</div>');
           //$initEl.find('.dp-header').append('<div class="selected-date">' + newDate + '</div>');
           }          
@@ -12034,9 +12042,11 @@ function requestItemsInputFirst(requestdata) {
         //var accountListListText = '';    
         //let dropdownListItem = $(accountListListText);
         
-        dropdownMenuListWrap.css('bottom', 60+'px');
-        dropdownMenuListWrap.empty();
-        
+        //dropdownMenuListWrap.css('bottom', 60+'px');
+        //dropdownMenuListWrap.empty();
+        dropdownMenuListWrap.css('top', 'auto');    // .css('filter','opacity(0%)');
+        dropdownMenuListWrap.remove();
+
         $(btn).removeClass('active');
         $(btn).find('span').text('청구할 계정을 선택해 주세요.');
     }
@@ -12085,6 +12095,7 @@ function requestItemsInputFirst(requestdata) {
                 else{
                     account_list = result.resultList;
                     
+                    dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
                     //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
                     var accountListListText = '';    
                     account_list.forEach(function(account, index) {
@@ -12100,7 +12111,7 @@ function requestItemsInputFirst(requestdata) {
                     let dropdownListItem = $(accountListListText);
                     
                     dropdownMenuListWrap.append(dropdownListItem);
-                    //dropdownBox.append(dropdownMenuListWrap);
+                    dropdownBox.append(dropdownMenuListWrap);
                     
                     if(selectflag == true) {
                         setTimeout(function() {
@@ -12449,7 +12460,7 @@ function requestItemsInputFirst(requestdata) {
     dropdownMainBtn.append(dropdownArrow);
 
     
-    var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
+    var dropdownMenuListWrap = $('<ul class="dropdown-menu"></ul>');
     var accountListListText = '';    
     accountList.forEach(function(account, index) {
         var selected = '';
@@ -12462,12 +12473,15 @@ function requestItemsInputFirst(requestdata) {
     let dropdownListItem = $(accountListListText);
     
     dropdownMenuListWrap.append(dropdownListItem);
-    dropdownBox.append(dropdownMenuListWrap);
+    //dropdownBox.append(dropdownMenuListWrap);
     
     dropdownBox.append('<input type="hidden" value="" id="account_code"/>');
     dropdownBox.append('<input type="hidden" value="" id="account_name"/>');
     
     pluginForm.append(dropdownBox);
+    
+    var emptylayer = $('<div id="empty_layer" style="height:200px;display:none;"></div>');
+    pluginForm.append(emptylayer);
 
     dropdownTitle.find('a').on('click', function() {
         let url = 'https://clink.dev.nerp.lge.com:9090/PclHttp.dll';    // 계정 가이드 
@@ -12644,10 +12658,24 @@ function requestItemsInputFirst(requestdata) {
         nextBtnEvent();
     });
     function dropdownBtnEvent(target) {
+            let ddmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+            console.log('ddmenu height : '+ddmenu.outerHeight()+', conetne : '+$('.plugin-contents').height());
+            
         if ($(target).hasClass('active')) {
+
+            pluginForm.find('#empty_layer').css('display', 'none');
+            
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
+
+            //pluginForm.find('.btn').find('button').prepend(emptylayer);
+            pluginForm.find('#empty_layer').css('display', 'block');
+            setTimeout(function() {
+                    var e = document.getElementById("item-content");
+                    e.scrollTop = e.scrollHeight
+            }, 50)            
+            
             $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
             $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
         }
@@ -12673,6 +12701,9 @@ function requestItemsInputFirst(requestdata) {
         
         //$(target).parents('.dropdown-box').find('#redidence_type').val(redidence_type);
         dropmenu.stop().slideUp().removeClass('show');
+
+        pluginForm.find('#empty_layer').css('display', 'none');
+        
         //console.log('dropBtn height after : '+$(dropBtn).outerHeight());
     }
 
@@ -15305,7 +15336,7 @@ function addArticleReqFilterPopupOpen(data){
     });
     
     var addArtReqFilterFoot = $('<div class="articleRequestFilter-footer"></div>');
-    var addArtReqFilterSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-artReqFilter">확인</button>');
+    var addArtReqFilterSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-artReqFilter">조회</button>');
     addArtReqFilterFoot.append(addArtReqFilterSubmit);
     addArtReqFilter.append(addArtReqFilterFoot);
     
@@ -16086,7 +16117,7 @@ function uitUpdatePopupOpenNERP(uitdata) {
             $('.plugin-dim').remove();
             $('#uit-update').remove();
             
-            uitDataInit(uitdata);
+            uitDataInitNERP(uitdata);
         }, 300);
 
     }
@@ -16273,7 +16304,7 @@ function uitUpdateInputFirstNERP(uitdata){
                       console.log('품목 결과 : 0건');
                       
                       setTimeout(function() {
-                        showHtmlToastDialog('Plant, Meterial no.가 유효하지 않습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        showHtmlToastDialog('Plant ID, Material no.가 유효하지 않습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                       }, 100);                      
                       //return;                      
                 } else {
@@ -16596,12 +16627,12 @@ function uitUpdateInputSecondNERP(uitdata){
                      console.log('UIT 수정 요청 완료 : ');
                      
                      uitdata.uptMaterial = createInfo[0].MATNR;
-                     uitdata.beforeUit = createInfo[0].ZUIT;
-                     uitdata.afterUit = createInfo[0].ZCHG_UIT;
+                     uitdata.bef_uit_code = createInfo[0].ZUIT;
+                     uitdata.aft_uit_code = createInfo[0].ZCHG_UIT;
     
                     closeBtn();
 
-                    appendChatbotHtml(addUitChangeCard(uitdata), true);    
+                    appendChatbotHtml(addUitChangeCardNERP(uitdata), true);    
                 }
     
                 closeLoadingWithMask();
@@ -16677,7 +16708,7 @@ function uitUpdateInputSecondNERP(uitdata){
             $('.plugin-dim').remove();
             $('#uit-update').remove();
             
-            uitDataInit(uitdata);            
+            uitDataInitNERP(uitdata);            
         }, 300);
     }
     
@@ -16701,7 +16732,7 @@ function uitUpdateInputSecondNERP(uitdata){
     return pluginForm;
 };
 
-function uitDataInit(uitdata) {
+function uitDataInitNERP(uitdata) {
 
     delete uitdata.plant;
     delete uitdata.materialNo;
@@ -16714,7 +16745,7 @@ function uitDataInit(uitdata) {
 
 }
 
-function addUitChangeCard(uitdata){
+function addUitChangeCardNERP(uitdata){
     var messageWrap = $('<div class="custom-message"></div>');
     
     var messageTextWrap = $('<div class="message simple-text"></div>');    
@@ -16747,9 +16778,9 @@ function addUitChangeCard(uitdata){
                 +'<li>'
                     +'<p class="item-header" style="margin: 0px !important;">수정 UIT</p>'
                     +'<div class="item-content status-chip">'
-                        +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+uitdata.beforeUit+'</span>'
+                        +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+bef_uit_code+'</span>'
                         +iconArrow2
-                        +'<span class="badge-base badge-pink" style="'+chipStyleAft+'">'+uitdata.afterUit+'</span>'
+                        +'<span class="badge-base badge-pink" style="'+chipStyleAft+'">'+aft_uit_code+'</span>'
                     +'</div>'
                 +'</li>'
             +'</ul>'
@@ -16766,7 +16797,7 @@ function addUitChangeCard(uitdata){
     quickBtnBox.append(list);
     messageTextWrap2.append(quickBtnBox);
 
-    uitDataInit(uitdata);       // 물품 입력내용 초기화. 
+    uitDataInitNERP(uitdata);       // 물품 입력내용 초기화. 
 
     list.on('click', function() {
 
