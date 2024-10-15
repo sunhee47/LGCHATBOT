@@ -2588,10 +2588,13 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">회사일반</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">도움말</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">홍보자료</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문 입력</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구 신청</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">NERP-UIT 수정</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">NERP-UIT 수정내역조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">GERP-UIT 수정</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">GERP-UIT 수정내역조회</button>'
   +     '</div>'
   +     '<h2>IT 관련 문의가 있으신가요?</h2>'
   +     '<div class="btns">'
@@ -6134,23 +6137,133 @@ function makeDefaultFallbackCard(data) {
  
 }
 
+/////////////////////////////////////////////////////  []  ////////////////////////////////
+
+    function thisPushPluginClose(popupObj) {
+        popupObj.removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            popupObj.remove();
+            
+            closeErrorWithMask();
+            closeLoadingWithMask();
+        }, 100);
+    }
+
+function callbackPushOrderInquiry(payload) {
+    var searchInfo = '';
+    var regSuccessYn = '';
+    var errorMessage = '';
+    
+    let messageCard = null;
+    
+    let p_gubun = 'A';
+    let p_order_number = '';
+    let p_ref_number = '';
+    
+    var reviewParam = {
+            userId:'sojung.im',
+            re_employee_number : 'Y046222', 
+            re_order_number : (p_gubun == 'C')? p_order_number:'0',
+            re_regist_number : (p_gubun == 'D')? p_ref_number:'0',
+            re_order_gubun : p_gubun
+    }    
+    
+    if (payload && payload.body && payload.body.OUTPUT_DATA.length > 0) {
+        var bodyData = payload.body.OUTPUT_DATA;
+        var bodyResult = payload.body.OUTPUT_RESULT[0];
+        var header = payload.header;
+
+        console.log(bodyResult["RESULT_CODE"]);
+        
+        if (bodyResult["RESULT_CODE"] != 'SUCCESS') {
+            console.log('errorMessage : '+header["message"]);
+            regSuccessYn = 'N';
+            errorMessage = header["message"];               // 에러메시지.
+        } else {
+            regSuccessYn = 'Y';
+            searchInfo = bodyData;
+        }
+        
+    }
+    else{
+        regSuccessYn = 'N';
+        errorMessage = 'server error!!!';               // 에러메시지.
+    }
+    
+    thisPushPluginClose($('#aalvPopup'));
+
+    if(regSuccessYn == 'N') {
+        
+        console.log('타계정 주문 현황 조회 실패 : ');
+        
+        messageCard = aalvResultError(reviewParam);
+    }   
+    else{
+    
+        console.log('타계정 주문 현황 조회 완료 : ', searchInfo);
+        
+        var msgSearchResult = '<div class="message simple-text">'
+                         +'<p>'
+                            +'타계정 주문 내역을 조회했어요.<br> '
+                            +'<small class="note" style="color: #898989; font-size:12px;">나의 주문 건, 부서 내 주문 건 조회시 </br>'
+                            +'오늘 기준 1개월 이내 주문 건만 조회 가능하며, </br>'
+                            +'주문 발행 일자를 기준으로 최근 20건을 보여 줍니다.</br>'
+                            +'</small></br>'
+                            +'<small class="note" style="color: #898989; font-size:12px;">※ 특정 주문 건 조회 시 주문 번호 또는 접수 번호로 조회해 주세요.</br>'
+                         +'</p>'
+                        + '</div>'; 
+        
+        var anotherSearchResult = '';
+        if(searchInfo.length > 0) {            // 타계정 주문 현황 조회
+
+            messageCard = aalvResult(searchInfo, msgSearchResult);
+        }
+        else{
+            console.log('타계정 주문 현황 조회 : 0건.');
+            setTimeout(function() {
+                showSmallDialog('타계정 주문 현황 조회 건수가 없습니다. 다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+                $('.chat-message.left').last().remove();
+            }, 100);                    
+        }
+        
+    }   
+    
+    closeLoadingWithMask();
+    
+    return messageCard;
+}
 
 // ** 커스텀 음답 메시지 생성 함수 **
 chatui.createCustomResponseMessage = function(response, isHistory) {
   console.log("chatui.createCustomResponseMessage()", response);
   
   try {
-      
+    var messageCard = null;
+
     if(response.pushType) {         // 타계정 우회방안 적용. 
     
         console.log('pushType : '+response.pushType);
-        return;    
+        
+        if(response.pushType == 'pushOrderInquiry') {       // 타계정 주문 현황 조회. 
+            var payload = response.response;
+            console.log('payload > ', payload);
+            
+            $('.chat-message.left').last().remove();
+            
+            messageCard = callbackPushOrderInquiry(payload);
+            
+            requestMsgScroll();    
+
+        }
+        
+        return messageCard;    
     }   
     
     var customPayload = JSON.parse(response.response);
 
-    var messageCard = null;
-   
     if(customPayload) {   
         if(customPayload.type == 'apmsPush') {          // 광고판촉비 push 일 경우 
             console.log('apmsPush : ', response);
@@ -6569,11 +6682,22 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         else if(message.type == 'uitUpdateInputNERP') {                    // UIT 수정 (NERP)
           messageCard = uitUpdateInputNERP(message.data);
     	}
-        if(message.type == 'uitUpdateListNERP') {
+        else if(message.type == 'uitUpdateListNERP') {
             //if(message.data.isSearch){
                 messageCard = uitUpdateListNERP(message.data); // UIT 수정내역 조회
             //}else{
             //    messageCard = makeUitUpdateListNERP(message.data); // UIT 수정내역 조회(메시지카드)
+            //}
+        }
+        /* GERP UIT */ 
+        else if(message.type == 'uitUpdateInputGERP') {
+            messageCard = uitUpdateInputGERP(message.data); // UIT 수정
+        }
+        else if(message.type == 'uitUpdateListGERP') {
+            //if(message.data.isSearch){
+            //    messageCard = uitUpdateListGERP(message.data); // UIT 수정내역 조회
+            //}else{
+                messageCard = makeUitUpdateListGERP(message.data); // UIT 수정내역 조회(메시지카드)
             //}
         }
         else {
@@ -14416,10 +14540,15 @@ function anotherAccountListViewPopupOpen(data) {
     var registNumber = (data.re_regist_number == null)? '':data.re_regist_number;
     var searchGubun = (data.re_order_gubun == null)? '':data.re_order_gubun;
     
+    if(empNumber == '') {
+        empNumber = data.employee_number;
+    }
+    
     var searchNumber = '';
     if(searchGubun == 'C')   searchNumber = orderNumber;
     if(searchGubun == 'D')   searchNumber = registNumber;
     
+    console.log('empNumber : '+empNumber);
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
     var addPlugin = $('<div class="plugins" id="aalvPopup"></div>');
@@ -14545,7 +14674,7 @@ function anotherAccountListViewPopupOpen(data) {
 			  "body" : {
 				"INPUT_DATA1":
 					 [{
-						"p_company_code": userId,
+						"p_company_code": "LGEKR",
 						"p_employee_number": empNumber,
 						"p_gubun": $('#search_type').val(),
 						"p_order_number": ($('#search_type').val() == 'C')? $('#searchNumber').val():'0',
@@ -14553,6 +14682,8 @@ function anotherAccountListViewPopupOpen(data) {
 					 }]
 			  }
 			};                        
+        
+        LoadingWithMask();
         
         let api_header_str = JSON.stringify(api_header);        
         let api_body_str = JSON.stringify(api_body);        
@@ -15021,7 +15152,7 @@ function anotherAccountOrderResultError(orderdata) {
 }
 
 // 타계정 주문 현황 조회 오류 메세지
-function aalvResultError() {
+function aalvResultError(data) {
     var messageWrap = $('<div class="custom-message"></div>');
     var messageBox = $('<div class="message"></div>');
     var messageTextWrap = $('<div class="message simple-text"></div>');
@@ -15037,7 +15168,7 @@ function aalvResultError() {
         +'</div>'
     );
     reloadBtn.on('click', function() {
-        anotherAccountListViewPopupOpen();
+        anotherAccountListViewPopupOpen(data);
     });
     messageTextWrap.append(messageTextContent);
     messageTextWrap.append(reloadBtn);
@@ -15284,12 +15415,19 @@ function anotherAccountResult(orderdata) {
 }
 
 // 타계정 주문 현황 결과 메세지
-function aalvResult(result) {
+function aalvResult(result, textCont) {
     console.log('result : ', result);
     
     var messageCont = $('<div class="custom-message"></div>');
     var messageBox = $('<div class="message"></div>');
-    //var messageTextWrap = $('<div class="message simple-text"></div>');    
+    //var messageTextWrap = $('<div class="message simple-text"></div>');   
+    
+    if(textCont != null) {
+        var messageBox1 = $('<div class="message"></div>');
+        
+        messageBox1.append(textCont);
+        messageCont.append(messageBox1);
+    }
     
     var messageWrap = $('<div class="message content-list-message"></div>');
     var messageHeader = $('<div class="content-list-header">' + listHeaderIcon2 + '<p class="list-header-title" style="font-weight: bold;">타계정 주문 내역</p></div>');
@@ -19365,7 +19503,7 @@ function uitUpdatePopupOpenNERP(uitdata) {
             $('.plugin-dim').remove();
             $('#uit-update').remove();
             
-            uitDataInit(uitdata);
+            uitDataInitNERP(uitdata);
         }, 300);
 
     }
@@ -19864,12 +20002,12 @@ function uitUpdateInputSecondNERP(uitdata){
                      console.log('UIT 수정 요청 완료 : ');
                      
                      uitdata.uptMaterial = createInfo[0].MATNR;
-                     uitdata.beforeUit = createInfo[0].ZUIT;
-                     uitdata.afterUit = createInfo[0].ZCHG_UIT;
-    
+                     uitdata.bef_uit_code = createInfo[0].ZUIT;
+                     uitdata.aft_uit_code = createInfo[0].ZCHG_UIT;
+                     
                     closeBtn();
 
-                    appendChatbotHtml(addUitChangeCard(uitdata), true);    
+                    appendChatbotHtml(addUitChangeCardNERP(uitdata), true);    
                 }
     
                 closeLoadingWithMask();
@@ -19945,7 +20083,7 @@ function uitUpdateInputSecondNERP(uitdata){
             $('.plugin-dim').remove();
             $('#uit-update').remove();
             
-            uitDataInit(uitdata);            
+            uitDataInitNERP(uitdata);            
         }, 300);
     }
     
@@ -19969,7 +20107,7 @@ function uitUpdateInputSecondNERP(uitdata){
     return pluginForm;
 };
 
-function uitDataInit(uitdata) {
+function uitDataInitNERP(uitdata) {
 
     delete uitdata.plant;
     delete uitdata.materialNo;
@@ -19982,7 +20120,7 @@ function uitDataInit(uitdata) {
 
 }
 
-function addUitChangeCard(uitdata){
+function addUitChangeCardNERP(uitdata){
     var messageWrap = $('<div class="custom-message"></div>');
     
     var messageTextWrap = $('<div class="message simple-text"></div>');    
@@ -20015,9 +20153,9 @@ function addUitChangeCard(uitdata){
                 +'<li>'
                     +'<p class="item-header" style="margin: 0px !important;">수정 UIT</p>'
                     +'<div class="item-content status-chip">'
-                        +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+uitdata.beforeUit+'</span>'
+                        +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+bef_uit_code+'</span>'
                         +iconArrow2
-                        +'<span class="badge-base badge-pink" style="'+chipStyleAft+'">'+uitdata.afterUit+'</span>'
+                        +'<span class="badge-base badge-pink" style="'+chipStyleAft+'">'+aft_uit_code+'</span>'
                     +'</div>'
                 +'</li>'
             +'</ul>'
@@ -20034,7 +20172,7 @@ function addUitChangeCard(uitdata){
     quickBtnBox.append(list);
     messageTextWrap2.append(quickBtnBox);
 
-    uitDataInit(uitdata);       // 물품 입력내용 초기화. 
+    uitDataInitNERP(uitdata);       // 물품 입력내용 초기화. 
 
     list.on('click', function() {
 
@@ -20357,154 +20495,154 @@ function addDateSettingPopupOpenNERP(data){
 
     /* #########[ popup_content ]######### */
     /*  ###[ ORG Code ]###  */
-    var orgCodeBox = $(
-        '<div class="input-box">'
-            +'<label>ORG Code<b>*</b></label>'
-        +'</div>'
-    );
+    // var orgCodeBox = $(
+    //     '<div class="input-box">'
+    //         +'<label>ORG Code<b>*</b></label>'
+    //     +'</div>'
+    // );
 
-    var orgCodeForm = $('<div class="orgId-form"></div>');
+    // var orgCodeForm = $('<div class="orgId-form"></div>');
 
-    var selectedOrg = $('<div class="selected-org fold"></div>');
-    orgCodeForm.append(selectedOrg);
-    var autocompleteOrg = $('<div class="autocomplete-member"></div>');
-    orgCodeForm.append(autocompleteOrg);
-    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;">'
-        +'<span class="org-list">ORG Code 목록</span>'
-        +'</ul>');
-    autocompleteOrg.append(orgUi);
+    // var selectedOrg = $('<div class="selected-org fold"></div>');
+    // orgCodeForm.append(selectedOrg);
+    // var autocompleteOrg = $('<div class="autocomplete-member"></div>');
+    // orgCodeForm.append(autocompleteOrg);
+    // var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;">'
+    //     +'<span class="org-list">ORG Code 목록</span>'
+    //     +'</ul>');
+    // autocompleteOrg.append(orgUi);
 
-    var orgCodeInputForm = $(
-        '<div class="input-form">'
-            +'<input type="text" placeholder="ORG Code를 입력 후 \'Enter\'로 검색" class="search-input" id="orgCode" max-length="358" autocomplete="off"/>'
-            +'<span class="input-val-del">'
-                +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                    +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
-                +'</svg>'
-            +'</span>'
-        +'</div>'
-    );
-    orgCodeForm.append(orgCodeInputForm);
-    var orgLoading = false;
-    orgCodeInputForm.on('keyup', function(e) {
-        var input = e.target.value;
-        var inputVal = input.toUpperCase();
-        var inputLength = inputVal.length;
+    // var orgCodeInputForm = $(
+    //     '<div class="input-form">'
+    //         +'<input type="text" placeholder="ORG Code를 입력 후 \'Enter\'로 검색" class="search-input" id="orgCode" max-length="358" autocomplete="off"/>'
+    //         +'<span class="input-val-del">'
+    //             +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //                 +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+    //             +'</svg>'
+    //         +'</span>'
+    //     +'</div>'
+    // );
+    // orgCodeForm.append(orgCodeInputForm);
+    // var orgLoading = false;
+    // orgCodeInputForm.on('keyup', function(e) {
+    //     var input = e.target.value;
+    //     var inputVal = input.toUpperCase();
+    //     var inputLength = inputVal.length;
 
-        var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g; // /[a-zA-Z1-9]/g;
+    //     var check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g; // /[a-zA-Z1-9]/g;
             
-        if(check.test(inputVal)){
-            $('.small-dialog').remove();
-            showSmallDialog("영어, 숫자만 입력해주세요.");
-            $('#orgCode').val('');
-            $('#orgCode').focus();
-            return;
-        }
+    //     if(check.test(inputVal)){
+    //         $('.small-dialog').remove();
+    //         showSmallDialog("영어, 숫자만 입력해주세요.");
+    //         $('#orgCode').val('');
+    //         $('#orgCode').focus();
+    //         return;
+    //     }
 
-        var uitReqDateSettingSubmit = $('#btn-uitReqDate');
+    //     var uitReqDateSettingSubmit = $('#btn-uitReqDate');
 
-        if(input){
-            $(this).find('.input-val-del').addClass('show');
-        }else{
-            $(this).find('.input-val-del').removeClass('show');
-            selectedOrg.empty();
-            uitReqDateSettingSubmit.addClass('btn-disabled');
-        }
+    //     if(input){
+    //         $(this).find('.input-val-del').addClass('show');
+    //     }else{
+    //         $(this).find('.input-val-del').removeClass('show');
+    //         selectedOrg.empty();
+    //         uitReqDateSettingSubmit.addClass('btn-disabled');
+    //     }
 
-        if (window.event.keyCode == 13) {
-            if(orgLoading) return;
-            var ul = $(this).closest('.orgId-form').find('ul');
-            ul.empty();
-            ul.append('<span class="org-list">ORG Code 목록</span>');
+    //     if (window.event.keyCode == 13) {
+    //         if(orgLoading) return;
+    //         var ul = $(this).closest('.orgId-form').find('ul');
+    //         ul.empty();
+    //         ul.append('<span class="org-list">ORG Code 목록</span>');
 
-            if(inputLength == 3){
+    //         if(inputLength == 3){
                 
-                var requestParam = {
-                    query: {
-                        "event": "searchReqOrgCodeReturnEvent"
-                    },
-                    payload: {
-                        "plant_code" : inputVal
-                    }
-                };
+    //             var requestParam = {
+    //                 query: {
+    //                     "event": "searchReqOrgCodeReturnEvent"
+    //                 },
+    //                 payload: {
+    //                     "plant_code" : inputVal
+    //                 }
+    //             };
 
-                orgLoading = true;
-                LoadingWithMask();
-                sendChatApi(requestParam, null, function(payload){
-                    var message = payload.queryResult.messages[0];
-                    var response = message.response;
-                    var result = JSON.parse(response);
+    //             orgLoading = true;
+    //             LoadingWithMask();
+    //             sendChatApi(requestParam, null, function(payload){
+    //                 var message = payload.queryResult.messages[0];
+    //                 var response = message.response;
+    //                 var result = JSON.parse(response);
                     
-                    var li = $('<li class="ui-menu-item"></li>');
-                    var htmlStr = "";
+    //                 var li = $('<li class="ui-menu-item"></li>');
+    //                 var htmlStr = "";
 
-                    if(result == null){
-                        li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
-                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
-                        htmlStr += '<input type="hidden" class="plant-code" value=""/>';
-                        htmlStr += '<input type="hidden" class="plant-id" value=""/>';
-                        htmlStr += '<input type="hidden" class="plant-name" value=""/>';
-                        htmlStr += '</div>';
-                    }else{
-                        if(result.RESULT_CODE != "SUCCESS"){
-                            li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
-                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
-                            htmlStr += '<input type="hidden" class="plant-code" value=""/>';
-                            htmlStr += '<input type="hidden" class="plant-id" value=""/>';
-                            htmlStr += '<input type="hidden" class="plant-name" value=""/>';
-                            htmlStr += '</div>';
-                        }else{
-                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">['+ result.plant_code + '] '+ result.plant_name;
-                            htmlStr += '<input type="hidden" class="plant-code" value="' + result.plant_code + '"/>';
-                            htmlStr += '<input type="hidden" class="plant-id" value="' + result.plant_id + '"/>';
-                            htmlStr += '<input type="hidden" class="plant-name" value="' + result.plant_name + '"/>';
-                            htmlStr += '</div>';
-                        }
-                    }
+    //                 if(result == null){
+    //                     li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+    //                     htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+    //                     htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+    //                     htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+    //                     htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+    //                     htmlStr += '</div>';
+    //                 }else{
+    //                     if(result.RESULT_CODE != "SUCCESS"){
+    //                         li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+    //                         htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+    //                         htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+    //                         htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+    //                         htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+    //                         htmlStr += '</div>';
+    //                     }else{
+    //                         htmlStr =  '<div class="person-info ui-menu-item-wrapper">['+ result.plant_code + '] '+ result.plant_name;
+    //                         htmlStr += '<input type="hidden" class="plant-code" value="' + result.plant_code + '"/>';
+    //                         htmlStr += '<input type="hidden" class="plant-id" value="' + result.plant_id + '"/>';
+    //                         htmlStr += '<input type="hidden" class="plant-name" value="' + result.plant_name + '"/>';
+    //                         htmlStr += '</div>';
+    //                     }
+    //                 }
 
-                    li.append(htmlStr);
-                    orgUi.append(li);
+    //                 li.append(htmlStr);
+    //                 orgUi.append(li);
 
-                    li.on('click', function() {
-                        var plantCode = $(this).find('.plant-code').val();
-                        var plantId = $(this).find('.plant-id').val();
-                        var plantName = $(this).find('.plant-name').val();
+    //                 li.on('click', function() {
+    //                     var plantCode = $(this).find('.plant-code').val();
+    //                     var plantId = $(this).find('.plant-id').val();
+    //                     var plantName = $(this).find('.plant-name').val();
                 
-                        if(plantCode != ""){
-                            var plantInfo = $('<div class="sel-org-info" style="display: none;">'
-                              + '<input type="hidden" value="'+ plantCode +'" class="sel-plant-code"/>'
-                              + '<input type="hidden" value="'+ plantId +'" class="sel-plant-id"/>'
-                              + '<input type="hidden" value="'+ plantName +'" class="sel-plant-name"/>'
-                              +'</div>'
-                            );
+    //                     if(plantCode != ""){
+    //                         var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+    //                           + '<input type="hidden" value="'+ plantCode +'" class="sel-plant-code"/>'
+    //                           + '<input type="hidden" value="'+ plantId +'" class="sel-plant-id"/>'
+    //                           + '<input type="hidden" value="'+ plantName +'" class="sel-plant-name"/>'
+    //                           +'</div>'
+    //                         );
                         
-                            selectedOrg.empty();
-                            selectedOrg.append(plantInfo);
-                            $('#orgCode').val(plantCode);
-                            uitReqDateSettingSubmit.removeClass('btn-disabled');
-                        }else{
-                            $('#orgCode').val("");
-                            selectedOrg.empty();
-                            uitReqDateSettingSubmit.addClass('btn-disabled');
-                        }
-                        orgUi.css('display','none');
-                    });
+    //                         selectedOrg.empty();
+    //                         selectedOrg.append(plantInfo);
+    //                         $('#orgCode').val(plantCode);
+    //                         uitReqDateSettingSubmit.removeClass('btn-disabled');
+    //                     }else{
+    //                         $('#orgCode').val("");
+    //                         selectedOrg.empty();
+    //                         uitReqDateSettingSubmit.addClass('btn-disabled');
+    //                     }
+    //                     orgUi.css('display','none');
+    //                 });
 
-                    if(orgUi.length){
-                        orgUi.css('display','block');
-                    }
-                    orgLoading = false;
-                    closeLoadingWithMask();
-                });
+    //                 if(orgUi.length){
+    //                     orgUi.css('display','block');
+    //                 }
+    //                 orgLoading = false;
+    //                 closeLoadingWithMask();
+    //             });
                 
-            }else{
-                $('.small-dialog').remove();
-                showSmallDialog("검색어를 3글자로 입력해 주세요.");
-                e.target.focus();
-                orgUi.css('display','none');
-            }
-        }
-    });
+    //         }else{
+    //             $('.small-dialog').remove();
+    //             showSmallDialog("검색어를 3글자로 입력해 주세요.");
+    //             e.target.focus();
+    //             orgUi.css('display','none');
+    //         }
+    //     }
+    // });
         
     // $(document).on('click', function(e) {
         
@@ -20535,7 +20673,7 @@ function addDateSettingPopupOpenNERP(data){
     //     }
     // });
         
-    orgCodeBox.append(orgCodeForm);
+    // orgCodeBox.append(orgCodeForm);
     //uitReqDateSettingForm.append(orgCodeBox);
     
     /*  ###[ 조회 기간 ]###  */
@@ -21032,3 +21170,1683 @@ const setDatepickerUITGERP = function() {
       fulldate: fullDate
     }
 };
+
+
+/* #################### [ UIT 수정 (GERP) Start ] #################### */
+
+// UIT 조회 메시지 카드
+function makeUitUpdateListGERP(data) {
+    var uitUpdateCard = $('<div class="system-contents"></div>');
+    var uitUpdateText = $(
+        '<div class="message simple-text">'
+        +   '<p>UIT 수정 내역을 조회하려면 아래 버튼을 눌러주세요.</p>'
+        +   '<p style="font-size: 11.5px;color: #898989;">'
+        +       '엘지니에선 UIT 수정 확정된 내역을 최대 20건 조회해 드릴 수 있어요.'
+        +   '</p>'
+        +'</div>' )
+    uitUpdateCard.append(uitUpdateText);
+
+    var uitUpdateBtnWrap = $('<div class="btn"></div>');
+    var uitUpdateBtn = $('<button type="button" class="btn btn-emphasis">UIT 수정 내역 조회</button>');
+    
+    uitUpdateBtn.on('click', function() {
+        addDateSettingPopupOpenGERP(data);
+    });
+    
+    uitUpdateBtnWrap.append(uitUpdateBtn);
+    uitUpdateText.append(uitUpdateBtnWrap);
+    
+    if(checkChatHistory == false) {
+        //addDateSettingPopupOpenGERP(data);
+    }
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var systemBtn = $('<span class="btn-custom-reply">UIT 수정 요청</span>');
+    quickReplies.append(systemBtn);
+    uitUpdateCard.append(quickReplies);
+    
+    systemBtn.click(function(){
+        chatui.sendMessage("UIT 수정 요청");
+    });
+    
+    return uitUpdateCard;
+}
+
+// UIT 수정내역 조회
+function uitUpdateListGERP(data) {
+    console.log('list data : ', data);
+    var items = data.items;
+
+    var reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+    var reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+
+    // system contents start
+    var uitUpdateListContents = $('<div class="system-contents" style="width: 300px;"></div>');
+    
+    // 상위 문구 조회필터 버튼 영역
+    var msgCon = $('<div class="message simple-text"></div>');
+    var text = $(
+            '<p>'
+            + '<b style="color: #333333;">' + reqDateFr + ' - ' + reqDateTo + '</b> 에 '
+            + '<font color="#E0205C"><b>' + data.userName + '님</b></font>이 신청하셔서 수정된 UIT는 '
+            + '<font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
+          + '</p>'
+          + '<p style="font-size: 12px;color: #898989;">'
+            + '엘지니에선 최대 20건 조회해 드릴 수 있어요.'
+          + '</p>'
+        );
+    
+    msgCon.append(text);    
+    
+    // simple Text button 추가
+    var btnWrap = $('<div class="btn"></div>');
+    var customBtn = $('<button class="btn btn-emphasis">조회 기간 설정</button>')
+
+    btnWrap.append(customBtn);
+    msgCon.append(btnWrap);
+
+    uitUpdateListContents.append(msgCon);
+
+    // simple Text button event
+    customBtn.click(function(){
+        addDateSettingPopupOpenGERP(data);
+    });
+    // 상위 문구 조회필터 버튼 영역 END
+
+    // 하단 내역 조회 카드
+    if (Object.prototype.toString.call(items) && Array.isArray(items) && items.length > 0) {
+        
+        var listContents = $('<div class="message profile-list system" style="margin-left: 0px;"></div>');
+    	
+    	var listWrap = $('<div class="p-box"></div>');
+    	listContents.append(listWrap);
+    	
+    	var listUl = $('<ul class="profile-list-wrap"></ul>');
+    	listWrap.append(listUl);
+
+        // 최대 20건
+    	if(items.length > 20){
+    	    items.splice(20, items.length - 20);
+    	}
+    	
+        items.forEach(function(item,index){
+            
+            listCount = index + 1;
+            
+            var listLi = $('<li class="list-box Request-List-box" id="listBox_' + listCount + '"></li>');
+            listUl.append(listLi);
+          
+            var sysInfo = $('<div class="text-box"></div>');
+            listLi.append(sysInfo);
+            
+            /* Material No */
+            sysInfo.append(
+                '<div class="name">'
+                    +'<h1 class="system articleRequestList-h1">'
+                        + item.part_no
+                    +'</h1>'
+                +'</div">'
+            );
+            
+            var sysInfoList = $('<ul class="profile-info system"></ul>');
+            
+            /* 상태 아이콘 */
+            var chipStyle1;
+            var chipStyle2;
+            if(item.bef_uit_code == "M"||item.bef_uit_code == "G"){
+                chipStyle1 = 'style="padding: 1px 5px 2px 4px;"'
+            }else if(item.bef_uit_code == "F"){
+                chipStyle1 = 'style="padding: 1px 5px 2px 6px;"'
+            }
+
+            if(item.aft_uit_code == "M"||item.aft_uit_code == "G"){
+                chipStyle2 = 'style="padding: 1px 5px 2px 4px;"'
+            }else if(item.aft_uit_code == "F"){
+                chipStyle2 = 'style="padding: 1px 5px 2px 6px;"'
+            }
+
+            var liStatus = '<span class="badge-base badge-gray" '+chipStyle1+'>' + item.bef_uit_code + '</span>';
+            liStatus += iconArrow2;
+            liStatus += '<span class="badge-base badge-pink" '+chipStyle2+'>' + item.aft_uit_code + '</span>';
+            
+            sysInfoList.append($(
+                '<li class="articleRequestList-li uit-content-box">'
+                    +'<h4>수정 UIT</h4>'
+                    +'<div style="display: flex;justify-content: right;align-items: center;" class="status-chip">' + liStatus + '</div>'
+                +'</li>'
+            ));
+            
+            /* 수정 사유 */
+            sysInfoList.append($(
+                '<li class="articleRequestList-li">'
+                    +'<h4>수정 사유</h4>'
+                    +'<div class="result-item-reqTitle"><span>' + item.change_reason + '</span></div>'
+                +'</li>'
+            ));
+            
+            sysInfo.append(sysInfoList);
+            
+            if (listCount > 4){
+                listLi.addClass('hide');
+            }
+            
+            arrowHtml =	'<span class="arrow">'
+                +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                +'</svg>'
+              +'</span>';    
+          
+            listLi.append(arrowHtml);
+            
+            listLi.click(function(){
+                addUITDetailPopupOpenGERP(item, data.orgCode);
+            });
+          
+        });
+   
+        /* 
+        더보기 버튼
+        청구물품이 4건 초과일때 출력
+        클릭시 4건씩 추가 노출
+        */
+        if (listCount > 4){
+            var seeMoreBtn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            
+            listWrap.append(seeMoreBtn);
+            
+            seeMoreBtn.click(function() {
+                var currentList = $(this).parents('.profile-list').find(".hide").first().attr('id');
+                var currentLi = parseInt(currentList.split('_')[1]);
+                
+                if((currentLi+4) >= listCount){
+                    $(this).parents('.p-box').find(".list-box").removeClass('hide');
+                    $(this).remove();
+                }else{
+                    for(var i=0;i<4;i++){
+                        var targetLi = "#listBox_" + (currentLi + i);
+                        $(this).parents('.p-box').find(targetLi).removeClass('hide');
+                    }
+                }
+                descendScrollCustom();
+            });
+        }
+        
+        uitUpdateListContents.append(listContents);
+    }
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var uitReqBtn = $('<span class="btn-custom-reply">UIT 수정 요청</span>');
+    quickReplies.append(uitReqBtn);
+    uitUpdateListContents.append(quickReplies);
+
+    uitReqBtn.click(function(){
+        chatui.sendMessage("UIT 수정 요청");    
+    });
+
+    requestMsgScroll();    
+    return uitUpdateListContents;
+}
+
+/**
+ * 기존에 있으니 추가 X
+ * '더보기용 내리기' 함수
+ */
+function descendScrollCustom() {
+	setTimeout(function() {
+        var e = document.getElementById("divScroll");
+        var dd = e.scrollHeight - 650;
+        console.log(e.scrollTop,e.scrollHeight,dd);
+        e.scrollTop = dd;
+    }, 50)
+}
+
+// UIT 조회 기간 설정 팝업
+function addDateSettingPopupOpenGERP(data){
+    window.datepicker = setDatepickerUITGERP();
+    /* #########[ popup_wrap_start ]######### */
+    
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var uitReqDateSetting = $('<div class="plugins" id="uitReqDateSetting"></div>');
+
+    /* #########[ popup_header ]######### */
+    var uitReqDateSettingHeader = $('<div class="plugin-header"><h1>UIT 수정 내역 조회</h1></div>');
+    var uitReqDateSettingClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    
+    uitReqDateSettingClose.on('click', function() {
+        uitReqDateSettingPopupCloseGERP();
+    })
+    uitReqDateSettingHeader.append(uitReqDateSettingClose);
+    uitReqDateSetting.append(uitReqDateSettingHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var uitReqDateSettingContents = $('<div class="plugin-contents articleRequestFilter-contents"></div>');
+    var uitReqDateSettingForm = $('<form class="form-UITReqDate"></form>');
+
+    /* #########[ popup_content ]######### */
+    /*  ###[ ORG Code ]###  */
+    var orgCodeBox = $(
+        '<div class="input-box">'
+            +'<label>ORG Code<b>*</b></label>'
+        +'</div>'
+    );
+
+    var orgCodeForm = $('<div class="orgId-form"></div>');
+
+    var selectedOrg = $('<div class="selected-org fold"></div>');
+    orgCodeForm.append(selectedOrg);
+    var autocompleteOrg = $('<div class="autocomplete-member"></div>');
+    orgCodeForm.append(autocompleteOrg);
+    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;">'
+        +'<span class="org-list">ORG Code 목록</span>'
+        +'</ul>');
+    autocompleteOrg.append(orgUi);
+
+    var orgCodeInputForm = $(
+        '<div class="input-form">'
+            +'<input type="text" placeholder="ORG Code를 입력 후 \'Enter\'로 검색" class="search-input" id="orgCode" max-length="358" autocomplete="off"/>'
+            +'<span class="input-val-del">'
+                +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+                +'</svg>'
+            +'</span>'
+        +'</div>'
+    );
+    orgCodeForm.append(orgCodeInputForm);
+    var orgLoading = false;
+    
+    var engNum_pattern = /[^a-zA-Z0-9]/g;
+    orgCodeInputForm.on('keyup', function(e) {
+        var input = e.target.value;
+
+        if(engNum_pattern.test(input) == true) {
+            //console.log('e.target ...'+e.key);
+            
+            $('.small-dialog').remove();    
+            //setTimeout(function() {
+            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = input.replace(engNum_pattern, '');
+
+            $(this).find('input').val(replaceVal);
+        }
+            
+        var inputVal = input.toUpperCase();
+        var inputLength = inputVal.length;
+            
+        inputVal = inputVal.trim();             
+
+        var uitReqDateSettingSubmit = $('#btn-uitReqDate');
+
+        // if(input){
+        //     $(this).find('.input-val-del').addClass('show');
+        // }else{
+        //     $(this).find('.input-val-del').removeClass('show');
+        //     selectedOrg.empty();
+        //     uitReqDateSettingSubmit.addClass('btn-disabled');
+        // }
+
+        if (window.event.keyCode == 13) {
+            if(orgLoading) return;
+            var ul = $(this).closest('.orgId-form').find('ul');
+            ul.empty();
+            ul.append('<span class="org-list">ORG Code 목록</span>');
+
+            if(inputLength == 3){
+                
+                var requestParam = {
+                    query: {
+                        "event": "searchReqOrgCodeReturnEvent"
+                    },
+                    payload: {
+                        "plant_code" : inputVal
+                    }
+                };
+
+                orgLoading = true;
+                LoadingWithMask();
+                sendChatApi(requestParam, null, function(payload){
+                    var message = payload.queryResult.messages[0];
+                    var response = message.response;
+                    var result = JSON.parse(response);
+                    
+                    var li = $('<li class="ui-menu-item"></li>');
+                    var htmlStr = "";
+
+                    if(result == null){
+                        li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+                        htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+                        htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+                        htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+                        htmlStr += '</div>';
+                    }else{
+                        if(result.RESULT_CODE != "SUCCESS"){
+                            li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+                            htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+                            htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+                            htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+                            htmlStr += '</div>';
+                        }else{
+                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">['+ result.plant_code + '] '+ result.plant_name;
+                            htmlStr += '<input type="hidden" class="plant-code" value="' + result.plant_code + '"/>';
+                            htmlStr += '<input type="hidden" class="plant-id" value="' + result.plant_id + '"/>';
+                            htmlStr += '<input type="hidden" class="plant-name" value="' + result.plant_name + '"/>';
+                            htmlStr += '</div>';
+                        }
+                    }
+
+                    li.append(htmlStr);
+                    orgUi.append(li);
+
+                    li.on('click', function() {
+                        var plantCode = $(this).find('.plant-code').val();
+                        var plantId = $(this).find('.plant-id').val();
+                        var plantName = $(this).find('.plant-name').val();
+                
+                        if(plantCode != ""){
+                            var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+                              + '<input type="hidden" value="'+ plantCode +'" class="sel-plant-code"/>'
+                              + '<input type="hidden" value="'+ plantId +'" class="sel-plant-id"/>'
+                              + '<input type="hidden" value="'+ plantName +'" class="sel-plant-name"/>'
+                              +'</div>'
+                            );
+                        
+                            selectedOrg.empty();
+                            selectedOrg.append(plantInfo);
+                            $('#orgCode').val(plantCode);
+                            uitReqDateSettingSubmit.removeClass('btn-disabled');
+                            
+                            orgCodeInputForm.find('.input-val-del').addClass('show');
+                        }else{
+                            $('#orgCode').val("");
+                            selectedOrg.empty();
+                            uitReqDateSettingSubmit.addClass('btn-disabled');
+                        }
+                        orgUi.css('display','none');
+                    });
+
+                    if(orgUi.length){
+                        orgUi.css('display','block');
+                    }
+                    orgLoading = false;
+                    closeLoadingWithMask();
+                });
+                
+            }else{
+                $('.small-dialog').remove();
+                showSmallDialog("검색어를 3글자로 입력해 주세요.");
+                e.target.focus();
+                orgUi.css('display','none');
+            }
+        }
+    });
+        
+    $(document).on('click', function(e) {
+        
+        var uitReqDateSettingSubmit = $('#btn-uitReqDate');
+            
+        if ($('.orgId-form').has(e.target).length === 0) {
+            
+            orgUi.css('display','none');
+
+            var selInfo = $('.sel-plant-code').val();
+
+            if(selInfo){
+                if($('#orgCode').val()){
+                    var selecteVal = selectedOrg.find('.sel-plant-code').val();
+                    $('#orgCode').val(selecteVal);
+                    uitReqDateSettingSubmit.removeClass('btn-disabled');
+                    orgCodeInputForm.find('.input-val-del').addClass('show');
+                }else{
+                    $('#orgCode').val('');
+                    selectedOrg.empty();
+                    uitReqDateSettingSubmit.addClass('btn-disabled');
+                    orgCodeInputForm.find('.input-val-del').removeClass('show');
+                }
+            }else{
+                $('#orgCode').val('');
+                orgCodeInputForm.find('.input-val-del').removeClass('show');
+            }
+        }
+    });
+        
+    orgCodeBox.append(orgCodeForm);
+    uitReqDateSettingForm.append(orgCodeBox);
+    
+    /*  ###[ 조회 기간 ]###  */
+    var reqDateFr;
+    var reqDateTo;
+    if(data.ZREQDATE_FR != "") reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+    if(data.ZREQDATE_TO != "") reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+
+    var timeInputBox = $('<div class="input-box"><label>조회 기간<b>*</b></label></div>');
+    
+    var dateTimeWrap = $('<div class="schedule-wrap schedule-wrap-filter"></div>');
+    
+    var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="start-date-box"></div>');
+    var dateStartInput = $('<input type="text" placeholder="'+reqDateFr+'" value="' +reqDateFr+ '" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var datepickerStart = $('<div class="datepicker-chem" id="datepickerStart"></div>');
+    var spliter = $('<div class="font-Xlarge"> - </div>');
+    var dateTimeEndBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="end-date-box"></div>');
+    var dateEndInput = $('<input type="text" placeholder="'+reqDateTo+'" value="' +reqDateTo+ '" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var datepickerEnd = $('<div class="datepicker-chem" id="datepickerEnd"></div>');
+
+    var smail = $('<small class="hsCode-orgId show" style="font-size: 12px;color: #898989;">최대 조회 기간은 3개월입니다.</small>');
+
+    dateTimeStartBox.append(dateStartInput);
+    dateTimeStartBox.append(datepickerStart);
+    dateTimeEndBox.append(dateEndInput);
+    dateTimeEndBox.append(datepickerEnd);
+    dateTimeWrap.append(dateTimeStartBox);
+    dateTimeWrap.append(spliter);
+    dateTimeWrap.append(dateTimeEndBox);
+
+    timeInputBox.append(dateTimeWrap);
+    timeInputBox.append(smail);
+    uitReqDateSettingForm.append(timeInputBox);
+
+    uitReqDateSettingContents.append(uitReqDateSettingForm);
+    uitReqDateSetting.append(uitReqDateSettingContents);
+    
+    var uitReqDateSettingFoot = $('<div class="articleRequestFilter-footer"></div>');
+    var uitReqDateSettingSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-uitReqDate">조회</button>');
+    uitReqDateSettingFoot.append(uitReqDateSettingSubmit);
+    uitReqDateSetting.append(uitReqDateSettingFoot);
+    
+    var isLoading = false;
+    uitReqDateSettingSubmit.on('click', function() {
+        if(isLoading) return;
+        if(uitReqDateSettingSubmit.hasClass('btn-disabled')) return;
+
+        var startDt = moment($('.startdate').val()).format('YYYYMMDD');
+        var endDt = moment($('.enddate').val()).format('YYYYMMDD');
+
+        var zReqdateFrom = $('#start-date').val();
+        var zReqdateTo = $('#end-date').val();
+        
+        var plantId = $('.sel-plant-id').val();
+        var plantCode = $('.sel-plant-code').val();
+
+        if(startDt > endDt){
+            showHtmlSmallDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
+            return;
+        }
+
+        var requestParam = {
+            query: {
+                "event": "uitUpdateListEventGERP"
+            },
+            payload:{
+                "ZREQDATE_FR":zReqdateFrom,
+                "ZREQDATE_TO":zReqdateTo,
+                "plantId":plantId,
+                "userId":data.userId,
+                "orgCode":plantCode,
+                "isSearch": true
+            }
+        };
+        isLoading = true;
+        
+        LoadingWithMask();
+        sendChatApi(requestParam, null, function(payload){
+            console.log('GERP UIT 수정 내역 조회 : ', payload);
+            
+            var message = payload.queryResult.messages[0];
+            var response = message.response;
+            var result = JSON.parse(response);
+            
+            console.log('GERP UIT 수정 내역 조회 결과 : ', result);
+            if(result == null){
+                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                isLoading = false;
+                closeLoadingWithMask();
+                return;
+            }
+
+            var itemLength = result.template.outputs[0].data.items.length;
+
+            if(itemLength == 0){
+                showHtmlSmallDialog('<div>조회된 UIT 수정 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
+                isLoading = false;
+                closeLoadingWithMask();
+                return;
+            }else{
+                let viewdata = result.template.outputs[0].data;
+                //console.log('viewdata : ', viewdata);
+                
+                appendChatbotHtml(uitUpdateListGERP(viewdata), true);
+                
+                uitReqDateSettingPopupCloseGERP();
+                closeLoadingWithMask();
+            }
+        });
+    });
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(uitReqDateSetting);
+    $('.plugin-dim').css('display', 'block');
+    $('#uitReqDateSetting').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#uitReqDateSetting').addClass('show');
+    }, 100);
+
+    $('#start-date').val(reqDateFr);
+    $('#end-date').val(reqDateTo);
+    
+    function uitReqDateSettingPopupCloseGERP() {
+        window.datepicker = setDatepicker();
+        $('#uitReqDateSetting').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#uitReqDateSetting').remove();
+        }, 300);
+    }
+
+    /*  #########[ input-form ]#########  */
+    $('.input-val-del').on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+            selectedOrg.empty();
+            $('#btn-uitReqDate').addClass('btn-disabled');
+        }
+    });
+};
+
+// UIT 수정 내역 조회 상세 
+function addUITDetailPopupOpenGERP(item, orgCode){
+    console.log('detail data : '+orgCode, item);
+
+    /* #########[ popup_wrap_start ]######### */
+
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addUITDetail = $('<div class="plugins" id="addUITDetail" style="max-height: calc(100% - 44px);"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addUITDetailHeader = $('<div class="plugin-header"><h1>' + item.part_no + '</h1></div>');
+    var addUITDetailClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+
+    addUITDetailClose.on('click', function() {
+        addUITDetailPopupCloseGERP();
+    })
+    addUITDetailHeader.append(addUITDetailClose);
+    addUITDetail.append(addUITDetailHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addUITDetailContents = $('<div class="plugin-contents articleRequestDetail-contents" style="margin-top: 10px;"></div>');
+    var addUITDetailForm = $('<form class="form-artReqDetail"></form>');
+
+    /* #########[ popup_content ]######### */
+    var uitSubInfo = $('<div class="articleReqSubInfo"></div>');
+    var uitSubInfoUi = $('<ul class="articleReq-list-sub-wrap"></ul>');
+
+    var meterialNameInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>Material Name</h5>'
+        +'<p>' + item.material_name +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(meterialNameInfo);
+
+    var plantInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>ORG Code</h5>'
+        +'<p>' + orgCode +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(plantInfo);
+
+    var chipStyle2;
+    if(item.aft_uit_code == "T"){
+        chipStyle2 = 'style="width: 22px;padding: 0.4px 6.5px;"'
+    }else if(item.aft_uit_code == "F"){
+        chipStyle2 = 'style="width: 22px;padding: 0.4px 7px"'
+    }
+
+    var uitNowInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>현재 UIT</h5>'
+        +'<p><span class="badge-base badge-detali-card badge-pink" '+chipStyle2+'>' + item.aft_uit_code + '</span></p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(uitNowInfo);
+    
+    var reqDate = item.change_request_date.substr(0, 4) + '-' + item.change_request_date.substr(4, 2) + '-' + item.change_request_date.substr(6, 2);
+    var reqDateInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>수정 요청일</h5>'
+        +'<p>' + reqDate +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(reqDateInfo);
+    
+    var reasonInfo =$('<li style="margin-bottom: 5px;display: flex;align-items: flex-start;justify-content: space-between;">'
+        +'<h5 style="width:65%;">수정 이유</h5>'
+        +'<p style="width:113%;font-size: 14px;margin-top: 0px;margin-bottom: 0px;text-align: right;">' + item.change_reason +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(reasonInfo);
+    
+    var chipStyle1;
+    if(item.bef_uit_code == "T"){
+        chipStyle1 = 'style="width: 22px;padding: 0.4px 6.5px;"'
+    }else if(item.bef_uit_code == "F"){
+        chipStyle1 = 'style="width: 22px;padding: 0.4px 7px"'
+    }
+
+    var uitBeforeInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>수정 전 UIT</h5>'
+        +'<p><span class="badge-base badge-detali-card badge-gray" '+chipStyle1+'>' + item.bef_uit_code + '</span></p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(uitBeforeInfo);
+    
+    uitSubInfo.append(uitSubInfoUi);
+    addUITDetailForm.append(uitSubInfo);
+    
+    addUITDetailContents.append(addUITDetailForm);
+    addUITDetail.append(addUITDetailContents);
+    
+    /* #########[ popup_footer ]######### */
+    var adduitFoot = $('<div class="articleRequestDetail-footer"></div>');
+    var uitCheckBtn = $('<button type="button" class="btn btn-plugin btn-apply btn-check-close" id="btn-check">확인</button>');
+    adduitFoot.append(uitCheckBtn);
+    
+    uitCheckBtn.on('click', function() {
+        addUITDetailPopupCloseGERP();
+    });
+    
+    addUITDetail.append(adduitFoot);
+
+    function addUITDetailPopupCloseGERP() {
+        $('#addUITDetail').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#addUITDetail').remove();
+        }, 300);
+    }
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addUITDetail);
+    $('.plugin-dim').css('display', 'block');
+    $('#addUITDetail').css('display', 'block');
+
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addUITDetail').addClass('show');
+    }, 100);
+};
+
+// UIT 수정 팝업
+function uitUpdateInputGERP(data) {
+    var uitUpdateCard = $('<div class="system-contents"></div>');
+    var uitUpdateText = $(
+        '<div class="message simple-text">'
+        +   '<p>UIT 수정을 신청하고 싶으시면 아래 버튼을 눌러주세요.</p>'
+        +   '<p style="font-size: 11.5px;color: #898989;">'
+        +       '단, W/O, P/O가 있는 경우 UIT 변경이 불가해요.'
+        +   '</p>'
+        +'</div>' )
+    uitUpdateCard.append(uitUpdateText);
+
+    var uitUpdateBtnWrap = $('<div class="btn"></div>');
+    var uitUpdateBtn = $('<button type="button" class="btn btn-emphasis">UIT 수정하기</button>');
+    
+    uitUpdateBtn.on('click', function() {
+        data.step = 1;
+        uitUpdatePopupOpenGERP(data);
+    });
+    
+    uitUpdateBtnWrap.append(uitUpdateBtn);
+    uitUpdateText.append(uitUpdateBtnWrap);
+    
+    if(checkChatHistory == false) {
+        //uitUpdatePopupOpenGERP(data);
+    }
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var systemBtn = $('<span class="btn-custom-reply">UIT 수정 내역 조회</span>');
+    quickReplies.append(systemBtn);
+    uitUpdateCard.append(quickReplies);
+    
+    systemBtn.click(function(){
+        chatui.sendMessage("UIT 수정 내역 조회");
+    });
+    
+    return uitUpdateCard;
+}
+
+// UIT 수정 팝업 Header
+var uitUpdateInputFormGERP;
+// var plantCodeG;
+// var plantIdG;
+// var plantNameG;
+// var materialG;
+function uitUpdatePopupOpenGERP(uitdata) {
+    /* #########[ popup_wrap_start ]######### */
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addPlugin = $('<div class="plugins uit-update" id="uit-update"></div>');
+
+    /* #########[ popup_header ]######### */
+    var pluginHeader = $('<div class="plugin-header"><h1>UIT 수정 ('+ '1' + '/' + '2' +')</h1></div>');
+    var pluginClose = $('<span class="close-plugin">' + iconPopupClose + '</span>');
+    pluginClose.on('click', function() {
+        thisPluginClose();
+    })
+
+    pluginHeader.append(pluginClose);
+    addPlugin.append(pluginHeader);
+
+    function thisPluginClose() {
+        $('#uit-update').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#uit-update').remove();
+        }, 300);
+
+        uitDataInitGERP(uitdata);
+        // plantCodeG = "";
+        // plantIdG = "";
+        // plantNameG = "";
+        // materialG = "";
+    }
+
+    /* #########[ popup_content_wrap ]######### */
+    var pluginContents = $('<div class="plugin-contents" id="item-content"></div>');
+    var requestForm = uitUpdateInputFirstGERP(uitdata);
+    pluginContents.append(requestForm);
+    addPlugin.append(pluginContents);
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addPlugin);
+    $('.plugin-dim').css('display', 'block');
+    $('#uit-update').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#uit-update').addClass('show');
+    }, 100);
+}
+
+// UIT 수정 팝업 Content 1
+function uitUpdateInputFirstGERP(uitdata){
+    console.log('GERP 1단계 uitdata : ', uitdata);    
+    
+    var plant_code = (uitdata.plant_code == null)? '':uitdata.plant_code;
+    var plant_id = (uitdata.plant_id == null)? '':uitdata.plant_id;
+    var plant_name = (uitdata.plant_name == null)? '':uitdata.plant_name;
+    var materialNo = (uitdata.material == null)? '':uitdata.material;
+    
+    var pluginHeader = $('.plugin-header');
+    pluginHeader.find('h1').text('UIT 수정 ('+ '1' + '/' + '2' +')');
+
+    pluginHeader.find('.backBtn').remove();
+    
+    setTimeout(function() {
+        $('.plugin-contents').css('overflow-y', 'auto');
+    },1);
+    
+    var pluginForm = $('<form class="form-first"></form>');
+    /* #########[ popup_content ]######### */
+    /*  ###[ ORG Code ]###  */
+    var orgCodeBox = $(
+        '<div class="input-box">'
+            +'<label>ORG Code<b>*</b></label>'
+        +'</div>'
+    );
+
+    var orgCodeForm = $('<div class="orgId-form"></div>');
+
+    var selectedOrg = $('<div class="selected-org fold"></div>');
+    orgCodeForm.append(selectedOrg);
+    var autocompleteOrg = $('<div class="autocomplete-member"></div>');
+    orgCodeForm.append(autocompleteOrg);
+    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;">'
+        +'<span class="org-list">ORG Code 목록</span>'
+        +'</ul>');
+    autocompleteOrg.append(orgUi);
+
+    var orgCodeInputForm = $(
+        '<div class="input-form">'
+            +'<input type="text" placeholder="ORG Code를 입력 후 \'Enter\'로 검색" class="search-input" id="orgCode" max-length="358" autocomplete="off"/>'
+        +'</div>'
+    );
+    var orgBtnClose = $(
+        '<span class="input-val-del">'
+            +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+            +'</svg>'
+        +'</span>'
+    );
+
+    orgCodeInputForm.append(orgBtnClose);
+    orgCodeForm.append(orgCodeInputForm);
+
+    if(plant_code != ''){
+        var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+            + '<input type="hidden" value="'+ plant_code +'" class="sel-plant-code"/>'
+            + '<input type="hidden" value="'+ plant_id +'" class="sel-plant-id"/>'
+            + '<input type="hidden" value="'+ plant_name +'" class="sel-plant-name"/>'
+            +'</div>'
+        );
+      
+        selectedOrg.empty();
+        selectedOrg.append(plantInfo);
+        //$('#orgCode').val(plant_code);
+        
+        orgCodeInputForm.find('input').val(plant_code);
+    }
+
+    var orgLoading = false;
+    var engNum_pattern = /[^a-zA-Z0-9]/g;
+    orgCodeInputForm.on('keyup', function(e) {
+        var input = e.target.value;
+
+        if(engNum_pattern.test(input) == true) {
+            //console.log('e.target ...'+e.key);
+            
+            $('.small-dialog').remove();    
+            //setTimeout(function() {
+            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = input.replace(engNum_pattern, '');
+
+            $(this).find('input').val(replaceVal);
+        }
+            
+        var inputVal = input.toUpperCase();
+        var inputLength = inputVal.length;
+            
+        inputVal = inputVal.trim();             
+
+        // if(inputVal){
+        //     //$(this).find('.input-val-del').addClass('show');
+        // }else{
+        //     //$(this).find('.input-val-del').removeClass('show');
+        //     //selectedOrg.empty();
+        //     //nextBtnEvent();
+        // }
+
+        if (window.event.keyCode == 13) {
+            if(orgLoading) return;
+            var ul = $(this).closest('.orgId-form').find('ul');
+            ul.empty();
+            ul.append('<span class="org-list">ORG Code 목록</span>');
+
+            if(inputLength == 3){
+                
+                var requestParam = {
+                    query: {
+                        "event": "searchReqOrgCodeReturnEvent"
+                    },
+                    payload: {
+                        "plant_code" : inputVal
+                    }
+                };
+
+                orgLoading = true;
+                LoadingWithMask();
+                sendChatApi(requestParam, null, function(payload){
+                    var message = payload.queryResult.messages[0];
+                    var response = message.response;
+                    var result = JSON.parse(response);
+                    
+                    var li = $('<li class="ui-menu-item"></li>');
+                    var htmlStr = "";
+
+                    if(result == null){
+                        li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+                        htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+                        htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+                        htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+                        htmlStr += '</div>';
+                    }else{
+                        if(result.RESULT_CODE != "SUCCESS"){
+                            li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+                            htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+                            htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+                            htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+                            htmlStr += '</div>';
+                        }else{
+                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">['+ result.plant_code + '] '+ result.plant_name;
+                            htmlStr += '<input type="hidden" class="plant-code" value="' + result.plant_code + '"/>';
+                            htmlStr += '<input type="hidden" class="plant-id" value="' + result.plant_id + '"/>';
+                            htmlStr += '<input type="hidden" class="plant-name" value="' + result.plant_name + '"/>';
+                            htmlStr += '</div>';
+                        }
+                    }
+
+                    li.append(htmlStr);
+                    orgUi.append(li);
+
+                    li.on('click', function() {
+                        var plantCode = $(this).find('.plant-code').val();
+                        var plantId = $(this).find('.plant-id').val();
+                        var plantName = $(this).find('.plant-name').val();
+                
+                        if(plantCode != ""){
+                            var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+                              + '<input type="hidden" value="'+ plantCode +'" class="sel-plant-code"/>'
+                              + '<input type="hidden" value="'+ plantId +'" class="sel-plant-id"/>'
+                              + '<input type="hidden" value="'+ plantName +'" class="sel-plant-name"/>'
+                              +'</div>'
+                            );
+                        
+                            selectedOrg.empty();
+                            selectedOrg.append(plantInfo);
+                            $('#orgCode').val(plantCode);
+                            
+                            orgCodeInputForm.find('.input-val-del').addClass('show');
+                            nextBtnEvent();
+                        }else{
+                            $('#orgCode').val("");
+                            selectedOrg.empty();
+                            nextBtnEvent();
+                        }
+                        orgUi.css('display','none');
+                    });
+
+                    if(orgUi.length){
+                        orgUi.css('display','block');
+                    }
+                    orgLoading = false;
+                    closeLoadingWithMask();
+                    nextBtnEvent();
+                });
+                
+            }else{
+                $('.small-dialog').remove();
+                showSmallDialog("검색어를 3글자로 입력해 주세요.");
+                e.target.focus();
+                orgUi.css('display','none');
+            }
+        }
+    });
+        
+    $(document).on('click', function(e) {
+            
+        if ($('.orgId-form').has(e.target).length === 0) {
+            
+            orgUi.css('display','none');
+
+            var selInfo = $('.sel-plant-code').val();
+
+            if(selInfo){
+                if($('#orgCode').val()){
+                    var selecteVal = selectedOrg.find('.sel-plant-code').val();
+                    $('#orgCode').val(selecteVal);
+                    nextBtnEvent();
+                    orgCodeInputForm.find('.input-val-del').addClass('show');
+                }else{
+                    $('#orgCode').val('');
+                    selectedOrg.empty();
+                    nextBtnEvent();
+                    orgCodeInputForm.find('.input-val-del').removeClass('show');
+                }
+            }else{
+                $('#orgCode').val('');
+                orgCodeInputForm.find('.input-val-del').removeClass('show');
+            }
+        }
+    });
+        
+    orgCodeBox.append(orgCodeForm);
+    pluginForm.append(orgCodeBox);
+
+    /*  ###[ Material ]###  */
+    var materialInputBox = $('<div class="input-box"><label>Material no.<b>*</b></label></div>');
+    var materialInput = $('<div class="input-form"><input type="text" placeholder="내용을 입력해 주세요." max-length="50" id="material" value="'+materialNo+'" autocomplete="off"/></div>');
+
+    var materialBtnClose = $(
+        '<span class="input-val-del">'
+            +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+            +'</svg>'
+        +'</span>'
+    );
+
+    materialInput.append(materialBtnClose);
+    materialInputBox.append(materialInput);
+    pluginForm.append(materialInputBox);
+    
+    materialInput.on('blur keyup', function(e) {
+        var input = e.target.value;
+        
+        if(engNum_pattern.test(input) == true) {
+            //console.log('e.target ...'+e.key);
+            
+            $('.small-dialog').remove();    
+            //setTimeout(function() {
+            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = input.replace(engNum_pattern, '');
+
+            $(this).find('input').val(replaceVal);
+        }
+        
+        var inputVal = input.toUpperCase();
+        var inputLength = inputVal.length;
+
+        inputVal = inputVal.trim(); 
+        
+        if(input){
+            $(this).find('.input-val-del').addClass('show');
+            nextBtnEvent();
+        }else{
+            $(this).find('.input-val-del').removeClass('show');
+            nextBtnEvent();
+        }
+    })
+
+    //if(materialG){
+//        $('#material').val(materialG);
+    //}
+    
+    /* #########[ popup_footer ]######### */
+    var nextBtn = $('<div class="btn" style="margin-top: 35px;"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
+    pluginForm.append(nextBtn);
+
+    pluginForm.children('.btn').find('button').on('click', function() {
+
+		let plant = $('.sel-plant-id').val();   //$('.sel-plant-code').val();
+        let material = $('#material').val();
+
+        LoadingWithMask();
+
+        // material No 조회
+        var requestParam = {
+            query: {
+                "event": "uitUpdateMaterialEventGERP"
+            },
+            payload:{
+                "plant":plant,
+                "material":material
+            }
+        };
+	
+        sendChatApi(requestParam, null, function(payload){
+            var message = payload.queryResult.messages[0];
+            var response = message.response;
+            var result = JSON.parse(response);
+            
+            console.log('Material 조회 : ', result);
+            
+            if(result == null){
+                $('.small-dialog').remove();
+                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                closeLoadingWithMask();
+                return;
+            }
+
+            var RESULT_CODE = result.RESULT_CODE;
+
+            if(RESULT_CODE !== "SUCCESS"){
+                $('.small-dialog').remove();
+                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                closeLoadingWithMask();
+                return;
+            }
+
+            if(result.wo_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"||
+                result.po_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"){
+                $('.small-dialog').remove();
+                showHtmlSmallDialog('<div>Material no.가 유효하지 않습니다.</div>');
+                closeLoadingWithMask();
+                return;
+            }
+
+            // 1단계 선택 Value (plant 추가로 intent api 혹은 테스트용 node에 plant 추가해야합니다)
+            uitdata.plant = plant;
+            uitdata.material = material;
+
+            // 물품 조회 후 Response
+            uitdata.part_no  = result.part_no;
+            uitdata.po_check = result.po_check;
+            uitdata.wo_check = result.wo_check;
+            uitdata.po_err_msg = result.po_err_msg;
+            uitdata.wo_err_msg = result.wo_err_msg;
+            
+            // 물품 조회 후 Response (현재는 필드가 없는데 api 명세서 대로 업뎃 되면 추가) 
+            uitdata.inventory_item_id  = result.inventory_item_id
+            uitdata.material_name      = result.material_name
+            uitdata.uit_code           = result.uit_code
+
+            //전역 변수
+            // plantCodeG = $('.sel-plant-code').val();
+            // plantIdG = $('.sel-plant-id').val();
+            // plantNameG = $('.sel-plant-name').val();
+            // materialG = material;
+            uitdata.plant_code = $('.sel-plant-code').val();
+            uitdata.plant_id = $('.sel-plant-id').val();
+            uitdata.plant_name = $('.sel-plant-name').val();
+
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+
+            uitUpdateInputGERPSecond(uitdata);
+            $('.plugin-contents').append(uitUpdateInputFormGERP);
+
+            closeLoadingWithMask();
+        });
+    });
+
+    uitUpdateInputFormGERP = pluginForm;
+
+    function nextBtnEvent() {
+        var selInfo = $('.sel-plant-code').val();
+        var material = materialInput.find('input').val();
+
+        if(selInfo&&material){
+            nextBtn.find('button').attr('disabled', false);
+        }else{
+            nextBtn.find('button').attr('disabled', true);
+        }
+    };
+
+    /*  #########[ input-form ]#########  */
+    orgBtnClose.on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+            selectedOrg.empty();
+            nextBtnEvent();
+        }
+    });
+
+    materialBtnClose.on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+            nextBtnEvent();
+        }
+    });
+    
+    return uitUpdateInputFormGERP;
+};
+
+// UIT 수정 팝업 Content 2
+function uitUpdateInputGERPSecond(uitdata){
+    console.log('GERP 2단계 uitdata : ', uitdata);
+
+    var userId = chatui.getSetting("userId");
+
+    var pluginHeader = $('.plugin-header');
+    var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
+    pluginHeader.find('h1').text('UIT 수정 ('+ '2' + '/' + '2' +')');
+    pluginHeader.find('.backBtn').remove();
+    pluginHeader.prepend(backBtn);
+
+    $('.plugin-contents').focus();
+    $(document).off('click');
+
+    // back버튼
+    pluginHeader.find('.backBtn').off('click').on('click', function() {
+//         pluginForm.removeClass('show');
+//         pluginForm.remove();
+//         uitUpdateInputFormGERP = uitUpdateInputFirstGERP(uitdata);
+//         $('.plugin-contents').append(uitUpdateInputFormGERP);
+        
+//         var selectedOrg = $('.plugin-contents').find('.selected-org');
+
+// 		var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+//                               + '<input type="hidden" value="'+ plantCodeG +'" class="sel-plant-code"/>'
+//                               + '<input type="hidden" value="'+ plantIdG +'" class="sel-plant-id"/>'
+//                               + '<input type="hidden" value="'+ plantNameG +'" class="sel-plant-name"/>'
+//                               +'</div>'
+//                             );
+                        
+// 	    selectedOrg.empty();
+//         selectedOrg.append(plantInfo);
+//         $('.plugin-contents').find('#orgCode').val(plantCodeG);
+        
+//         $('.plugin-contents').find('#material').val(materialG);
+
+        uitdata.step = 1;
+        uitdata.action = 'back';
+        
+        pluginForm.removeClass('show');
+        pluginForm.remove();
+        
+        uitUpdateInputFirstGERP(uitdata);
+        $('.plugin-contents').append(uitUpdateInputFormGERP);
+
+    });
+    
+    /* #########[ popup_content_wrap_start ]######### */
+    var pluginForm = $('<form class="form-second" onsubmit="return false;"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* itemBox Start */
+    var itemBox = $('<div class="uit-update-item-box"></div>'); // class = 회색 배경 border 라운드
+
+    // 상태 칩
+    var statusChip;
+    // 앞에 엑스,체크 아이콘 필요
+    if(uitdata.wo_check === "Fail"||uitdata.po_check === "Fail"){
+        statusChip = $('<span class="badge-base badge-pink">' + errorIcon + 'unavailable</span>'); 
+    }else{
+        statusChip = $('<span class="badge-base badge-green">' + confirmIcon + 'available</span>');
+    }
+    itemBox.append(statusChip);
+    
+    // Material No
+    materialInfo = $(
+        '<div>'
+            +'<span class="uit-content-label-bold">' + uitdata.part_no + '</span>'
+            +'<span class="uit-item">' + uitdata.material_name + '</span>'//materialName으로 변경
+        +'</div>'
+    );
+    itemBox.append(materialInfo);
+
+    // 현 UIT (성공 일 경우)
+    if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
+        uitInfo = $(
+            '<div>'
+                +'<span class="uit-content-label">현재 UIT</span>'
+                +'<span>' + uitdata.uit_code + '</span>'
+            +'</div>'
+        );
+        itemBox.append(uitInfo);
+    }
+
+    // W/O
+    woInfo = $(
+        '<div>'
+            +'<span class="uit-content-label">W/O</span>'
+            +'<span>' + uitdata.wo_check + '</span>'
+        +'</div>'
+    );
+    itemBox.append(woInfo);
+
+    // P/O
+    poInfo = $(
+        '<div>'
+            +'<span class="uit-content-label">P/O</span>'
+            +'<span>' + uitdata.po_check + '</span>'
+        +'</div>'
+    );
+    itemBox.append(poInfo);
+    
+    pluginForm.append(itemBox);
+    /* itemBox End */
+
+    /* 성공/실패 분기 */
+    var contentCard;
+    var btn;
+    if(uitdata.wo_check === "Fail"||uitdata.po_check === "Fail"){
+        contentCard = $('<div class="uit-update-msg_box"></div>');
+
+        var titleMsg = "";
+        if(uitdata.wo_check === "Fail"&&uitdata.po_check === "Fail"){
+            titleMsg = $('<div class="uit-title">W/O, P/O 가 있어 엘지니에서 UIT 수정이 불가합니다. </div>');
+        }        
+        else if(uitdata.wo_check === "Fail"){
+            titleMsg = $('<div class="uit-title">W/O 가 있어 엘지니에서 UIT 수정이 불가합니다. </div>');    
+        }else if(uitdata.po_check === "Fail"){
+            titleMsg = $('<div class="uit-title">P/O 가 있어 엘지니에서 UIT 수정이 불가합니다. </div>');
+        } 
+        
+        contentCard.append(titleMsg);
+
+        var subMsg = $('<div class="uit-sub-title">사업부 자재 담당자에게 Released W/O 또는 잔량 Open P/O 정리를 요청해주시기 바랍니다.</div>');
+        contentCard.append(subMsg);
+
+        btn = $('<button type="button" class="btn btn-plugin btn-close" style="background-color: #E0205C;width: 100%;margin: 16px 0;">확인</button>');
+    }else{
+        contentCard = $('<div></div>');
+
+        /*  ###[ 수정 UIT ]###  */
+        var uitDropdownBox = $(
+            '<div class="dropdown-box dropdown-uit">'
+                +'<label>수정 UIT<b>*</b></label>'
+            +'</div>'
+        );
+        var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span>수정할 UIT를 선택해 주세요.</span></button>');
+        var uitDropdownArrow = $(
+            '<i class="icons">'
+                +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+                +'</svg>'
+            +'</i>'
+        );
+        contentCard.append(uitDropdownBox);
+        uitDropdownBox.append(uitDropdown);
+        uitDropdown.append(uitDropdownArrow);
+
+        // 조회 유형 드롭다운메뉴 & 리스트
+        var uitDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+        var uitArry = uitdata.uitList;
+
+        uitArry.forEach(function(arr) {
+            let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.uit + '</a></li>');
+            uitDropdownListWrap.append(uitDropdownList)
+        });
+
+        uitDropdownBox.append(uitDropdownListWrap);
+
+        var uitPopupContetnBox = $('<div class="input-box"><label>수정 사유<b>*</b></label>');
+        var uitPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" style="height: 100px;" id="uitReason"></textarea>');
+        uitPopupContetnBox.append(uitPopupTextArea);
+
+        var uitPopupHelpText = $('<p style="font-size:12px;color:#898989;margin-top: 0px;font-weight: 400;">10자 이상, 120자 이하로 작성해 주세요.</p>');
+        uitPopupContetnBox.append(uitPopupHelpText);
+        contentCard.append(uitPopupContetnBox);
+
+        btn = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" style="background-color: #E0205C;width: 100%;margin: 16px 0;">UIT 수정 신청</button>')
+
+    }
+    
+    pluginForm.append(contentCard);
+    pluginForm.append(btn);
+    
+    /* #########[ popup_footer ]######### */
+    pluginForm.find('button').on('click', function() {
+        if($(this).hasClass('btn-close')){
+            
+            closeBtn();
+            
+        }else if($(this).hasClass('btn-apply')){
+            
+            if($(this).hasClass('btn-disabled')) return;
+
+            let chg_uit = $('#uit').text();
+            let remark = $('#uitReason').val();
+            
+            let inventory_item_id = uitdata.inventory_item_id;
+            let plant_id = uitdata.plant_id;
+            let pre_uit = uitdata.uit_code;
+            
+            LoadingWithMask();            
+            // uit 수정 신청
+            var requestParam = {
+                query: {
+                    "event": "uitChangeCreateEventGERP"
+                },
+                payload:{
+                    "plant_id": plant_id,
+                    "inventory_item_id":inventory_item_id,
+                    "bef_uit_code":pre_uit,
+                    "aft_uit_code":chg_uit,
+                    "employee_number":uitdata.empNo, 
+                    "change_reason":remark
+                }
+            };
+
+            sendChatApi(requestParam, null, function(payload){
+                console.log('UIT 수정 요청 결과 : ', payload);
+                
+                var createInfo = '';
+                var regSuccessYn = '';
+                var errorMessage = '';
+                if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                    var createResponse = JSON.parse(payload.queryResult.messages[0].response);
+                    console.log(createResponse["successYn"]);
+                    
+                    if (createResponse["successYn"] == 'N') {
+                        console.log('errorMessage : '+createResponse["errorMessage"]);
+                        regSuccessYn = 'N';
+                        errorMessage = createResponse["errorMessage"];               // 에러메시지.
+                    } else {
+                        regSuccessYn = 'Y';
+                        if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0]) {
+                            
+                            createInfo = createResponse.template.outputs[0];
+                        }
+                    }
+                    
+                }
+                else{
+                    regSuccessYn = 'E';
+                }
+    
+                console.log('createInfo : ', createInfo);
+
+                if(regSuccessYn == 'N') {
+                    console.log('UIT 수정 요청 실패 : '+errorMessage);
+                    
+                    //closeBtn();
+                    setTimeout(function() {
+                        showSmallHtmlDialog("UIT 수정 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                    }, 400);
+                    
+                }
+                else if(regSuccessYn == 'E') {          // 주문 생성 요청 에러. 
+                    console.log('UIT 수정 요청 에러 : ');
+    
+                    //closeBtn();
+                    setTimeout(function() {
+                        showSmallHtmlDialog("UIT 수정 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                    }, 400);
+                    
+                }
+                else{
+                     console.log('UIT 수정 요청 완료 : ');
+                     
+                     uitdata.uptMaterial = createInfo.resultPartNo;
+                     uitdata.bef_uit_code = pre_uit;
+                     uitdata.aft_uit_code = chg_uit;
+    
+                    closeBtn();
+
+                    appendChatbotHtml(addUitChangeCardGERP(uitdata), true);    
+                }
+    
+                closeLoadingWithMask();
+
+            });
+        }       // 
+            
+    });
+    
+    pluginForm.find('#uitReason').on('keyup', function(e) {
+        var input = e.target.value;
+        var inputVal = input.toUpperCase();
+        var inputLength = inputVal.length;
+
+		var targetP = pluginForm.find('#uitReason').next('p');
+		var targetArea = pluginForm.find('#uitReason');
+
+        if(inputLength<10&&inputLength>0){
+            //10자 미만
+			targetP.text("10자 이상 작성해 주세요.")
+			targetP.css("color","#F94B50")
+			targetArea.css("border-color","#F94B50")
+        }else if(inputLength>120){
+            //120자 초과
+			targetP.text("120자 이하로 작성해 주세요.")
+			targetP.css("color","#F94B50")
+			targetArea.css("border-color","#F94B50")
+        }else{
+			targetP.text("10자 이상, 120자 이하로 작성해 주세요.")
+			targetP.css("color","#898989")
+			targetArea.css("border-color","#898989")
+		}
+
+		nextBtnEvent();
+    })
+    
+    /*  #########[ dropdown ]#########  */
+    pluginForm.find('.btn-dropdown').on('click', function() {
+        dropdownBtnEvent(this);
+        //nextBtnEvent();
+    });
+    pluginForm.find('.dropdown-menu a').on('click', function() {
+        dropdownMenuEvent(this);
+        nextBtnEvent();
+    });
+    
+    function dropdownBtnEvent(target) {
+        if ($(target).hasClass('active')) {
+            uitDropdown.removeClass('active');
+            uitDropdownListWrap.removeClass('show');
+            uitDropdownListWrap.css("display","none");
+        }
+        else {
+            uitDropdown.addClass('active');
+            uitDropdownListWrap.addClass('show');
+            uitDropdownListWrap.css("display","flex");
+        }
+    }
+    
+    function dropdownMenuEvent(target) {
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).text();
+        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        uitDropdown.removeClass('active');
+        uitDropdownListWrap.removeClass('show');
+        uitDropdownListWrap.css("display","none");
+    }
+
+    function closeBtn(){
+        $('#uit-update').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#uit-update').remove();
+            
+            uitDataInitGERP(uitdata);
+        }, 300);
+    }
+    
+    function nextBtnEvent(){
+		var aftUitCode = pluginForm.find('.select').find('span').text();
+        var uitReasonText = pluginForm.find('#uitReason').val().length;
+
+        if(aftUitCode === "수정할 UIT를 선택해 주세요."){
+			aftUitCode = "";
+		}
+        
+        if(aftUitCode&&(uitReasonText>=10&&uitReasonText<=120)){
+            pluginForm.find('.btn-apply').removeClass('btn-disabled');
+        }else{
+            pluginForm.find('.btn-apply').addClass('btn-disabled');
+        }
+	}
+
+    uitUpdateInputFormGERP = pluginForm;
+    
+    return uitUpdateInputFormGERP;
+};
+
+function uitDataInitGERP(uitdata) {
+
+    delete uitdata.plant;
+    delete uitdata.material;
+    
+    delete uitdata.plant_code;
+    delete uitdata.plant_id;
+    delete uitdata.plant_name;
+    
+    delete uitdata.part_no;
+    delete uitdata.inventory_item_id;
+    delete uitdata.material_name;
+    delete uitdata.uit_code;
+    delete uitdata.po_check;
+    delete uitdata.wo_check;
+    delete uitdata.po_err_msg;
+    delete uitdata.wo_err_msg;
+
+    uitdata.step = 1;
+
+}
+
+function addUitChangeCardGERP(uitdata){
+    console.log('UIT 수정 완료 : ', uitdata);
+    
+    var messageWrap = $('<div class="custom-message"></div>');
+    
+    var messageTextWrap = $('<div class="message simple-text"></div>');    
+    var messageBox = $('<div class="message"></div>');
+    var contentWarp = $('<div class="content-wrap"></div>');
+    var contentHeader = $('<div class="content-wrap-header">' + iconBell2 +'<h2>UIT가 수정되었어요.</h2></div>');
+    contentWarp.append(contentHeader);
+    
+    var chipStyleBef = "";
+    var chipStyleAft = "";
+    var bef_uit_code = uitdata.bef_uit_code;
+    var aft_uit_code = uitdata.aft_uit_code;
+    if(bef_uit_code === "M"||bef_uit_code === "G"){
+        chipStyleBef = "padding: 1px 5px 2px 4px;";
+    }else if(bef_uit_code === "F"){
+        chipStyleBef = "padding: 1px 5px 2px 6px;";
+    }
+    if(aft_uit_code === "M"||aft_uit_code === "G"){
+        chipStyleAft = "padding: 1px 5px 2px 4px;";
+    }else if(aft_uit_code === "F"){
+        chipStyleAft = "padding: 1px 5px 2px 6px;";
+    }
+    var contentBox = $(
+        '<div class="uit-content-box">'
+            +'<ul>'
+                +'<li>'
+                    +'<p class="item-header" style="margin: 0px !important;">Material no.</p>'
+                    +'<p class="item-content">'+uitdata.uptMaterial+'</p>'
+                +'</li>'
+                +'<li>'
+                    +'<p class="item-header" style="margin: 0px !important;">수정 UIT</p>'
+                    +'<div class="item-content status-chip">'
+                        +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+bef_uit_code+'</span>'
+                        +iconArrow2
+                        +'<span class="badge-base badge-pink" style="'+chipStyleAft+'">'+aft_uit_code+'</span>'
+                    +'</div>'
+                +'</li>'
+            +'</ul>'
+        +'</div>'
+    );
+
+    contentWarp.append(contentBox);
+    messageTextWrap.append(contentWarp);
+    messageWrap.append(messageTextWrap);
+    
+    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
+    var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
+    var list = $('<button type="button" class="btn-quick-reply btn-basic">UIT 수정 내역 조회</button>');
+    quickBtnBox.append(list);
+    messageTextWrap2.append(quickBtnBox);
+
+    uitDataInitNERP(uitdata);       // 물품 입력내용 초기화. 
+
+    list.on('click', function() {
+
+        chatui.sendMessage("GERP-UIT 수정 내역 조회");
+    });
+
+    messageWrap.append(messageTextWrap2);
+
+    requestMsgScroll();
+    return messageWrap;
+}
+
+/* #################### [ UIT 수정 (GERP) End ] #################### */

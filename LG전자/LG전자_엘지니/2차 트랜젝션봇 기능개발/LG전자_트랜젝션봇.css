@@ -8278,4 +8278,12 @@ color: var(--color-gray-900, #2c2c2c);
     margin-top: 9px;
 }
 
+.org-list{
+    font-size: 12px;
+    line-height: 18px;
+    display: block;
+    color: #E0205C;
+    padding: 10px 8px;
+    font-weight: 400;
+}
 /* UIT NERP END */
