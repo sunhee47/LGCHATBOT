@@ -8402,3 +8402,350 @@ li::marker {
 }
 
 /* 물품 청구 조회 End */
+
+/* UIT NERP Start */
+/* UIT 공통 */
+.badge-base {
+    padding: 0.4px 5px;
+    border: 1.5px solid #2c2c2c;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    font-size: 12px !important;
+    text-align: right;
+    font-weight: 500;
+}
+.badge-pink { /*#F94B50;*/
+    border-color: #e0205c;
+    color: #e0205c;
+}   
+.badge-yellow {
+    border-color: #ffaa00;
+    color: #ffaa00;
+}
+.badge-green {
+    border-color: #04B395;
+    color: #04B395;
+}
+.badge-gray {
+    border-color: #6b6b6b;
+    color: #6b6b6b;
+}
+
+.uit-update.plugins .plugin-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.uit-update.plugins .plugin-header h1 {
+  line-height: 28px;
+}
+.uit-update.plugins .plugin-header .close-plugin {
+  top: 16px;
+}
+.uit-update hr {
+  border: 0; border-top: 1px solid #e8e8e8;
+}
+.uit-update h3 {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.uit-update h3.balance-box {
+  font-weight: 500;
+}
+.uit-update h3 .balance {
+  font-weight: 400;
+}
+.uit-update .help-message {
+  color: #898989;
+  font-size: 12px;
+}
+
+.backBtn {
+  cursor: pointer;
+}
+
+
+.uit-update-item-box{
+  border-radius: 10px;
+  padding: 15px 10px 20px 10px;
+  background: #F7F7F7;
+  margin-bottom: 10px;
+}
+.uit-update-item-box>.badge-base {
+  padding: 2.4px 6.4px 2.4px 6.4px;
+  border: 0.6px solid #2c2c2c;
+  border-radius: 22px;
+  text-align: center;
+  font-size: 10px !important;
+  font-weight: 500;
+  display: flex;
+  margin-bottom: 5px;
+}
+.uit-update-item-box>.badge-green {
+  border-color: #04B395;
+  color: #04B395;
+  width: 70px;
+  height: 18px;
+}
+.uit-update-item-box>.badge-pink {
+  border-color: #F94B50;
+  color: #F94B50;
+  width: 82px;
+  height: 18px;
+}
+.uit-update-item-box div{
+  justify-content: space-between;
+  display: flex;
+  font-size: 14px;
+  font-weight: 400;
+}
+.uit-update-item-box .uit-content-label-bold{
+  font-weight: 700;
+}
+.uit-update-item-box .uit-content-label{
+  color: #898989;
+}
+.uit-update-item-box .uit-item{
+  width: 60%;
+  word-wrap: break-word;
+  text-align: right;
+}
+
+.uit-update-msg_box{
+  padding-top: 10px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.uit-update-msg_box .uit-title{
+  color: #F94B50;
+  font-weight: 700;
+}
+.uit-update-msg_box .uit-sub-title{
+  color: #6B6B6B;
+}
+
+.uit-update-btn{
+  border-color: #E0205C;
+  color: #FFFFFF;
+  background: #E0205C;
+}
+
+.uit-content-header{
+  background: #424242;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  height: 34px;
+  align-items: center;
+  display: flex;
+}
+
+.uit-content-header p{
+  color: #FFFFFF !important;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.uit-content-header font{
+  font-weight: 700;
+  margin-left: 5px;
+}
+
+.uit-content-box{
+  display: flex;
+  justify-content: space-between;
+}
+.uit-content-box ul{
+  width: 100%;
+  padding-top: 15px;
+}
+.uit-content-box li{
+  height: 28px;
+  display: flex;
+  justify-content: space-between;
+}
+.uit-content-box .item-header{
+  width: 37%;
+  padding: 0px 0px 0px 12px;
+  color: #898989 !important;
+  align-items: center;
+  display: flex;
+}
+.uit-content-box .item-content{
+  width: 68%;
+  margin: 0px !important;
+  padding: 0px 0px 0px 6px;
+  align-items: center;
+  display: flex;
+}
+.uit-content-box .status-chip{
+  justify-content: left;
+}
+.uit-content-box .status-chip svg{
+  margin: 0px 5px;
+}
+.uit-content-box .status-chip .badge-base {
+  padding: 1px 5px 2px 5px;
+  border: 0.75px solid #2c2c2c;
+  border-radius: 27px;
+  text-align: center;
+  font-size: 11px !important;
+  display: flex;
+  width: 18px;
+  height: 18px;
+}
+.uit-content-box .status-chip .badge-gray {
+  border-color: #6B6B6B;
+  color: #6B6B6B;
+}
+.uit-content-box .status-chip .badge-pink {
+  border-color: #E0205C;
+  color: #E0205C;
+}
+
+.articleRequestList-h1{
+    width: 215px;
+}
+
+.articleRequestList-li{
+    justify-content: space-between;
+}
+
+.articleRequestList-li h4{
+    width: 30%;
+}
+
+.articleRequestList-li .result-item-reqTitle{
+    width: 70%;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.plugins .articleRequestFilter-contents{
+    max-height: calc(90vh - 170px)!important;
+}
+
+.input-box .schedule-wrap-filter{
+    display: flex; 
+    gap: 8px;
+}
+
+.input-box .schedule-wrap-filter .schedule-date-wrap-filter{
+    margin-bottom:0px;
+    width: 100%;
+}
+
+.plugins .articleRequestFilter-footer{
+    padding: 0px 16px 0px 16px;
+    position: relative;
+}
+
+.plugins .articleRequestDetail-contents-NS{
+    max-height:  calc(100vh - 373px) !important;
+}
+.plugins .articleRequestDetail-contents-R{
+    max-height:  calc(100vh - 310px) !important;
+}
+.plugins .articleRequestDetail-contents-other{
+    max-height:  calc(100vh - 247px) !important;
+}
+.plugins .articleRequestDetail-contents{
+    scrollbar-width: auto;
+}
+
+.plugins .articleRequestDetail-contents .articleReqSubInfo .articleReq-list-sub-wrap .subInfo-li{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 24px;
+}
+
+.plugins .articleRequestDetail-contents .articleReqSubInfo .articleReq-list-sub-wrap .subInfo-li p{
+    font-size: 14px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.plugins .articleRequestDetail-contents .totalCnt{
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.plugins .articleRequestDetail-contents .articleReqItemList{
+    margin-top: 10px;
+}
+
+.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li{
+    display: flex;
+    border-top:1px solid #eeeeee;
+    padding: 15px 0px 10px 0px;
+}
+
+.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-count{
+    width:52px;
+}
+
+.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-name{
+    padding-left: 5px;width: 91%;
+}
+
+.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-box{
+    margin: 5px 0px 5px 0px;
+}
+
+.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-info{
+    display: flex;
+    justify-content: space-between;
+    height: 23px;
+}
+
+.plugins .articleRequestDetail-footer{
+    padding: 16px 16px 16px 16px;
+}
+
+.plugins .articleRequestDetail-footer .total-amount{
+    display: flex;
+    justify-content: space-between;
+    background-color: #f7f7f7;
+    border-radius: 4px;
+    padding: 10px;
+    align-items: center;
+    height: 54px;
+}
+
+.plugins .articleRequestDetail-footer .total-amount p{
+    margin-top: 0px;
+    font-size: 14px;
+}
+
+.plugins .articleRequestDetail-footer .btn-border-pink{
+    margin:0px;
+    margin-top: 9px;
+    color: #E0205C;
+    border: 1px solid #F55D8D;
+}
+
+.plugins .articleRequestDetail-footer .btn-check-close{
+    margin: 0px;
+    margin-top: 9px;
+}
+
+.org-list{
+    font-size: 12px;
+    line-height: 18px;
+    display: block;
+    color: #E0205C;
+    padding: 10px 8px;
+    font-weight: 400;
+}
+/* UIT NERP END */
