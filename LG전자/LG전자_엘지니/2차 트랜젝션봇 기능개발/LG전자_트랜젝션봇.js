@@ -6137,105 +6137,6 @@ function makeDefaultFallbackCard(data) {
  
 }
 
-/////////////////////////////////////////////////////  []  ////////////////////////////////
-
-    function thisPushPluginClose(popupObj) {
-        popupObj.removeClass('show');
-        $('.plugin-dim').removeClass('show');
-        
-        setTimeout(function() {
-            $('.plugin-dim').remove();
-            popupObj.remove();
-            
-            closeErrorWithMask();
-            closeLoadingWithMask();
-        }, 100);
-    }
-
-function callbackPushOrderInquiry(payload) {
-    var searchInfo = '';
-    var regSuccessYn = '';
-    var errorMessage = '';
-    
-    let messageCard = null;
-    
-    let p_gubun = 'A';
-    let p_order_number = '';
-    let p_ref_number = '';
-    
-    var reviewParam = {
-            userId:'sojung.im',
-            re_employee_number : 'Y046222', 
-            re_order_number : (p_gubun == 'C')? p_order_number:'0',
-            re_regist_number : (p_gubun == 'D')? p_ref_number:'0',
-            re_order_gubun : p_gubun
-    }    
-    
-    if (payload && payload.body && payload.body.OUTPUT_DATA.length > 0) {
-        var bodyData = payload.body.OUTPUT_DATA;
-        var bodyResult = payload.body.OUTPUT_RESULT[0];
-        var header = payload.header;
-
-        console.log(bodyResult["RESULT_CODE"]);
-        
-        if (bodyResult["RESULT_CODE"] != 'SUCCESS') {
-            console.log('errorMessage : '+header["message"]);
-            regSuccessYn = 'N';
-            errorMessage = header["message"];               // 에러메시지.
-        } else {
-            regSuccessYn = 'Y';
-            searchInfo = bodyData;
-        }
-        
-    }
-    else{
-        regSuccessYn = 'N';
-        errorMessage = 'server error!!!';               // 에러메시지.
-    }
-    
-    thisPushPluginClose($('#aalvPopup'));
-
-    if(regSuccessYn == 'N') {
-        
-        console.log('타계정 주문 현황 조회 실패 : ');
-        
-        messageCard = aalvResultError(reviewParam);
-    }   
-    else{
-    
-        console.log('타계정 주문 현황 조회 완료 : ', searchInfo);
-        
-        var msgSearchResult = '<div class="message simple-text">'
-                         +'<p>'
-                            +'타계정 주문 내역을 조회했어요.<br> '
-                            +'<small class="note" style="color: #898989; font-size:12px;">나의 주문 건, 부서 내 주문 건 조회시 </br>'
-                            +'오늘 기준 1개월 이내 주문 건만 조회 가능하며, </br>'
-                            +'주문 발행 일자를 기준으로 최근 20건을 보여 줍니다.</br>'
-                            +'</small></br>'
-                            +'<small class="note" style="color: #898989; font-size:12px;">※ 특정 주문 건 조회 시 주문 번호 또는 접수 번호로 조회해 주세요.</br>'
-                         +'</p>'
-                        + '</div>'; 
-        
-        var anotherSearchResult = '';
-        if(searchInfo.length > 0) {            // 타계정 주문 현황 조회
-
-            messageCard = aalvResult(searchInfo, msgSearchResult);
-        }
-        else{
-            console.log('타계정 주문 현황 조회 : 0건.');
-            setTimeout(function() {
-                showSmallDialog('타계정 주문 현황 조회 건수가 없습니다. 다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-                $('.chat-message.left').last().remove();
-            }, 100);                    
-        }
-        
-    }   
-    
-    closeLoadingWithMask();
-    
-    return messageCard;
-}
-
 // ** 커스텀 음답 메시지 생성 함수 **
 chatui.createCustomResponseMessage = function(response, isHistory) {
   console.log("chatui.createCustomResponseMessage()", response);
@@ -6249,299 +6150,314 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         
         if(response.pushType == 'pushOrderInquiry') {       // 타계정 주문 현황 조회. 
             var payload = response.response;
+            var requestParam = response.requestBody; 
+            
             console.log('payload > ', payload);
+            console.log('requestParam > ', requestParam);
             
             $('.chat-message.left').last().remove();
             
-            messageCard = callbackPushOrderInquiry(payload);
+            messageCard = callbackPushOrderInquiry(payload, requestParam);
             
             requestMsgScroll();    
 
         }
+        else if(response.pushType == 'pushAccountInquiry') { 
+            var payload = response.response;
+            var requestParam = response.requestBody; 
+            
+            console.log('payload > ', payload);
+            console.log('requestParam > ', requestParam);
+            
+            $('.chat-message.left').last().remove();
+            
+            messageCard = callbackPushAccountInquiry(payload, requestParam);
+        }
         
         return messageCard;    
+        
     }   
     
     var customPayload = JSON.parse(response.response);
 
-    if(customPayload) {   
-        if(customPayload.type == 'apmsPush') {          // 광고판촉비 push 일 경우 
-            console.log('apmsPush : ', response);
+    // if(customPayload) {   
+    //     if(customPayload.type == 'apmsPush') {          // 광고판촉비 push 일 경우 
+    //         console.log('apmsPush : ', response);
             
-            var apmsInfo = '';
-            var regSuccessYn = '';
-            var errorMessage = '';
-            var parameters = null;
-            if(response.result_code && response.result_code == 'SUCCESS') {
-                regSuccessYn = 'Y';
+    //         var apmsInfo = '';
+    //         var regSuccessYn = '';
+    //         var errorMessage = '';
+    //         var parameters = null;
+    //         if(response.result_code && response.result_code == 'SUCCESS') {
+    //             regSuccessYn = 'Y';
                 
-                if(response.result_data) {
-                    apmsInfo = response.result_data;
-                }
-            }
-            else{
-                regSuccessYn = 'N';
-                errorMessage = response.result_message;
-                parameters = response.parameters;
-            }
+    //             if(response.result_data) {
+    //                 apmsInfo = response.result_data;
+    //             }
+    //         }
+    //         else{
+    //             regSuccessYn = 'N';
+    //             errorMessage = response.result_message;
+    //             parameters = response.parameters;
+    //         }
             
-            if(regSuccessYn == 'N') {           // 광고판촉비 조회 에러시. 
+    //         if(regSuccessYn == 'N') {           // 광고판촉비 조회 에러시. 
                 
-                console.log('광고판촉비 조회 실패 : ');
+    //             console.log('광고판촉비 조회 실패 : ');
                 
-                if(customPayload.mode == "input") {         // 타계정 주문 입력 4단계 광고판촉비 조회시
-                    setTimeout(function() {
-                        showSmallDialog('광고판촉비 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                        $('.chat-message.left').last().remove();
-                    }, 100);
-                }
-                else{                                       // 광고판촉비 조회 
-                    //thisPluginClose();
-                    apmsPluginClose();
+    //             if(customPayload.mode == "input") {         // 타계정 주문 입력 4단계 광고판촉비 조회시
+    //                 setTimeout(function() {
+    //                     showSmallDialog('광고판촉비 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+    //                     $('.chat-message.left').last().remove();
+    //                 }, 100);
+    //             }
+    //             else{                                       // 광고판촉비 조회 
+    //                 //thisPluginClose();
+    //                 apmsPluginClose();
     
-                    var anotherApmsResult = '<div class="message simple-text">'
-                                     +'<p>'
-                                        +'시스템 오류로 인해 조회되지 않았어요.<br><br>'
-                                        +'아래 버튼을 눌러 광고판촉비를 다시 조회해 보세요.'
-                                     +'</p>'
-                                    +'<div class="btn">'
-                                        +'<button type="button" class="btn btn-default btn-big reload-apms">다시 조회하기</button>'
-                                    +'</div>'
-                                    + '</div>'; 
+    //                 var anotherApmsResult = '<div class="message simple-text">'
+    //                                  +'<p>'
+    //                                     +'시스템 오류로 인해 조회되지 않았어요.<br><br>'
+    //                                     +'아래 버튼을 눌러 광고판촉비를 다시 조회해 보세요.'
+    //                                  +'</p>'
+    //                                 +'<div class="btn">'
+    //                                     +'<button type="button" class="btn btn-default btn-big reload-apms">다시 조회하기</button>'
+    //                                 +'</div>'
+    //                                 + '</div>'; 
                                     
-                    //appendChatbotText(anotherApmsResult);
+    //                 //appendChatbotText(anotherApmsResult);
                     
-                    //$('.reload-apms').on('click', function() {
-                    //    apmsPopupOpen(reviewParam);
-                    //});
+    //                 //$('.reload-apms').on('click', function() {
+    //                 //    apmsPopupOpen(reviewParam);
+    //                 //});
                     
-                    messageCard = apmsResultError(parameters);
-                }
-            }   
-            else{           // 광고판촉비 조회가 정상적인 경우.
+    //                 messageCard = apmsResultError(parameters);
+    //             }
+    //         }   
+    //         else{           // 광고판촉비 조회가 정상적인 경우.
             
-                console.log('광고판촉비 조회 완료 : ', apmsInfo);
+    //             console.log('광고판촉비 조회 완료 : ', apmsInfo);
                 
-                if(customPayload.mode == "input") {                 // 타계정 주문 입력 4단계 광고판촉비 조회시
-                    if(apmsInfo.length == 1) {                // 광고판촉비 조회 단건
-                        let apms_data = apmsInfo[0];
+    //             if(customPayload.mode == "input") {                 // 타계정 주문 입력 4단계 광고판촉비 조회시
+    //                 if(apmsInfo.length == 1) {                // 광고판촉비 조회 단건
+    //                     let apms_data = apmsInfo[0];
                         
-                        let orderdata = getOrderdata();
+    //                     let orderdata = getOrderdata();
                         
-                        console.log('orderdata get : ', orderdata);
+    //                     console.log('orderdata get : ', orderdata);
                         
-                        orderdata.apms_no = apms_data.apms_no;
-                        orderdata.au_code = apms_data.au_code;
-                        orderdata.au_name = apms_data.au_name;
-                        orderdata.department_code = apms_data.department_code;
-                        orderdata.department_name = apms_data.department_name;
-                        orderdata.account_code = apms_data.account_code;
-                        orderdata.account_name = apms_data.account_name;
-                        orderdata.activity_code = apms_data.activity_code;
-                        orderdata.activity_id = apms_data.activity_id;
-                        orderdata.activity_name = apms_data.activity_name;
-                        orderdata.activity_amount = apms_data.activity_amount;
-                        orderdata.activity_rate = apms_data.activity_rate;
+    //                     orderdata.apms_no = apms_data.apms_no;
+    //                     orderdata.au_code = apms_data.au_code;
+    //                     orderdata.au_name = apms_data.au_name;
+    //                     orderdata.department_code = apms_data.department_code;
+    //                     orderdata.department_name = apms_data.department_name;
+    //                     orderdata.account_code = apms_data.account_code;
+    //                     orderdata.account_name = apms_data.account_name;
+    //                     orderdata.activity_code = apms_data.activity_code;
+    //                     orderdata.activity_id = apms_data.activity_id;
+    //                     orderdata.activity_name = apms_data.activity_name;
+    //                     orderdata.activity_amount = apms_data.activity_amount;
+    //                     orderdata.activity_rate = apms_data.activity_rate;
                         
-                        delete orderdata.action;    
+    //                     delete orderdata.action;    
                         
-                        //pluginForm.removeClass('show');
-                        //pluginForm.remove();
-                        $('.form-fourth').removeClass('show');
-                        $('.form-fourth').remove();
-                        anotherAccountOrderFifth(orderdata);
-                        $('.plugin-contents').append(anotherAccountOrderForm);
+    //                     //pluginForm.removeClass('show');
+    //                     //pluginForm.remove();
+    //                     $('.form-fourth').removeClass('show');
+    //                     $('.form-fourth').remove();
+    //                     anotherAccountOrderFifth(orderdata);
+    //                     $('.plugin-contents').append(anotherAccountOrderForm);
                         
-                    }
-                    else{                                   // 광고판촉비가 0건인 경우.
-                        console.log('광고판촉비 조회 : 0건.');
+    //                 }
+    //                 else{                                   // 광고판촉비가 0건인 경우.
+    //                     console.log('광고판촉비 조회 : 0건.');
                         
-                        setTimeout(function() {
-                            showSmallDialog('광고판촉비 조회 내역이 없습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                            $('.chat-message.left').last().remove();
-                        }, 100);
-                    }                    
-                }
-                else{                                       // 광고판촉비 조회시
+    //                     setTimeout(function() {
+    //                         showSmallDialog('광고판촉비 조회 내역이 없습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+    //                         $('.chat-message.left').last().remove();
+    //                     }, 100);
+    //                 }                    
+    //             }
+    //             else{                                       // 광고판촉비 조회시
                     
-                    var msgApmsResult = '<div class="message simple-text">'
-                                     +'<p>'
-                                        +'<b>광고판촉비(APMS)</b>를 확인해 보세요. '
-                                     +'</p>'
-                                    + '</div>'; 
+    //                 var msgApmsResult = '<div class="message simple-text">'
+    //                                  +'<p>'
+    //                                     +'<b>광고판촉비(APMS)</b>를 확인해 보세요. '
+    //                                  +'</p>'
+    //                                 + '</div>'; 
                     
-                    var anotherApmsResult = '';
-                    if(apmsInfo.length == 1) {                // 광고판촉비 조회 단건
-                        apmsPluginClose();
-                        //var anotherApmsResult = msgApmsResult + apmsResult(apmsInfo);
-                        //thisPluginClose();
-                        //appendChatbotText(anotherApmsResult);
+    //                 var anotherApmsResult = '';
+    //                 if(apmsInfo.length == 1) {                // 광고판촉비 조회 단건
+    //                     apmsPluginClose();
+    //                     //var anotherApmsResult = msgApmsResult + apmsResult(apmsInfo);
+    //                     //thisPluginClose();
+    //                     //appendChatbotText(anotherApmsResult);
                         
-                        messageCard = apmsResult(apmsInfo);
-                    }
-                    else{
-                        console.log('광고판촉비 조회 : 0건.');
+    //                     messageCard = apmsResult(apmsInfo);
+    //                 }
+    //                 else{
+    //                     console.log('광고판촉비 조회 : 0건.');
                         
-                        setTimeout(function() {
-                            showSmallHtmlDialog('품의번호가 조회되지 않았습니다. </br>확인 후 다시 입력해 주세요.'); // [퍼블 수정 및 추가] - 텍스트 수정
-                            $('.chat-message.left').last().remove();
-                        }, 100);                          
-                    }
+    //                     setTimeout(function() {
+    //                         showSmallHtmlDialog('품의번호가 조회되지 않았습니다. </br>확인 후 다시 입력해 주세요.'); // [퍼블 수정 및 추가] - 텍스트 수정
+    //                         $('.chat-message.left').last().remove();
+    //                     }, 100);                          
+    //                 }
                     
-                }
+    //             }
                 
-            }            
+    //         }            
 
-            closeLoadingWithMask();
-        }       // customPayload.type == 'apmsPush' 
-        else if(customPayload.type == 'accountPush') {          // 비용처리계정 push 일 경우 
-            console.log('accountPush : ', response);
+    //         closeLoadingWithMask();
+    //     }       // customPayload.type == 'apmsPush' 
+    //     else if(customPayload.type == 'accountPush') {          // 비용처리계정 push 일 경우 
+    //         console.log('accountPush : ', response);
             
-            var accntList = '';
-            var regSuccessYn = '';
-            var errorMessage = '';
-            var parameters = null;
-            if(response.result_code && response.result_code == 'SUCCESS') {
-                regSuccessYn = 'Y';
+    //         var accntList = '';
+    //         var regSuccessYn = '';
+    //         var errorMessage = '';
+    //         var parameters = null;
+    //         if(response.result_code && response.result_code == 'SUCCESS') {
+    //             regSuccessYn = 'Y';
                 
-                if(response.result_data) {
-                    accntList = response.result_data;
-                }
-            }
-            else{
-                regSuccessYn = 'N';
-                errorMessage = response.result_message;
-                parameters = response.parameters;
-            }
+    //             if(response.result_data) {
+    //                 accntList = response.result_data;
+    //             }
+    //         }
+    //         else{
+    //             regSuccessYn = 'N';
+    //             errorMessage = response.result_message;
+    //             parameters = response.parameters;
+    //         }
             
-            var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
+    //         var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
             
-            if(regSuccessYn == 'N') {           // 비용처리계정 조회 에러시. 
-                var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
-                orderUl3.append(orderLi3);
-                $('.cost_accnt_list').append(orderUl3);
-            }
-            else{
-                orderUl3.empty();
-                if(accntList.length == 0) {
-                    var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
-                    orderUl3.append(orderLi3);
-                    $('.cost_accnt_list').append(orderUl3);
-                }   
-                else{
+    //         if(regSuccessYn == 'N') {           // 비용처리계정 조회 에러시. 
+    //             var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
+    //             orderUl3.append(orderLi3);
+    //             $('.cost_accnt_list').append(orderUl3);
+    //         }
+    //         else{
+    //             orderUl3.empty();
+    //             if(accntList.length == 0) {
+    //                 var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
+    //                 orderUl3.append(orderLi3);
+    //                 $('.cost_accnt_list').append(orderUl3);
+    //             }   
+    //             else{
                     
-                  accntList.map(costAccount => {
+    //               accntList.map(costAccount => {
                       
-                    var orderLi3 = $(
-                        '<li>'
-                            +'<p>['+costAccount.account_code+']'+ costAccount.account_name // + '()' 
-                            +'</p>'
-                        +'</li>'
-                    );
+    //                 var orderLi3 = $(
+    //                     '<li>'
+    //                         +'<p>['+costAccount.account_code+']'+ costAccount.account_name // + '()' 
+    //                         +'</p>'
+    //                     +'</li>'
+    //                 );
                     
-                    // 비용처리 계정 목록 리스트 클릭
-                    orderLi3.on('click', function() {
+    //                 // 비용처리 계정 목록 리스트 클릭
+    //                 orderLi3.on('click', function() {
                         
-                        var coastAccountInfo = $(
-                            /*'<div class="place-info">'
-                                + '['+costAccount.account_code+'] ' + costAccount.account_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                                + '<button type="button" class="btn btn-delete">' 
-                                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                                    + '</svg>'
-                                + '</button>'
-                                  + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
-                                  + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
-                            +'</div>'*/
-                            '<div class="data-wrap">'
-                                 +'<p>['+costAccount.account_code+'] ' + costAccount.account_name
-                                 + '</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
-                              + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
-                            +'</div>'
-                        );
+    //                     var coastAccountInfo = $(
+    //                         /*'<div class="place-info">'
+    //                             + '['+costAccount.account_code+'] ' + costAccount.account_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
+    //                             + '<button type="button" class="btn btn-delete">' 
+    //                                 + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //                                     + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+    //                                 + '</svg>'
+    //                             + '</button>'
+    //                               + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
+    //                               + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
+    //                         +'</div>'*/
+    //                         '<div class="data-wrap">'
+    //                              +'<p>['+costAccount.account_code+'] ' + costAccount.account_name
+    //                              + '</p>'
+    //                         + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+    //                             + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+    //                         + '</button>'
+    //                           + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
+    //                           + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
+    //                         +'</div>'
+    //                     );
                         
-                        $('#costaccount').empty();
-                        $('#costaccount').val('');
-                        $('.cost_accnt_selected').empty();
-                        $('.cost_accnt_selected').css('width', '100%'); 
-                        $('.cost_accnt_selected').append(coastAccountInfo);
+    //                     $('#costaccount').empty();
+    //                     $('#costaccount').val('');
+    //                     $('.cost_accnt_selected').empty();
+    //                     $('.cost_accnt_selected').css('width', '100%'); 
+    //                     $('.cost_accnt_selected').append(coastAccountInfo);
                         
-                        //orderInput.val(orderInfo.html());
+    //                     //orderInput.val(orderInfo.html());
                         
-                        // [퍼블 수정 및 추가]
-                        var targetHeight = $('.cost_accnt_selected').height();
-                        $('.cost_accnt_input').removeClass('focus');
-                        console.log(targetHeight);
+    //                     // [퍼블 수정 및 추가]
+    //                     var targetHeight = $('.cost_accnt_selected').height();
+    //                     $('.cost_accnt_input').removeClass('focus');
+    //                     console.log(targetHeight);
                 
-                        $('.cost_accnt_list').removeClass('show');
-                        // $('.order-list').css('top', '82px');
-                        $('.cost_accnt_list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-                        $('#costaccount-name').attr('placeholder', '');
-                        //scheduleorderWidth($('#costdept-name'));
+    //                     $('.cost_accnt_list').removeClass('show');
+    //                     // $('.order-list').css('top', '82px');
+    //                     $('.cost_accnt_list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+    //                     $('#costaccount-name').attr('placeholder', '');
+    //                     //scheduleorderWidth($('#costdept-name'));
                         
-                        scheduleorderWidth($('.cost_accnt_input'), $('.cost_accnt_selected'), $('#costaccount-name')); 
+    //                     scheduleorderWidth($('.cost_accnt_input'), $('.cost_accnt_selected'), $('#costaccount-name')); 
                         
-                        selectBoxAction($('#project-name'), $('.project_input'), 'enabled');
-                        selectBoxAction($('#activity-name'), $('.activity_input'), 'enabled');
+    //                     selectBoxAction($('#project-name'), $('.project_input'), 'enabled');
+    //                     selectBoxAction($('#activity-name'), $('.activity_input'), 'enabled');
 
-						$('.project_selected').empty();
-						$('.activity_selected').empty();
+				// 		$('.project_selected').empty();
+				// 		$('.activity_selected').empty();
                         
-                        $('#project-name').attr('placeholder', 'Project Code를 선택하세요.');
-                        $('#activity-name').attr('placeholder', 'Activity Code를 선택하세요.');
+    //                     $('#project-name').attr('placeholder', 'Project Code를 선택하세요.');
+    //                     $('#activity-name').attr('placeholder', 'Activity Code를 선택하세요.');
     
-                        //nextBtnEvent($(this));
+    //                     //nextBtnEvent($(this));
                         
-                    });
+    //                 });
                     
-                    orderUl3.append(orderLi3);
-                  });
-                  $('.cost_accnt_list').append(orderUl3);
+    //                 orderUl3.append(orderLi3);
+    //               });
+    //               $('.cost_accnt_list').append(orderUl3);
                     
-                }
+    //             }
                 
-            }
+    //         }
             
-            closeLoadingWithMask();
-        }
+    //         closeLoadingWithMask();
+    //     }
         
         
-    }
+    // }
     
-    function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
-        let orderSelectWidth = $inputTextContent.width();
-        let selectedorderWidth = $costSelected.width();
-        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
-        $inputId.css('width', scheduleorderWidth + "px");
-        if ($inputId.width() === 0) {
-            $inputId.attr('style', '');
-        }
+    // function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
+    //     let orderSelectWidth = $inputTextContent.width();
+    //     let selectedorderWidth = $costSelected.width();
+    //     let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+    //     $inputId.css('width', scheduleorderWidth + "px");
+    //     if ($inputId.width() === 0) {
+    //         $inputId.attr('style', '');
+    //     }
         
-        if(selectedorderWidth == 0) {
-            $inputId.css('display', 'block');
-        }
-        else{
-            $inputId.css('display', 'none');
-        }
-    };    
+    //     if(selectedorderWidth == 0) {
+    //         $inputId.css('display', 'block');
+    //     }
+    //     else{
+    //         $inputId.css('display', 'none');
+    //     }
+    // };    
     
-    function selectBoxAction($input, $inputContent, action) {
-        if(action == 'disabled') {
-            $input.attr('disabled', true);
-            $inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
+    // function selectBoxAction($input, $inputContent, action) {
+    //     if(action == 'disabled') {
+    //         $input.attr('disabled', true);
+    //         $inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
             
-            //$inputContent.addClass('addValue');
-        }
-        else{
-            $input.attr('disabled', false);
-            $inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
-            //$inputContent.removeClass('addValue');
-        }
-    }	    
+    //         //$inputContent.addClass('addValue');
+    //     }
+    //     else{
+    //         $input.attr('disabled', false);
+    //         $inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
+    //         //$inputContent.removeClass('addValue');
+    //     }
+    // }	    
     
     /////////////////////////////////////////////////////////////////////////////////////   End Push
     
@@ -9080,8 +8996,8 @@ function anotherAccountPopupOpen(orderdata) {
         var anotherForm = anotherAccountOrderEighth(orderdata);
     }
     else{
-        var anotherForm = anotherAccountOrderFirst(orderdata);
-        //var anotherForm = anotherAccountOrderFifth(orderdata);
+        //var anotherForm = anotherAccountOrderFirst(orderdata);
+        var anotherForm = anotherAccountOrderFifth(orderdata);
     }
     //var anotherForm = anotherAccountOrderFirst(orderdata);
     pluginContents.append(anotherForm);
@@ -10564,7 +10480,7 @@ function isNull(val) {
 function anotherAccountOrderFifth(orderdata) {
     console.log('orderdata : ', orderdata);
     
-    var selOrderType = (orderdata.orderType == null)? '':orderdata.orderType;       // OTHERS_OUT_NO RETURN_OMD / OTHERS_OUT_FA_OMD
+    var selOrderType = (orderdata.orderType == null)? 'OTHERS_OUT_NO RETURN_OMD':orderdata.orderType;       // OTHERS_OUT_NO RETURN_OMD / OTHERS_OUT_FA_OMD
     var selApmsYN = (orderdata.apmsYN == null)? '':orderdata.apmsYN;
 
     var selApmsNo = (orderdata.apms_no == null)? '':orderdata.apms_no;              // EKHQ-MKT-20231127-0087
@@ -11055,6 +10971,13 @@ function anotherAccountOrderFifth(orderdata) {
     inputTextContent3.append(inputBox3);
     inputTextContent3.append(costAccountListCont);
     
+    // 타계정 우회방안 개발시 비용처리계정 목록 선택시 다음 버튼 처리. 
+    //costAccountListCont.find('ul').find('li').on('click', function(){
+    $(document).on('click', '.form-fifth .cost_accnt_list ul li', function(){    
+        console.log('click....');
+        nextBtnEvent();
+    });
+    
     var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
     
     inputBox3.on('click', function() {
@@ -11090,7 +11013,7 @@ function anotherAccountOrderFifth(orderdata) {
                 return;
             }      
             
-            LoadingWithMask();
+//            LoadingWithMask();
 
             inputTextContent3.addClass('focus');
 
@@ -11099,124 +11022,175 @@ function anotherAccountOrderFifth(orderdata) {
             costAccountListCont.addClass('show');
             orderUl3.empty();
 
+////////////////
+        userId = chatui.getSetting("userId"); 
         
-        var requestParam = {
-            query: {
-              "event": "costAccountInquiryEvent"
-            },
-            payload: {
-                "auCode": $("#au_code").val()
-                , "departmentCode": $("#costdept_code").val()
-                , "orderType": selOrderType
-                , "keyword": inval
-            }
-          };
+        let api_url = 'https://apigw-int.lge.com:7211/gateway/gerp/api2api/rest/gerpRest/XXOMDS/ChatbotAccountInquiry';   // 운영.
+                    // 'http://dev-apigw-int.lge.com:7220/gateway/gerp/api2api/rest/gerpRest/XXOMDS/ChatbotOrderInquiry';
+        let api_method = 'POST';
+        let api_header = {
+                            "Content-Type": "application/json",
+                            "x-Gateway-APIKey": "37f90096-4f19-49ba-8987-e749f119750d"
+                        };
+                       
+        let api_body = {
+              "header" : {
+                "SYSTEM_CODE" : "XXOMDS",
+                "PROCESS_NAME" : "ChatbotAccountInquiry"
+              },
+              "body" : {
+                "INPUT_DATA1":
+                     [{
+                     "p_company_code": "LGEKR",
+                        "p_au_code": "AAZ",
+                        "p_department_code": "12436",
+                        "p_order_type":"OTHERS_OUT_NO RETURN_OMD",
+                        "p_account_code":"522"
+                     }]
+              }
+            };
 
-          sendChatApi(requestParam, null, function(payload){
-            console.log('payload > ', payload);
+        // OTHERS_OUT_NO RETURN_OMD
+        LoadingWithMask();
+        
+        let api_header_str = JSON.stringify(api_header);        
+        let api_body_str = JSON.stringify(api_body);        
+        
+        var apiPushParam = {
+                userId: userId,
+                pushType: 'pushAccountInquiry', 
+                sessionId: chatui.getSessionId(),  
+                chatbotId: chatui.getSetting("chatbotId"), 
+                api_url : api_url, 
+                api_method : api_method, 
+                api_header : api_header_str,  
+                api_body : api_body_str
+        }
+        
+        console.log('비용 처리 계정 조회 : ', apiPushParam);
+        
+        chatui.sendEventMessage("callAPI",apiPushParam);
+        
+        //*************************************** 비용처리 계정 조회 Push 변경          
+        // var requestParam = {
+        //     query: {
+        //       "event": "costAccountInquiryEvent"
+        //     },
+        //     payload: {
+        //         "auCode": $("#au_code").val()
+        //         , "departmentCode": $("#costdept_code").val()
+        //         , "orderType": selOrderType
+        //         , "keyword": inval
+        //     }
+        //   };
 
-            if(payload.queryResult.messages.length == 0) {
-                closeLoadingWithMask();
-                errorWithMask();
-                return;
-            }
+        //   sendChatApi(requestParam, null, function(payload){
+        //     console.log('payload > ', payload);
 
-            // 비용처리 계정 조회 Not Push Start            
-            var result = JSON.parse(payload.queryResult.messages[0].response);
-            console.log('result', result);
+        //     if(payload.queryResult.messages.length == 0) {
+        //         closeLoadingWithMask();
+        //         errorWithMask();
+        //         return;
+        //     }
+
+        //     // 비용처리 계정 조회 Not Push Start            
+        //     var result = JSON.parse(payload.queryResult.messages[0].response);
+        //     console.log('result', result);
             
-            if(result == null) {
-              var orderLi3 = $('<li class="no-res">조회시 에러가 발생했습니다. 다시 조회하세요.</li>');
-              orderUl3.append(orderLi3);
-              costAccountListCont.append(orderUl3);
-              closeLoadingWithMask();
+        //     if(result == null) {
+        //       var orderLi3 = $('<li class="no-res">조회시 에러가 발생했습니다. 다시 조회하세요.</li>');
+        //       orderUl3.append(orderLi3);
+        //       costAccountListCont.append(orderUl3);
+        //       closeLoadingWithMask();
               
-              return;
-            }
+        //       return;
+        //     }
             
-            costAccountList = result.resultList;
+        //     costAccountList = result.resultList;
             
-            if(costAccountList.length == 0) {
-              var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
-              orderUl3.append(orderLi3);
-              costAccountListCont.append(orderUl3);
-            } else {
-              costAccountList.map(costAccount => {
+        //     if(costAccountList.length == 0) {
+        //       var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
+        //       orderUl3.append(orderLi3);
+        //       costAccountListCont.append(orderUl3);
+        //     } else {
+        //       costAccountList.map(costAccount => {
                   
-                var orderLi3 = $(
-                    '<li>'
-                        +'<p>['+costAccount.account_code+']'+ costAccount.account_name // + '()' 
-                        +'</p>'
-                    +'</li>'
-                );
+        //         var orderLi3 = $(
+        //             '<li>'
+        //                 +'<p>['+costAccount.account_code+']'+ costAccount.account_name // + '()' 
+        //                 +'</p>'
+        //             +'</li>'
+        //         );
                 
-                // 비용처리 계정 목록 리스트 클릭
-                orderLi3.on('click', function() {
+        //         // 비용처리 계정 목록 리스트 클릭
+        //         orderLi3.on('click', function() {
                     
-                    var coastAccountInfo = $(
-                            '<div class="data-wrap">'
-                                 +'<p>['+costAccount.account_code+']' + costAccount.account_name 
-                                 + '</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
-                              + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
-                            +'</div>'
-                    );
+        //             var coastAccountInfo = $(
+        //                     '<div class="data-wrap">'
+        //                          +'<p>['+costAccount.account_code+']' + costAccount.account_name 
+        //                          + '</p>'
+        //                     + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+        //                         + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+        //                     + '</button>'
+        //                       + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
+        //                       + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
+        //                     +'</div>'
+        //             );
                     
-                    //inputBox3.empty();
-                    //inputBox3.val('');
-                    //costAccountSelected.empty();
+        //             //inputBox3.empty();
+        //             //inputBox3.val('');
+        //             //costAccountSelected.empty();
                     
-                    initBoxAction(inputBox3, costAccountSelected, "코드 입력 후 \'Enter\'로 검색");
+        //             initBoxAction(inputBox3, costAccountSelected, "코드 입력 후 \'Enter\'로 검색");
                     
-                    costAccountSelected.css('width', '100%');
-                    costAccountSelected.append(coastAccountInfo);
+        //             costAccountSelected.css('width', '100%');
+        //             costAccountSelected.append(coastAccountInfo);
                     
-                    //orderInput.val(orderInfo.html());
+        //             //orderInput.val(orderInfo.html());
                     
-                    // [퍼블 수정 및 추가]
-                    var targetHeight = costAccountSelected.height();
-                    inputTextContent3.removeClass('focus');
-                    console.log(targetHeight);
+        //             // [퍼블 수정 및 추가]
+        //             var targetHeight = costAccountSelected.height();
+        //             inputTextContent3.removeClass('focus');
+        //             console.log(targetHeight);
             
-                    costAccountListCont.removeClass('show');
-                    // $('.order-list').css('top', '82px');
-                    costAccountListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-                    $('#costaccount-name').attr('placeholder', '');
-                    //scheduleorderWidth($('#costdept-name'));
-                    scheduleorderWidth(inputTextContent3, costAccountSelected, $('#costaccount-name'));
+        //             costAccountListCont.removeClass('show');
+        //             // $('.order-list').css('top', '82px');
+        //             costAccountListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+        //             $('#costaccount-name').attr('placeholder', '');
+        //             //scheduleorderWidth($('#costdept-name'));
+        //             scheduleorderWidth(inputTextContent3, costAccountSelected, $('#costaccount-name'));
                     
-                    selectBoxAction(inputBox4, inputTextContent4, 'enabled');
-                    selectBoxAction(inputBox5, inputTextContent5, 'enabled');
-                    //nextBtn.find('button').attr('disabled', false);
+        //             selectBoxAction(inputBox4, inputTextContent4, 'enabled');
+        //             selectBoxAction(inputBox5, inputTextContent5, 'enabled');
+        //             //nextBtn.find('button').attr('disabled', false);
 
-                    //inputBox4.val('');
-                    //inputBox5.val('');
+        //             //inputBox4.val('');
+        //             //inputBox5.val('');
                     
-                    //initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
-                    //initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+        //             //initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
+        //             //initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
 
-                    //projectCodeSelected.empty();
-                    //activityCodeSelected.empty();
+        //             //projectCodeSelected.empty();
+        //             //activityCodeSelected.empty();
                     
-                    //inputBox4.attr('placeholder', 'Project Code를 선택하세요.');
-                    //inputBox5.attr('placeholder', 'Activity Code를 선택하세요.');
+        //             //inputBox4.attr('placeholder', 'Project Code를 선택하세요.');
+        //             //inputBox5.attr('placeholder', 'Activity Code를 선택하세요.');
 
-                    nextBtnEvent($(this));
+        //             nextBtnEvent($(this));
 
-                });
+        //         });
                 
-                orderUl3.append(orderLi3);
-              });
-              costAccountListCont.append(orderUl3);
-            }
+        //         orderUl3.append(orderLi3);
+        //       });
+        //       costAccountListCont.append(orderUl3);
+        //     }
             
-            closeLoadingWithMask();
-            // 비용처리 계정 조회 Not Push End            
+        //     closeLoadingWithMask();
+        //     // 비용처리 계정 조회 Not Push End            
 
-          });
+        //   });
+        
+        //*************************************** 비용처리 계정 조회 Push 변경          
         
         //////
         }
@@ -12262,6 +12236,10 @@ function anotherAccountOrderFifth(orderdata) {
 
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
+    
+    // return {
+    //     outNextBtnEvent : nextBtnEvent
+    // }
     return pluginForm;
 }
 
@@ -22850,3 +22828,347 @@ function addUitChangeCardGERP(uitdata){
 }
 
 /* #################### [ UIT 수정 (GERP) End ] #################### */
+
+/* #################### [ 타계정 API Push 함수 (우회방안) Start ] #################### */
+
+function callbackPushOrderInquiry(payload, param) {
+    var searchInfo = '';
+    var regSuccessYn = '';
+    var errorMessage = '';
+    
+    let messageCard = null;
+    
+    var reviewParam = {
+            re_employee_number : '', 
+            re_order_number : '',
+            re_regist_number : '',
+            re_order_gubun : ''
+    }    
+
+    if (param && param.body && param.body.INPUT_DATA1[0]) {
+        var inputdata = param.body.INPUT_DATA1[0];
+        
+        console.log('inputdata : ', inputdata);
+        
+        reviewParam.re_employee_number = inputdata.p_employee_number;
+        reviewParam.re_order_gubun = inputdata.p_gubun;
+        reviewParam.re_order_number = (inputdata.p_gubun == 'C')? inputdata.p_order_number:'0'; 
+        reviewParam.re_regist_number = (inputdata.p_gubun == 'D')? inputdata.p_orig_sys_document_ref:'0';
+        
+    }  
+    
+    if (payload && payload.body && payload.body.OUTPUT_DATA.length > 0) {
+        var bodyData = payload.body.OUTPUT_DATA;
+        var bodyResult = payload.body.OUTPUT_RESULT[0];
+        var header = payload.header;
+
+        console.log(bodyResult["RESULT_CODE"]);
+        
+        if (bodyResult["RESULT_CODE"] != 'SUCCESS') {
+            console.log('errorMessage : '+header["message"]);
+            regSuccessYn = 'N';
+            errorMessage = header["message"];               // 에러메시지.
+        } else {
+            regSuccessYn = 'Y';
+            searchInfo = bodyData;
+        }
+        
+    }
+    else{
+        regSuccessYn = 'N';
+        errorMessage = 'server error!!!';               // 에러메시지.
+    }
+    
+    pushAnother.pluginClose($('#aalvPopup'));
+    // thisPushPluginClose($('#aalvPopup'));
+
+    if(regSuccessYn == 'N') {
+        
+        console.log('타계정 주문 현황 조회 실패 : ');
+        
+        messageCard = aalvResultError(reviewParam);
+    }   
+    else{
+    
+        console.log('타계정 주문 현황 조회 완료 : ', searchInfo);
+        
+        var msgSearchResult = '<div class="message simple-text">'
+                         +'<p>'
+                            +'타계정 주문 내역을 조회했어요.<br> '
+                            +'<small class="note" style="color: #898989; font-size:12px;">나의 주문 건, 부서 내 주문 건 조회시 </br>'
+                            +'오늘 기준 1개월 이내 주문 건만 조회 가능하며, </br>'
+                            +'주문 발행 일자를 기준으로 최근 20건을 보여 줍니다.</br>'
+                            +'</small></br>'
+                            +'<small class="note" style="color: #898989; font-size:12px;">※ 특정 주문 건 조회 시 주문 번호 또는 접수 번호로 조회해 주세요.</br>'
+                         +'</p>'
+                        + '</div>'; 
+        
+        var anotherSearchResult = '';
+        if(searchInfo.length > 0) {            // 타계정 주문 현황 조회
+
+            messageCard = aalvResult(searchInfo, msgSearchResult);
+        }
+        else{
+            console.log('타계정 주문 현황 조회 : 0건.');
+            setTimeout(function() {
+                showSmallDialog('타계정 주문 현황 조회 건수가 없습니다. 다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+                $('.chat-message.left').last().remove();
+            }, 100);                    
+        }
+        
+    }   
+    
+    closeLoadingWithMask();
+    
+    return messageCard;
+}
+
+function callbackPushAccountInquiry(payload, param) {
+    var accntList = '';
+    var regSuccessYn = '';
+    var errorMessage = '';
+    
+    let messageCard = null;
+    
+    if (payload && payload.body && payload.body.OUTPUT_DATA) {
+        var bodyData = payload.body.OUTPUT_DATA;
+        var bodyResult = payload.body.OUTPUT_RESULT[0];
+        var header = payload.header;
+
+        console.log(bodyResult["RESULT_CODE"]);
+        
+        if (bodyResult["RESULT_CODE"] != 'SUCCESS') {
+            console.log('errorMessage : '+header["message"]);
+            regSuccessYn = 'N';
+            errorMessage = header["message"];               // 에러메시지.
+        } else {
+            regSuccessYn = 'Y';
+            accntList = bodyData;
+        }
+        
+    }
+    else{
+        regSuccessYn = 'N';
+        errorMessage = 'server error!!!';               // 에러메시지.
+    }
+    
+    var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
+    
+    $('.cost_accnt_list').find('ul').remove();
+    //orderUl3.empty();
+    
+    if(regSuccessYn == 'N') {
+        
+        //console.log('타계정 주문 현황 조회 실패 : ');
+        var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
+        orderUl3.append(orderLi3);
+        $('.cost_accnt_list').append(orderUl3);
+        
+    }   
+    else{
+    
+        console.log('비용처리 계정 조회 완료 : ', accntList);
+        
+        var anotherSearchResult = '';
+        if(accntList.length > 0) {           
+        
+                  accntList.map(costAccount => {
+                      
+                    var orderLi3 = $(
+                        '<li>'
+                            +'<p>['+costAccount.account_code+']'+ costAccount.account_name // + '()' 
+                            +'</p>'
+                        +'</li>'
+                    );
+                    
+                    // 비용처리 계정 목록 리스트 클릭
+                    orderLi3.on('click', function() {
+                        
+                        var coastAccountInfo = $(
+                            '<div class="data-wrap">'
+                                 +'<p>['+costAccount.account_code+']' + costAccount.account_name 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
+                              + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
+                            +'</div>'
+                        );
+                        
+                        //$('#costaccount').empty();
+                        //$('#costaccount').val('');
+                        //$('.cost_accnt_selected').empty();
+                        
+                        pushAnother.step5InitBoxAction($('#costaccount-name'), $('.cost_accnt_selected'), "코드 입력 후 \'Enter\'로 검색");
+                        //globalInitBoxAction($('#costaccount-name'), $('.cost_accnt_selected'), "코드 입력 후 \'Enter\'로 검색");
+                        
+                        $('.cost_accnt_selected').css('width', '100%'); 
+                        $('.cost_accnt_selected').append(coastAccountInfo);
+                        
+                        //orderInput.val(orderInfo.html());
+                        
+                        // [퍼블 수정 및 추가]
+                        var targetHeight = $('.cost_accnt_selected').height();
+                        $('.cost_accnt_input').removeClass('focus');
+                        console.log(targetHeight);
+                
+                        $('.cost_accnt_list').removeClass('show');
+                        // $('.order-list').css('top', '82px');
+                        $('.cost_accnt_list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+                        $('#costaccount-name').attr('placeholder', '');
+                        //scheduleorderWidth($('#costdept-name'));
+                        
+                        pushAnother.step5ScheduleorderWidth($('.cost_accnt_input'), $('.cost_accnt_selected'), $('#costaccount-name'));
+                        //globalScheduleorderWidth($('.cost_accnt_input'), $('.cost_accnt_selected'), $('#costaccount-name')); 
+                        
+                        pushAnother.step5SelectBoxAction($('#project-name'), $('.project_input'), 'enabled');
+                        pushAnother.step5SelectBoxAction($('#activity-name'), $('.activity_input'), 'enabled');
+
+                        // globalSelectBoxAction($('#project-name'), $('.project_input'), 'enabled');
+                        // globalSelectBoxAction($('#activity-name'), $('.activity_input'), 'enabled');
+
+						//$('.project_selected').empty();
+						//$('.activity_selected').empty();
+                        
+                        //$('#project-name').attr('placeholder', 'Project Code를 선택하세요.');
+                        //$('#activity-name').attr('placeholder', 'Activity Code를 선택하세요.');
+    
+                        // 함수 안의 함수 처리해야 함. 
+                        //nextBtnEvent($(this));            
+                        //pushAnother.step5NextBtnEvent();
+                        
+                        //anotherStep5.outNextBtnEvent();
+                    });
+                    
+                    orderUl3.append(orderLi3);
+
+                  });
+                  $('.cost_accnt_list').append(orderUl3);
+
+        }
+        else{
+            console.log('비용처리 계정 조회 : 0건.');
+            
+            var orderLi3 = $('<li class="no-res">비용처리 계정 정보가 없습니다.</li>');
+            orderUl3.append(orderLi3);
+            $('.cost_accnt_list').append(orderUl3);
+        
+        }
+        
+    }   
+        
+    setTimeout(function() {
+        $('.chat-message.left').last().remove();
+    }, 100);  
+    
+    closeLoadingWithMask();
+    
+    return messageCard;
+}
+
+function pushCommonAnotherAccount() {
+
+    function gSelectBoxAction($input, $inputContent, action) {
+        if(action == 'disabled') {
+            $input.attr('disabled', true);
+            $inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
+            
+            //$inputContent.addClass('addValue');
+        }
+        else{
+            $input.attr('disabled', false);
+            $inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
+            //$inputContent.removeClass('addValue');
+        }
+    }
+
+    function gInitBoxAction($input, $costSelected, hloderMsg) {
+        
+        $costSelected.empty();
+        $input.val('');
+        if(hloderMsg)        $input.attr('placeholder', hloderMsg);
+        $input.css('display', 'block');
+    }
+
+
+    function gScheduleorderWidth($inputTextContent, $costSelected, $inputId) {
+        let orderSelectWidth = $inputTextContent.width();
+        let selectedorderWidth = $costSelected.width();
+        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        $inputId.css('width', scheduleorderWidth + "px");
+        if ($inputId.width() === 0) {
+            $inputId.attr('style', '');
+        }
+        
+        if(selectedorderWidth == 0) {
+            $inputId.css('display', 'block');
+        }
+        else{
+            $inputId.css('display', 'none');
+        }        
+    }
+    
+    function gNextBtnEvent() {
+        var costval = costAuSelected.find('.data-wrap').text();
+        var deptval = costDeptSelected.find('.data-wrap').text();
+        var accountval = costAccountSelected.find('.data-wrap').text();
+        var projectval = projectCodeSelected.find('.data-wrap').text();
+        var activityval = activityCodeSelected.find('.data-wrap').text();
+        var minorval = minorCategorySelected.find('.data-wrap').text();
+        var assetName = inputBoxA.val();    
+        var majorval = dropdownHidden.val();
+        
+        //console.log('costval : '+costval + ', deptval : '+deptval + ', accountval : '+accountval + ', projectval : '+projectval);
+        //console.log('activityval : '+activityval + ', assetName : '+assetName + ', majorval : '+majorval + ', minorval : '+minorval);
+        
+        //if (costval && deptval && accountval && projectval && activityval) {
+        if (costval && deptval && accountval && activityval) {
+
+            nextBtn.find('button').attr('disabled', false);
+            
+            if(selOrderType == 'OTHERS_OUT_FA_OMD') {
+                if(assetName && minorval && dropdownMainBtn.hasClass('select')) {
+                    nextBtn.find('button').attr('disabled', false);
+                }
+                else{
+                    nextBtn.find('button').attr('disabled', true);
+                }
+            }
+            else{
+            }
+        }
+        else{
+            nextBtn.find('button').attr('disabled', true);
+        }
+        
+    }
+    
+    
+    function thisPushPluginClose(popupObj) {
+        popupObj.removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            popupObj.remove();
+            
+            closeErrorWithMask();
+            closeLoadingWithMask();
+        }, 100);
+    }
+    
+    return {
+        step5SelectBoxAction : gSelectBoxAction, 
+        step5InitBoxAction : gInitBoxAction, 
+        step5ScheduleorderWidth : gScheduleorderWidth, 
+        step5NextBtnEvent : gNextBtnEvent, 
+        pluginClose : thisPushPluginClose
+    }
+	
+}
+
+var pushAnother =  pushCommonAnotherAccount();   
+
+
+/* #################### [ 타계정 API Push 함수 (우회방안) End ] #################### */
