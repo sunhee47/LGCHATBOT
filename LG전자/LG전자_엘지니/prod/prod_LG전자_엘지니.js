@@ -3727,7 +3727,7 @@ function dictDeatilOpen(btn, termId) {
 
 
  
-
+var button_data = null;
 chatui.onReceiveResponse = function(resp, isHistory) {
    console.log("chatui.onReceiveResponse", resp, isHistory);
    
@@ -3830,6 +3830,19 @@ chatui.onReceiveResponse = function(resp, isHistory) {
 
         $('.quick-list').last().html(quickButtons);
       }
+      
+      if(message.buttons && message.buttons.length > 0) {
+          for(var k=0; k<message.buttons.length; k++) {
+              var button = message.buttons[k];
+              
+              if(button.label == '마곡 LG 사이언스 파크') {
+                  //console.log('button.value : '+button.value);
+                  
+                  button_data = button;
+              }
+          }
+      }
+      
     }
 
     
@@ -3874,6 +3887,7 @@ chatui.onReceiveResponse = function(resp, isHistory) {
     var lastLeftMessage = $('.chat-message.left').last();
     newWindowForLink(lastLeftMessage);
 
+    buttonLink(lastLeftMessage);
 
     $('.btn-system').on('click', function() {
       var systemSelect = $(this).data('system');
@@ -3930,6 +3944,47 @@ chatui.onReceiveResponse = function(resp, isHistory) {
   
 }
 
+function openWindows(link, userInfo) {
+    
+    if($('#menu_form').length) {
+        var paramForm = $('#menu_form');
+        
+        var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
+        window.open("", "LGenieWin", "width=1200,height=900", "_blank");
+        
+        $(paramForm).attr('action', url);
+        $(paramForm).attr('target', "LGenieWin");
+        $(paramForm).attr('method', 'post');
+        
+        paramForm.submit();        
+    }
+    else{
+        var paramForm = document.createElement("form");
+        var url = link; //"https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do";
+        window.open("", "LGenieWin", "width=1200,height=900", "_blank");
+        
+        $(paramForm).attr('id', "menu_form");
+        $(paramForm).attr('action', url);
+        $(paramForm).attr('target', "LGenieWin");
+        $(paramForm).attr('method', 'post');
+    
+        var obj = document.createElement("input");
+        obj.setAttribute("type", "hidden");
+        obj.setAttribute("name", "cid");
+        obj.setAttribute("value", "040");
+        paramForm.appendChild(obj);
+    
+        var obj = document.createElement("input");
+        obj.setAttribute("type", "hidden");
+        obj.setAttribute("name", "userInfo");
+        obj.setAttribute("value", userInfo);
+        paramForm.appendChild(obj);
+    
+        document.body.appendChild(paramForm);
+        paramForm.submit();
+    }
+}
+
 function newWindowForLink(lastLeftMessage) {
     var childMessages = lastLeftMessage.children('.message');
     
@@ -3959,6 +4014,45 @@ function newWindowForLink(lastLeftMessage) {
         }            
     }
     
+}
+
+function buttonLink(lastLeftMessage) {
+    var childMessages = lastLeftMessage.children('.message');
+    
+    console.log('길이 : '+lastLeftMessage.children('.message').length);
+    
+    for(var m=0; m<childMessages.length; m++) {
+        var childMessage = childMessages[m];
+        var buttons = $(childMessage).find('.btn-wrap').find('.btn-default');
+        
+        console.log(buttons.length);
+        
+        for(var i=0; i<buttons.length; i++) {
+            var button = buttons[i];
+            //console.log('buttons : ', button);
+            
+            //console.log('label : '+$(button).children('span').text());
+            
+            let label = $(button).children('span').text();
+            if(label == '마곡 LG 사이언스 파크') {
+                
+                if(button_data.label == label) {
+                    let linkBtn = $(button);  
+              
+                    let addBtn = $('<div><button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color"><span>'+button_data.label+'</span></button></div>');
+               
+                    linkBtn.after(addBtn);
+                    linkBtn.remove();
+               
+                    console.log('button_data > ', button_data.value);
+                    addBtn.on('click', function(){
+                        openWindows('https://sso.lgsp.co.kr/ikep4sp-sso/lgspLogin.do', button_data.value);
+                    });     
+                }
+            }
+        }
+        
+    }    
 }
 
 /**
