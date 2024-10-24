@@ -18070,6 +18070,7 @@ function textFocusStyle(target) {
 
 /* ########### 타계정 추가 End ########### */
 
+/* #################### [ Hs Code 조회 START ] #################### */
 /*
 title : HsCode 조회
 작성자 : 이건희
@@ -18172,6 +18173,8 @@ function hsCodeResultErrorPage(data) {
 var checkBtnClicked = false;
 var hsCodeLoading = false;
 function makeHsCodeCard(data) {
+    var messageWrap = $('<div class="custom-message"></div>');
+    
     var hsCodeCard = $('<div class="message simple-text"></div>');
         var hsCodeText = $(
         '<div class="message">'
@@ -18190,6 +18193,8 @@ function makeHsCodeCard(data) {
     hsCodeBtnWrap.append(hsCodeBtn);
     hsCodeCard.append(hsCodeBtnWrap);
     
+    messageWrap.append(hsCodeCard);
+
     if(checkChatHistory == false) {
         //강예진 선임 요청으로 주석처리
         //addHsCodePopupOpen(data);
@@ -18201,7 +18206,25 @@ function makeHsCodeCard(data) {
         checkBtnClicked = false;
     }
     
-    return hsCodeCard;
+    var messageTextWrap = $('<div class="custom-message" style="margin-left: 0px;"></div>'); //
+    var messageBox = $('<div class="message"></div>');
+
+    var hscodeAddMsg = $('<div class="message simple-text">'
+                     +'<p>'     
+                        +'<span style="color: #6b6b6b; font-weight: 500;">단, VS본부의 HS Code 조회는 제한됩니다.</span></br>'
+                        +'<span style="color: #6b6b6b;">HS Code 결과를 견적 등에 오용해 본부 수익률에 영향을 줄 수 있다는 담당자의 의견에 따른 조치입니다.</span>'
+                     +'</p>'
+                     //+'<p style="color: #898989; font-size: 12px;">'
+                     //   +'\"담당자에게 요청한 UIT 수정 결과\", \"Planner UIT 요청 내역\"과 같이 질문해 주셔도 내역을 보여 드려요.'
+                     //+'</p>'
+                    + '</div>'); 
+    
+    messageBox.append(hscodeAddMsg);
+    messageTextWrap.append(messageBox);
+    
+    messageWrap.append(messageTextWrap);
+
+    return messageWrap;
 }
 
 function addHsCodePopupClose() {
@@ -18218,6 +18241,9 @@ function addHsCodePopupClose() {
 
 // HsCode 조회 popup
 function addHsCodePopupOpen(data) {
+    
+    console.log('hscode : ', data);
+    
     var hsCodeReply = data.hsCodeReply;
     var organizationId = data.organizationId;
     var partNo = data.partNo;
@@ -18266,9 +18292,9 @@ function addHsCodePopupOpen(data) {
         +'</svg>'
         +'</span>'
     );
-    var orgIdSmall = $('<small class="hsCode-orgId show">사업부 코드 미입력 시 전체 사업부로 조회됩니다.</small>');
+    var orgIdSmall = $('<small class="hsCode-orgId show">사업부 코드 미입력 시 VS본부 사업부를 제외한 전체 사업부로 조회됩니다.</small>');
     
-    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;"></ul>');
+    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;top: 49px !important;"></ul>');
 
     autocompleteOrg.append(orgUi);
     
@@ -18695,6 +18721,8 @@ const setAutocompleteCountry = function(input, items) {
      
      keyword = countrys;
      
+     $(input).closest(".country-form").find(".autocomplete-member").find('.ui-autocomplete').css('top', '49px !important');
+     
     $(input).autocomplete("option", "source", keyword);
     $(input).autocomplete("option", "appendTo", $(input).closest(".country-form").find(".autocomplete-member"));
 
@@ -18708,6 +18736,7 @@ const setAutocompleteCountry = function(input, items) {
         
       },
       open: function(event, ui) {
+          $('.country-form .ui-autocomplete').css('top', '49px !important');
           $('.country-form .ui-autocomplete').scrollTop();
           
       },
@@ -18892,6 +18921,7 @@ function showHtmlSmallDialog(msg) {
 function hsCodeResult(data) {
     var chatRight = $('#divScroll').find('.right').last();
     var chatRightVal= chatRight.find('.message').text();;
+    console.log('hscode result', data);
     console.log(data.items);
     var hsCodeResult = $('<div class="custom-message scrollfix"></div>');
     var hsCodeResultMessageWrap = $('<div class="message"></div>');
@@ -18921,8 +18951,13 @@ function hsCodeResult(data) {
     
     var hsCodeResultLiRate = "";
     
+    var isFTA = false;
     if(item.rateList.length > 0){
         item.rateList.forEach(function(itemR){
+            
+            if(itemR.meaning.indexOf('FTA') > -1) {
+                isFTA = true;
+            }
             hsCodeResultLiRate += '<li><h4 class="hsCode-li-header">' + itemR.meaning + '</h4><div class="hsCode-li-content"><span>' + itemR.tariffRate + '</span></div></li>';
         });
     }
@@ -18938,6 +18973,12 @@ function hsCodeResult(data) {
         }
     }
     
+    // 수입국 : 항상 출력 
+    var hsCodeImportCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수입국</h4><div class="hsCode-li-content"><span>the Republic of Korea</span></div></li>';
+    // 조회일시 : 항상 출력 
+    var hsCodeResultDate = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">조회일시</h4><div class="hsCode-li-content"><span>'+moment().format('YYYY-MM-DD')+'</span></div></li>';
+    var ftaContent = (isFTA == true)? '</br><div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* FTA 협정세율을 적용 받으려면, 원산지 결정기준을 충족하고, 원산지 증명서를 제출해야 합니다.</div>':'';
+    
     var hsCodeResultLiCountry = "";
     if(data.countryNameEn != ""){
         hsCodeResultLiCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수출국</h4><div class="hsCode-li-content"><span>' + data.countryNameEn + '</span></div></li>';
@@ -18945,6 +18986,8 @@ function hsCodeResult(data) {
    
     var hsCodeResultLiUserBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 조회</button></li>');
     var hsCodeResultLiUserBtnNEEP = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 및 담당자 조회</button></li>');
+
+    var hsCodeCentralBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">본부별 관세담당자</button></li>');
     
     var hsCodeResultContent = $('<div class="importCargo-content"></div>');
 
@@ -18966,13 +19009,26 @@ function hsCodeResult(data) {
                     +'<div class="hsCode-li-header"><span class="hsCode-li-content"><h5>' + item.hsCode + '</h5></span></div>'
                 +'</li>'
                 +hsCodeResultLiCountry
+                +hsCodeImportCountry
                 +hsCodeResultLiRate
                 +hsCodeResultLiUser
+                +hsCodeResultDate
                 +'<li>'
                     +'<div class="importCargo-remain">'
-                        //+'<div>* 본 품목에 대한 세율 및 HS Code는 ERP상 확정 데이터입니다.</div>'
-                        +'<div>* GERP HS Code Master 데이터 조회결과입니다.</div>'
-                        +'<div>* 관세혜택을 받으려면 원산지 결정기준을 충족하고 원산지 증명서를 제출해야 합니다.</div>'
+                        +'<div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* 본 데이터는 현재 시점에 GERP IMP 모듈 내 HS Code Master 데이터 조회 결과입니다. '
+                        +'데이터 업데이트 지연 등이 발생할 수 있으므로, 상세 적용이 필요한 경우 본부별 관세 담당자에게 문의해 주세요.</div>'
+                    +'</div>'
+                +'</li>'
+                +'<li>'
+                    +'<div class="importCargo-remain">'
+                        +'<div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* 사업 수익성 분석에 사용되는 HS Code 및 세율 정보는 반드시 관세 담당자에게 별도 문의가 필요합니다. '
+                        +'(수익성의 경우 연도별 관세율, FTA 원산지, 생산지별 실효 세율 등을 확인하여야 함)</div>'
+                        //+ftaContent
+                    +'</div>'
+                +'</li>'
+                +'<li>'
+                    +'<div class="importCargo-remain">'
+                        +ftaContent
                     +'</div>'
                 +'</li>'
             +'</ul>'
@@ -18981,6 +19037,8 @@ function hsCodeResult(data) {
     if(item.userList.length > 1){
         hsCodeResultContentUi.append(hsCodeResultLiUserBtn);
     }
+    
+    hsCodeResultContentUi.append(hsCodeCentralBtn);
     
     hsCodeResultContent.append(hsCodeResultContentUi);
     hsCodeResultContentWrap.append(hsCodeResultContent);
@@ -19022,7 +19080,115 @@ function hsCodeResult(data) {
         addHsCodeSeachUserPopupOpen(item.userList);
     });
     
+    hsCodeCentralBtn.click(function(){
+        addHsCodeSeachCentralPopupOpen(data.userType);
+    });
+    
     return hsCodeResult;
+}
+
+// 본부별 관세담당자
+function addHsCodeSeachCentralPopupOpen(userType) {
+    /* #########[ popup_wrap_start ]######### */
+    
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addHsCode = $('<div class="plugins" id="addHsCode"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addHsCodeHeader = $('<div class="plugin-header"><h1>본부별 관세 담당자</h1></div>');
+    var addHsCodeClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    
+    addHsCodeClose.on('click', function() {
+        addHsCodePopupClose();
+    })
+    addHsCodeHeader.append(addHsCodeClose);
+    addHsCode.append(addHsCodeHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addHsCodeContents = $('<div class="plugin-contents" style="max-height: calc(92vh - 170px); scrollbar-width: auto;"></div>');
+    var addHsCodeForm = $('<form class="form-hsCode"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ 사업부 코두 ]###  */
+    var orgIdInputBox = $(
+        '<div class="input-box">'
+            +'<div class="hsCode-orgId">'
+                +'<label></label>'
+            +'</div>'
+        +'</div>'
+    );
+    
+    addHsCodeForm.append(orgIdInputBox);
+    
+    var hsCodeResultContentUi = $(
+        '<ul class="importCargo-list-wrap hsCodeResult-list-wrap"  style="display: flex; flex-direction: column;"></ul>'
+    );
+    
+    var hsCodeResultContentLiHtml = "";
+
+    if(userType == 'EKHQ') {            // 전자 사용자
+        
+        hsCodeResultContentLiHtml ='<li style="display: flex;align-items: center;"><h5 style="width: 90px;">H&A 본부</h5><div class="importCargo-type"><span style="font-size: 14px;">' + '김지호 선임'
+        hsCodeResultContentLiHtml +='(<a href="javascript:void(0)" style="text-decoration: underline; color: #0056b3; ">' + 'jiho1.kim@lge.com' + '</a>)';
+        hsCodeResultContentLiHtml +='</span></div></li></br>';        
+
+        hsCodeResultContentLiHtml +='<li style="display: flex;align-items: center;"><h5 style="width: 90px;">HE 본부</h5><div class="importCargo-type"><span style="font-size: 14px;">' + '강소현 책임'
+        hsCodeResultContentLiHtml +='(<a href="javascript:void(0)" style="text-decoration: underline; color: #0056b3; ">' + 'sh0621.kang@lge.com' + '</a>)';
+        hsCodeResultContentLiHtml +='</span></div></li></br>';        
+    }
+    else {
+        hsCodeResultContentLiHtml ='<li style="display: flex;align-items: center;"><h5 style="width: 90px;">마그나</h5><div class="importCargo-type"><span style="font-size: 14px;">' + '정다은 선임'
+        hsCodeResultContentLiHtml +='(<a href="javascript:void(0)" style="text-decoration: underline; color: #0056b3; ">' + 'daeun.chung@lgmagna.com' + '</a>)';
+        hsCodeResultContentLiHtml +='</span></div></li></br>';        
+    }
+
+    var hsCodeResultContentLi = $(hsCodeResultContentLiHtml);
+    
+    hsCodeResultContentUi.append(hsCodeResultContentLi);
+    addHsCodeForm.append(hsCodeResultContentUi);
+    
+    hsCodeResultContentUi.find("li").find("a").click(function() {
+        var emailAddr = $(this).text().trim();
+        var temp = $('<textarea type="text" class="hidden-textbox" />');
+        $("body").append(temp);
+        temp.val(emailAddr).select();
+        document.execCommand('copy');
+        //showHtmlSmallDialog(temp);
+        temp.remove();
+        
+        showHtmlToastDialog('이메일 주소가 복사되었습니다.');
+    });
+    
+    addHsCodeContents.append(addHsCodeForm);
+    addHsCode.append(addHsCodeContents);
+
+    // 조회버튼
+    var addHsCodeFoot = $('<div style="padding: 0px 16px 0px 16px; position: relative;"></div>');
+    var addHsCodeSubmit = $('<button type="button" class="btn btn-plugin btn-apply" id="btn-hsCode">확인</button>');
+    addHsCodeFoot.append(addHsCodeSubmit);
+    addHsCode.append(addHsCodeFoot);
+    
+    addHsCodeSubmit.on('click', function() {
+        addHsCodePopupClose();
+    });
+    
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addHsCode);
+    $('.plugin-dim').css('display', 'block');
+    $('#addHsCode').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addHsCode').addClass('show');
+    }, 100);
+    
 }
 
 // HsCode 사업부 담당자 조회 popup
@@ -19186,21 +19352,25 @@ function hsCodeResultError(data) {
     
     
     //simple Text
-    var msgCon = $('<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"></div>');
+   //var msgCon = $('<div class="message caas-chat-response-message-back-color caas-chat-response-message-font-color"></div>');
+    var msgCon = $('<div class="message simple-text"></div>');
+   
     var text;
 
 	var loginCorp = data.orgItems[0].ATTRIBUTE2;
 	
 	if(loginCorp == "EKHQ"){
-		text = $('<p>입력하신 정보로 조회되는 HS Code가 없습니다. 작성 하신 내용을 정확히 확인 후 다시 조회하거나 관세팀으로 문의해주세요.</p>');	
+	    let add_text = '<p><span style="color: #898989; font-size: 11px;">※ VS본부 사업부의 HS Code는 조회되지 않습니다.</span></p>';
+		text = $('<p>입력하신 정보로 조회되는 HS Code가 없습니다. 작성 하신 내용을 정확히 확인 후 다시 조회하거나 관세팀으로 문의해주세요.</p>'+add_text);	
 	}else if(loginCorp == "EKLM"){
 		text = $('<p>입력하신 정보로 조회되는 HS Code가 없습니다. 작성 하신 내용을 정확히 확인 후 다시 조회하거나 관세 담당자에게 문의해주세요.</p>');
 	}
     msgCon.append(text);
     
     // simple Text button 추가
-    var btnWrap = $('<div class=""btn-wrap"></div>');
-    var customBtn1 = $('<div><button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color" data-slot="N"><span>HS Code 다시 물어보기</span></button></div>')
+    var btnWrap = $('<div class="btn"></div>');
+    // var customBtn1 = $('<div><button class="btn btn-default caas-chat-button-back-color caas-chat-button-font-color caas-chat-button-border-color" data-slot="N"><span>HS Code 다시 물어보기</span></button></div>')
+    var customBtn1 = $('<button class="btn btn-default" data-slot="N"><span>HS Code 다시 물어보기</span></button>')
     
     btnWrap.append(customBtn1);
     msgCon.append(btnWrap);
@@ -19445,6 +19615,7 @@ function hsCodeResultList(data) {
     return systemContetns;
 }
 //Hs Code 조회 END
+/* #################### [ Hs Code 조회 END ] #################### */
 
 /*** ------------------------- 물품 청구 (GERP) Start ------------------------- ***/
 
@@ -24465,7 +24636,7 @@ function uitUpdateListGERP(data) {
     
     // simple Text button 추가
     var btnWrap = $('<div class="btn"></div>');
-    var customBtn = $('<button class="btn btn-emphasis">조회 기간 설정</button>')
+    var customBtn = $('<button class="btn btn-emphasis">조회 조건 변경</button>')
 
     btnWrap.append(customBtn);
     msgCon.append(btnWrap);
@@ -24517,18 +24688,18 @@ function uitUpdateListGERP(data) {
             var sysInfoList = $('<ul class="profile-info system"></ul>');
             
             /* 상태 아이콘 */
-            var chipStyle1 = '';
-            var chipStyle2 = '';
+            var chipStyle1 = 'style="padding: 2px 4px 4px 4.5px;"';
+            var chipStyle2 = 'style="padding: 2px 4px 4px 4.5px;"';
             if(item.bef_uit_code == "M"||item.bef_uit_code == "G"){
-                chipStyle1 = 'style="padding: 1px 5px 2px 4px;"'
+                chipStyle1 = 'style="padding: 2px 5px 4px 4px;"';
             }else if(item.bef_uit_code == "F"){
-                chipStyle1 = 'style="padding: 1px 5px 2px 6px;"'
+                chipStyle1 = 'style="padding: 1px 5px 2px 6px;"';
             }
 
             if(item.aft_uit_code == "M"||item.aft_uit_code == "G"){
-                chipStyle2 = 'style="padding: 1px 5px 2px 4px;"'
+                chipStyle2 = 'style="padding: 2px 5px 4px 4px;"';
             }else if(item.aft_uit_code == "F"){
-                chipStyle2 = 'style="padding: 1px 5px 2px 6px;"'
+                chipStyle2 = 'style="padding: 1px 5px 2px 6px;"';
             }
 
             var liStatus = '<span class="badge-base badge-gray" '+chipStyle1+'>' + item.bef_uit_code + '</span>';
@@ -24636,6 +24807,12 @@ function descendScrollCustom() {
 
 // UIT 조회 기간 설정 팝업
 function addDateSettingPopupOpenGERP(data){
+    console.log('조회 : ', data);
+    
+    var org_code = (data.orgCode == null)? '':data.orgCode;
+    var plant_id = (data.plantId == null)? '':data.plantId; 
+    var plant_name = '';
+    
     window.datepicker = setDatepickerUITGERP();
     /* #########[ popup_wrap_start ]######### */
     
@@ -24703,7 +24880,7 @@ function addDateSettingPopupOpenGERP(data){
             
             $('.small-dialog').remove();    
             //setTimeout(function() {
-            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
             //}, 100);    
                 
             var replaceVal = input.replace(engNum_pattern, '');
@@ -24816,7 +24993,7 @@ function addDateSettingPopupOpenGERP(data){
                 
             }else{
                 $('.small-dialog').remove();
-                showSmallDialog("검색어를 3글자로 입력해 주세요.");
+                showHtmlToastDialog("검색어를 3글자로 입력해 주세요.");
                 e.target.focus();
                 orgUi.css('display','none');
             }
@@ -24836,17 +25013,17 @@ function addDateSettingPopupOpenGERP(data){
             if(selInfo){
                 if($('#orgCode').val()){
                     var selecteVal = selectedOrg.find('.sel-plant-code').val();
-                    $('#orgCode').val(selecteVal);
+                    //$('#orgCode').val(selecteVal);
                     uitReqDateSettingSubmit.removeClass('btn-disabled');
                     orgCodeInputForm.find('.input-val-del').addClass('show');
                 }else{
-                    $('#orgCode').val('');
+                    //$('#orgCode').val('');
                     selectedOrg.empty();
                     uitReqDateSettingSubmit.addClass('btn-disabled');
                     orgCodeInputForm.find('.input-val-del').removeClass('show');
                 }
             }else{
-                $('#orgCode').val('');
+                //$('#orgCode').val('');
                 orgCodeInputForm.find('.input-val-del').removeClass('show');
             }
         }
@@ -24854,6 +25031,21 @@ function addDateSettingPopupOpenGERP(data){
         
     orgCodeBox.append(orgCodeForm);
     uitReqDateSettingForm.append(orgCodeBox);
+    
+    if(org_code != ''){
+        var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+            + '<input type="hidden" value="'+ org_code +'" class="sel-plant-code"/>'
+            + '<input type="hidden" value="'+ plant_id +'" class="sel-plant-id"/>'
+            + '<input type="hidden" value="'+ plant_name +'" class="sel-plant-name"/>'
+            +'</div>'
+        );
+      
+        selectedOrg.empty();
+        selectedOrg.append(plantInfo);
+        //$('#orgCode').val(plant_code);
+        
+        orgCodeInputForm.find('input').val(org_code);
+    }
     
     /*  ###[ 조회 기간 ]###  */
     var reqDateFr;
@@ -24910,7 +25102,7 @@ function addDateSettingPopupOpenGERP(data){
         var plantCode = $('.sel-plant-code').val();
 
         if(startDt > endDt){
-            showHtmlSmallDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
+            showHtmlToastDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
             return;
         }
 
@@ -24939,7 +25131,7 @@ function addDateSettingPopupOpenGERP(data){
             
             console.log('GERP UIT 수정 내역 조회 결과 : ', result);
             if(result == null){
-                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
                 isLoading = false;
                 closeLoadingWithMask();
                 return;
@@ -24948,7 +25140,7 @@ function addDateSettingPopupOpenGERP(data){
             var itemLength = result.template.outputs[0].data.items.length;
 
             if(itemLength == 0){
-                showHtmlSmallDialog('<div>조회된 UIT 수정 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
+                showHtmlToastDialog('<div>조회된 UIT 수정 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
                 isLoading = false;
                 closeLoadingWithMask();
                 return;
@@ -25052,12 +25244,18 @@ function addUITDetailPopupOpenGERP(item, orgCode){
     }else if(item.bef_uit_code == "F"){
         chipStyle1 = 'style="width: 22px;padding: 0.4px 7px"'
     }
+    else{
+        chipStyle1 = 'style="height: 20px;"';
+    }
 
     var chipStyle2 = '';
     if(item.aft_uit_code == "T"){
         chipStyle2 = 'style="width: 22px;padding: 0.4px 6.5px;"'
     }else if(item.aft_uit_code == "F"){
         chipStyle2 = 'style="width: 22px;padding: 0.4px 7px"'
+    }
+    else{
+        chipStyle2 = 'style="height: 20px;"';
     }
 
     var uitNowInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
@@ -25208,7 +25406,7 @@ function uitUpdatePopupOpenGERP(uitdata) {
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents" id="item-content"></div>');
+    var pluginContents = $('<div class="plugin-contents uit-update-contents" id="item-content"></div>');
     var requestForm = uitUpdateInputFirstGERP(uitdata);
     pluginContents.append(requestForm);
     addPlugin.append(pluginContents);
@@ -25304,7 +25502,7 @@ function uitUpdateInputFirstGERP(uitdata){
             
             $('.small-dialog').remove();    
             //setTimeout(function() {
-            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
             //}, 100);    
                 
             var replaceVal = input.replace(engNum_pattern, '');
@@ -25416,7 +25614,7 @@ function uitUpdateInputFirstGERP(uitdata){
                 
             }else{
                 $('.small-dialog').remove();
-                showSmallDialog("검색어를 3글자로 입력해 주세요.");
+                showHtmlToastDialog("검색어를 3글자로 입력해 주세요.");
                 e.target.focus();
                 orgUi.css('display','none');
             }
@@ -25434,17 +25632,17 @@ function uitUpdateInputFirstGERP(uitdata){
             if(selInfo){
                 if($('#orgCode').val()){
                     var selecteVal = selectedOrg.find('.sel-plant-code').val();
-                    $('#orgCode').val(selecteVal);
+                    //$('#orgCode').val(selecteVal);
                     nextBtnEvent();
                     orgCodeInputForm.find('.input-val-del').addClass('show');
                 }else{
-                    $('#orgCode').val('');
+                    //$('#orgCode').val('');
                     selectedOrg.empty();
                     nextBtnEvent();
                     orgCodeInputForm.find('.input-val-del').removeClass('show');
                 }
             }else{
-                $('#orgCode').val('');
+                //$('#orgCode').val('');
                 orgCodeInputForm.find('.input-val-del').removeClass('show');
             }
         }
@@ -25477,7 +25675,7 @@ function uitUpdateInputFirstGERP(uitdata){
             
             $('.small-dialog').remove();    
             //setTimeout(function() {
-            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
             //}, 100);    
                 
             var replaceVal = input.replace(engNum_pattern, '');
@@ -25511,6 +25709,8 @@ function uitUpdateInputFirstGERP(uitdata){
 
 		let plant = $('.sel-plant-id').val();   //$('.sel-plant-code').val();
         let material = $('#material').val();
+        
+        material = material.toUpperCase().trim();
 
         LoadingWithMask();
 
@@ -25534,7 +25734,7 @@ function uitUpdateInputFirstGERP(uitdata){
             
             if(result == null){
                 $('.small-dialog').remove();
-                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
                 closeLoadingWithMask();
                 return;
             }
@@ -25543,15 +25743,16 @@ function uitUpdateInputFirstGERP(uitdata){
 
             if(RESULT_CODE !== "SUCCESS"){
                 $('.small-dialog').remove();
-                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
                 closeLoadingWithMask();
                 return;
             }
 
-            if(result.wo_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"||
-                result.po_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"){
+            // if(result.wo_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"||
+            //     result.po_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"){
+            if(result.wo_err_msg == "Part No not exists!( "+plant+","+material+")" || result.po_err_msg == "Part No not exists!( "+plant+","+material+")") {
                 $('.small-dialog').remove();
-                showHtmlSmallDialog('<div>Material no.가 유효하지 않습니다.</div>');
+                showHtmlToastDialog('<div>Material no.가 유효하지 않습니다.</div>');
                 closeLoadingWithMask();
                 return;
             }
@@ -25700,7 +25901,7 @@ function uitUpdateInputGERPSecond(uitdata){
     itemBox.append(materialInfo);
 
     // 현 UIT (성공 일 경우)
-    if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
+    //if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
         uitInfo = $(
             '<div>'
                 +'<span class="uit-content-label">현재 UIT</span>'
@@ -25708,7 +25909,7 @@ function uitUpdateInputGERPSecond(uitdata){
             +'</div>'
         );
         itemBox.append(uitInfo);
-    }
+    //}
 
     // W/O
     woInfo = $(
@@ -25779,8 +25980,11 @@ function uitUpdateInputGERPSecond(uitdata){
         var uitArry = uitdata.uitList;
 
         uitArry.forEach(function(arr) {
-            let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.uit + '</a></li>');
-            uitDropdownListWrap.append(uitDropdownList)
+            
+            if(uitdata.uit_code != arr.uit) {
+                let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.uit + '</a></li>');
+                uitDropdownListWrap.append(uitDropdownList);
+            }
         });
 
         uitDropdownBox.append(uitDropdownListWrap);
@@ -25885,7 +26089,7 @@ function uitUpdateInputGERPSecond(uitdata){
                     
                     //closeBtn();
                     setTimeout(function() {
-                        showSmallHtmlDialog(showMsg);
+                        showHtmlToastDialog(showMsg);
                     }, 400);
                     
                 }
@@ -25894,7 +26098,7 @@ function uitUpdateInputGERPSecond(uitdata){
     
                     //closeBtn();
                     setTimeout(function() {
-                        showSmallHtmlDialog("UIT 수정 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                        showHtmlToastDialog("UIT 수정 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
                     }, 400);
                     
                 }
@@ -26040,17 +26244,17 @@ function addUitChangeCardGERP(uitdata){
     var contentHeader = $('<div class="content-wrap-header">' + iconBell2 +'<h2>UIT가 수정되었어요.</h2></div>');
     contentWarp.append(contentHeader);
     
-    var chipStyleBef = "";
-    var chipStyleAft = "";
+    var chipStyleBef = "padding: 2px 4px 4px 4.5px;";
+    var chipStyleAft = "padding: 2px 4px 4px 4.5px;";
     var bef_uit_code = uitdata.bef_uit_code;
     var aft_uit_code = uitdata.aft_uit_code;
     if(bef_uit_code === "M"||bef_uit_code === "G"){
-        chipStyleBef = "padding: 1px 5px 2px 4px;";
+        chipStyleBef = "padding: 2px 5px 4px 4px;";
     }else if(bef_uit_code === "F"){
         chipStyleBef = "padding: 1px 5px 2px 6px;";
     }
     if(aft_uit_code === "M"||aft_uit_code === "G"){
-        chipStyleAft = "padding: 1px 5px 2px 4px;";
+        chipStyleAft = "padding: 2px 5px 4px 4px;";
     }else if(aft_uit_code === "F"){
         chipStyleAft = "padding: 1px 5px 2px 6px;";
     }
@@ -26079,11 +26283,18 @@ function addUitChangeCardGERP(uitdata){
     
     var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
     var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
+    var update = $('<button type="button" class="btn-quick-reply btn-basic">UIT 수정</button>');
     var list = $('<button type="button" class="btn-quick-reply btn-basic">UIT 수정 내역</button>');
+    quickBtnBox.append(update);
     quickBtnBox.append(list);
     messageTextWrap2.append(quickBtnBox);
 
     uitDataInitGERP(uitdata);       // 물품 입력내용 초기화. 
+
+    update.on('click', function() {
+
+        chatui.sendMessage("UIT 수정");
+    });
 
     list.on('click', function() {
 
@@ -26323,5 +26534,19 @@ const setDatepickerUITGERP = function() {
       fulldate: fullDate
     }
 };
+
+function showHtmlToastDialog(msg) {
+  //$('.test-panel').append('<div class="small-dialog"></div>');
+  $('.plugins').append('<div class="toast-dialog"></div>');
+  $('.toast-dialog').html(msg);
+  $('.toast-dialog').addClass('show');
+  setTimeout(function() {
+    $('.toast-dialog').removeClass('show');
+  }, 2000);
+
+  setTimeout(function() {
+    $('.toast-dialog').remove();
+  }, 5000);
+}
 
 /* #################### [ UIT 수정 (GERP) End ] #################### */
