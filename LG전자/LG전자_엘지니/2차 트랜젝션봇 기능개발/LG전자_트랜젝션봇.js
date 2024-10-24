@@ -8996,8 +8996,8 @@ function anotherAccountPopupOpen(orderdata) {
         var anotherForm = anotherAccountOrderEighth(orderdata);
     }
     else{
-        //var anotherForm = anotherAccountOrderFirst(orderdata);
-        var anotherForm = anotherAccountOrderFifth(orderdata);
+        var anotherForm = anotherAccountOrderFirst(orderdata);
+        //var anotherForm = anotherAccountOrderFifth(orderdata);
     }
     //var anotherForm = anotherAccountOrderFirst(orderdata);
     pluginContents.append(anotherForm);
@@ -10480,7 +10480,7 @@ function isNull(val) {
 function anotherAccountOrderFifth(orderdata) {
     console.log('orderdata : ', orderdata);
     
-    var selOrderType = (orderdata.orderType == null)? 'OTHERS_OUT_NO RETURN_OMD':orderdata.orderType;       // OTHERS_OUT_NO RETURN_OMD / OTHERS_OUT_FA_OMD
+    var selOrderType = (orderdata.orderType == null)? '':orderdata.orderType;       // OTHERS_OUT_NO RETURN_OMD / OTHERS_OUT_FA_OMD
     var selApmsYN = (orderdata.apmsYN == null)? '':orderdata.apmsYN;
 
     var selApmsNo = (orderdata.apms_no == null)? '':orderdata.apms_no;              // EKHQ-MKT-20231127-0087
@@ -21219,7 +21219,7 @@ function uitUpdateListGERP(data) {
     
     // simple Text button 추가
     var btnWrap = $('<div class="btn"></div>');
-    var customBtn = $('<button class="btn btn-emphasis">조회 기간 설정</button>')
+    var customBtn = $('<button class="btn btn-emphasis">조회 조건 변경</button>')
 
     btnWrap.append(customBtn);
     msgCon.append(btnWrap);
@@ -22297,8 +22297,9 @@ function uitUpdateInputFirstGERP(uitdata){
                 return;
             }
 
-            if(result.wo_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"||
-                result.po_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"){
+            //if(result.wo_err_msg == "Part No not exists!('||p_plant_id||','||p_material_no||')'"||
+            //    result.po_err_msg == "Part No not exists!('||p_plant_id||','||p_material_no||')'"){
+            if(result.wo_err_msg == "Part No not exists!( "+plant+","+material+")" || result.po_err_msg == "Part No not exists!( "+plant+","+material+")") {
                 $('.small-dialog').remove();
                 showHtmlSmallDialog('<div>Material no.가 유효하지 않습니다.</div>');
                 closeLoadingWithMask();
@@ -22449,7 +22450,7 @@ function uitUpdateInputGERPSecond(uitdata){
     itemBox.append(materialInfo);
 
     // 현 UIT (성공 일 경우)
-    if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
+    //if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
         uitInfo = $(
             '<div>'
                 +'<span class="uit-content-label">현재 UIT</span>'
@@ -22457,7 +22458,7 @@ function uitUpdateInputGERPSecond(uitdata){
             +'</div>'
         );
         itemBox.append(uitInfo);
-    }
+    //}
 
     // W/O
     woInfo = $(
@@ -22549,6 +22550,9 @@ function uitUpdateInputGERPSecond(uitdata){
     pluginForm.append(contentCard);
     pluginForm.append(btn);
     
+    const chg_error_msg = ['check_req_status', 'val org id null', 'Update Error : MTL_SYSTEM_ITEMS_B', 'change_uit exception', 'uit_main exception in cur_1', 'Part No not exists', 'uit_main exception'];
+    const chg_retry_msg = ['Previous request was not completed'];
+    
     /* #########[ popup_footer ]######### */
     pluginForm.find('button').on('click', function() {
         if($(this).hasClass('btn-close')){
@@ -22612,11 +22616,26 @@ function uitUpdateInputGERPSecond(uitdata){
                 console.log('createInfo : ', createInfo);
 
                 if(regSuccessYn == 'N') {
+                    
                     console.log('UIT 수정 요청 실패 : '+errorMessage);
+                    
+                    let showMsg = 'UIT 수정 중 챗봇 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ';
+                    for(var e=0; e<chg_retry_msg.length; e++) {
+                        if(errorMessage.indexOf(chg_retry_msg[e]) > -1) {
+                            showMsg = 'GERP 시스템에서 이전 요청이 완료되지 않았습니다.</br>1시간 후에 다시 시도해 주세요.';
+                            //console.log('retry...');
+                        }
+                    }
+                    for(var e=0; e<chg_error_msg.length; e++) {
+                        if(errorMessage.indexOf(chg_error_msg[e]) > -1) {
+                            showMsg = 'GERP 시스템에서 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ';
+                            //console.log('error...');
+                        }
+                    }
                     
                     //closeBtn();
                     setTimeout(function() {
-                        showSmallHtmlDialog("UIT 수정 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                        showSmallHtmlDialog(showMsg);
                     }, 400);
                     
                 }
