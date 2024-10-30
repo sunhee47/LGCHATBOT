@@ -25431,6 +25431,8 @@ function uitUpdateInputFirstGERP(uitdata){
     var plant_id = (uitdata.plant_id == null)? '':uitdata.plant_id;
     var plant_name = (uitdata.plant_name == null)? '':uitdata.plant_name;
     var materialNo = (uitdata.material == null)? '':uitdata.material;
+
+    var selChgUit = (uitdata.chg_uit_code == null)? '':uitdata.chg_uit_code;
     
     var pluginHeader = $('.plugin-header');
     pluginHeader.find('h1').text('UIT 수정 ('+ '1' + '/' + '2' +')');
@@ -25441,7 +25443,7 @@ function uitUpdateInputFirstGERP(uitdata){
         $('.plugin-contents').css('overflow-y', 'auto');
     },1);
     
-    var pluginForm = $('<form class="form-first"></form>');
+    var pluginForm = $('<form class="form-first-uit"></form>');
     /* #########[ popup_content ]######### */
     /*  ###[ ORG Code ]###  */
     var orgCodeBox = $(
@@ -25701,6 +25703,99 @@ function uitUpdateInputFirstGERP(uitdata){
 //        $('#material').val(materialG);
     //}
     
+    /*  ###[ 수정 UIT ]###  */
+    var uitDropdownBox = $(
+        '<div class="dropdown-box dropdown-uit">'
+            +'<label>수정 UIT<b>*</b></label>'
+        +'</div>'
+    );
+    var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span style="color: #6b6b6b;">수정할 UIT를 선택해 주세요.</span></button>');
+    var uitDropdownArrow = $(
+        '<i class="icons">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</i>'
+    );
+    uitDropdownBox.append(uitDropdown);
+    uitDropdown.append(uitDropdownArrow);
+
+
+    // 조회 유형 드롭다운메뉴 & 리스트
+    var uitDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+    var uitArry = uitdata.uitList;
+
+    uitArry.forEach(function(arr) {
+        var selected = '';
+        
+        if(arr.uit == selChgUit) {
+            console.log('selChgUit : '+selChgUit);
+            selected = 'selected';
+        }
+        
+        //if(uitdata.uit_code != arr.uit) {
+            let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)" class="'+selected+'">' + arr.uit + '</a></li>');
+            uitDropdownListWrap.append(uitDropdownList);
+        //}
+    });
+
+    uitDropdownBox.append(uitDropdownListWrap);
+    pluginForm.append(uitDropdownBox);
+
+    uitDropdownBox.append('<input type="hidden" value="'+selChgUit+'" id="chg_uit_code"/>');
+
+    var emptylayer = $('<div id="empty_layer" style="height:120px;display:none;"></div>');
+    pluginForm.append(emptylayer);
+    
+    /*  #########[ dropdown ]#########  */
+    //$(document).on('click','.form-first-uit .btn-dropdown', function(e) {
+    pluginForm.find('.btn-dropdown').on('click', function() {
+        dropdownBtnEvent(this);
+        //nextBtnEvent();
+    });
+    //$(document).on('click','.form-first-uit .dropdown-item > a', function(e) {    
+    pluginForm.find('.dropdown-menu a').on('click', function() {
+        dropdownMenuEvent(this);
+        nextBtnEvent();
+    });
+    
+    function dropdownBtnEvent(target) {
+        //console.log('button : '+$(target).hasClass('active'));
+        if ($(target).hasClass('active')) {
+            
+            pluginForm.find('#empty_layer').css('display', 'none');
+            $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+        }
+        else {
+            pluginForm.find('#empty_layer').css('display', 'block');
+            
+            setTimeout(function() {
+                    var e = document.getElementById("item-content");
+                    e.scrollTop = e.scrollHeight
+            }, 50)            
+            
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+        }
+        
+    }
+    
+    function dropdownMenuEvent(target) {
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).text();
+        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        
+        console.log('select value : '+targetText);
+        $('#chg_uit_code').val(targetText);
+        
+        uitDropdown.removeClass('active');
+        uitDropdownListWrap.removeClass('show');
+        uitDropdownListWrap.css("display","none");
+        
+        pluginForm.find('#empty_layer').css('display', 'none');
+
+    }
+    
     /* #########[ popup_footer ]######### */
     var nextBtn = $('<div class="btn" style="margin-top: 35px;"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
     pluginForm.append(nextBtn);
@@ -25711,6 +25806,7 @@ function uitUpdateInputFirstGERP(uitdata){
         let material = $('#material').val();
         
         material = material.toUpperCase().trim();
+        var chgUidCode = $('#chg_uit_code').val();
 
         LoadingWithMask();
 
@@ -25721,7 +25817,8 @@ function uitUpdateInputFirstGERP(uitdata){
             },
             payload:{
                 "plant":plant,
-                "material":material
+                "material":material, 
+                "chg_uit_code":chgUidCode
             }
         };
 	
@@ -25756,6 +25853,13 @@ function uitUpdateInputFirstGERP(uitdata){
                 closeLoadingWithMask();
                 return;
             }
+            
+            if(result.wo_err_msg == material+" uit is already "+chgUidCode || result.po_err_msg == material+" uit is already "+chgUidCode) {
+                $('.small-dialog').remove();
+                showHtmlToastDialog('<div>수정 UIT가 현재 UIT와 동일합니다.</div>');
+                closeLoadingWithMask();
+                return;
+            }
 
             // 1단계 선택 Value (plant 추가로 intent api 혹은 테스트용 node에 plant 추가해야합니다)
             uitdata.plant = plant;
@@ -25769,9 +25873,10 @@ function uitUpdateInputFirstGERP(uitdata){
             uitdata.wo_err_msg = result.wo_err_msg;
             
             // 물품 조회 후 Response (현재는 필드가 없는데 api 명세서 대로 업뎃 되면 추가) 
-            uitdata.inventory_item_id  = result.inventory_item_id
-            uitdata.material_name      = result.material_name
-            uitdata.uit_code           = result.uit_code
+            uitdata.inventory_item_id  = result.inventory_item_id;
+            uitdata.material_name      = result.material_name;
+            uitdata.uit_code           = result.uit_code;
+            uitdata.chg_uit_code        = result.chg_uit_code;
 
             //전역 변수
             // plantCodeG = $('.sel-plant-code').val();
@@ -25797,8 +25902,11 @@ function uitUpdateInputFirstGERP(uitdata){
     function nextBtnEvent() {
         var selInfo = $('.sel-plant-code').val();
         var material = materialInput.find('input').val();
+        
+        var chgUidCode = $('#chg_uit_code').val();
 
-        if(selInfo&&material){
+        //console.log('next > '+selInfo+' / '+material+' / '+chgUidCode);
+        if(selInfo&&material&&chgUidCode){
             nextBtn.find('button').attr('disabled', false);
         }else{
             nextBtn.find('button').attr('disabled', true);
@@ -25823,6 +25931,15 @@ function uitUpdateInputFirstGERP(uitdata){
         }
     });
     
+    if (selChgUit != '') {
+        var selectedList = uitDropdownListWrap.find('li').find('.selected');
+        console.log('selectedList > ', selChgUit);
+        selectedList.trigger('click');
+    }
+    
+    
+    //nextBtnEvent();
+    
     return uitUpdateInputFormGERP;
 };
 
@@ -25843,26 +25960,6 @@ function uitUpdateInputGERPSecond(uitdata){
 
     // back버튼
     pluginHeader.find('.backBtn').off('click').on('click', function() {
-//         pluginForm.removeClass('show');
-//         pluginForm.remove();
-//         uitUpdateInputFormGERP = uitUpdateInputFirstGERP(uitdata);
-//         $('.plugin-contents').append(uitUpdateInputFormGERP);
-        
-//         var selectedOrg = $('.plugin-contents').find('.selected-org');
-
-// 		var plantInfo = $('<div class="sel-org-info" style="display: none;">'
-//                               + '<input type="hidden" value="'+ plantCodeG +'" class="sel-plant-code"/>'
-//                               + '<input type="hidden" value="'+ plantIdG +'" class="sel-plant-id"/>'
-//                               + '<input type="hidden" value="'+ plantNameG +'" class="sel-plant-name"/>'
-//                               +'</div>'
-//                             );
-                        
-// 	    selectedOrg.empty();
-//         selectedOrg.append(plantInfo);
-//         $('.plugin-contents').find('#orgCode').val(plantCodeG);
-        
-//         $('.plugin-contents').find('#material').val(materialG);
-
         uitdata.step = 1;
         uitdata.action = 'back';
         
@@ -25900,16 +25997,49 @@ function uitUpdateInputGERPSecond(uitdata){
     );
     itemBox.append(materialInfo);
 
+    var chipStyleBef = "padding: 2px 4px 4px 4.5px;";
+    var chipStyleAft = "padding: 2px 4px 4px 4.5px;";
+    var bef_uit_code = uitdata.uit_code;
+    var aft_uit_code = uitdata.chg_uit_code;
+    if(bef_uit_code === "M"||bef_uit_code === "G"){
+        chipStyleBef = "padding: 2px 5px 4px 4px;";
+    }else if(bef_uit_code === "F"){
+        chipStyleBef = "padding: 1px 5px 2px 6px;";
+    }
+    if(aft_uit_code === "M"||aft_uit_code === "G"){
+        chipStyleAft = "padding: 2px 5px 4px 4px;";
+    }else if(aft_uit_code === "F"){
+        chipStyleAft = "padding: 1px 5px 2px 6px;";
+    }
+    
     // 현 UIT (성공 일 경우)
     //if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
         uitInfo = $(
             '<div>'
                 +'<span class="uit-content-label">현재 UIT</span>'
-                +'<span>' + uitdata.uit_code + '</span>'
+                //+'<span class="badge-base badge-gray">' + uitdata.uit_code + '</span>'
+                +'<div class="item-content status-chip" style="padding: 3px 0px 2px 0px;">'
+                    +'<span class="badge-base badge-gray" style="width:20px;height:20px;'+chipStyleBef+'">'+bef_uit_code+'</span>'
+                +'</div>'
+
             +'</div>'
         );
         itemBox.append(uitInfo);
     //}
+
+    // 현 UIT (성공 일 경우)
+    if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
+        uitInfo = $(
+            '<div>'
+                +'<span class="uit-content-label">수정 UIT</span>'
+                 //+'<span class="badge-base badge-pink">' + uitdata.chg_uit_code + '</span>'
+                +'<div class="item-content status-chip" style="padding: 3px 0px 2px 0px;">'
+                    +'<span class="badge-base badge-pink" style="width:20px;height:20px;'+chipStyleAft+'">'+aft_uit_code+'</span>'
+                +'</div>'
+            +'</div>'
+        );
+        itemBox.append(uitInfo);
+    }
 
     // W/O
     woInfo = $(
@@ -25958,36 +26088,36 @@ function uitUpdateInputGERPSecond(uitdata){
         contentCard = $('<div></div>');
 
         /*  ###[ 수정 UIT ]###  */
-        var uitDropdownBox = $(
-            '<div class="dropdown-box dropdown-uit">'
-                +'<label>수정 UIT<b>*</b></label>'
-            +'</div>'
-        );
-        var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span>수정할 UIT를 선택해 주세요.</span></button>');
-        var uitDropdownArrow = $(
-            '<i class="icons">'
-                +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                    +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
-                +'</svg>'
-            +'</i>'
-        );
-        contentCard.append(uitDropdownBox);
-        uitDropdownBox.append(uitDropdown);
-        uitDropdown.append(uitDropdownArrow);
+        // var uitDropdownBox = $(
+        //     '<div class="dropdown-box dropdown-uit">'
+        //         +'<label>수정 UIT<b>*</b></label>'
+        //     +'</div>'
+        // );
+        // var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span>수정할 UIT를 선택해 주세요.</span></button>');
+        // var uitDropdownArrow = $(
+        //     '<i class="icons">'
+        //         +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        //             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+        //         +'</svg>'
+        //     +'</i>'
+        // );
+        // contentCard.append(uitDropdownBox);
+        // uitDropdownBox.append(uitDropdown);
+        // uitDropdown.append(uitDropdownArrow);
 
-        // 조회 유형 드롭다운메뉴 & 리스트
-        var uitDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
-        var uitArry = uitdata.uitList;
+        // // 조회 유형 드롭다운메뉴 & 리스트
+        // var uitDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+        // var uitArry = uitdata.uitList;
 
-        uitArry.forEach(function(arr) {
+        // uitArry.forEach(function(arr) {
             
-            if(uitdata.uit_code != arr.uit) {
-                let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.uit + '</a></li>');
-                uitDropdownListWrap.append(uitDropdownList);
-            }
-        });
+        //     if(uitdata.uit_code != arr.uit) {
+        //         let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.uit + '</a></li>');
+        //         uitDropdownListWrap.append(uitDropdownList);
+        //     }
+        // });
 
-        uitDropdownBox.append(uitDropdownListWrap);
+        // uitDropdownBox.append(uitDropdownListWrap);
 
         var uitPopupContetnBox = $('<div class="input-box"><label>수정 사유<b>*</b></label>');
         var uitPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" style="height: 100px;" id="uitReason"></textarea>');
@@ -26017,12 +26147,13 @@ function uitUpdateInputGERPSecond(uitdata){
             
             if($(this).hasClass('btn-disabled')) return;
 
-            let chg_uit = $('#uit').text();
+            //let chg_uit = $('#uit').text();
             let remark = $('#uitReason').val();
             
             let inventory_item_id = uitdata.inventory_item_id;
             let plant_id = uitdata.plant_id;
-            let pre_uit = uitdata.uit_code;
+            let pre_uit = bef_uit_code;     //uitdata.uit_code;
+            let chg_uit = aft_uit_code;
             
             LoadingWithMask();            
             // uit 수정 신청
@@ -26149,36 +26280,36 @@ function uitUpdateInputGERPSecond(uitdata){
     })
     
     /*  #########[ dropdown ]#########  */
-    pluginForm.find('.btn-dropdown').on('click', function() {
-        dropdownBtnEvent(this);
-        //nextBtnEvent();
-    });
-    pluginForm.find('.dropdown-menu a').on('click', function() {
-        dropdownMenuEvent(this);
-        nextBtnEvent();
-    });
+    // pluginForm.find('.btn-dropdown').on('click', function() {
+    //     dropdownBtnEvent(this);
+    //     //nextBtnEvent();
+    // });
+    // pluginForm.find('.dropdown-menu a').on('click', function() {
+    //     dropdownMenuEvent(this);
+    //     nextBtnEvent();
+    // });
     
-    function dropdownBtnEvent(target) {
-        if ($(target).hasClass('active')) {
-            uitDropdown.removeClass('active');
-            uitDropdownListWrap.removeClass('show');
-            uitDropdownListWrap.css("display","none");
-        }
-        else {
-            uitDropdown.addClass('active');
-            uitDropdownListWrap.addClass('show');
-            uitDropdownListWrap.css("display","flex");
-        }
-    }
+    // function dropdownBtnEvent(target) {
+    //     if ($(target).hasClass('active')) {
+    //         uitDropdown.removeClass('active');
+    //         uitDropdownListWrap.removeClass('show');
+    //         uitDropdownListWrap.css("display","none");
+    //     }
+    //     else {
+    //         uitDropdown.addClass('active');
+    //         uitDropdownListWrap.addClass('show');
+    //         uitDropdownListWrap.css("display","flex");
+    //     }
+    // }
     
-    function dropdownMenuEvent(target) {
-        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
-        let targetText = $(target).text();
-        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
-        uitDropdown.removeClass('active');
-        uitDropdownListWrap.removeClass('show');
-        uitDropdownListWrap.css("display","none");
-    }
+    // function dropdownMenuEvent(target) {
+    //     const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+    //     let targetText = $(target).text();
+    //     dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+    //     uitDropdown.removeClass('active');
+    //     uitDropdownListWrap.removeClass('show');
+    //     uitDropdownListWrap.css("display","none");
+    // }
 
     function closeBtn(){
         $('#uit-update').removeClass('show');
@@ -26192,14 +26323,15 @@ function uitUpdateInputGERPSecond(uitdata){
     }
     
     function nextBtnEvent(){
-		var aftUitCode = pluginForm.find('.select').find('span').text();
+		//var aftUitCode = pluginForm.find('.select').find('span').text();
         var uitReasonText = pluginForm.find('#uitReason').val().length;
 
-        if(aftUitCode === "수정할 UIT를 선택해 주세요."){
-			aftUitCode = "";
-		}
+//         if(aftUitCode === "수정할 UIT를 선택해 주세요."){
+// 			aftUitCode = "";
+// 		}
         
-        if(aftUitCode&&(uitReasonText>=10&&uitReasonText<=120)){
+        if((uitReasonText>=10&&uitReasonText<=120)){
+        // if(aftUitCode&&(uitReasonText>=10&&uitReasonText<=120)){
             pluginForm.find('.btn-apply').removeClass('btn-disabled');
         }else{
             pluginForm.find('.btn-apply').addClass('btn-disabled');
@@ -26228,6 +26360,12 @@ function uitDataInitGERP(uitdata) {
     delete uitdata.wo_check;
     delete uitdata.po_err_msg;
     delete uitdata.wo_err_msg;
+
+    delete uitdata.chg_uit_code;
+    
+    delete uitdata.bef_uit_code;
+    delete uitdata.aft_uit_code;
+    delete uitdata.uptMaterial;
 
     uitdata.step = 1;
 
