@@ -8579,6 +8579,14 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
             //    messageCard = makeUitUpdateListNERP(message.data); // UIT 수정내역 조회(메시지카드)
             //}
         }
+        else if(message.type == 'uitPlannerListNERP') {
+            console.log('planner list...');
+            //if(message.data.isSearch){
+                messageCard = uitPlannerListNERP(message.data); // Planner UIT 수정내역 조회
+            //}else{
+            //    messageCard = makeUitUpdateListNERP(message.data); // UIT 수정내역 조회(메시지카드)
+            //}
+        }
         else {
           console.log(message.type);
         }
@@ -9345,15 +9353,30 @@ function addBudgetPopupOpen(data) {
     // dropdown box 열려 있으면 닫기. 
     $(document).off('click').on('click', function(e) {
         
-        //console.log('length : '+$('.dropdown-box').has(e.target).length+' / '+$('.dropdown-box').length+' / ', e.target);
-        for(var i=0; i<$('.dropdown-box').length; i++) {
-            let dropdownBox = $('.dropdown-box')[i];
+        // console.log('budget .... ', e.target);
+        // console.log('length : '+$('.dropdown-box').has(e.target).length+' / '+$('.dropdown-box').length+' / ', e.target);
+        
+        // for(var i=0; i<$('.dropdown-box').length; i++) {
+        //     let dropdownBox = $('.dropdown-box')[i];
             
-            if($(dropdownBox).has(e.target).length === 0) {
+        //     if($(dropdownBox).has(e.target).length === 0) {
+        //         if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
+        //             dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
+        //         }
+        //     }
+            
+        // }
+        
+        if($('.dropdown-box').has(e.target).length == 0) {
+            for(var i=0; i<$('.dropdown-box').length; i++) {
+                let dropdownBox = $('.dropdown-box')[i];
+                
                 if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
                     dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
                 }
-            }            
+
+            }
+            
         }
     });
 
@@ -9366,6 +9389,7 @@ function addBudgetPopupOpen(data) {
     
     $('.btn-dropdown').on('click', function() {
         if ($(this).parents('.dropdown-box').hasClass('dropdown-userInfo')) {
+            // console.log('account...');
             if ($('.dropdown-budget .btn-dropdown').hasClass('select')) {
                 dropdownBtnEvent(this);
             } else {
@@ -9373,6 +9397,7 @@ function addBudgetPopupOpen(data) {
                 $('.dropdown-budget .btn-dropdown').addClass('accent');
             }
         } else {
+            // console.log('type...');
             $('.budget-tooltip').fadeOut(1);
             $('.dropdown-budget .btn-dropdown').removeClass('accent');
             dropdownBtnEvent(this);
@@ -9415,7 +9440,9 @@ function addBudgetPopupOpen(data) {
         console.log('seelct code : '+$(target).parents('.dropdown-item').find('span').text());
         
         if(dropBtn.hasClass('accountType')) {
-            $('#list-account').empty();
+            // $('#list-account').empty();
+            $('#list-account').remove();
+            var accountUL = $('<ul class="dropdown-menu" id="list-account"></ul>');
             $('#accountType').val(targetText);
             $('#btn-account').html('<span>계정 정보를 선택해 주세요.</span>');
             
@@ -9424,9 +9451,11 @@ function addBudgetPopupOpen(data) {
             for(var i=0; i<accountList.length; i++) {
                 var account = accountList[i];
                 if(account.group == targetText) {
-                    $('#list-account').append('<li class="dropdown-item"><span style="display:none;">'+account.code+'</span><a href="javascript:void(0)">'+account.name+'</a></li>');
+                    accountUL.append('<li class="dropdown-item"><span style="display:none;">'+account.code+'</span><a href="javascript:void(0)">'+account.name+'</a></li>');
                 }
             }
+            
+            userInfoDropdownBox.append(accountUL);
             
             $('#list-account a').on('click', function() {
                 console.log('account menu....');
@@ -9440,7 +9469,7 @@ function addBudgetPopupOpen(data) {
         }
         else if(dropBtn.hasClass('searchmonth')) { 
             var targetCode = $(target).parents('.dropdown-item').find('span').text();
-            console.log('targetCode : '+targetCode);
+            // console.log('targetCode : '+targetCode);
             
             $('#searchMonth').val(targetCode);
         } else{
@@ -9454,6 +9483,7 @@ function addBudgetPopupOpen(data) {
     }
 
     function dropdownBtnEvent(target) {
+        // console.log('this : ', target);
         if ($(target).hasClass('active')) {
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
@@ -9537,20 +9567,20 @@ function budgetResult(data) {
     budgetResultMessage.append(budgetMessageResult);
     
     budgetMessageResultContent.find('.move_n-erp').on('click', function() {
-        // window.open('#none', '_blank');
+        window.open('https://nerpdev.lge.com/', '_blank');
         
-         let url = 'https://nerpdev.lge.com/';    // N-ERP portal
-         let paramVal1 = '*ZMIMR0509 P_HBLNO='+data.hblNo+';P_YEAR='+data.etprDt;
-         let params = {
-                    // "~transaction": paramVal1, 
-                    // "~nosplash": "1",
-                    // "~singletransaction": "1",
-                    // "sap-client": "210", 
-                    // "sap-language": "EN"
-                };
-         console.log('url > '+url);
+        //  let url = 'https://nerpdev.lge.com/';    // N-ERP portal
+        //  let paramVal1 = '*ZMIMR0509 P_HBLNO='+data.hblNo+';P_YEAR='+data.etprDt;
+        //  let params = {
+        //             // "~transaction": paramVal1, 
+        //             // "~nosplash": "1",
+        //             // "~singletransaction": "1",
+        //             // "sap-client": "210", 
+        //             // "sap-language": "EN"
+        //         };
+        //  console.log('url > '+url);
                
-         openDeepLink(url, params);
+        //  openDeepLink(url, params);
         
     });
     
@@ -9566,7 +9596,7 @@ function budgetResultError(data) {
     
     var budgetResultErrorMessage = $(
          '<p>시스템 오류로 인해 조회되지 않았어요. 아래 버튼을 눌러 잔여 예산을 다시 조회해 보세요.</p>'
-         + '<p>'+data.errorMsg+'</p>'
+         + '<p>'+data.resultMsg+'</p>'
          
     );
     
@@ -16704,12 +16734,22 @@ function uitUpdateInputSecondNERP(uitdata){
     );
     itemBox.append(materialInfo);
 
+    var chipStyleBef = "padding: 2px 4px 4px 4.5px;";
+    if(uitStatus === "M"||uitStatus === "G"){
+        chipStyleBef = "padding: 2px 5px 4px 4px;";
+    }else if(uitStatus === "F"){
+        chipStyleBef = "padding: 1px 5px 2px 6px;";
+    }
+
     // 현 UIT (성공 일 경우)
     //if(uit_flag == 'YES') {
         uitInfo = $(
             '<div>'
                 +'<span class="uit-content-label">현재 UIT</span>'
-                +'<span>' + uitStatus + '</span>'
+                // +'<span>' + uitStatus + '</span>'
+                +'<div class="item-content status-chip" style="padding: 3px 0px 2px 0px;">'
+                    +'<span class="badge-base badge-gray" style="width:20px;height:20px;'+chipStyleBef+'">'+uitStatus+'</span>'
+                +'</div>'
             +'</div>'
         );
         itemBox.append(uitInfo);
@@ -18246,6 +18286,694 @@ function showHtmlToastDialog(msg) {
     $('.toast-dialog').remove();
   }, 5000);
 }
+
+// Planner UIT 수정내역 조회
+function uitPlannerListNERP(data) {
+    console.log('planner uit 수정내역 : ', data);
+
+        var items = data.items;
+    
+        var reqDateFr = data.ZREQDATE_FR.replace(/-/gi, '.'); //data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+        var reqDateTo = data.ZREQDATE_TO.replace(/-/gi, '.'); //data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+    
+        // system contents start
+        var uitUpdateListContents = $('<div class="system-contents" style="width: 300px;"></div>');
+    
+    if(data.restSuccessYn == 'N')  {
+        var msgCon = $('<div class="message simple-text"></div>');
+        
+        var text = $(
+                '<p>시스템 오류로 인해 조회되지 않았어요. </p>'
+              + '<p>아래 버튼을 눌러 UIT 수정 내역을 다시 조회해 보세요.</p>'
+            );
+        
+        msgCon.append(text);    
+        
+        var btnWrap = $('<div class="btn"></div>');
+        var customBtn = $('<button class="btn btn-emphasis">Planner UIT 수정 내역</button>')
+    
+        btnWrap.append(customBtn);
+        msgCon.append(btnWrap);
+    
+        uitUpdateListContents.append(msgCon);
+    
+        // simple Text button event
+        customBtn.click(function(){
+            chatui.sendMessage("Planner UIT 수정 내역");
+        });
+        
+    }
+    else {
+        
+        // 상위 문구 조회필터 버튼 영역
+        var msgCon = $('<div class="message simple-text"></div>');
+        
+        var periodMsg = '<b>최근 1개월</b> 간 <b>Planner</b>에게 요청하신 UIT 수정 건수는 ';
+        var addMsg = '엘지니에선 UIT 수정 확정된 내역을 최대 20건 조회해 드릴 수 있어요.';
+        if(items.length == 0) {
+                addMsg = '조회 기간, 상태 필터를 설정해 청구 내역을 다시 조회해 보세요!';     
+        }
+        else {
+            if(data.isSearch == 'true'){
+                periodMsg = '<b style="color: #333333;">' + reqDateFr + ' - ' + reqDateTo + '</b>에 '
+                        + '' + data.userName + '님께서 <b>Planner</b>에게 수정 요청하신 UIT';
+                        
+                if(data.STATUS_CODE == '') {
+                    periodMsg += '는 ';
+                }                      
+                else{
+                    periodMsg += ' 중 <b style="color: #333333;">'+data.STATUS_NAME+'</b> 상태는 ';
+                }
+
+                addMsg = '엘지니에선 최대 20건 조회해 드릴 수 있어요.';     
+            } 
+        }    
+        var text = $(
+                '<p>'
+                //+ '<b style="color: #333333;">' + reqDateFr + ' - ' + reqDateTo + '</b> 에 '
+                //+ '<font color="#E0205C"><b>최근 1개월</b></font> 간 '
+                + periodMsg
+                + '<b>' + items.length + '건</b>이에요.'
+              + '</p>'
+              + '<p style="font-size: 12px;color: #898989;">'
+                + addMsg 
+              + '</p>'
+            );
+        
+        msgCon.append(text);    
+        
+        // simple Text button 추가
+        var btnWrap = $('<div class="btn"></div>');
+        var customBtn = $('<button class="btn btn-emphasis">조회 필터 설정</button>')
+    
+        btnWrap.append(customBtn);
+        msgCon.append(btnWrap);
+    
+        uitUpdateListContents.append(msgCon);
+    
+        // simple Text button event
+        customBtn.click(function(){
+            addPlannerSearchPopupOpenNERP(data);          // 
+        });
+        // 상위 문구 조회필터 버튼 영역 END
+    
+        // 하단 내역 조회 카드
+        if (Object.prototype.toString.call(items) && Array.isArray(items) && items.length > 0) {
+            
+            var listContents = $('<div class="message profile-list system" style="margin-left: 0px;"></div>');
+        	
+        	var listWrap = $('<div class="p-box"></div>');
+        	listContents.append(listWrap);
+        	
+        	var listUl = $('<ul class="profile-list-wrap"></ul>');
+        	listWrap.append(listUl);
+    
+            // 최대 20건
+        	if(items.length > 20){
+        	    items.splice(20, items.length - 20);
+        	}
+        	
+            items.forEach(function(item,index){
+                
+                listCount = index + 1;
+                
+                var listLi = $('<li class="list-box Request-List-box" id="listBox_' + listCount + '"></li>');
+                listUl.append(listLi);
+              
+                var sysInfo = $('<div class="text-box"></div>');
+                listLi.append(sysInfo);
+                
+                /* Material No */
+                sysInfo.append(
+                    '<div class="name">'
+                        +'<h1 class="system articleRequestList-h1">'
+                            + item.MAKTX
+                        +'</h1>'
+                    +'</div">'
+                );
+                
+                var sysInfoList = $('<ul class="profile-info system"></ul>');
+                
+                /* 수정 상태 */
+            // 수정상태 (STATUS)
+            var liStatus;
+            if(item.STATUS == "00"){ // 노랑 badge : Waiting
+                liStatus = '<span class="badge-base badge-yellow" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+            }else if(item.STATUS == "01"){ // 초록 badge : Completed
+                liStatus = '<span class="badge-base badge-green" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+            }else if(item.STATUS == "02"){ // 회색 badge : Rejected
+                liStatus = '<span class="badge-base badge-gray" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+            }
+            
+                sysInfoList.append($(
+                    '<li class="articleRequestList-li">'
+                        +'<h4>수정 상태</h4>'
+                        // +'<div class="result-item-reqTitle"><span>' + liStatus + '</span></div>'
+                        +liStatus
+                    +'</li>'
+                ));
+
+                sysInfoList.append($(
+                    '<li class="articleRequestList-li">'
+                        +'<h4>Planner</h4>'
+                        +'<div class="result-item-reqTitle"><span>' + item.PLANNER_NAME + '</span></div>'
+                    +'</li>'
+                ));
+                
+                /* 상태 아이콘 */
+                var chipStyle1;
+                var chipStyle2;
+                if(item.Z_OLD_VALUE == "M"||item.Z_OLD_VALUE == "G"){
+                    chipStyle1 = 'style="padding: 1px 5px 2px 4px;"'
+                }else if(item.Z_OLD_VALUE == "F"){
+                    chipStyle1 = 'style="padding: 1px 5px 2px 6px;"'
+                }
+    
+                if(item.Z_NEW_VALUE == "M"||item.Z_NEW_VALUE == "G"){
+                    chipStyle2 = 'style="padding: 1px 5px 2px 4px;"'
+                }else if(item.Z_NEW_VALUE == "F"){
+                    chipStyle2 = 'style="padding: 1px 5px 2px 6px;"'
+                }
+    
+                var liStatus = '<span class="badge-base badge-gray" '+chipStyle1+'>' + item.Z_OLD_VALUE + '</span>';
+                liStatus += iconArrow2;
+                liStatus += '<span class="badge-base badge-pink" '+chipStyle2+'>' + item.Z_NEW_VALUE + '</span>';
+                
+                sysInfoList.append($(
+                    '<li class="articleRequestList-li uit-content-box">'
+                        +'<h4>요청 UIT</h4>'
+                        +'<div style="display: flex;justify-content: right;align-items: center;" class="status-chip">' + liStatus + '</div>'
+                    +'</li>'
+                ));
+                
+                sysInfo.append(sysInfoList);
+                
+                if (listCount > 4){
+                    listLi.addClass('hide');
+                }
+                
+                arrowHtml =	'<span class="arrow">'
+                    +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                      +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                    +'</svg>'
+                  +'</span>';    
+              
+                listLi.append(arrowHtml);
+                
+                listLi.click(function(){
+                    addPlannerDetailPopupOpenNERP(item);
+                });
+              
+            });
+       
+            /* 
+            더보기 버튼
+            청구물품이 4건 초과일때 출력
+            클릭시 4건씩 추가 노출
+            */
+            if (listCount > 4){
+                var seeMoreBtn = $(
+                    '<div class="see-more">'
+                        +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                            +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                        +'</svg>'
+                        +'더보기'
+                    +'</div>'
+                );
+                
+                listWrap.append(seeMoreBtn);
+                
+                seeMoreBtn.click(function() {
+                    var currentList = $(this).parents('.profile-list').find(".hide").first().attr('id');
+                    var currentLi = parseInt(currentList.split('_')[1]);
+                    
+                    if((currentLi+4) >= listCount){
+                        $(this).parents('.p-box').find(".list-box").removeClass('hide');
+                        $(this).remove();
+                    }else{
+                        for(var i=0;i<4;i++){
+                            var targetLi = "#listBox_" + (currentLi + i);
+                            $(this).parents('.p-box').find(targetLi).removeClass('hide');
+                        }
+                    }
+                    descendScrollCustom();
+                });
+            }
+            
+            uitUpdateListContents.append(listContents);
+        }
+
+    }
+    
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var plannerListBtn = $('<span class="btn-custom-reply">Self UIT 수정 내역</span>');
+    var uitReqBtn = $('<span class="btn-custom-reply">UIT 수정</span>');
+    
+    quickReplies.append(plannerListBtn);
+    quickReplies.append(uitReqBtn);
+    
+    uitUpdateListContents.append(quickReplies);
+
+    plannerListBtn.click(function(){
+        chatui.sendMessage("Self UIT 수정 내역");    
+    });
+
+    uitReqBtn.click(function(){
+        chatui.sendMessage("UIT 수정");    
+    });
+    
+    return uitUpdateListContents;
+}
+
+// Planner UIT 조회 필터 설정 팝업
+function addPlannerSearchPopupOpenNERP(data){
+    console.log('Planner UIT 조회 필터 : ', data);
+    
+    var selStatusName = (data.STATUS_NAME == null)? '전체':data.STATUS_NAME; 
+    var selStatusCode = (data.STATUS_CODE == null)? '':data.STATUS_CODE; 
+
+    window.datepicker = setDatepickerUIT();
+    /* #########[ popup_wrap_start ]######### */
+    
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var uitReqDateSetting = $('<div class="plugins" id="uitReqDateSetting"></div>');
+
+    /* #########[ popup_header ]######### */
+    var uitReqDateSettingHeader = $('<div class="plugin-header"><h1>조회 필터 설정</h1></div>');
+    var uitReqDateSettingClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    
+    uitReqDateSettingClose.on('click', function() {
+        uitReqDateSettingPopupClose();
+    })
+    uitReqDateSettingHeader.append(uitReqDateSettingClose);
+    uitReqDateSetting.append(uitReqDateSettingHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var uitReqDateSettingContents = $('<div class="plugin-contents articleRequestFilter-contents"></div>');
+    var uitReqDateSettingForm = $('<form class="form-UITReqDate"></form>');
+
+    /* #########[ popup_content ]######### */
+
+    /*  ###[ 조회 기간 ]###  */
+    var reqDateFr;
+    var reqDateTo;
+    if(data.ZREQDATE_FR != "") reqDateFr = data.ZREQDATE_FR.replace(/-/gi, '.');//data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+    if(data.ZREQDATE_TO != "") reqDateTo = data.ZREQDATE_TO.replace(/-/gi, '.');//data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+
+    var timeInputBox = $('<div class="input-box"><label>조회 기간<b>*</b></label></div>');
+    
+    var dateTimeWrap = $('<div class="schedule-wrap schedule-wrap-filter"></div>');
+    
+    var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="start-date-box"></div>');
+    var dateStartInput = $('<input type="text" placeholder="'+reqDateFr+'" value="' +reqDateFr+ '" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var datepickerStart = $('<div class="datepicker-chem" id="datepickerStart"></div>');
+    var spliter = $('<div class="font-Xlarge"> - </div>');
+    var dateTimeEndBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="end-date-box"></div>');
+    var dateEndInput = $('<input type="text" placeholder="'+reqDateTo+'" value="' +reqDateTo+ '" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var datepickerEnd = $('<div class="datepicker-chem" id="datepickerEnd"></div>');
+
+    var smail = $('<small class="hsCode-orgId show" style="font-size: 12px;color: #898989;">최대 조회 기간은 3개월입니다.</small>');
+
+    dateTimeStartBox.append(dateStartInput);
+    dateTimeStartBox.append(datepickerStart);
+    dateTimeEndBox.append(dateEndInput);
+    dateTimeEndBox.append(datepickerEnd);
+    dateTimeWrap.append(dateTimeStartBox);
+    dateTimeWrap.append(spliter);
+    dateTimeWrap.append(dateTimeEndBox);
+
+    timeInputBox.append(dateTimeWrap);
+    timeInputBox.append(smail);
+    uitReqDateSettingForm.append(timeInputBox);
+
+    /*  ###[ 조회 상태 ]###  */
+    var listStatusDropdownBox = $(
+        '<div class="dropdown-box dropdown-listStatus">'
+            +'<label>조회 상태</label>'
+        +'</div>'
+    );
+    var listStatusDropdown = $('<button type="button" class="btn btn-dropdown select" id="filter-statusId"><span>' + selStatusName + '</span><input type="hidden" id="statusId" value="' + selStatusCode + '"/></button>');
+    var listStatusDropdownArrow = $(
+        '<i class="icons">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</i>'
+    );
+    uitReqDateSettingForm.append(listStatusDropdownBox);
+    listStatusDropdownBox.append(listStatusDropdown);
+    listStatusDropdown.append(listStatusDropdownArrow);
+
+    // 조회 유형 드롭다운메뉴 & 리스트
+    var listStatusDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+    var listStatusArry = data.statusList;
+    
+    let listStatusDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">전체</a><input type="hidden" name="statusCode" value=""/></li>');
+    listStatusDropdownListWrap.append(listStatusDropdownList)
+
+    listStatusArry.forEach(function(arr) {
+        let listStatusDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.TEXT + '</a><input type="hidden" name="statusCode" value="' + arr.STATUS + '"/></li>');
+        listStatusDropdownListWrap.append(listStatusDropdownList)
+    });
+
+    listStatusDropdownBox.append(listStatusDropdownListWrap);
+
+    uitReqDateSettingContents.append(uitReqDateSettingForm);
+    uitReqDateSetting.append(uitReqDateSettingContents);
+    
+    $(document).on('click', function(e) {
+        if (e.target.id != "filter-statusId") {
+            listStatusDropdown.removeClass('active');
+			listStatusDropdownListWrap.removeClass('show');
+			listStatusDropdownListWrap.css("display","none");
+            listStatusDropdownBox.css('padding-bottom', "10px");
+        }
+    });
+    
+    var uitReqDateSettingFoot = $('<div class="articleRequestFilter-footer"></div>');
+    var uitReqDateSettingSubmit = $('<button type="button" class="btn btn-plugin btn-apply" id="btn-uitReqDate">조회</button>');
+    uitReqDateSettingFoot.append(uitReqDateSettingSubmit);
+    uitReqDateSetting.append(uitReqDateSettingFoot);
+    
+    var isLoading = false;
+    uitReqDateSettingSubmit.on('click', function() {
+        if(isLoading) return;
+        if(uitReqDateSettingSubmit.hasClass('btn-disabled')) return;
+
+        var startDt = moment($('.startdate').val()).format('YYYYMMDD');
+        var endDt = moment($('.enddate').val()).format('YYYYMMDD');
+
+        var zReqdateFrom = moment($('#start-date').val()).format('YYYY-MM-DD');
+        var zReqdateTo = moment($('#end-date').val()).format('YYYY-MM-DD');
+        
+        var statusId = $('#statusId').val();
+        
+        console.log('statusId : '+statusId);
+
+        if(startDt > endDt){
+            showHtmlSmallDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
+            return;
+        }
+
+        var requestParam = {
+            query: {
+                "event": "uitPlannerListEventNERP"
+            },
+            payload:{
+                "ZREQDATE_FR":zReqdateFrom,
+                "ZREQDATE_TO":zReqdateTo,
+                "STATUS_CODE":statusId, 
+                "userId":data.userId,
+                "isSearch": true
+            }
+        };
+        isLoading = true;
+        sendChatApi(requestParam, null, function(payload){
+            console.log('Planner 수정 내역 조회 : ', payload);
+            var message = payload.queryResult.messages[0];
+            var response = message.response;
+            var result = JSON.parse(response);
+            
+            if(result == null){
+                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                isLoading = false;
+                return;
+            }
+
+            var itemLength = result.template.outputs[0].data.items.length;
+
+            if(itemLength == 0){
+                showHtmlToastDialog('<div>조회된 UIT 수정 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
+                isLoading = false;
+                return;
+            }else{
+                
+                var items = result.template.outputs[0].data.items;
+
+                appendChatbotHtml(uitPlannerListNERP(result.template.outputs[0].data), true);    
+                console.log('조회 내역 결과. ', items);
+                // var param = {
+                //     "ZREQDATE_FR":zReqdateFrom,
+                //     "ZREQDATE_TO":zReqdateTo,
+                //     "userName":data.userName,
+                //     "userId":data.userId,
+                //     "empNo":data.empNo,
+                //     "isSearch": true
+                // }
+                                    
+                // chatui.sendEventMessage("uitUpdateListEventNERP", param);
+                 isLoading = false;
+                 uitReqDateSettingPopupClose();
+            }
+        });
+    });
+
+    /*  #########[ dropdown ]#########  */
+    //$('.btn-dropdown').on('click', function() {
+    uitReqDateSettingForm.find('.btn-dropdown').on('click', function() {
+        console.log('aaaa');
+        dropdownBtnEvent(this);
+    });
+    uitReqDateSettingForm.find('.dropdown-menu a').on('click', function() {
+        console.log('bbb');
+        dropdownMenuEvent(this);
+    });
+
+    function dropdownBtnEvent(target) {
+        if ($(target).hasClass('active')) {
+            listStatusDropdown.removeClass('active');
+			listStatusDropdownListWrap.removeClass('show');
+			listStatusDropdownListWrap.css("display","none");
+            listStatusDropdownBox.css('padding-bottom', "10px");
+        }
+        else {
+            listStatusDropdown.addClass('active');
+			listStatusDropdownListWrap.addClass('show');
+			listStatusDropdownListWrap.css("display","flex");
+            listStatusDropdownBox.css('padding-bottom', "160px");
+            listStatusDropdown.closest('.plugin-contents').scrollTop(500);
+        }
+    }
+    
+    function dropdownMenuEvent(target) {
+        const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).text();
+        let targetCode = $(target).next().val();
+        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        dropBtn.find('input').val(targetCode);
+        dropmenu.removeClass('show');
+        $(target).closest('.dropdown-listStatus').css('padding-bottom', "10px");
+    }
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(uitReqDateSetting);
+    $('.plugin-dim').css('display', 'block');
+    $('#uitReqDateSetting').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#uitReqDateSetting').addClass('show');
+    }, 100);
+
+    $('#start-date').val(reqDateFr);
+    $('#end-date').val(reqDateTo);
+    
+    function uitReqDateSettingPopupClose() {
+        window.datepicker = setDatepicker();
+        $('#uitReqDateSetting').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#uitReqDateSetting').remove();
+        }, 300);
+    }
+
+    /*  #########[ input-form ]#########  */
+    $('.input-val-del').on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+            selectedOrg.empty();
+            $('#btn-uitReqDate').addClass('btn-disabled');
+        }
+    });
+};
+
+// UIT 수정 내역 조회 상세 
+function addPlannerDetailPopupOpenNERP(item){
+    /* #########[ popup_wrap_start ]######### */
+
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addUITDetail = $('<div class="plugins" id="addUITDetail" style="max-height: calc(100% - 44px);"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addUITDetailHeader = $('<div class="plugin-header"><h1>' + '신청번호 이벤트 ID' + '</h1></div>');
+    var addUITDetailClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+
+    addUITDetailClose.on('click', function() {
+        addUITDetailPopupClose();
+    })
+    addUITDetailHeader.append(addUITDetailClose);
+    addUITDetail.append(addUITDetailHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addUITDetailContents = $('<div class="plugin-contents articleRequestDetail-contents" style="margin-top: 10px;"></div>');
+    var addUITDetailForm = $('<form class="form-artReqDetail"></form>');
+
+    /* #########[ popup_content ]######### */
+    var uitSubInfo = $('<div class="articleReqSubInfo"></div>');
+    var uitSubInfoUi = $('<ul class="articleReq-list-sub-wrap"></ul>');
+
+    var liStatus;
+    if(item.STATUS == "00"){ // 노랑 badge : Waiting
+        liStatus = '<span class="badge-base badge-yellow" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+    }else if(item.STATUS == "01"){ // 초록 badge : Completed
+        liStatus = '<span class="badge-base badge-green" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+    }else if(item.STATUS == "02"){ // 회색 badge : Rejected
+        liStatus = '<span class="badge-base badge-gray" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+    }
+            
+    var statusInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+         //+'<h5>Material no.</h5>'
+        //+'<p>' + data.material_no +'</p>' 
+            + liStatus
+        +'</li>'
+    );
+    uitSubInfoUi.append(statusInfo);
+
+    var plannerInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>Planner</h5>'
+        +'<p>' + item.PLANNER_NAME+'('+item.PLANNER_EMAIL+')' +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(plannerInfo);
+
+    var commentInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>Comment</h5>'
+        +'<p>' + item.MCOMMENT +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(commentInfo);
+
+    var confirmDateInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>확인일시</h5>'
+        +'<p>' + item.UDATE + ' ' + item. UTIME+'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(confirmDateInfo);
+
+    var meterialNameInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>Material</h5>'
+        +'<p>' + item.MATNR + '</br>' + item.MAKTX +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(meterialNameInfo);
+
+    var plantInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>Plant ID</h5>'
+        +'<p>' + item.WERKS +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(plantInfo);
+
+    var chipStyle1;
+    if(item.Z_OLD_VALUE == "T"){
+        chipStyle1 = 'style="width: 22px;padding: 0.4px 6.5px;"';
+    }else if(item.Z_OLD_VALUE == "F"){
+        chipStyle1 = 'style="width: 22px;padding: 0.4px 7px"';
+    }
+
+    var chipStyle2;
+    if(item.Z_NEW_VALUE == "T"){
+        chipStyle2 = 'style="width: 22px;padding: 0.4px 6.5px;"';
+    }else if(item.Z_NEW_VALUE == "F"){
+        chipStyle2 = 'style="width: 22px;padding: 0.4px 7px"';
+    }
+
+    // var uitNowInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+    //     +'<h5>현재 UIT</h5>'
+    //     +'<p><span class="badge-base badge-detali-card badge-pink" '+chipStyle2+'>' + data.update_uit_2 + '</span></p>' 
+    //     +'</li>'
+    // );
+    var uitNowInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>수정 UIT</h5>'
+        +'<p style="display: flex; justify-content: right; align-items: center;">'
+        +'<span class="badge-base badge-detali-card badge-gray" '+chipStyle1+'>' + item.Z_OLD_VALUE + '</span>' 
+        +iconArrow2
+        +'<span class="badge-base badge-detali-card badge-pink" '+chipStyle2+'>' + item.Z_NEW_VALUE + '</span>'
+        +'</p>'
+        +'</li>'
+    );
+    
+    uitSubInfoUi.append(uitNowInfo);
+    
+    var reqDate = item.UDATE + ' ' + item. UTIME; //data.request_date.substr(0, 4) + '-' + data.request_date.substr(4, 2) + '-' + data.request_date.substr(6, 2);
+    var reqDateInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>수정 요청일시</h5>'
+        +'<p>' + reqDate +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(reqDateInfo);
+    
+    var reasonInfo =$('<li style="margin-bottom: 5px;display: flex;align-items: flex-start;justify-content: space-between;">'
+        +'<h5 style="width:65%;">수정 이유</h5>'
+        +'<p style="width:113%;font-size: 14px;margin-top: 0px;margin-bottom: 0px;text-align: right;">' + item.Z_CHG_RSN +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(reasonInfo);
+    
+    uitSubInfo.append(uitSubInfoUi);
+    addUITDetailForm.append(uitSubInfo);
+    
+    addUITDetailContents.append(addUITDetailForm);
+    addUITDetail.append(addUITDetailContents);
+    
+    /* #########[ popup_footer ]######### */
+    var adduitFoot = $('<div class="articleRequestDetail-footer"></div>');
+    var uitCheckBtn = $('<button type="button" class="btn btn-plugin btn-apply btn-check-close" id="btn-check">확인</button>');
+    adduitFoot.append(uitCheckBtn);
+    
+    uitCheckBtn.on('click', function() {
+        addUITDetailPopupClose();
+    });
+    
+    addUITDetail.append(adduitFoot);
+
+    function addUITDetailPopupClose() {
+        $('#addUITDetail').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#addUITDetail').remove();
+        }, 300);
+    }
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addUITDetail);
+    $('.plugin-dim').css('display', 'block');
+    $('#addUITDetail').css('display', 'block');
+
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addUITDetail').addClass('show');
+    }, 100);
+};
 
 /* #################### [ UIT 수정 내역조회 (NERP) End] #################### */
 
