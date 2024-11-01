@@ -2473,12 +2473,20 @@ function welcomeAppend(welcomeMessage) {
       var mText = '번역';
       chatui.sendMessage(mText);
     });
+
+    var erpWorkBtn = $('<button type="button" class="btn-quick-reply btn-basic">ERP 업무 처리하기</button>');
+    
+    erpWorkBtn.on('click', function() {
+      var mText = 'ERP 업무 처리하기';
+      chatui.sendMessage(mText);
+    });
     
     welcomeBtns.append(gptBtn);
     //welcomeBtns.append(eudBtn);
     //welcomeBtns.append(schBtn);
     //welcomeBtns.append(transBtn);
-    
+    welcomeBtns.append(erpWorkBtn);
+
     welcomeList.append(welcomeBtns);
 
    welcomeContent.append(welcomeList);
@@ -3041,7 +3049,7 @@ jQuery(document).ready(function(e){
   '<div class="faq-menu faq-original">'
   +'<div class="faq-list">'
   +   '<div class="faq-header">'
-  +     '<h1>자주 묻는 질문을 모아봤어요.</h1>'
+  +     '<h1>Quick Menu</h1>'
   +     '<div class="input-collapse">'
   +       '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +         '<path d="M1.74478 0.75483C1.47141 0.481463 1.0282 0.481463 0.75483 0.75483C0.481463 1.0282 0.481463 1.47141 0.75483 1.74478L9.00997 9.99992L0.755059 18.2548C0.481691 18.5282 0.481691 18.9714 0.755059 19.2448C1.02843 19.5181 1.47164 19.5181 1.74501 19.2448L9.99992 10.9899L18.2548 19.2448C18.5282 19.5181 18.9714 19.5181 19.2448 19.2448C19.5181 18.9714 19.5181 18.5282 19.2448 18.2548L10.9899 9.99992L19.245 1.74478C19.5184 1.47141 19.5184 1.0282 19.245 0.75483C18.9716 0.481463 18.5284 0.481463 18.2551 0.75483L9.99992 9.00997L1.74478 0.75483Z" fill="#2C2C2C"/>'
@@ -3049,28 +3057,29 @@ jQuery(document).ready(function(e){
   +     '</div>'
   +   '</div>'
   +   '<div class="faq-body">'
-  +     '<h2>사용해 보세요!</h2>'
+  +     '<h2>자주 묻는 질문을 모아봤어요.</h2>'
   +     '<div class="btns">'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">번역</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">Trans Talk</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 등록</button>'
-  //+         '<button type="button" class="btn-s btn-text btn-sendtext">화상회의 등록</button>'
-  //+         '<button type="button" class="btn-s btn-text btn-sendtext">월마감</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">예산 조회</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문</button>'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구</button>'
-  +     '</div>'
-  +     '<h2>주요 메뉴</h2>'
-  +     '<div class="btns">'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">[번역] Trans:Doc</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">[통역] Trans:Talk</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">날씨</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 등록</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">일정 조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">주간 메뉴</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">통근 버스</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">주차</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">법인카드 이용내역</button>'
+  //+         '<button type="button" class="btn-s btn-text btn-sendtext">화상회의 등록</button>'
+  //+         '<button type="button" class="btn-s btn-text btn-sendtext">월마감</button>'
   +     '</div>'
-  +     '<h2>주요 업무</h2>'
+  +     '<h2>ERP 업무 처리하기</h2>'
+  +     '<div class="btns">'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">수입 화물 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">예산 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">HS Code 조회</button>'
+  +     '</div>'
+  +     '<h2>업무별 주요 정보 Check!</h2>'
   +     '<div class="btns">'
   +     '<button type="button" class="btn-s btn-text btn-sendtext">HR</button>'
   +     '<button type="button" class="btn-s btn-text btn-sendtext">총무</button>'
@@ -18977,7 +18986,7 @@ function hsCodeResult(data) {
     var hsCodeImportCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수입국</h4><div class="hsCode-li-content"><span>the Republic of Korea</span></div></li>';
     // 조회일시 : 항상 출력 
     var hsCodeResultDate = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">조회일시</h4><div class="hsCode-li-content"><span>'+moment().format('YYYY-MM-DD')+'</span></div></li>';
-    var ftaContent = (isFTA == true)? '</br><div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* FTA 협정세율을 적용 받으려면, 원산지 결정기준을 충족하고, 원산지 증명서를 제출해야 합니다.</div>':'';
+    var ftaContent = (isFTA == true)? '<div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* FTA 협정세율을 적용 받으려면, 원산지 결정기준을 충족하고, 원산지 증명서를 제출해야 합니다.</div>':'';
     
     var hsCodeResultLiCountry = "";
     if(data.countryNameEn != ""){
@@ -26688,3 +26697,4 @@ function showHtmlToastDialog(msg) {
 }
 
 /* #################### [ UIT 수정 (GERP) End ] #################### */
+

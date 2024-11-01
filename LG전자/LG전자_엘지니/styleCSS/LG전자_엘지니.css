@@ -7248,6 +7248,7 @@ background: #F5F5F5 !important;
 
 /* 달력 창 사이즈 변경.  */
 
+/*** HSCode Start ***/ 
 /* 신규 추가 (HSCode 관련)*/
 .plugins .plugin-contents .input-box .hsCode-orgId {
     display: flex;
@@ -7330,6 +7331,7 @@ background: #F5F5F5 !important;
     display: block;
     height: 3px;
 }
+/*** HSCode End ***/ 
 
 /*** 물품청구 신청 Start ***/ 
 /* 물품 청구 */
