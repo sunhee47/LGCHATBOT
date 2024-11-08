@@ -9595,7 +9595,7 @@ function budgetResultError(data) {
     var budgetResultErrorWrap = $('<div class="message simple-text"></div>');
     
     var budgetResultErrorMessage = $(
-         '<p>시스템 오류로 인해 조회되지 않았어요. 아래 버튼을 눌러 잔여 예산을 다시 조회해 보세요.</p>'
+         '<p>예산이 정상적으로 조회되지 않았어요. 아래 버튼을 눌러 잔여 예산을 다시 조회해 보세요.</p>'
          + '<p>'+data.resultMsg+'</p>'
          
     );
@@ -9626,34 +9626,22 @@ function budgetResultError(data) {
 }
 
 function reloadSearchBudget(data) {
-    console.log('data : ', data);
-    
     $('.budget-tooltip').fadeOut(1);
     $('.dropdown-budget .btn-dropdown').removeClass('accent');
     
-    //console.log('list-type : '+$('#list-type > li').length);
-    
     var listType = $('#list-type > li');
     for(var i=0; i<listType.length; i++) {
-        
         var atag = $(listType[i]).find('a');
-        
         if(atag.text() == data.accountType) {
-            
             atag.trigger('click');
         }
     }
     
-    //console.log('list-account : '+$('#list-account > li').length);
-    
     var listAccount = $('#list-account > li');
     for(var i=0; i<listAccount.length; i++) {
-        
         var nameTag = $(listAccount[i]).find('a');
         var codeTag = $(listAccount[i]).find('span');
-        
-        //console.log('tag : '+codeTag.text()+' / '+nameTag.text());
-        if(codeTag.text() == data.accountItem[0].P_ACCOUNT_CODE) {
+        if(codeTag.text() == data.accountCode) {
             nameTag.trigger('click');
         }
     }
@@ -9662,7 +9650,6 @@ function reloadSearchBudget(data) {
 }
 
 function getAmountComma(price) {
-    console.log(price);
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
@@ -16586,16 +16573,31 @@ function uitUpdateInputFirstNERP(uitdata){
             if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
                 var result = JSON.parse(payload.queryResult.messages[0].response);
                 console.log('result', result);
+                
+                var result_code = result.resultCode;
+                var result_message = result.resultMessage;
                 var meterialInfo = result.resultList;
                 
-                if(meterialInfo.length == 0) {
-                      console.log('품목 결과 : 0건');
-                      
+                if(result_code == 'E') {
+
+                    if(result_message == 'Material( '+material+' ), Plant( '+plant+' ) is not found.') {
+                        
                       setTimeout(function() {
                         showHtmlToastDialog('Plant ID, Material no.가 유효하지 않습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                       }, 100);                      
-                      //return;                      
-                } else {
+                    }
+                    else{
+                        console.log('Material no 조회 에러.');
+                        
+                        setTimeout(function() {
+                            showSmallDialog('Material no 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        }, 100);
+                    }
+                    
+                    closeLoadingWithMask();
+                    
+                }
+                else{
                     console.log('품목  조회 완료 : ', meterialInfo);
                     
                     uitdata.step = 2;
@@ -16613,10 +16615,10 @@ function uitUpdateInputFirstNERP(uitdata){
             //uitUpdatePopupOpen = uitUpdateInputGERPSecond(data);
                     uitUpdateInputSecondNERP(uitdata);
                     $('.plugin-contents').append(uitUpdateInputForm);
-
+                    
+                    closeLoadingWithMask();
                 }
                 
-                closeLoadingWithMask();
             }
             else {
                 console.log('Material no 조회 에러.');
@@ -18848,7 +18850,7 @@ function addPlannerDetailPopupOpenNERP(item){
         liStatus = '<span class="badge-base badge-gray" style="height:18px;">' + item.STATUS_TEXT + '</span>';
     }
             
-    var statusInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+    var statusInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
          //+'<h5>Material no.</h5>'
         //+'<p>' + data.material_no +'</p>' 
             + liStatus
@@ -18856,66 +18858,75 @@ function addPlannerDetailPopupOpenNERP(item){
     );
     uitSubInfoUi.append(statusInfo);
 
-    var plannerInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+    var plannerEmail = '';
+    if(item.PLANNER_EMAIL !== ""){
+        plannerEmail = '</br>(<a id="planner_userEmail" href="#" style="text-decoration: underline; color: #0056b3;">' + item.PLANNER_EMAIL + '</a>)';
+    }
+    
+    var plannerInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
         +'<h5>Planner</h5>'
-        +'<p>' + item.PLANNER_NAME+'('+item.PLANNER_EMAIL+')' +'</p>' 
+        +'<p style="text-align: right;">' + item.PLANNER_NAME
+        +plannerEmail
+        +'</p>' 
         +'</li>'
     );
     uitSubInfoUi.append(plannerInfo);
 
-    var commentInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>Comment</h5>'
-        +'<p>' + item.MCOMMENT +'</p>' 
-        +'</li>'
-    );
-    uitSubInfoUi.append(commentInfo);
-
-    var confirmDateInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>확인일시</h5>'
-        +'<p>' + item.UDATE + ' ' + item. UTIME+'</p>' 
-        +'</li>'
-    );
-    uitSubInfoUi.append(confirmDateInfo);
-
-    var meterialNameInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+    if(item.STATUS != "00") {
+        var commentInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
+            +'<h5>Comment</h5>'
+            +'<p>' + item.MCOMMENT +'</p>' 
+            +'</li>'
+        );
+        uitSubInfoUi.append(commentInfo);
+    
+        var confirmDateInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
+            +'<h5>확인일시</h5>'
+            +'<p>' + item.UDATE + ' ' + item. UTIME+'</p>' 
+            +'</li>'
+        );
+        uitSubInfoUi.append(confirmDateInfo);
+    }
+    
+    var lineHr = $('<li class="detailInfo-li"><hr class="mgY20 mgT20"></li>');
+    uitSubInfoUi.append(lineHr);
+    
+    var meterialNameInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
         +'<h5>Material</h5>'
-        +'<p>' + item.MATNR + '</br>' + item.MAKTX +'</p>' 
+        +'<p style="text-align: right;">' + item.MATNR + '</br>' + item.MAKTX +'</p>' 
         +'</li>'
     );
     uitSubInfoUi.append(meterialNameInfo);
 
-    var plantInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+    var plantInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
         +'<h5>Plant ID</h5>'
         +'<p>' + item.WERKS +'</p>' 
         +'</li>'
     );
     uitSubInfoUi.append(plantInfo);
 
-    var chipStyle1;
-    if(item.Z_OLD_VALUE == "T"){
-        chipStyle1 = 'style="width: 22px;padding: 0.4px 6.5px;"';
+    var chipStyle1 = '';
+    if(item.Z_OLD_VALUE == "M"||item.Z_OLD_VALUE == "G"){
+        chipStyle1 = 'style="padding: 1px 5px 2px 4px;"'
     }else if(item.Z_OLD_VALUE == "F"){
-        chipStyle1 = 'style="width: 22px;padding: 0.4px 7px"';
+        chipStyle1 = 'style="padding: 1px 5px 2px 6px;"'
     }
 
-    var chipStyle2;
-    if(item.Z_NEW_VALUE == "T"){
-        chipStyle2 = 'style="width: 22px;padding: 0.4px 6.5px;"';
+    var chipStyle2 = '';
+    if(item.Z_NEW_VALUE == "M"||item.Z_NEW_VALUE == "G"){
+        chipStyle2 = 'style="padding: 1px 5px 2px 4px;"'
     }else if(item.Z_NEW_VALUE == "F"){
-        chipStyle2 = 'style="width: 22px;padding: 0.4px 7px"';
+        chipStyle2 = 'style="padding: 1px 5px 2px 6px;"'
     }
 
-    // var uitNowInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-    //     +'<h5>현재 UIT</h5>'
-    //     +'<p><span class="badge-base badge-detali-card badge-pink" '+chipStyle2+'>' + data.update_uit_2 + '</span></p>' 
-    //     +'</li>'
-    // );
-    var uitNowInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>수정 UIT</h5>'
+    var updateUitTitle = (item.STATUS == "01")? "수정 UIT":"요청 UIT";
+    
+    var uitNowInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>'+updateUitTitle+'</h5>'
         +'<p style="display: flex; justify-content: right; align-items: center;">'
-        +'<span class="badge-base badge-detali-card badge-gray" '+chipStyle1+'>' + item.Z_OLD_VALUE + '</span>' 
+        +'<span class="badge-base-size20 badge-detali-card badge-gray" '+chipStyle1+'>' + item.Z_OLD_VALUE + '</span>' 
         +iconArrow2
-        +'<span class="badge-base badge-detali-card badge-pink" '+chipStyle2+'>' + item.Z_NEW_VALUE + '</span>'
+        +'<span class="badge-base-size20 badge-detali-card badge-pink" '+chipStyle2+'>' + item.Z_NEW_VALUE + '</span>'
         +'</p>'
         +'</li>'
     );
@@ -18931,7 +18942,7 @@ function addPlannerDetailPopupOpenNERP(item){
     uitSubInfoUi.append(reqDateInfo);
     
     var reasonInfo =$('<li style="margin-bottom: 5px;display: flex;align-items: flex-start;justify-content: space-between;">'
-        +'<h5 style="width:65%;">수정 이유</h5>'
+        +'<h5 style="width:65%;">수정 사유</h5>'
         +'<p style="width:113%;font-size: 14px;margin-top: 0px;margin-bottom: 0px;text-align: right;">' + item.Z_CHG_RSN +'</p>' 
         +'</li>'
     );
@@ -18953,6 +18964,18 @@ function addPlannerDetailPopupOpenNERP(item){
     });
     
     addUITDetail.append(adduitFoot);
+
+    uitSubInfoUi.find("li").find("a").click(function() {
+        var emailAddr = $(this).text().trim();
+        var temp = $('<textarea type="text" class="hidden-textbox" />');
+        $("body").append(temp);
+        temp.val(emailAddr).select();
+        document.execCommand('copy');
+        //showHtmlSmallDialog(temp);
+        temp.remove();
+        
+        showHtmlToastDialog('E-mail 주소가 복사되었습니다.');
+    });
 
     function addUITDetailPopupClose() {
         $('#addUITDetail').removeClass('show');

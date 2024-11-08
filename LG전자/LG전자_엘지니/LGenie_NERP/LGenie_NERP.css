@@ -8300,6 +8300,18 @@ li::marker {
     text-align: right;
     font-weight: 500;
 }
+.badge-base-size20 {
+    padding: 0.4px 5px;
+    border: 1.5px solid #2c2c2c;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    font-size: 12px !important;
+    text-align: right;
+    font-weight: 500;
+    width:20px;
+    height:20px;
+}
 .badge-pink { /*#F94B50;*/
     border-color: #e0205c;
     color: #e0205c;
@@ -8546,14 +8558,14 @@ li::marker {
     scrollbar-width: auto;
 }
 
-.plugins .articleRequestDetail-contents .articleReqSubInfo .articleReq-list-sub-wrap .subInfo-li{
+.plugins .articleRequestDetail-contents .articleReqSubInfo .articleReq-list-sub-wrap .detailInfo-li{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 24px;
+    /* height: 24px; */ 
 }
 
-.plugins .articleRequestDetail-contents .articleReqSubInfo .articleReq-list-sub-wrap .subInfo-li p{
+.plugins .articleRequestDetail-contents .articleReqSubInfo .articleReq-list-sub-wrap .detailInfo-li p{
     font-size: 14px;
     margin-top: 0px;
     margin-bottom: 0px;
@@ -8676,6 +8688,15 @@ li::marker {
   background-clip: padding-box !important;
   border: 2px solid transparent !important;
   border-radius: 10px !important;
+}
+
+.plugins .articleRequestDetail-contents .articleReqSubInfo .articleReq-list-sub-wrap .detailInfo-li hr {
+  width: 100%;
+  border: 0; border-top: 1px solid #e8e8e8;
+}
+
+.mgY20 {
+  margin: 20px 0 !important;
 }
 
 /* UIT NERP END */
