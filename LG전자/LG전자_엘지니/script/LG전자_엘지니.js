@@ -9107,18 +9107,32 @@ function addBudgetPopupOpen(data) {
     /*  #########[ dropdown ]#########  */
     
     // dropdown box 열려 있으면 닫기. 
-    $(document).on('click', function(e) {
+    $(document).off('click').on('click', function(e) {
         
         //console.log('length : '+$('.dropdown-box').has(e.target).length+' / '+$('.dropdown-box').length+' / ', e.target);
-        for(var i=0; i<$('.dropdown-box').length; i++) {
-            let dropdownBox = $('.dropdown-box')[i];
+        
+        // for(var i=0; i<$('.dropdown-box').length; i++) {
+        //     let dropdownBox = $('.dropdown-box')[i];
             
-            if($(dropdownBox).has(e.target).length === 0) {
+        //     if($(dropdownBox).has(e.target).length === 0) {
+        //         if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
+        //             dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
+        //         }
+        //     }            
+        // }
+        
+        if($('.dropdown-box').has(e.target).length == 0) {
+            for(var i=0; i<$('.dropdown-box').length; i++) {
+                let dropdownBox = $('.dropdown-box')[i];
+                
                 if($(dropdownBox).find('.dropdown-menu').css('display') == 'flex') {
                     dropdownBtnEvent($(dropdownBox).find('.btn-dropdown'));
                 }
-            }            
+
+            }
+            
         }
+        
     });
 
     function reloadPopup() {
@@ -9130,6 +9144,7 @@ function addBudgetPopupOpen(data) {
     
     $('.btn-dropdown').on('click', function() {
         if ($(this).parents('.dropdown-box').hasClass('dropdown-userInfo')) {
+            console.log('account...');
             if ($('.dropdown-budget .btn-dropdown').hasClass('select')) {
                 dropdownBtnEvent(this);
             } else {
@@ -9137,6 +9152,7 @@ function addBudgetPopupOpen(data) {
                 $('.dropdown-budget .btn-dropdown').addClass('accent');
             }
         } else {
+            console.log('type...');
             $('.budget-tooltip').fadeOut(1);
             $('.dropdown-budget .btn-dropdown').removeClass('accent');
             dropdownBtnEvent(this);
@@ -9160,7 +9176,9 @@ function addBudgetPopupOpen(data) {
         //console.log('seelct code : '+$(target).parents('.dropdown-item').find('span').text());
         
         if(dropBtn.hasClass('accountType')) {
-            $('#list-account').empty();
+            // $('#list-account').empty();
+            $('#list-account').remove();
+            var accountUL = $('<ul class="dropdown-menu" id="list-account"></ul>');
             $('#accountType').val(targetText);
             $('#btn-account').html('<span>계정 정보를 선택해 주세요.</span>');
             
@@ -9169,9 +9187,11 @@ function addBudgetPopupOpen(data) {
             for(var i=0; i<accountList.length; i++) {
                 var account = accountList[i];
                 if(account.group == targetText) {
-                    $('#list-account').append('<li class="dropdown-item"><span style="display:none;">'+account.code+'</span><a href="javascript:void(0)">'+account.name+'</a></li>');
+                    accountUL.append('<li class="dropdown-item"><span style="display:none;">'+account.code+'</span><a href="javascript:void(0)">'+account.name+'</a></li>');
                 }
             }
+            
+            userInfoDropdownBox.append(accountUL);
             
             $('#list-account a').on('click', function() {
                 console.log('account menu....');
@@ -26697,4 +26717,3 @@ function showHtmlToastDialog(msg) {
 }
 
 /* #################### [ UIT 수정 (GERP) End ] #################### */
-
