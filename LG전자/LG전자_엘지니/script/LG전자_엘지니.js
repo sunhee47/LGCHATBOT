@@ -8383,13 +8383,13 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         }
         /* GERP UIT */ 
         else if(message.type == 'uitUpdateInputGERP') {
-            messageCard = uitUpdateInputGERP(message.data); // UIT 수정
+            messageCard = uitUpdateInputGERP(message.data); // UIT 변경
         }
         else if(message.type == 'uitUpdateListGERP') {
             //if(message.data.isSearch){
-            //    messageCard = uitUpdateListGERP(message.data); // UIT 수정내역 조회
+            //    messageCard = uitUpdateListGERP(message.data); // UIT 변경내역 조회
             //}else{
-                messageCard = makeUitUpdateListGERP(message.data); // UIT 수정내역 조회(메시지카드)
+                messageCard = makeUitUpdateListGERP(message.data); // UIT 변경내역 조회(메시지카드)
             //}
         }
         else {
@@ -22952,12 +22952,12 @@ function requestItemsInputGERPFourth(requestdata) {
     // submitDiv.append(submitBtn);
     
     // 물품 청구 신청이 가능한 사번에 한해서만 버튼 활성화.  
-    if(requestdata.empNo == testerableEmpNo) {
+    // if(requestdata.empNo == testerableEmpNo) {
         pluginForm.append(submitBtn);
-    }
-    else{
-        pluginForm.append(DisableBtn);
-    }
+    // }
+    // else{
+    //     pluginForm.append(DisableBtn);
+    // }
     
     submitBtn.on('click', function() {
 
@@ -24582,7 +24582,7 @@ const setDatepickerGERP = function() {
 
 /*** ------------------------- 물품 청구 (GERP) End ------------------------- ***/
 
-/* #################### [ UIT 수정 (GERP) Start ] #################### */
+/* #################### [ UIT 변경 (GERP) Start ] #################### */
 
 /* UIT ICON 추가 */
 var errorIcon = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -24603,15 +24603,15 @@ function makeUitUpdateListGERP(data) {
     var uitUpdateCard = $('<div class="system-contents"></div>');
     var uitUpdateText = $(
         '<div class="message simple-text">'
-        +   '<p>UIT 수정 내역을 조회하려면 아래 버튼을 눌러주세요.</p>'
+        +   '<p>UIT 변경 내역을 조회하려면 아래 버튼을 눌러주세요.</p>'
         +   '<p style="font-size: 11.5px;color: #898989;">'
-        +       '엘지니에선 UIT 수정 확정된 내역을 최대 20건 조회해 드릴 수 있어요.'
+        +       '엘지니에선 UIT 변경 확정된 내역을 최대 20건 조회해 드릴 수 있어요.'
         +   '</p>'
         +'</div>' )
     uitUpdateCard.append(uitUpdateText);
 
     var uitUpdateBtnWrap = $('<div class="btn"></div>');
-    var uitUpdateBtn = $('<button type="button" class="btn btn-emphasis">UIT 수정 내역 조회</button>');
+    var uitUpdateBtn = $('<button type="button" class="btn btn-emphasis">UIT 변경 내역 조회</button>');
     
     uitUpdateBtn.on('click', function() {
         addDateSettingPopupOpenGERP(data);
@@ -24626,18 +24626,18 @@ function makeUitUpdateListGERP(data) {
 
     // quickReplies 템플릿
     var quickReplies = $('<div class="custom-quick-reply"></div>');
-    var systemBtn = $('<span class="btn-custom-reply">UIT 수정</span>');
+    var systemBtn = $('<span class="btn-custom-reply">UIT 변경</span>');
     quickReplies.append(systemBtn);
     uitUpdateCard.append(quickReplies);
     
     systemBtn.click(function(){
-        chatui.sendMessage("UIT 수정");
+        chatui.sendMessage("UIT 변경");
     });
     
     return uitUpdateCard;
 }
 
-// UIT 수정내역 조회
+// UIT 변경내역 조회
 function uitUpdateListGERP(data) {
     console.log('list data : ', data);
     var items = data.items;
@@ -24653,7 +24653,7 @@ function uitUpdateListGERP(data) {
     var text = $(
             '<p>'
             + '<b style="color: #333333;">' + reqDateFr + ' - ' + reqDateTo + '</b> 에 '
-            + '<font color="#E0205C"><b>' + data.userName + '님</b></font>께서 수정하신 UIT는 '
+            + '<font color="#E0205C"><b>' + data.userName + '님</b></font>께서 변경하신 UIT는 '
             + '<font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
           + '</p>'
           + '<p style="font-size: 12px;color: #898989;">'
@@ -24737,15 +24737,15 @@ function uitUpdateListGERP(data) {
             
             sysInfoList.append($(
                 '<li class="articleRequestList-li uit-content-box">'
-                    +'<h4>수정 UIT</h4>'
+                    +'<h4>변경 UIT</h4>'
                     +'<div style="display: flex;justify-content: right;align-items: center;" class="status-chip">' + liStatus + '</div>'
                 +'</li>'
             ));
             
-            /* 수정 사유 */
+            /* 변경 사유 */
             sysInfoList.append($(
                 '<li class="articleRequestList-li">'
-                    +'<h4>수정 사유</h4>'
+                    +'<h4>변경 사유</h4>'
                     +'<div class="result-item-reqTitle"><span>' + item.change_reason + '</span></div>'
                 +'</li>'
             ));
@@ -24809,12 +24809,12 @@ function uitUpdateListGERP(data) {
 
     // quickReplies 템플릿
     var quickReplies = $('<div class="custom-quick-reply"></div>');
-    var uitReqBtn = $('<span class="btn-custom-reply">UIT 수정</span>');
+    var uitReqBtn = $('<span class="btn-custom-reply">UIT 변경</span>');
     quickReplies.append(uitReqBtn);
     uitUpdateListContents.append(quickReplies);
 
     uitReqBtn.click(function(){
-        chatui.sendMessage("UIT 수정");    
+        chatui.sendMessage("UIT 변경");    
     });
 
     requestMsgScroll();    
@@ -24849,7 +24849,7 @@ function addDateSettingPopupOpenGERP(data){
     var uitReqDateSetting = $('<div class="plugins" id="uitReqDateSetting"></div>');
 
     /* #########[ popup_header ]######### */
-    var uitReqDateSettingHeader = $('<div class="plugin-header"><h1>UIT 수정 내역 조회</h1></div>');
+    var uitReqDateSettingHeader = $('<div class="plugin-header"><h1>UIT 변경 내역 조회</h1></div>');
     var uitReqDateSettingClose = $(
         '<span class="close-plugin">'
             +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -25152,13 +25152,13 @@ function addDateSettingPopupOpenGERP(data){
         
         LoadingWithMask();
         sendChatApi(requestParam, null, function(payload){
-            console.log('GERP UIT 수정 내역 조회 : ', payload);
+            console.log('GERP UIT 변경 내역 조회 : ', payload);
             
             var message = payload.queryResult.messages[0];
             var response = message.response;
             var result = JSON.parse(response);
             
-            console.log('GERP UIT 수정 내역 조회 결과 : ', result);
+            console.log('GERP UIT 변경 내역 조회 결과 : ', result);
             if(result == null){
                 showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
                 isLoading = false;
@@ -25169,7 +25169,7 @@ function addDateSettingPopupOpenGERP(data){
             var itemLength = result.template.outputs[0].data.items.length;
 
             if(itemLength == 0){
-                showHtmlToastDialog('<div>조회된 UIT 수정 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
+                showHtmlToastDialog('<div>조회된 UIT 변경 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
                 isLoading = false;
                 closeLoadingWithMask();
                 return;
@@ -25220,7 +25220,7 @@ function addDateSettingPopupOpenGERP(data){
     });
 };
 
-// UIT 수정 내역 조회 상세 
+// UIT 변경 내역 조회 상세 
 function addUITDetailPopupOpenGERP(item, orgCode){
     console.log('detail data : '+orgCode, item);
 
@@ -25254,7 +25254,7 @@ function addUITDetailPopupOpenGERP(item, orgCode){
     var uitSubInfoUi = $('<ul class="articleReq-list-sub-wrap"></ul>');
 
     var meterialNameInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>Material no</h5>'
+        +'<h5>Material no.</h5>'
         +'<p>' + item.part_no +'</p>' 
         +'</li>'
     );
@@ -25288,7 +25288,7 @@ function addUITDetailPopupOpenGERP(item, orgCode){
     }
 
     var uitNowInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>수정 UIT</h5>'
+        +'<h5>변경 UIT</h5>'
         +'<p style="display: flex; justify-content: right; align-items: center;">'
         +'<span class="badge-base badge-detali-card badge-gray" '+chipStyle1+'>' + item.bef_uit_code + '</span>' 
         +iconArrow2
@@ -25300,21 +25300,21 @@ function addUITDetailPopupOpenGERP(item, orgCode){
     
     var reqDate = item.change_request_date.substr(0, 4) + '-' + item.change_request_date.substr(4, 2) + '-' + item.change_request_date.substr(6, 2);
     var reqDateInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>수정 요청일</h5>'
+        +'<h5>변경 요청일</h5>'
         +'<p>' + reqDate +'</p>' 
         +'</li>'
     );
     uitSubInfoUi.append(reqDateInfo);
     
     var reasonInfo =$('<li style="margin-bottom: 5px;display: flex;align-items: flex-start;justify-content: space-between;">'
-        +'<h5 style="width:65%;">수정 이유</h5>'
+        +'<h5 style="width:65%;">변경 이유</h5>'
         +'<p style="width:113%;font-size: 14px;margin-top: 0px;margin-bottom: 0px;text-align: right;">' + item.change_reason +'</p>' 
         +'</li>'
     );
     uitSubInfoUi.append(reasonInfo);
     
     var uitBeforeInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>수정 전 UIT</h5>'
+        +'<h5>변경 전 UIT</h5>'
         +'<p><span class="badge-base badge-detali-card badge-gray" '+chipStyle1+'>' + item.bef_uit_code + '</span></p>' 
         +'</li>'
     );
@@ -25358,12 +25358,12 @@ function addUITDetailPopupOpenGERP(item, orgCode){
     }, 100);
 };
 
-// UIT 수정 팝업
+// UIT 변경 팝업
 function uitUpdateInputGERP(data) {
     var uitUpdateCard = $('<div class="system-contents"></div>');
     var uitUpdateText = $(
         '<div class="message simple-text">'
-        +   '<p>UIT 수정을 신청하고 싶으시면 아래 버튼을 눌러주세요.</p>'
+        +   '<p>UIT 변경을 신청하고 싶으시면 아래 버튼을 눌러주세요.</p>'
         +   '<p style="font-size: 11.5px;color: #898989;">'
         +       '단, W/O, P/O가 있는 경우 UIT 변경이 불가해요.'
         +   '</p>'
@@ -25371,7 +25371,7 @@ function uitUpdateInputGERP(data) {
     uitUpdateCard.append(uitUpdateText);
 
     var uitUpdateBtnWrap = $('<div class="btn"></div>');
-    var uitUpdateBtn = $('<button type="button" class="btn btn-emphasis">UIT 수정하기</button>');
+    var uitUpdateBtn = $('<button type="button" class="btn btn-emphasis">UIT 변경하기</button>');
     
     uitUpdateBtn.on('click', function() {
         data.step = 1;
@@ -25387,18 +25387,18 @@ function uitUpdateInputGERP(data) {
 
     // quickReplies 템플릿
     var quickReplies = $('<div class="custom-quick-reply"></div>');
-    var systemBtn = $('<span class="btn-custom-reply">UIT 수정 내역</span>');
+    var systemBtn = $('<span class="btn-custom-reply">UIT 변경 내역</span>');
     quickReplies.append(systemBtn);
     uitUpdateCard.append(quickReplies);
     
     systemBtn.click(function(){
-        chatui.sendMessage("UIT 수정 내역");
+        chatui.sendMessage("UIT 변경 내역");
     });
     
     return uitUpdateCard;
 }
 
-// UIT 수정 팝업 Header
+// UIT 변경 팝업 Header
 var uitUpdateInputFormGERP;
 // var plantCodeG;
 // var plantIdG;
@@ -25410,7 +25410,7 @@ function uitUpdatePopupOpenGERP(uitdata) {
     var addPlugin = $('<div class="plugins uit-update" id="uit-update"></div>');
 
     /* #########[ popup_header ]######### */
-    var pluginHeader = $('<div class="plugin-header"><h1>UIT 수정 ('+ '1' + '/' + '2' +')</h1></div>');
+    var pluginHeader = $('<div class="plugin-header"><h1>UIT 변경 ('+ '1' + '/' + '2' +')</h1></div>');
     var pluginClose = $('<span class="close-plugin">' + iconPopupClose + '</span>');
     pluginClose.on('click', function() {
         thisPluginClose();
@@ -25452,7 +25452,7 @@ function uitUpdatePopupOpenGERP(uitdata) {
     }, 100);
 }
 
-// UIT 수정 팝업 Content 1
+// UIT 변경 팝업 Content 1
 function uitUpdateInputFirstGERP(uitdata){
     console.log('GERP 1단계 uitdata : ', uitdata);    
     
@@ -25464,7 +25464,7 @@ function uitUpdateInputFirstGERP(uitdata){
     var selChgUit = (uitdata.chg_uit_code == null)? '':uitdata.chg_uit_code;
     
     var pluginHeader = $('.plugin-header');
-    pluginHeader.find('h1').text('UIT 수정 ('+ '1' + '/' + '2' +')');
+    pluginHeader.find('h1').text('UIT 변경 ('+ '1' + '/' + '2' +')');
 
     pluginHeader.find('.backBtn').remove();
     
@@ -25732,13 +25732,13 @@ function uitUpdateInputFirstGERP(uitdata){
 //        $('#material').val(materialG);
     //}
     
-    /*  ###[ 수정 UIT ]###  */
+    /*  ###[ 변경 UIT ]###  */
     var uitDropdownBox = $(
         '<div class="dropdown-box dropdown-uit">'
-            +'<label>수정 UIT<b>*</b></label>'
+            +'<label>변경 UIT<b>*</b></label>'
         +'</div>'
     );
-    var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span style="color: #6b6b6b;">수정할 UIT를 선택해 주세요.</span></button>');
+    var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span style="color: #6b6b6b;">변경할 UIT를 선택해 주세요.</span></button>');
     var uitDropdownArrow = $(
         '<i class="icons">'
             +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -25860,7 +25860,7 @@ function uitUpdateInputFirstGERP(uitdata){
             
             if(result == null){
                 $('.small-dialog').remove();
-                showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
+                showHtmlToastDialog("<div>오류가 발생했습니다.</br>GERP 'Change Item Type'에서 직접 변경해 주세요.</div>");
                 closeLoadingWithMask();
                 return;
             }
@@ -25869,7 +25869,7 @@ function uitUpdateInputFirstGERP(uitdata){
 
             if(RESULT_CODE !== "SUCCESS"){
                 $('.small-dialog').remove();
-                showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
+                showHtmlToastDialog('<div>오류가 발생했습니다.</div>');
                 closeLoadingWithMask();
                 return;
             }
@@ -25882,13 +25882,24 @@ function uitUpdateInputFirstGERP(uitdata){
                 closeLoadingWithMask();
                 return;
             }
-            
-            if(result.wo_err_msg == material+" uit is already "+chgUidCode || result.po_err_msg == material+" uit is already "+chgUidCode) {
+            else if(result.wo_err_msg == material+" uit is already "+chgUidCode || result.po_err_msg == material+" uit is already "+chgUidCode) {
                 $('.small-dialog').remove();
-                showHtmlToastDialog('<div>수정 UIT가 현재 UIT와 동일합니다.</div>');
+                showHtmlToastDialog('<div>변경 UIT가 현재 UIT와 동일합니다.</div>');
                 closeLoadingWithMask();
                 return;
             }
+            else if(result.wo_err_msg != "" || result.po_err_msg != "") {
+                $('.small-dialog').remove();
+                showHtmlToastDialog("<div>오류가 발생했습니다.</br>GERP 'Change Item Type'에서 직접 변경해 주세요.</div>");
+                closeLoadingWithMask();
+                return;
+            }
+            // else {
+            //     $('.small-dialog').remove();
+            //     showHtmlToastDialog("<div>오류가 발생했습니다.</br>GERP 'Change Item Type'에서 직접 변경해 주세요.</div>");
+            //     closeLoadingWithMask();
+            //     return;
+            // }
 
             // 1단계 선택 Value (plant 추가로 intent api 혹은 테스트용 node에 plant 추가해야합니다)
             uitdata.plant = plant;
@@ -25972,7 +25983,7 @@ function uitUpdateInputFirstGERP(uitdata){
     return uitUpdateInputFormGERP;
 };
 
-// UIT 수정 팝업 Content 2
+// UIT 변경 팝업 Content 2
 function uitUpdateInputGERPSecond(uitdata){
     console.log('GERP 2단계 uitdata : ', uitdata);
 
@@ -25980,7 +25991,7 @@ function uitUpdateInputGERPSecond(uitdata){
 
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
-    pluginHeader.find('h1').text('UIT 수정 ('+ '2' + '/' + '2' +')');
+    pluginHeader.find('h1').text('UIT 변경 ('+ '2' + '/' + '2' +')');
     pluginHeader.find('.backBtn').remove();
     pluginHeader.prepend(backBtn);
 
@@ -26011,9 +26022,9 @@ function uitUpdateInputGERPSecond(uitdata){
     var statusChip;
     // 앞에 엑스,체크 아이콘 필요
     if(uitdata.wo_check === "Fail"||uitdata.po_check === "Fail"){
-        statusChip = $('<span class="badge-base badge-pink">' + errorIcon + 'unavailable</span>'); 
+        statusChip = $('<span class="badge-base badge-pink">' + errorIcon + 'Unavailable</span>'); 
     }else{
-        statusChip = $('<span class="badge-base badge-green">' + confirmIcon + 'available</span>');
+        statusChip = $('<span class="badge-base badge-green">' + confirmIcon + 'Available</span>');
     }
     itemBox.append(statusChip);
     
@@ -26060,7 +26071,7 @@ function uitUpdateInputGERPSecond(uitdata){
     if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
         uitInfo = $(
             '<div>'
-                +'<span class="uit-content-label">수정 UIT</span>'
+                +'<span class="uit-content-label">변경 UIT</span>'
                  //+'<span class="badge-base badge-pink">' + uitdata.chg_uit_code + '</span>'
                 +'<div class="item-content status-chip" style="padding: 3px 0px 2px 0px;">'
                     +'<span class="badge-base badge-pink" style="width:20px;height:20px;'+chipStyleAft+'">'+aft_uit_code+'</span>'
@@ -26091,6 +26102,17 @@ function uitUpdateInputGERPSecond(uitdata){
     pluginForm.append(itemBox);
     /* itemBox End */
 
+    //// ------------- uit 변경 가능 체크 1
+    var testerableEmpNo = ['315632'];     // 신청 테스트 가능한 사번. 
+    var isRequest = false;
+		testerableEmpNo.forEach(function(emp_no,index) {
+			if(uitdata.empNo == emp_no){
+			    isRequest = true;
+			}
+		});
+    
+    console.log('isRequest : '+isRequest);
+    
     /* 성공/실패 분기 */
     var contentCard;
     var btn;
@@ -26099,12 +26121,12 @@ function uitUpdateInputGERPSecond(uitdata){
 
         var titleMsg = "";
         if(uitdata.wo_check === "Fail"&&uitdata.po_check === "Fail"){
-            titleMsg = $('<div class="uit-title">W/O, P/O 가 있어 엘지니에서 UIT 수정이 불가합니다. </div>');
+            titleMsg = $('<div class="uit-title">W/O, P/O 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');
         }        
         else if(uitdata.wo_check === "Fail"){
-            titleMsg = $('<div class="uit-title">W/O 가 있어 엘지니에서 UIT 수정이 불가합니다. </div>');    
+            titleMsg = $('<div class="uit-title">W/O 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');    
         }else if(uitdata.po_check === "Fail"){
-            titleMsg = $('<div class="uit-title">P/O 가 있어 엘지니에서 UIT 수정이 불가합니다. </div>');
+            titleMsg = $('<div class="uit-title">P/O 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');
         } 
         
         contentCard.append(titleMsg);
@@ -26116,13 +26138,13 @@ function uitUpdateInputGERPSecond(uitdata){
     }else{
         contentCard = $('<div></div>');
 
-        /*  ###[ 수정 UIT ]###  */
+        /*  ###[ 변경 UIT ]###  */
         // var uitDropdownBox = $(
         //     '<div class="dropdown-box dropdown-uit">'
-        //         +'<label>수정 UIT<b>*</b></label>'
+        //         +'<label>변경 UIT<b>*</b></label>'
         //     +'</div>'
         // );
-        // var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span>수정할 UIT를 선택해 주세요.</span></button>');
+        // var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span>변경할 UIT를 선택해 주세요.</span></button>');
         // var uitDropdownArrow = $(
         //     '<i class="icons">'
         //         +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -26148,7 +26170,7 @@ function uitUpdateInputGERPSecond(uitdata){
 
         // uitDropdownBox.append(uitDropdownListWrap);
 
-        var uitPopupContetnBox = $('<div class="input-box"><label>수정 사유<b>*</b></label>');
+        var uitPopupContetnBox = $('<div class="input-box"><label>변경 사유<b>*</b></label>');
         var uitPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" style="height: 100px;" id="uitReason"></textarea>');
         uitPopupContetnBox.append(uitPopupTextArea);
 
@@ -26156,7 +26178,13 @@ function uitUpdateInputGERPSecond(uitdata){
         uitPopupContetnBox.append(uitPopupHelpText);
         contentCard.append(uitPopupContetnBox);
 
-        btn = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" style="background-color: #E0205C;width: 100%;margin: 16px 0;">UIT 수정 신청</button>')
+        //// ------------- uit 변경 가능 체크 2
+        if(isRequest) {
+            btn = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" style="background-color: #E0205C;width: 100%;margin: 16px 0;">UIT 변경</button>')
+        }
+        else{
+            btn = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-" disabled>UIT 변경</button>');   // style="position:fixed; bottom:0px;"
+        }
 
     }
     
@@ -26185,7 +26213,7 @@ function uitUpdateInputGERPSecond(uitdata){
             let chg_uit = aft_uit_code;
             
             LoadingWithMask();            
-            // uit 수정 신청
+            // uit 변경 신청
             var requestParam = {
                 query: {
                     "event": "uitChangeCreateEventGERP"
@@ -26200,8 +26228,9 @@ function uitUpdateInputGERPSecond(uitdata){
                 }
             };
 
+            console.log('uit 변경 요청....');
             sendChatApi(requestParam, null, function(payload){
-                console.log('UIT 수정 요청 결과 : ', payload);
+                console.log('UIT 변경 요청 결과 : ', payload);
                 
                 var createInfo = '';
                 var regSuccessYn = '';
@@ -26231,9 +26260,9 @@ function uitUpdateInputGERPSecond(uitdata){
 
                 if(regSuccessYn == 'N') {
                     
-                    console.log('UIT 수정 요청 실패 : '+errorMessage);
+                    console.log('UIT 변경 요청 실패 : '+errorMessage);
                     
-                    let showMsg = 'UIT 수정 중 챗봇 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ';
+                    let showMsg = 'UIT 변경 중 챗봇 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ';
                     for(var e=0; e<chg_retry_msg.length; e++) {
                         if(errorMessage.indexOf(chg_retry_msg[e]) > -1) {
                             showMsg = 'GERP 시스템에서 이전 요청이 완료되지 않았습니다.</br>1시간 후에 다시 시도해 주세요.';
@@ -26254,16 +26283,16 @@ function uitUpdateInputGERPSecond(uitdata){
                     
                 }
                 else if(regSuccessYn == 'E') {          // 주문 생성 요청 에러. 
-                    console.log('UIT 수정 요청 에러 : ');
+                    console.log('UIT 변경 요청 에러 : ');
     
                     //closeBtn();
                     setTimeout(function() {
-                        showHtmlToastDialog("UIT 수정 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                        showHtmlToastDialog("UIT 변경 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
                     }, 400);
                     
                 }
                 else{
-                     console.log('UIT 수정 요청 완료 : ');
+                     console.log('UIT 변경 요청 완료 : ');
                      
                      uitdata.uptMaterial = createInfo.resultPartNo;
                      uitdata.bef_uit_code = pre_uit;
@@ -26305,7 +26334,10 @@ function uitUpdateInputGERPSecond(uitdata){
 			targetArea.css("border-color","#898989")
 		}
 
-		nextBtnEvent();
+        //// ------------- uit 변경 가능 체크 3
+        if(isRequest) {
+		    nextBtnEvent();
+        }
     })
     
     /*  #########[ dropdown ]#########  */
@@ -26355,7 +26387,7 @@ function uitUpdateInputGERPSecond(uitdata){
 		//var aftUitCode = pluginForm.find('.select').find('span').text();
         var uitReasonText = pluginForm.find('#uitReason').val().length;
 
-//         if(aftUitCode === "수정할 UIT를 선택해 주세요."){
+//         if(aftUitCode === "변경할 UIT를 선택해 주세요."){
 // 			aftUitCode = "";
 // 		}
         
@@ -26401,14 +26433,14 @@ function uitDataInitGERP(uitdata) {
 }
 
 function addUitChangeCardGERP(uitdata){
-    console.log('UIT 수정 완료 : ', uitdata);
+    console.log('UIT 변경 완료 : ', uitdata);
     
     var messageWrap = $('<div class="custom-message"></div>');
     
     var messageTextWrap = $('<div class="message simple-text"></div>');    
     var messageBox = $('<div class="message"></div>');
     var contentWarp = $('<div class="content-wrap"></div>');
-    var contentHeader = $('<div class="content-wrap-header">' + iconBell2 +'<h2>UIT가 수정되었어요.</h2></div>');
+    var contentHeader = $('<div class="content-wrap-header">' + iconBell2 +'<h2>UIT가 변경되었어요.</h2></div>');
     contentWarp.append(contentHeader);
     
     var chipStyleBef = "padding: 2px 4px 4px 4.5px;";
@@ -26433,7 +26465,7 @@ function addUitChangeCardGERP(uitdata){
                     +'<p class="item-content">'+uitdata.uptMaterial+'</p>'
                 +'</li>'
                 +'<li>'
-                    +'<p class="item-header" style="margin: 0px !important;">수정 UIT</p>'
+                    +'<p class="item-header" style="margin: 0px !important;">변경 UIT</p>'
                     +'<div class="item-content status-chip">'
                         +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+bef_uit_code+'</span>'
                         +iconArrow2
@@ -26450,8 +26482,8 @@ function addUitChangeCardGERP(uitdata){
     
     var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
     var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
-    var update = $('<button type="button" class="btn-quick-reply btn-basic">UIT 수정</button>');
-    var list = $('<button type="button" class="btn-quick-reply btn-basic">UIT 수정 내역</button>');
+    var update = $('<button type="button" class="btn-quick-reply btn-basic">UIT 변경</button>');
+    var list = $('<button type="button" class="btn-quick-reply btn-basic">UIT 변경 내역</button>');
     quickBtnBox.append(update);
     quickBtnBox.append(list);
     messageTextWrap2.append(quickBtnBox);
@@ -26460,12 +26492,12 @@ function addUitChangeCardGERP(uitdata){
 
     update.on('click', function() {
 
-        chatui.sendMessage("UIT 수정");
+        chatui.sendMessage("UIT 변경");
     });
 
     list.on('click', function() {
 
-        chatui.sendMessage("UIT 수정 내역");
+        chatui.sendMessage("UIT 변경 내역");
     });
 
     messageWrap.append(messageTextWrap2);
@@ -26591,6 +26623,7 @@ const setDatepickerUITGERP = function() {
             if(limitDate > 93){
                 $('.small-dialog').remove();
                 showHtmlSmallDialog('<div>최대 조회 기간은 3개월입니다.</div>');
+                //showHtmlToastDialogByDiv('<div>최대 조회 기간은 3개월입니다.</div>', $(".datepicker-chem.hasDatepicker.show > ui-datepicker"));
                 
                 if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
                     $('.enddate').val(newDate);
@@ -26716,4 +26749,19 @@ function showHtmlToastDialog(msg) {
   }, 5000);
 }
 
-/* #################### [ UIT 수정 (GERP) End ] #################### */
+function showHtmlToastDialogByDiv(msg, byDiv) {
+  //$('.test-panel').append('<div class="small-dialog"></div>');
+  console.log('byDiv : ', byDiv);
+  byDiv.append('<div class="toast-dialog"></div>');
+  $('.toast-dialog').html(msg);
+  $('.toast-dialog').addClass('show');
+  setTimeout(function() {
+    $('.toast-dialog').removeClass('show');
+  }, 2000);
+
+  setTimeout(function() {
+    $('.toast-dialog').remove();
+  }, 5000);
+}
+
+/* #################### [ UIT 변경 (GERP) End ] #################### */
