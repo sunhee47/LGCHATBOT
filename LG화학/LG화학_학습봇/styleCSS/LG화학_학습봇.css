@@ -1475,4 +1475,30 @@
   color: #46BF90;
 }
 
+/* 학습봇 답변 작성 메시지 */ 
+.toast-dialog {
+  padding: 8px 12px;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 4px;
+  background: rgba(44, 44, 44, 0.8);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #F5F5F5;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 200;
+
+  /* [퍼블 수정 및 추가] - width: max-content; 추가 */
+  width: max-content;
+}
+.toast-dialog.show {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
 /*# sourceMappingURL=edu-style.css.map */

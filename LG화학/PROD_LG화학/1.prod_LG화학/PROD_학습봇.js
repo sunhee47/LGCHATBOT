@@ -90,7 +90,26 @@ function appendQueryText(message) {
 var loading = false;
 function sendAnswer() {
   loading = true;
-  $('#btn-answer').addClass('btn-disabled');
+  
+//   let contLimitByte = 500;       // 
+  let urlLimitByte = 1000;        // 255 / 1000
+  
+    // if(checkByteSize(answerText, contLimitByte)){
+    //     showHtmlToastDialog('답변 내용에 입력할 수 있는 최대 글자수는 '+urlLimitByte+'자입니다.');
+    //     $('#answer-contents').focus();
+    //     return;
+    // }
+    
+    if(checkByteSize(answerUrl, urlLimitByte)){
+        showHtmlToastDialog('URL에 입력할 수 있는 최대 글자수는 '+urlLimitByte+'자입니다.');
+        $('#answer-url').css('border-color', '#f94b50');     //.focus();   
+          setTimeout(function() {
+           $('#answer-url').css('border-color', '#BEBEBE');  
+         }, 2000);
+        
+        return;
+    }
+        
   for(let fileName of fileNames) {
     addedFilesName += fileName + '<br />';
   }
@@ -99,7 +118,8 @@ function sendAnswer() {
   + (answerUrl ? '[관련 URL]<br />' + answerUrl + '<br /><br />' : '')
   +( addedFilesName ? '[첨부파일]<br />' + addedFilesName : '');
 
-  
+  $('#btn-answer').addClass('btn-disabled');
+
   appendQueryText(answer); 
   closePopup();
   chatui.sendEventMessage('new_answer_request', {"text": ""});
@@ -134,6 +154,10 @@ function showConfirmDialog(message) {
 }
 
 function sendCheckCharge() {
+    // 학습봇 로직 변경 - 시작
+    $('.chat-message.left').last().remove();
+    // 학습봇 로직 변경 - 끝
+    
   closePopup();
   var chargeValueSet = $("input[name='charge-select']:checked").val();
   var reason = $('input[name="charge-no"]:checked').val();
@@ -179,8 +203,9 @@ function sendCheckCharge() {
 	  , data: JSON.stringify(requestParam)
 	  , success: function(payload, textStatus, jqXHR) {
       console.log(payload);
-      answerReset();
-      showConfirmDialog('요청인 정보 입력이 완료되었습니다.');
+      callbackSaveConfirm(payload, 'send');
+    //   answerReset();
+    //   showConfirmDialog('요청인 정보 입력이 완료되었습니다.');
     }
 	});
 
@@ -188,6 +213,10 @@ function sendCheckCharge() {
 }
 
 function closeCheckPersonPopup() {
+    // 학습봇 로직 변경 - 시작
+    $('.chat-message.left').last().remove();
+    // 학습봇 로직 변경 - 끝
+
   closePopup();
   
   var requestParam = {
@@ -223,10 +252,90 @@ function closeCheckPersonPopup() {
 	  , data: JSON.stringify(requestParam)
 	  , success: function(payload, textStatus, jqXHR) {
       console.log(payload);
-      answerReset();
-      showConfirmDialog('반영 요청이 완료되었습니다.');
+      callbackSaveConfirm(payload, 'close');
+    //   answerReset();
+    //   showConfirmDialog('반영 요청이 완료되었습니다.');
     }
 	});
+}
+
+function callbackSaveConfirm(payload, mode) {
+    if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+        var callbackResponse = JSON.parse(payload.queryResult.messages[0].response);
+        console.log(callbackResponse["successYn"]);
+        
+        if(callbackResponse["successYn"] != "Y") {
+            // 학습반영요청 에러 발생. 
+            console.log('학습반영요청 API 결과 에러 발생.');
+            answerReset();
+            showConfirmDialog('오류가 발생해 요청되지 않았어요.</br>다시 시도해 주세요.');
+        }
+    }
+    else if(payload && payload.queryResult && payload.queryResult.messages.length > 0) {
+        // answerReset();
+        // console.log('학습반영요청 성공.');
+        chatui.sendEventMessage('req_fin', {"text":""});
+        // chatui.sendEventMessage('req_fin', {"category": selectedCategory, "question":questionText, "answer": answerText});
+        // let toastMsg = (mode == 'close')? "반영 요청이 완료되었습니다.":"요청인 정보 입력이 완료되었습니다.";
+        // showConfirmDialog(toastMsg);
+    }
+    else{
+        console.log('학습반영요청 시스템 에러 발생.');
+        answerReset();
+        //showConfirmDialog('오류가 발생해 요청되지 않았어요.</br>다시 시도해 주세요.');
+    }
+    
+}
+
+function checkByteSize(obj,limitSize) {
+    let overYn = false;
+    let stringSize = 0;
+    let maxByte = limitSize;
+    let stringVal = obj;
+    let stringLen = obj.length;
+    // Byte 수 체크 제한
+    var rbyte = 0;
+    var rlen = 0;
+    var one_char = "";
+    var str2 = "";
+
+
+    for(var i=0; i<stringLen; i++)
+    {
+        one_char = stringVal.charAt(i);
+        if(escape(one_char).length > 4) {
+            rbyte += 2;
+        }else{
+            rbyte++;
+        }
+        if(rbyte <= maxByte){
+            rlen = i+1;
+        }
+    }
+    console.log("rbyte : "+rbyte +" Bytes");
+    if(rbyte > maxByte){
+        //viewAlertPop("메시지는 한 번에 "+maxByte+"byte까지 입력할 수 있어요.");
+        //viewAlertPop(convert(gptLang.input_size, [maxByte]));
+        overYn = true;
+        //str2 = stringVal.substr(0,rlen);
+        //$('.sendText').val(str2);
+    }
+    console.log("overYn : "+overYn);
+    return overYn;
+}
+
+function showHtmlToastDialog(msg) {
+  //$('.test-panel').append('<div class="small-dialog"></div>');
+  $('.plugins').append('<div class="toast-dialog"></div>');
+  $('.toast-dialog').html(msg);
+  $('.toast-dialog').addClass('show');
+  setTimeout(function() {
+    $('.toast-dialog').removeClass('show');
+  }, 2000);
+
+  setTimeout(function() {
+    $('.toast-dialog').remove();
+  }, 5000);
 }
 
 function showSelectStatusPopup(selectedRequestId) {
@@ -984,6 +1093,11 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
     var customPayload = JSON.parse(resp.response);
     var customMessage = $('<div class="custom-message"></div>');
     
+    // 학습봇 로직 변경 - 시작
+    if(customPayload.type == 'requestMiddle') {
+        showCheckPersonCharge();
+    }
+    
     if(customPayload.type == 'requestEnd') {
       
       var requestCheck = $('<div class="message request-check"></div>');
@@ -1003,9 +1117,10 @@ chatui.createCustomResponseMessage = function(resp, isHistory) {
       requestCheck.append(checkContents);
       customMessage.append(requestCheck);
 
-      showCheckPersonCharge();
+      answerReset();
     }
-
+    // 학습봇 로직 변경 - 끝
+    
     if(customPayload["template"] && customPayload.template.outputs[0].data.items) {
       console.log(customPayload.template.outputs[0]);
       if(customPayload.template.outputs[0].type == "reflectionStatus") {
