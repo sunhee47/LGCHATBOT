@@ -16580,13 +16580,13 @@ function uitUpdateInputFirstNERP(uitdata){
                 
                 if(result_code == 'E') {
 
-                    if(result_message == 'User('+uitdata.empNo+') is not found.') {
+                    if(result_message == 'User( '+uitdata.empNo+' ) is not found.') {
                         
                       setTimeout(function() {
                         showHtmlToastDialog('시스템 오류입니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                       }, 100);                      
                     }
-                    else if(result_message == 'Plant('+plant+') is not found.') {
+                    else if(result_message == 'Plant( '+plant+' ) is not found.') {
                         
                       setTimeout(function() {
                         showHtmlToastDialog('Plant ID가 유효하지 않습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
@@ -16705,7 +16705,7 @@ function uitUpdateInputSecondNERP(uitdata){
     else{
         if(uitStatus == 'G' || uitStatus == 'D') {
             console.log('예외..');
-            uit_flag = 'NO';       
+            // uit_flag = 'NO';       
             // UIT 원복 1
             uit_flag = 'YES';       
         }
@@ -17466,10 +17466,10 @@ function reqPlannerUitChangeCardNERP(uitdata){
     var contentBox = $(
         '<div class="uit-content-box">'
             +'<ul>'
-                +'<li style="height: 35px;">'
-                    +'<p class="item-header" style="margin: 0px !important;align-self: start;">신청번호</p>'
-                    +'<p class="item-content" style="margin: 0px !important;display:block;align-self: start;">'+uitdata.eventId+'</p>'
-                +'</li>'
+                // +'<li style="height: 35px;">'
+                //     +'<p class="item-header" style="margin: 0px !important;align-self: start;">신청번호</p>'
+                //     +'<p class="item-content" style="margin: 0px !important;display:block;align-self: start;">'+uitdata.eventId+'</p>'
+                // +'</li>'
                 +'<li style="height: 35px;">'
                     +'<p class="item-header" style="margin: 0px !important;align-self: start;">Planner</p>'
                     +'<p class="item-content" style="margin: 0px !important;display:block;align-self: start;">'+uitdata.plannerName+' </br>(<a id="planner_userEmail" href="#" style="text-decoration: underline; ">'+uitdata.plannerEmail+'</a>)'+'</p>'
@@ -18913,7 +18913,7 @@ function addPlannerDetailPopupOpenNERP(item){
     var addUITDetail = $('<div class="plugins" id="addUITDetail" style="max-height: calc(100% - 44px);"></div>');
 
     /* #########[ popup_header ]######### */
-    var addUITDetailHeader = $('<div class="plugin-header"><h1>' + '신청번호 이벤트 ID' + '</h1></div>');
+    var addUITDetailHeader = $('<div class="plugin-header"><h1>' + item.MAKTX + '</h1></div>');
     var addUITDetailClose = $(
         '<span class="close-plugin">'
             +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -18987,8 +18987,9 @@ function addPlannerDetailPopupOpenNERP(item){
     uitSubInfoUi.append(lineHr);
     
     var meterialNameInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>Material</h5>'
-        +'<p style="text-align: right;">' + item.MATNR + '</br>' + item.MAKTX +'</p>' 
+        +'<h5>Material no.</h5>'
+        +'<p style="text-align: right;">' + item.MATNR //+ '</br>' + item.MAKTX 
+        +'</p>' 
         +'</li>'
     );
     uitSubInfoUi.append(meterialNameInfo);
