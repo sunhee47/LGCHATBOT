@@ -3064,6 +3064,7 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">HS Code 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">UIT 변경</button>'
   +     '</div>'
   +     '<h2>업무별 주요 정보 Check!</h2>'
   +     '<div class="btns">'
@@ -8368,6 +8369,16 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
             messageCard = hsCodeResultErrorPage(message.data); // HSCode 조회 결과(예외처리)
             addHsCodePopupClose();
             descendScroll();
+        }
+        else if(message.type == 'uitUpdateInputGERP') {
+            messageCard = uitUpdateInputGERP(message.data); // UIT 변경
+        }
+        else if(message.type == 'uitUpdateListGERP') {
+            //if(message.data.isSearch){
+            //    messageCard = uitUpdateListGERP(message.data); // UIT 변경내역 조회
+            //}else{
+                messageCard = makeUitUpdateListGERP(message.data); // UIT 변경내역 조회(메시지카드)
+            //}
         }
         else {
           console.log(message.type);
@@ -24561,3 +24572,2159 @@ function showHtmlToastDialog(msg) {
     $('.toast-dialog').remove();
   }, 5000);
 }
+
+/* #################### [ UIT 변경 (GERP) Start ] #################### */
+
+/* UIT ICON 추가 */
+var errorIcon = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill-rule="evenodd" clip-rule="evenodd" d="M12.1623 6.99422C12.1623 9.94446 9.77063 12.3361 6.8204 12.3361C3.87016 12.3361 1.47852 9.94446 1.47852 6.99422C1.47852 4.04399 3.87016 1.65234 6.8204 1.65234C9.77063 1.65234 12.1623 4.04399 12.1623 6.99422ZM5.4452 5.16575C5.32003 5.04059 5.11709 5.04059 4.99193 5.16575C4.86676 5.29092 4.86676 5.49386 4.99193 5.61903L6.36785 6.99495L4.99193 8.37088C4.86676 8.49605 4.86676 8.69899 4.99193 8.82415C5.11709 8.94932 5.32003 8.94932 5.4452 8.82415L6.82113 7.44823L8.19705 8.82415C8.32222 8.94932 8.52516 8.94932 8.65033 8.82415C8.7755 8.69899 8.7755 8.49605 8.65033 8.37088L7.2744 6.99495L8.65033 5.61903C8.7755 5.49386 8.7755 5.29092 8.65033 5.16575C8.52516 5.04059 8.32222 5.04059 8.19705 5.16575L6.82113 6.54168L5.4452 5.16575Z" fill="#F94B50"/>'
++'</svg>';
+var confirmIcon = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill-rule="evenodd" clip-rule="evenodd" d="M11 5.99219C11 8.75361 8.76142 10.9922 6 10.9922C3.23858 10.9922 1 8.75361 1 5.99219C1 3.23076 3.23858 0.992188 6 0.992188C8.76142 0.992188 11 3.23076 11 5.99219ZM8.21163 5.20305C8.32879 5.08589 8.32879 4.89594 8.21163 4.77879C8.09448 4.66163 7.90453 4.66163 7.78737 4.77879L5.49946 7.06669L4.21107 5.77875C4.09389 5.66161 3.90394 5.66164 3.78681 5.77882C3.66967 5.896 3.6697 6.08595 3.78688 6.20309L5.28741 7.70309C5.40457 7.82021 5.59449 7.82019 5.71163 7.70305L8.21163 5.20305Z" fill="#04B395"/>'
++'</svg>';
+var iconBell2 = '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
++'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.40042 1.73203C8.40042 1.51112 8.22134 1.33203 8.00042 1.33203C7.77951 1.33203 7.60042 1.51112 7.60042 1.73203V2.68227C5.21035 2.88517 3.33378 4.88945 3.33378 7.33203V8.83377C3.33378 9.59986 3.15541 10.3554 2.8128 11.0406L2.72405 11.2182C2.3916 11.8831 2.8751 12.6654 3.61848 12.6654H6.00049C6.00052 13.7699 6.89594 14.6653 8.00049 14.6653C9.10504 14.6653 10.0005 13.7699 10.0005 12.6654H12.3824C13.1258 12.6654 13.6093 11.8831 13.2768 11.2182L13.1881 11.0406C12.8455 10.3554 12.6671 9.59986 12.6671 8.83377V7.33203C12.6671 4.88944 10.7905 2.88515 8.40042 2.68227V1.73203ZM11.8671 8.83377V7.33203C11.8671 5.19653 10.1359 3.46536 8.00044 3.46536C5.86494 3.46536 4.13378 5.19653 4.13378 7.33203V8.83377C4.13378 9.72406 3.9265 10.6021 3.52835 11.3984L3.43959 11.5759C3.3731 11.7089 3.4698 11.8654 3.61848 11.8654H12.3824C12.5311 11.8654 12.6278 11.7089 12.5613 11.5759L12.4725 11.3984C12.0744 10.6021 11.8671 9.72406 11.8671 8.83377ZM8.00049 13.8653C7.33777 13.8653 6.80052 13.3281 6.80049 12.6654H9.20049C9.20045 13.3281 8.66321 13.8653 8.00049 13.8653Z" fill="white"/>'
++'</svg>';
+var iconArrow2 = '<svg width="15" height="8" viewBox="0 0 15 8" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0px 5px;">'
++'<path d="M0.6 4.31V3.29H12.165C11.4 2.705 10.41 1.76 9.735 0.83L10.635 0.304999C11.64 1.625 13.14 2.945 14.475 3.8C13.14 4.655 11.64 5.975 10.635 7.295L9.735 6.77C10.41 5.84 11.4 4.895 12.165 4.31H0.6Z" fill="black"></path>'
++'</svg>';
+
+// UIT 조회 메시지 카드
+function makeUitUpdateListGERP(data) {
+    var uitUpdateCard = $('<div class="system-contents"></div>');
+    var uitUpdateText = $(
+        '<div class="message simple-text">'
+        +   '<p>UIT 변경 내역을 조회하려면 아래 버튼을 눌러주세요.</p>'
+        +   '<p style="font-size: 11.5px;color: #898989;">'
+        +       '엘지니에선 UIT 변경 확정된 내역을 최대 20건 조회해 드릴 수 있어요.'
+        +   '</p>'
+        +'</div>' )
+    uitUpdateCard.append(uitUpdateText);
+
+    var uitUpdateBtnWrap = $('<div class="btn"></div>');
+    var uitUpdateBtn = $('<button type="button" class="btn btn-emphasis">UIT 변경 내역 조회</button>');
+    
+    uitUpdateBtn.on('click', function() {
+        addDateSettingPopupOpenGERP(data);
+    });
+    
+    uitUpdateBtnWrap.append(uitUpdateBtn);
+    uitUpdateText.append(uitUpdateBtnWrap);
+    
+    if(checkChatHistory == false) {
+        //addDateSettingPopupOpenGERP(data);
+    }
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var systemBtn = $('<span class="btn-custom-reply">UIT 변경</span>');
+    quickReplies.append(systemBtn);
+    uitUpdateCard.append(quickReplies);
+    
+    systemBtn.click(function(){
+        chatui.sendMessage("UIT 변경");
+    });
+    
+    return uitUpdateCard;
+}
+
+// UIT 변경내역 조회
+function uitUpdateListGERP(data) {
+    console.log('list data : ', data);
+    var items = data.items;
+
+    var reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+    var reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+
+    // system contents start
+    var uitUpdateListContents = $('<div class="system-contents" style="width: 300px;"></div>');
+    
+    // 상위 문구 조회필터 버튼 영역
+    var msgCon = $('<div class="message simple-text"></div>');
+    var text = $(
+            '<p>'
+            + '<b style="color: #333333;">' + reqDateFr + ' - ' + reqDateTo + '</b> 에 '
+            + '<font color="#E0205C"><b>' + data.userName + '님</b></font>께서 변경하신 UIT는 '
+            + '<font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
+          + '</p>'
+          + '<p style="font-size: 12px;color: #898989;">'
+            + '엘지니에선 최대 20건 조회해 드릴 수 있어요.'
+          + '</p>'
+        );
+    
+    msgCon.append(text);    
+    
+    // simple Text button 추가
+    var btnWrap = $('<div class="btn"></div>');
+    var customBtn = $('<button class="btn btn-emphasis">조회 조건 변경</button>')
+
+    btnWrap.append(customBtn);
+    msgCon.append(btnWrap);
+
+    uitUpdateListContents.append(msgCon);
+
+    // simple Text button event
+    customBtn.click(function(){
+        addDateSettingPopupOpenGERP(data);
+    });
+    // 상위 문구 조회필터 버튼 영역 END
+
+    // 하단 내역 조회 카드
+    if (Object.prototype.toString.call(items) && Array.isArray(items) && items.length > 0) {
+        
+        var listContents = $('<div class="message profile-list system" style="margin-left: 0px;"></div>');
+    	
+    	var listWrap = $('<div class="p-box"></div>');
+    	listContents.append(listWrap);
+    	
+    	var listUl = $('<ul class="profile-list-wrap"></ul>');
+    	listWrap.append(listUl);
+
+        // 최대 20건
+    	if(items.length > 20){
+    	    items.splice(20, items.length - 20);
+    	}
+    	
+        items.forEach(function(item,index){
+            
+            listCount = index + 1;
+            
+            var listLi = $('<li class="list-box Request-List-box" id="listBox_' + listCount + '"></li>');
+            listUl.append(listLi);
+          
+            var sysInfo = $('<div class="text-box"></div>');
+            listLi.append(sysInfo);
+            
+            /* Material No */
+            sysInfo.append(
+                '<div class="name">'
+                    +'<h1 class="system articleRequestList-h1">'
+                        //+ item.part_no
+                        + item.material_name
+                    +'</h1>'
+                +'</div">'
+            );
+            
+            var sysInfoList = $('<ul class="profile-info system"></ul>');
+            
+            /* 상태 아이콘 */
+            var chipStyle1 = 'style="padding: 2px 4px 4px 4.5px;"';
+            var chipStyle2 = 'style="padding: 2px 4px 4px 4.5px;"';
+            if(item.bef_uit_code == "M"||item.bef_uit_code == "G"){
+                chipStyle1 = 'style="padding: 2px 5px 4px 4px;"';
+            }else if(item.bef_uit_code == "F"){
+                chipStyle1 = 'style="padding: 1px 5px 2px 6px;"';
+            }
+
+            if(item.aft_uit_code == "M"||item.aft_uit_code == "G"){
+                chipStyle2 = 'style="padding: 2px 5px 4px 4px;"';
+            }else if(item.aft_uit_code == "F"){
+                chipStyle2 = 'style="padding: 1px 5px 2px 6px;"';
+            }
+
+            var liStatus = '<span class="badge-base badge-gray" '+chipStyle1+'>' + item.bef_uit_code + '</span>';
+            liStatus += iconArrow2;
+            liStatus += '<span class="badge-base badge-pink" '+chipStyle2+'>' + item.aft_uit_code + '</span>';
+            
+            sysInfoList.append($(
+                '<li class="articleRequestList-li uit-content-box">'
+                    +'<h4>변경 UIT</h4>'
+                    +'<div style="display: flex;justify-content: right;align-items: center;" class="status-chip">' + liStatus + '</div>'
+                +'</li>'
+            ));
+            
+            /* 변경 사유 */
+            sysInfoList.append($(
+                '<li class="articleRequestList-li">'
+                    +'<h4>변경 사유</h4>'
+                    +'<div class="result-item-reqTitle"><span>' + item.change_reason + '</span></div>'
+                +'</li>'
+            ));
+            
+            sysInfo.append(sysInfoList);
+            
+            if (listCount > 4){
+                listLi.addClass('hide');
+            }
+            
+            arrowHtml =	'<span class="arrow">'
+                +'<svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5.3817 6.60128C5.58377 6.82861 5.58377 7.17119 5.3817 7.39852L0.63891 12.7342C0.492143 12.8993 0.507015 13.1521 0.672128 13.2989C0.837241 13.4456 1.09007 13.4308 1.23684 13.2656L5.97963 7.93001C6.45113 7.39957 6.45113 6.60023 5.97962 6.06979L1.23684 0.734153C1.09007 0.56904 0.837241 0.554168 0.672128 0.700936C0.507015 0.847703 0.492143 1.10053 0.63891 1.26565L5.3817 6.60128Z" fill="#A5A5A5"/>'
+                +'</svg>'
+              +'</span>';    
+          
+            listLi.append(arrowHtml);
+            
+            listLi.click(function(){
+                addUITDetailPopupOpenGERP(item, data.orgCode);
+            });
+          
+        });
+   
+        /* 
+        더보기 버튼
+        청구물품이 4건 초과일때 출력
+        클릭시 4건씩 추가 노출
+        */
+        if (listCount > 4){
+            var seeMoreBtn = $(
+                '<div class="see-more">'
+                    +'<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+                    +'</svg>'
+                    +'더보기'
+                +'</div>'
+            );
+            
+            listWrap.append(seeMoreBtn);
+            
+            seeMoreBtn.click(function() {
+                var currentList = $(this).parents('.profile-list').find(".hide").first().attr('id');
+                var currentLi = parseInt(currentList.split('_')[1]);
+                
+                if((currentLi+4) >= listCount){
+                    $(this).parents('.p-box').find(".list-box").removeClass('hide');
+                    $(this).remove();
+                }else{
+                    for(var i=0;i<4;i++){
+                        var targetLi = "#listBox_" + (currentLi + i);
+                        $(this).parents('.p-box').find(targetLi).removeClass('hide');
+                    }
+                }
+                descendScrollCustom();
+            });
+        }
+        
+        uitUpdateListContents.append(listContents);
+    }
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var uitReqBtn = $('<span class="btn-custom-reply">UIT 변경</span>');
+    quickReplies.append(uitReqBtn);
+    uitUpdateListContents.append(quickReplies);
+
+    uitReqBtn.click(function(){
+        chatui.sendMessage("UIT 변경");    
+    });
+
+    requestMsgScroll();    
+    return uitUpdateListContents;
+}
+
+/**
+ * 기존에 있으니 추가 X
+ * '더보기용 내리기' 함수
+ */
+function descendScrollCustom() {
+	setTimeout(function() {
+        var e = document.getElementById("divScroll");
+        var dd = e.scrollHeight - 650;
+        console.log(e.scrollTop,e.scrollHeight,dd);
+        e.scrollTop = dd;
+    }, 50)
+}
+
+// UIT 조회 기간 설정 팝업
+function addDateSettingPopupOpenGERP(data){
+    console.log('조회 : ', data);
+    
+    var org_code = (data.orgCode == null)? '':data.orgCode;
+    var plant_id = (data.plantId == null)? '':data.plantId; 
+    var plant_name = '';
+    
+    window.datepicker = setDatepickerUITGERP();
+    /* #########[ popup_wrap_start ]######### */
+    
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var uitReqDateSetting = $('<div class="plugins" id="uitReqDateSetting"></div>');
+
+    /* #########[ popup_header ]######### */
+    var uitReqDateSettingHeader = $('<div class="plugin-header"><h1>UIT 변경 내역 조회</h1></div>');
+    var uitReqDateSettingClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+    
+    uitReqDateSettingClose.on('click', function() {
+        uitReqDateSettingPopupCloseGERP();
+    })
+    uitReqDateSettingHeader.append(uitReqDateSettingClose);
+    uitReqDateSetting.append(uitReqDateSettingHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var uitReqDateSettingContents = $('<div class="plugin-contents articleRequestFilter-contents"></div>');
+    var uitReqDateSettingForm = $('<form class="form-UITReqDate"></form>');
+
+    /* #########[ popup_content ]######### */
+    /*  ###[ ORG Code ]###  */
+    var orgCodeBox = $(
+        '<div class="input-box">'
+            +'<label>ORG Code<b>*</b></label>'
+        +'</div>'
+    );
+
+    var orgCodeForm = $('<div class="orgId-form"></div>');
+
+    var selectedOrg = $('<div class="selected-org fold"></div>');
+    orgCodeForm.append(selectedOrg);
+    var autocompleteOrg = $('<div class="autocomplete-member"></div>');
+    orgCodeForm.append(autocompleteOrg);
+    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;">'
+        +'<span class="org-list">ORG Code 목록</span>'
+        +'</ul>');
+    autocompleteOrg.append(orgUi);
+
+    var orgCodeInputForm = $(
+        '<div class="input-form">'
+            +'<input type="text" placeholder="ORG Code를 입력 후 \'Enter\'로 검색" class="search-input" id="orgCode" max-length="358" autocomplete="off"/>'
+            +'<span class="input-val-del">'
+                +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                    +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+                +'</svg>'
+            +'</span>'
+        +'</div>'
+    );
+    orgCodeForm.append(orgCodeInputForm);
+    var orgLoading = false;
+    
+    var engNum_pattern = /[^a-zA-Z0-9]/g;
+    orgCodeInputForm.on('keyup', function(e) {
+        var input = e.target.value;
+
+        if(engNum_pattern.test(input) == true) {
+            //console.log('e.target ...'+e.key);
+            
+            $('.small-dialog').remove();    
+            //setTimeout(function() {
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = input.replace(engNum_pattern, '');
+
+            $(this).find('input').val(replaceVal);
+        }
+            
+        var inputVal = input.toUpperCase();
+        var inputLength = inputVal.length;
+            
+        inputVal = inputVal.trim();             
+
+        var uitReqDateSettingSubmit = $('#btn-uitReqDate');
+
+        // if(input){
+        //     $(this).find('.input-val-del').addClass('show');
+        // }else{
+        //     $(this).find('.input-val-del').removeClass('show');
+        //     selectedOrg.empty();
+        //     uitReqDateSettingSubmit.addClass('btn-disabled');
+        // }
+
+        if (window.event.keyCode == 13) {
+            if(orgLoading) return;
+            var ul = $(this).closest('.orgId-form').find('ul');
+            ul.empty();
+            ul.append('<span class="org-list">ORG Code 목록</span>');
+
+            if(inputLength == 3){
+                
+                var requestParam = {
+                    query: {
+                        "event": "searchReqOrgCodeReturnEvent"
+                    },
+                    payload: {
+                        "plant_code" : inputVal
+                    }
+                };
+
+                orgLoading = true;
+                LoadingWithMask();
+                sendChatApi(requestParam, null, function(payload){
+                    var message = payload.queryResult.messages[0];
+                    var response = message.response;
+                    var result = JSON.parse(response);
+                    
+                    var li = $('<li class="ui-menu-item"></li>');
+                    var htmlStr = "";
+
+                    if(result == null){
+                        li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+                        htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+                        htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+                        htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+                        htmlStr += '</div>';
+                    }else{
+                        if(result.RESULT_CODE != "SUCCESS"){
+                            li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+                            htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+                            htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+                            htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+                            htmlStr += '</div>';
+                        }else{
+                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">['+ result.plant_code + '] '+ result.plant_name;
+                            htmlStr += '<input type="hidden" class="plant-code" value="' + result.plant_code + '"/>';
+                            htmlStr += '<input type="hidden" class="plant-id" value="' + result.plant_id + '"/>';
+                            htmlStr += '<input type="hidden" class="plant-name" value="' + result.plant_name + '"/>';
+                            htmlStr += '</div>';
+                        }
+                    }
+
+                    li.append(htmlStr);
+                    orgUi.append(li);
+
+                    li.on('click', function() {
+                        var plantCode = $(this).find('.plant-code').val();
+                        var plantId = $(this).find('.plant-id').val();
+                        var plantName = $(this).find('.plant-name').val();
+                
+                        if(plantCode != ""){
+                            var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+                              + '<input type="hidden" value="'+ plantCode +'" class="sel-plant-code"/>'
+                              + '<input type="hidden" value="'+ plantId +'" class="sel-plant-id"/>'
+                              + '<input type="hidden" value="'+ plantName +'" class="sel-plant-name"/>'
+                              +'</div>'
+                            );
+                        
+                            selectedOrg.empty();
+                            selectedOrg.append(plantInfo);
+                            $('#orgCode').val(plantCode);
+                            uitReqDateSettingSubmit.removeClass('btn-disabled');
+                            
+                            orgCodeInputForm.find('.input-val-del').addClass('show');
+                        }else{
+                            $('#orgCode').val("");
+                            selectedOrg.empty();
+                            uitReqDateSettingSubmit.addClass('btn-disabled');
+                        }
+                        orgUi.css('display','none');
+                    });
+
+                    if(orgUi.length){
+                        orgUi.css('display','block');
+                    }
+                    orgLoading = false;
+                    closeLoadingWithMask();
+                });
+                
+            }else{
+                $('.small-dialog').remove();
+                showHtmlToastDialog("검색어를 3글자로 입력해 주세요.");
+                e.target.focus();
+                orgUi.css('display','none');
+            }
+        }
+    });
+        
+    $(document).on('click', function(e) {
+        
+        var uitReqDateSettingSubmit = $('#btn-uitReqDate');
+            
+        if ($('.orgId-form').has(e.target).length === 0) {
+            
+            orgUi.css('display','none');
+
+            var selInfo = $('.sel-plant-code').val();
+
+            if(selInfo){
+                if($('#orgCode').val()){
+                    var selecteVal = selectedOrg.find('.sel-plant-code').val();
+                    //$('#orgCode').val(selecteVal);
+                    uitReqDateSettingSubmit.removeClass('btn-disabled');
+                    orgCodeInputForm.find('.input-val-del').addClass('show');
+                }else{
+                    //$('#orgCode').val('');
+                    selectedOrg.empty();
+                    uitReqDateSettingSubmit.addClass('btn-disabled');
+                    orgCodeInputForm.find('.input-val-del').removeClass('show');
+                }
+            }else{
+                //$('#orgCode').val('');
+                orgCodeInputForm.find('.input-val-del').removeClass('show');
+            }
+        }
+    });
+        
+    orgCodeBox.append(orgCodeForm);
+    uitReqDateSettingForm.append(orgCodeBox);
+    
+    if(org_code != ''){
+        var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+            + '<input type="hidden" value="'+ org_code +'" class="sel-plant-code"/>'
+            + '<input type="hidden" value="'+ plant_id +'" class="sel-plant-id"/>'
+            + '<input type="hidden" value="'+ plant_name +'" class="sel-plant-name"/>'
+            +'</div>'
+        );
+      
+        selectedOrg.empty();
+        selectedOrg.append(plantInfo);
+        //$('#orgCode').val(plant_code);
+        
+        orgCodeInputForm.find('input').val(org_code);
+    }
+    
+    /*  ###[ 조회 기간 ]###  */
+    var reqDateFr;
+    var reqDateTo;
+    if(data.ZREQDATE_FR != "") reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
+    if(data.ZREQDATE_TO != "") reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
+
+    var timeInputBox = $('<div class="input-box"><label>조회 기간<b>*</b></label></div>');
+    
+    var dateTimeWrap = $('<div class="schedule-wrap schedule-wrap-filter"></div>');
+    
+    var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="start-date-box"></div>');
+    var dateStartInput = $('<input type="text" placeholder="'+reqDateFr+'" value="' +reqDateFr+ '" id="start-date" class="input-schedule-date startdate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var datepickerStart = $('<div class="datepicker-chem" id="datepickerStart"></div>');
+    var spliter = $('<div class="font-Xlarge"> - </div>');
+    var dateTimeEndBox = $('<div class="schedule-input-wrap schedule-date-wrap schedule-date-wrap-filter" id="end-date-box"></div>');
+    var dateEndInput = $('<input type="text" placeholder="'+reqDateTo+'" value="' +reqDateTo+ '" id="end-date" class="input-schedule-date enddate" onclick="datepicker.open(this)" autocomplete="off"/>');
+    var datepickerEnd = $('<div class="datepicker-chem" id="datepickerEnd"></div>');
+
+    var smail = $('<small class="hsCode-orgId show" style="font-size: 12px;color: #898989;">최대 조회 기간은 3개월입니다.</small>');
+
+    dateTimeStartBox.append(dateStartInput);
+    dateTimeStartBox.append(datepickerStart);
+    dateTimeEndBox.append(dateEndInput);
+    dateTimeEndBox.append(datepickerEnd);
+    dateTimeWrap.append(dateTimeStartBox);
+    dateTimeWrap.append(spliter);
+    dateTimeWrap.append(dateTimeEndBox);
+
+    timeInputBox.append(dateTimeWrap);
+    timeInputBox.append(smail);
+    uitReqDateSettingForm.append(timeInputBox);
+
+    uitReqDateSettingContents.append(uitReqDateSettingForm);
+    uitReqDateSetting.append(uitReqDateSettingContents);
+    
+    var uitReqDateSettingFoot = $('<div class="articleRequestFilter-footer"></div>');
+    var uitReqDateSettingSubmit = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-uitReqDate">조회</button>');
+    uitReqDateSettingFoot.append(uitReqDateSettingSubmit);
+    uitReqDateSetting.append(uitReqDateSettingFoot);
+    
+    var isLoading = false;
+    uitReqDateSettingSubmit.on('click', function() {
+        if(isLoading) return;
+        if(uitReqDateSettingSubmit.hasClass('btn-disabled')) return;
+
+        var startDt = moment($('.startdate').val()).format('YYYYMMDD');
+        var endDt = moment($('.enddate').val()).format('YYYYMMDD');
+
+        var zReqdateFrom = $('#start-date').val();
+        var zReqdateTo = $('#end-date').val();
+        
+        var plantId = $('.sel-plant-id').val();
+        var plantCode = $('.sel-plant-code').val();
+
+        if(startDt > endDt){
+            showHtmlToastDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
+            return;
+        }
+
+        var requestParam = {
+            query: {
+                "event": "uitUpdateListEventGERP"
+            },
+            payload:{
+                "ZREQDATE_FR":zReqdateFrom,
+                "ZREQDATE_TO":zReqdateTo,
+                "plantId":plantId,
+                "userId":data.userId,
+                "orgCode":plantCode,
+                "isSearch": true
+            }
+        };
+        isLoading = true;
+        
+        LoadingWithMask();
+        sendChatApi(requestParam, null, function(payload){
+            console.log('GERP UIT 변경 내역 조회 : ', payload);
+            
+            var message = payload.queryResult.messages[0];
+            var response = message.response;
+            var result = JSON.parse(response);
+            
+            console.log('GERP UIT 변경 내역 조회 결과 : ', result);
+            if(result == null){
+                showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
+                isLoading = false;
+                closeLoadingWithMask();
+                return;
+            }
+
+            var itemLength = result.template.outputs[0].data.items.length;
+
+            if(itemLength == 0){
+                showHtmlToastDialog('<div>조회된 UIT 변경 내역이 없습니다.</br>조회 기간을 다시 설정해 주세요.</div>');
+                isLoading = false;
+                closeLoadingWithMask();
+                return;
+            }else{
+                let viewdata = result.template.outputs[0].data;
+                //console.log('viewdata : ', viewdata);
+                
+                appendChatbotHtml(uitUpdateListGERP(viewdata), true);
+                
+                uitReqDateSettingPopupCloseGERP();
+                closeLoadingWithMask();
+            }
+        });
+    });
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(uitReqDateSetting);
+    $('.plugin-dim').css('display', 'block');
+    $('#uitReqDateSetting').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#uitReqDateSetting').addClass('show');
+    }, 100);
+
+    $('#start-date').val(reqDateFr);
+    $('#end-date').val(reqDateTo);
+    
+    function uitReqDateSettingPopupCloseGERP() {
+        window.datepicker = setDatepicker();
+        $('#uitReqDateSetting').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#uitReqDateSetting').remove();
+        }, 300);
+    }
+
+    /*  #########[ input-form ]#########  */
+    $('.input-val-del').on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+            selectedOrg.empty();
+            $('#btn-uitReqDate').addClass('btn-disabled');
+        }
+    });
+};
+
+// UIT 변경 내역 조회 상세 
+function addUITDetailPopupOpenGERP(item, orgCode){
+    console.log('detail data : '+orgCode, item);
+
+    /* #########[ popup_wrap_start ]######### */
+
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addUITDetail = $('<div class="plugins" id="addUITDetail" style="max-height: calc(100% - 44px);"></div>');
+
+    /* #########[ popup_header ]######### */
+    var addUITDetailHeader = $('<div class="plugin-header"><h1>' + item.material_name + '</h1></div>');
+    var addUITDetailClose = $(
+        '<span class="close-plugin">'
+            +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</span>'
+    );
+
+    addUITDetailClose.on('click', function() {
+        addUITDetailPopupCloseGERP();
+    })
+    addUITDetailHeader.append(addUITDetailClose);
+    addUITDetail.append(addUITDetailHeader);
+
+    /* #########[ popup_content_wrap_start ]######### */
+    var addUITDetailContents = $('<div class="plugin-contents articleRequestDetail-contents" style="margin-top: 10px;"></div>');
+    var addUITDetailForm = $('<form class="form-artReqDetail"></form>');
+
+    /* #########[ popup_content ]######### */
+    var uitSubInfo = $('<div class="articleReqSubInfo"></div>');
+    var uitSubInfoUi = $('<ul class="articleReq-list-sub-wrap"></ul>');
+
+    var meterialNameInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>Material no.</h5>'
+        +'<p>' + item.part_no +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(meterialNameInfo);
+
+    var plantInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>ORG Code</h5>'
+        +'<p>' + orgCode +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(plantInfo);
+
+    var chipStyle1 = '';
+    if(item.bef_uit_code == "T"){
+        chipStyle1 = 'style="width: 22px;padding: 0.4px 6.5px;"'
+    }else if(item.bef_uit_code == "F"){
+        chipStyle1 = 'style="width: 22px;padding: 0.4px 7px"'
+    }
+    else{
+        chipStyle1 = 'style="height: 20px;"';
+    }
+
+    var chipStyle2 = '';
+    if(item.aft_uit_code == "T"){
+        chipStyle2 = 'style="width: 22px;padding: 0.4px 6.5px;"'
+    }else if(item.aft_uit_code == "F"){
+        chipStyle2 = 'style="width: 22px;padding: 0.4px 7px"'
+    }
+    else{
+        chipStyle2 = 'style="height: 20px;"';
+    }
+
+    var uitNowInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>변경 UIT</h5>'
+        +'<p style="display: flex; justify-content: right; align-items: center;">'
+        +'<span class="badge-base badge-detali-card badge-gray" '+chipStyle1+'>' + item.bef_uit_code + '</span>' 
+        +iconArrow2
+        +'<span class="badge-base badge-detali-card badge-pink" '+chipStyle2+'>' + item.aft_uit_code + '</span>'
+        +'</p>'
+        +'</li>'
+    );
+    uitSubInfoUi.append(uitNowInfo);
+    
+    var reqDate = item.change_request_date.substr(0, 4) + '-' + item.change_request_date.substr(4, 2) + '-' + item.change_request_date.substr(6, 2);
+    var reqDateInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>변경 요청일</h5>'
+        +'<p>' + reqDate +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(reqDateInfo);
+    
+    var reasonInfo =$('<li style="margin-bottom: 5px;display: flex;align-items: flex-start;justify-content: space-between;">'
+        +'<h5 style="width:65%;">변경 이유</h5>'
+        +'<p style="width:113%;font-size: 14px;margin-top: 0px;margin-bottom: 0px;text-align: right;">' + item.change_reason +'</p>' 
+        +'</li>'
+    );
+    uitSubInfoUi.append(reasonInfo);
+    
+    var uitBeforeInfo =$('<li class="subInfo-li" style="margin-bottom: 5px;">'
+        +'<h5>변경 전 UIT</h5>'
+        +'<p><span class="badge-base badge-detali-card badge-gray" '+chipStyle1+'>' + item.bef_uit_code + '</span></p>' 
+        +'</li>'
+    );
+    //uitSubInfoUi.append(uitBeforeInfo);
+    
+    uitSubInfo.append(uitSubInfoUi);
+    addUITDetailForm.append(uitSubInfo);
+    
+    addUITDetailContents.append(addUITDetailForm);
+    addUITDetail.append(addUITDetailContents);
+    
+    /* #########[ popup_footer ]######### */
+    var adduitFoot = $('<div class="articleRequestDetail-footer"></div>');
+    var uitCheckBtn = $('<button type="button" class="btn btn-plugin btn-apply btn-check-close" id="btn-check">확인</button>');
+    adduitFoot.append(uitCheckBtn);
+    
+    uitCheckBtn.on('click', function() {
+        addUITDetailPopupCloseGERP();
+    });
+    
+    addUITDetail.append(adduitFoot);
+
+    function addUITDetailPopupCloseGERP() {
+        $('#addUITDetail').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#addUITDetail').remove();
+        }, 300);
+    }
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addUITDetail);
+    $('.plugin-dim').css('display', 'block');
+    $('#addUITDetail').css('display', 'block');
+
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#addUITDetail').addClass('show');
+    }, 100);
+};
+
+// UIT 변경 팝업
+function uitUpdateInputGERP(data) {
+    var uitUpdateCard = $('<div class="system-contents"></div>');
+    var uitUpdateText = $(
+        '<div class="message simple-text">'
+        +   '<p>UIT 변경을 신청하고 싶으시면 아래 버튼을 눌러주세요.</p>'
+        +   '<p style="font-size: 11.5px;color: #898989;">'
+        +       '단, W/O, P/O가 있는 경우 UIT 변경이 불가해요.'
+        +   '</p>'
+        +'</div>' )
+    uitUpdateCard.append(uitUpdateText);
+
+    var uitUpdateBtnWrap = $('<div class="btn"></div>');
+    var uitUpdateBtn = $('<button type="button" class="btn btn-emphasis">UIT 변경하기</button>');
+    
+    uitUpdateBtn.on('click', function() {
+        data.step = 1;
+        uitUpdatePopupOpenGERP(data);
+    });
+    
+    uitUpdateBtnWrap.append(uitUpdateBtn);
+    uitUpdateText.append(uitUpdateBtnWrap);
+    
+    if(checkChatHistory == false) {
+        //uitUpdatePopupOpenGERP(data);
+    }
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var systemBtn = $('<span class="btn-custom-reply">UIT 변경 내역</span>');
+    quickReplies.append(systemBtn);
+    uitUpdateCard.append(quickReplies);
+    
+    systemBtn.click(function(){
+        chatui.sendMessage("UIT 변경 내역");
+    });
+    
+    return uitUpdateCard;
+}
+
+// UIT 변경 팝업 Header
+var uitUpdateInputFormGERP;
+// var plantCodeG;
+// var plantIdG;
+// var plantNameG;
+// var materialG;
+function uitUpdatePopupOpenGERP(uitdata) {
+    /* #########[ popup_wrap_start ]######### */
+    var pulginDim = $('<div class="plugin-dim show"></div>');
+    var addPlugin = $('<div class="plugins uit-update" id="uit-update"></div>');
+
+    /* #########[ popup_header ]######### */
+    var pluginHeader = $('<div class="plugin-header"><h1>UIT 변경 ('+ '1' + '/' + '2' +')</h1></div>');
+    var pluginClose = $('<span class="close-plugin">' + iconPopupClose + '</span>');
+    pluginClose.on('click', function() {
+        thisPluginClose();
+    })
+
+    pluginHeader.append(pluginClose);
+    addPlugin.append(pluginHeader);
+
+    function thisPluginClose() {
+        $('#uit-update').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#uit-update').remove();
+        }, 300);
+
+        uitDataInitGERP(uitdata);
+        // plantCodeG = "";
+        // plantIdG = "";
+        // plantNameG = "";
+        // materialG = "";
+    }
+
+    /* #########[ popup_content_wrap ]######### */
+    var pluginContents = $('<div class="plugin-contents uit-update-contents" id="item-content"></div>');
+    var requestForm = uitUpdateInputFirstGERP(uitdata);
+    pluginContents.append(requestForm);
+    addPlugin.append(pluginContents);
+
+    /* #########[ popup_wrap_end ]######### */
+    $('.test-panel').append(pulginDim);
+    $('.test-panel').append(addPlugin);
+    $('.plugin-dim').css('display', 'block');
+    $('#uit-update').css('display', 'block');
+    
+    setTimeout(function() {
+        $('.plugin-dim').addClass('show');
+        $('#uit-update').addClass('show');
+    }, 100);
+}
+
+// UIT 변경 팝업 Content 1
+function uitUpdateInputFirstGERP(uitdata){
+    console.log('GERP 1단계 uitdata : ', uitdata);    
+    
+    var plant_code = (uitdata.plant_code == null)? '':uitdata.plant_code;
+    var plant_id = (uitdata.plant_id == null)? '':uitdata.plant_id;
+    var plant_name = (uitdata.plant_name == null)? '':uitdata.plant_name;
+    var materialNo = (uitdata.material == null)? '':uitdata.material;
+
+    var selChgUit = (uitdata.chg_uit_code == null)? '':uitdata.chg_uit_code;
+    
+    var pluginHeader = $('.plugin-header');
+    pluginHeader.find('h1').text('UIT 변경 ('+ '1' + '/' + '2' +')');
+
+    pluginHeader.find('.backBtn').remove();
+    
+    setTimeout(function() {
+        $('.plugin-contents').css('overflow-y', 'auto');
+    },1);
+    
+    var pluginForm = $('<form class="form-first-uit"></form>');
+    /* #########[ popup_content ]######### */
+    /*  ###[ ORG Code ]###  */
+    var orgCodeBox = $(
+        '<div class="input-box">'
+            +'<label>ORG Code<b>*</b></label>'
+        +'</div>'
+    );
+
+    var orgCodeForm = $('<div class="orgId-form"></div>');
+
+    var selectedOrg = $('<div class="selected-org fold"></div>');
+    orgCodeForm.append(selectedOrg);
+    var autocompleteOrg = $('<div class="autocomplete-member"></div>');
+    orgCodeForm.append(autocompleteOrg);
+    var orgUi = $('<ul class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none; margin-left: 0px;">'
+        +'<span class="org-list">ORG Code 목록</span>'
+        +'</ul>');
+    autocompleteOrg.append(orgUi);
+
+    var orgCodeInputForm = $(
+        '<div class="input-form">'
+            +'<input type="text" placeholder="ORG Code를 입력 후 \'Enter\'로 검색" class="search-input" id="orgCode" max-length="358" autocomplete="off"/>'
+        +'</div>'
+    );
+    var orgBtnClose = $(
+        '<span class="input-val-del">'
+            +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+            +'</svg>'
+        +'</span>'
+    );
+
+    orgCodeInputForm.append(orgBtnClose);
+    orgCodeForm.append(orgCodeInputForm);
+
+    if(plant_code != ''){
+        var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+            + '<input type="hidden" value="'+ plant_code +'" class="sel-plant-code"/>'
+            + '<input type="hidden" value="'+ plant_id +'" class="sel-plant-id"/>'
+            + '<input type="hidden" value="'+ plant_name +'" class="sel-plant-name"/>'
+            +'</div>'
+        );
+      
+        selectedOrg.empty();
+        selectedOrg.append(plantInfo);
+        //$('#orgCode').val(plant_code);
+        
+        orgCodeInputForm.find('input').val(plant_code);
+    }
+
+    var orgLoading = false;
+    var engNum_pattern = /[^a-zA-Z0-9]/g;
+    orgCodeInputForm.on('keyup', function(e) {
+        var input = e.target.value;
+
+        if(engNum_pattern.test(input) == true) {
+            //console.log('e.target ...'+e.key);
+            
+            $('.small-dialog').remove();    
+            //setTimeout(function() {
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = input.replace(engNum_pattern, '');
+
+            $(this).find('input').val(replaceVal);
+        }
+            
+        var inputVal = input.toUpperCase();
+        var inputLength = inputVal.length;
+            
+        inputVal = inputVal.trim();             
+
+        // if(inputVal){
+        //     //$(this).find('.input-val-del').addClass('show');
+        // }else{
+        //     //$(this).find('.input-val-del').removeClass('show');
+        //     //selectedOrg.empty();
+        //     //nextBtnEvent();
+        // }
+
+        if (window.event.keyCode == 13) {
+            if(orgLoading) return;
+            var ul = $(this).closest('.orgId-form').find('ul');
+            ul.empty();
+            ul.append('<span class="org-list">ORG Code 목록</span>');
+
+            if(inputLength == 3){
+                
+                var requestParam = {
+                    query: {
+                        "event": "searchReqOrgCodeReturnEvent"
+                    },
+                    payload: {
+                        "plant_code" : inputVal
+                    }
+                };
+
+                orgLoading = true;
+                LoadingWithMask();
+                sendChatApi(requestParam, null, function(payload){
+                    var message = payload.queryResult.messages[0];
+                    var response = message.response;
+                    var result = JSON.parse(response);
+                    
+                    var li = $('<li class="ui-menu-item"></li>');
+                    var htmlStr = "";
+
+                    if(result == null){
+                        li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+                        htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+                        htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+                        htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+                        htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+                        htmlStr += '</div>';
+                    }else{
+                        if(result.RESULT_CODE != "SUCCESS"){
+                            li = $('<li class="ui-menu-item no-res-org" style="padding: 10px 8px !important;"></li>');
+                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">ORG Code 정보가 없습니다.</span>';
+                            htmlStr += '<input type="hidden" class="plant-code" value=""/>';
+                            htmlStr += '<input type="hidden" class="plant-id" value=""/>';
+                            htmlStr += '<input type="hidden" class="plant-name" value=""/>';
+                            htmlStr += '</div>';
+                        }else{
+                            htmlStr =  '<div class="person-info ui-menu-item-wrapper">['+ result.plant_code + '] '+ result.plant_name;
+                            htmlStr += '<input type="hidden" class="plant-code" value="' + result.plant_code + '"/>';
+                            htmlStr += '<input type="hidden" class="plant-id" value="' + result.plant_id + '"/>';
+                            htmlStr += '<input type="hidden" class="plant-name" value="' + result.plant_name + '"/>';
+                            htmlStr += '</div>';
+                        }
+                    }
+
+                    li.append(htmlStr);
+                    orgUi.append(li);
+
+                    li.on('click', function() {
+                        var plantCode = $(this).find('.plant-code').val();
+                        var plantId = $(this).find('.plant-id').val();
+                        var plantName = $(this).find('.plant-name').val();
+                
+                        if(plantCode != ""){
+                            var plantInfo = $('<div class="sel-org-info" style="display: none;">'
+                              + '<input type="hidden" value="'+ plantCode +'" class="sel-plant-code"/>'
+                              + '<input type="hidden" value="'+ plantId +'" class="sel-plant-id"/>'
+                              + '<input type="hidden" value="'+ plantName +'" class="sel-plant-name"/>'
+                              +'</div>'
+                            );
+                        
+                            selectedOrg.empty();
+                            selectedOrg.append(plantInfo);
+                            $('#orgCode').val(plantCode);
+                            
+                            orgCodeInputForm.find('.input-val-del').addClass('show');
+                            nextBtnEvent();
+                        }else{
+                            $('#orgCode').val("");
+                            selectedOrg.empty();
+                            nextBtnEvent();
+                        }
+                        orgUi.css('display','none');
+                    });
+
+                    if(orgUi.length){
+                        orgUi.css('display','block');
+                    }
+                    orgLoading = false;
+                    closeLoadingWithMask();
+                    nextBtnEvent();
+                });
+                
+            }else{
+                $('.small-dialog').remove();
+                showHtmlToastDialog("검색어를 3글자로 입력해 주세요.");
+                e.target.focus();
+                orgUi.css('display','none');
+            }
+        }
+    });
+        
+    $(document).on('click', function(e) {
+            
+        if ($('.orgId-form').has(e.target).length === 0) {
+            
+            orgUi.css('display','none');
+
+            var selInfo = $('.sel-plant-code').val();
+
+            if(selInfo){
+                if($('#orgCode').val()){
+                    var selecteVal = selectedOrg.find('.sel-plant-code').val();
+                    //$('#orgCode').val(selecteVal);
+                    nextBtnEvent();
+                    orgCodeInputForm.find('.input-val-del').addClass('show');
+                }else{
+                    //$('#orgCode').val('');
+                    selectedOrg.empty();
+                    nextBtnEvent();
+                    orgCodeInputForm.find('.input-val-del').removeClass('show');
+                }
+            }else{
+                //$('#orgCode').val('');
+                orgCodeInputForm.find('.input-val-del').removeClass('show');
+            }
+        }
+    });
+        
+    orgCodeBox.append(orgCodeForm);
+    pluginForm.append(orgCodeBox);
+
+    /*  ###[ Material ]###  */
+    var materialInputBox = $('<div class="input-box"><label>Material no.<b>*</b></label></div>');
+    var materialInput = $('<div class="input-form"><input type="text" placeholder="내용을 입력해 주세요." max-length="50" id="material" value="'+materialNo+'" autocomplete="off"/></div>');
+
+    var materialBtnClose = $(
+        '<span class="input-val-del">'
+            +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path d="M4.92417 4.07564C4.68985 3.84132 4.30995 3.84132 4.07564 4.07564C3.84132 4.30995 3.84132 4.68985 4.07564 4.92417L11.1515 12L4.07583 19.0756C3.84152 19.31 3.84152 19.6899 4.07583 19.9242C4.31015 20.1585 4.69005 20.1585 4.92436 19.9242L12 12.8485L19.0756 19.9242C19.31 20.1585 19.6899 20.1585 19.9242 19.9242C20.1585 19.6899 20.1585 19.31 19.9242 19.0756L12.8485 12L19.9244 4.92417C20.1587 4.68985 20.1587 4.30995 19.9244 4.07564C19.69 3.84132 19.3101 3.84132 19.0758 4.07564L12 11.1515L4.92417 4.07564Z" fill="#2C2C2C"></path>'
+            +'</svg>'
+        +'</span>'
+    );
+
+    materialInput.append(materialBtnClose);
+    materialInputBox.append(materialInput);
+    pluginForm.append(materialInputBox);
+    
+    materialInput.on('blur keyup', function(e) {
+        var input = e.target.value;
+        
+        if(engNum_pattern.test(input) == true) {
+            //console.log('e.target ...'+e.key);
+            
+            $('.small-dialog').remove();    
+            //setTimeout(function() {
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
+            //}, 100);    
+                
+            var replaceVal = input.replace(engNum_pattern, '');
+
+            $(this).find('input').val(replaceVal);
+        }
+        
+        var inputVal = input.toUpperCase();
+        var inputLength = inputVal.length;
+
+        inputVal = inputVal.trim(); 
+        
+        if(input){
+            $(this).find('.input-val-del').addClass('show');
+            nextBtnEvent();
+        }else{
+            $(this).find('.input-val-del').removeClass('show');
+            nextBtnEvent();
+        }
+    })
+
+    //if(materialG){
+//        $('#material').val(materialG);
+    //}
+    
+    /*  ###[ 변경 UIT ]###  */
+    var uitDropdownBox = $(
+        '<div class="dropdown-box dropdown-uit">'
+            +'<label>변경 UIT<b>*</b></label>'
+        +'</div>'
+    );
+    var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span style="color: #6b6b6b;">변경할 UIT를 선택해 주세요.</span></button>');
+    var uitDropdownArrow = $(
+        '<i class="icons">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</i>'
+    );
+    uitDropdownBox.append(uitDropdown);
+    uitDropdown.append(uitDropdownArrow);
+
+
+    // 조회 유형 드롭다운메뉴 & 리스트
+    var uitDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+    var uitArry = uitdata.uitList;
+
+    uitArry.forEach(function(arr) {
+        var selected = '';
+        
+        if(arr.uit == selChgUit) {
+            console.log('selChgUit : '+selChgUit);
+            selected = 'selected';
+        }
+        
+        //if(uitdata.uit_code != arr.uit) {
+            let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)" class="'+selected+'">' + arr.uit + '</a></li>');
+            uitDropdownListWrap.append(uitDropdownList);
+        //}
+    });
+
+    uitDropdownBox.append(uitDropdownListWrap);
+    pluginForm.append(uitDropdownBox);
+
+    uitDropdownBox.append('<input type="hidden" value="'+selChgUit+'" id="chg_uit_code"/>');
+
+    var emptylayer = $('<div id="empty_layer" style="height:120px;display:none;"></div>');
+    pluginForm.append(emptylayer);
+    
+    /*  #########[ dropdown ]#########  */
+    //$(document).on('click','.form-first-uit .btn-dropdown', function(e) {
+    pluginForm.find('.btn-dropdown').on('click', function() {
+        dropdownBtnEvent(this);
+        //nextBtnEvent();
+    });
+    //$(document).on('click','.form-first-uit .dropdown-item > a', function(e) {    
+    pluginForm.find('.dropdown-menu a').on('click', function() {
+        dropdownMenuEvent(this);
+        nextBtnEvent();
+    });
+    
+    function dropdownBtnEvent(target) {
+        //console.log('button : '+$(target).hasClass('active'));
+        if ($(target).hasClass('active')) {
+            
+            pluginForm.find('#empty_layer').css('display', 'none');
+            $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+        }
+        else {
+            pluginForm.find('#empty_layer').css('display', 'block');
+            
+            setTimeout(function() {
+                    var e = document.getElementById("item-content");
+                    e.scrollTop = e.scrollHeight
+            }, 50)            
+            
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+        }
+        
+    }
+    
+    function dropdownMenuEvent(target) {
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).text();
+        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        
+        console.log('select value : '+targetText);
+        $('#chg_uit_code').val(targetText);
+        
+        uitDropdown.removeClass('active');
+        uitDropdownListWrap.removeClass('show');
+        uitDropdownListWrap.css("display","none");
+        
+        pluginForm.find('#empty_layer').css('display', 'none');
+
+    }
+    
+    /* #########[ popup_footer ]######### */
+    var nextBtn = $('<div class="btn" style="margin-top: 35px;"><button type="button" class="btn btn-emphasis btn-big" disabled>다음</button></div>')
+    pluginForm.append(nextBtn);
+
+    pluginForm.children('.btn').find('button').on('click', function() {
+
+		let plant = $('.sel-plant-id').val();   //$('.sel-plant-code').val();
+        let material = $('#material').val();
+        
+        material = material.toUpperCase().trim();
+        var chgUidCode = $('#chg_uit_code').val();
+
+        LoadingWithMask();
+
+        // material No 조회
+        var requestParam = {
+            query: {
+                "event": "uitUpdateMaterialEventGERP"
+            },
+            payload:{
+                "plant":plant,
+                "material":material, 
+                "chg_uit_code":chgUidCode
+            }
+        };
+	
+        sendChatApi(requestParam, null, function(payload){
+            var message = payload.queryResult.messages[0];
+            var response = message.response;
+            var result = JSON.parse(response);
+            
+            console.log('Material 조회 : ', result);
+            
+            if(result == null){
+                $('.small-dialog').remove();
+                showHtmlToastDialog("<div>오류가 발생했습니다.</br>GERP 'Change Item Type'에서 직접 변경해 주세요.</div>");
+                closeLoadingWithMask();
+                return;
+            }
+
+            var RESULT_CODE = result.RESULT_CODE;
+
+            if(RESULT_CODE !== "SUCCESS"){
+                $('.small-dialog').remove();
+                showHtmlToastDialog('<div>오류가 발생했습니다.</div>');
+                closeLoadingWithMask();
+                return;
+            }
+
+            // if(result.wo_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"||
+            //     result.po_err_msg === "'Part No not exists!('||p_plant_id||','||p_material_no||')'"){
+            if(result.wo_err_msg == "Part No not exists!( "+plant+","+material+")" || result.po_err_msg == "Part No not exists!( "+plant+","+material+")") {
+                $('.small-dialog').remove();
+                showHtmlToastDialog('<div>Material no.가 유효하지 않습니다.</div>');
+                closeLoadingWithMask();
+                return;
+            }
+            else if(result.wo_err_msg == material+" uit is already "+chgUidCode || result.po_err_msg == material+" uit is already "+chgUidCode) {
+                $('.small-dialog').remove();
+                showHtmlToastDialog('<div>변경 UIT가 현재 UIT와 동일합니다.</div>');
+                closeLoadingWithMask();
+                return;
+            }
+            else if(result.wo_err_msg != "" || result.po_err_msg != "") {
+                $('.small-dialog').remove();
+                showHtmlToastDialog("<div>오류가 발생했습니다.</br>GERP 'Change Item Type'에서 직접 변경해 주세요.</div>");
+                closeLoadingWithMask();
+                return;
+            }
+            // else {
+            //     $('.small-dialog').remove();
+            //     showHtmlToastDialog("<div>오류가 발생했습니다.</br>GERP 'Change Item Type'에서 직접 변경해 주세요.</div>");
+            //     closeLoadingWithMask();
+            //     return;
+            // }
+
+            // 1단계 선택 Value (plant 추가로 intent api 혹은 테스트용 node에 plant 추가해야합니다)
+            uitdata.plant = plant;
+            uitdata.material = material;
+
+            // 물품 조회 후 Response
+            uitdata.part_no  = result.part_no;
+            uitdata.po_check = result.po_check;
+            uitdata.wo_check = result.wo_check;
+            uitdata.po_err_msg = result.po_err_msg;
+            uitdata.wo_err_msg = result.wo_err_msg;
+            
+            // 물품 조회 후 Response (현재는 필드가 없는데 api 명세서 대로 업뎃 되면 추가) 
+            uitdata.inventory_item_id  = result.inventory_item_id;
+            uitdata.material_name      = result.material_name;
+            uitdata.uit_code           = result.uit_code;
+            uitdata.chg_uit_code        = result.chg_uit_code;
+
+            //전역 변수
+            // plantCodeG = $('.sel-plant-code').val();
+            // plantIdG = $('.sel-plant-id').val();
+            // plantNameG = $('.sel-plant-name').val();
+            // materialG = material;
+            uitdata.plant_code = $('.sel-plant-code').val();
+            uitdata.plant_id = $('.sel-plant-id').val();
+            uitdata.plant_name = $('.sel-plant-name').val();
+
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+
+            uitUpdateInputGERPSecond(uitdata);
+            $('.plugin-contents').append(uitUpdateInputFormGERP);
+
+            closeLoadingWithMask();
+        });
+    });
+
+    uitUpdateInputFormGERP = pluginForm;
+
+    function nextBtnEvent() {
+        var selInfo = $('.sel-plant-code').val();
+        var material = materialInput.find('input').val();
+        
+        var chgUidCode = $('#chg_uit_code').val();
+
+        //console.log('next > '+selInfo+' / '+material+' / '+chgUidCode);
+        if(selInfo&&material&&chgUidCode){
+            nextBtn.find('button').attr('disabled', false);
+        }else{
+            nextBtn.find('button').attr('disabled', true);
+        }
+    };
+
+    /*  #########[ input-form ]#########  */
+    orgBtnClose.on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+            selectedOrg.empty();
+            nextBtnEvent();
+        }
+    });
+
+    materialBtnClose.on('click', function() {
+        if ($(this).hasClass('show')) {
+            $(this).parents('.input-form').find('input').val('');
+            $(this).removeClass('show');
+            nextBtnEvent();
+        }
+    });
+    
+    if (selChgUit != '') {
+        var selectedList = uitDropdownListWrap.find('li').find('.selected');
+        console.log('selectedList > ', selChgUit);
+        selectedList.trigger('click');
+    }
+    
+    
+    //nextBtnEvent();
+    
+    return uitUpdateInputFormGERP;
+};
+
+// UIT 변경 팝업 Content 2
+function uitUpdateInputGERPSecond(uitdata){
+    console.log('GERP 2단계 uitdata : ', uitdata);
+
+    var userId = chatui.getSetting("userId");
+
+    var pluginHeader = $('.plugin-header');
+    var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
+    pluginHeader.find('h1').text('UIT 변경 ('+ '2' + '/' + '2' +')');
+    pluginHeader.find('.backBtn').remove();
+    pluginHeader.prepend(backBtn);
+
+    $('.plugin-contents').focus();
+    $(document).off('click');
+
+    // back버튼
+    pluginHeader.find('.backBtn').off('click').on('click', function() {
+        uitdata.step = 1;
+        uitdata.action = 'back';
+        
+        pluginForm.removeClass('show');
+        pluginForm.remove();
+        
+        uitUpdateInputFirstGERP(uitdata);
+        $('.plugin-contents').append(uitUpdateInputFormGERP);
+
+    });
+    
+    /* #########[ popup_content_wrap_start ]######### */
+    var pluginForm = $('<form class="form-second" onsubmit="return false;"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* itemBox Start */
+    var itemBox = $('<div class="uit-update-item-box"></div>'); // class = 회색 배경 border 라운드
+
+    // 상태 칩
+    var statusChip;
+    // 앞에 엑스,체크 아이콘 필요
+    if(uitdata.wo_check === "Fail"||uitdata.po_check === "Fail"){
+        statusChip = $('<span class="badge-base badge-pink">' + errorIcon + 'Unavailable</span>'); 
+    }else{
+        statusChip = $('<span class="badge-base badge-green">' + confirmIcon + 'Available</span>');
+    }
+    itemBox.append(statusChip);
+    
+    // Material No
+    materialInfo = $(
+        '<div>'
+            +'<span class="uit-content-label-bold">' + uitdata.part_no + '</span>'
+            +'<span class="uit-item">' + uitdata.material_name + '</span>'//materialName으로 변경
+        +'</div>'
+    );
+    itemBox.append(materialInfo);
+
+    var chipStyleBef = "padding: 2px 4px 4px 4.5px;";
+    var chipStyleAft = "padding: 2px 4px 4px 4.5px;";
+    var bef_uit_code = uitdata.uit_code;
+    var aft_uit_code = uitdata.chg_uit_code;
+    if(bef_uit_code === "M"||bef_uit_code === "G"){
+        chipStyleBef = "padding: 2px 5px 4px 4px;";
+    }else if(bef_uit_code === "F"){
+        chipStyleBef = "padding: 1px 5px 2px 6px;";
+    }
+    if(aft_uit_code === "M"||aft_uit_code === "G"){
+        chipStyleAft = "padding: 2px 5px 4px 4px;";
+    }else if(aft_uit_code === "F"){
+        chipStyleAft = "padding: 1px 5px 2px 6px;";
+    }
+    
+    // 현 UIT (성공 일 경우)
+    //if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
+        uitInfo = $(
+            '<div>'
+                +'<span class="uit-content-label">현재 UIT</span>'
+                //+'<span class="badge-base badge-gray">' + uitdata.uit_code + '</span>'
+                +'<div class="item-content status-chip" style="padding: 3px 0px 2px 0px;">'
+                    +'<span class="badge-base badge-gray" style="width:20px;height:20px;'+chipStyleBef+'">'+bef_uit_code+'</span>'
+                +'</div>'
+
+            +'</div>'
+        );
+        itemBox.append(uitInfo);
+    //}
+
+    // 현 UIT (성공 일 경우)
+    if(uitdata.wo_check === "Success"&&uitdata.po_check === "Success"){
+        uitInfo = $(
+            '<div>'
+                +'<span class="uit-content-label">변경 UIT</span>'
+                 //+'<span class="badge-base badge-pink">' + uitdata.chg_uit_code + '</span>'
+                +'<div class="item-content status-chip" style="padding: 3px 0px 2px 0px;">'
+                    +'<span class="badge-base badge-pink" style="width:20px;height:20px;'+chipStyleAft+'">'+aft_uit_code+'</span>'
+                +'</div>'
+            +'</div>'
+        );
+        itemBox.append(uitInfo);
+    }
+
+    // W/O
+    woInfo = $(
+        '<div>'
+            +'<span class="uit-content-label">W/O</span>'
+            +'<span>' + uitdata.wo_check + '</span>'
+        +'</div>'
+    );
+    itemBox.append(woInfo);
+
+    // P/O
+    poInfo = $(
+        '<div>'
+            +'<span class="uit-content-label">P/O</span>'
+            +'<span>' + uitdata.po_check + '</span>'
+        +'</div>'
+    );
+    itemBox.append(poInfo);
+    
+    pluginForm.append(itemBox);
+    /* itemBox End */
+
+    //// ------------- uit 변경 가능 체크 1
+    // var testerableEmpNo = ['315632'];     // 신청 테스트 가능한 사번. 
+    var isRequest = true;
+// 		testerableEmpNo.forEach(function(emp_no,index) {
+// 			if(uitdata.empNo == emp_no){
+// 			    isRequest = true;
+// 			}
+// 		});
+    
+    // console.log('isRequest : '+isRequest);
+    
+    /* 성공/실패 분기 */
+    var contentCard;
+    var btn;
+    if(uitdata.wo_check === "Fail"||uitdata.po_check === "Fail"){
+        contentCard = $('<div class="uit-update-msg_box"></div>');
+
+        var titleMsg = "";
+        if(uitdata.wo_check === "Fail"&&uitdata.po_check === "Fail"){
+            titleMsg = $('<div class="uit-title">W/O, P/O 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');
+        }        
+        else if(uitdata.wo_check === "Fail"){
+            titleMsg = $('<div class="uit-title">W/O 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');    
+        }else if(uitdata.po_check === "Fail"){
+            titleMsg = $('<div class="uit-title">P/O 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');
+        } 
+        
+        contentCard.append(titleMsg);
+
+        var subMsg = $('<div class="uit-sub-title">사업부 자재 담당자에게 Released W/O 또는 잔량 Open P/O 정리를 요청해주시기 바랍니다.</div>');
+        contentCard.append(subMsg);
+
+        btn = $('<button type="button" class="btn btn-plugin btn-close" style="background-color: #E0205C;width: 100%;margin: 16px 0;">확인</button>');
+    }else{
+        contentCard = $('<div></div>');
+
+        /*  ###[ 변경 UIT ]###  */
+        // var uitDropdownBox = $(
+        //     '<div class="dropdown-box dropdown-uit">'
+        //         +'<label>변경 UIT<b>*</b></label>'
+        //     +'</div>'
+        // );
+        // var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span>변경할 UIT를 선택해 주세요.</span></button>');
+        // var uitDropdownArrow = $(
+        //     '<i class="icons">'
+        //         +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        //             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+        //         +'</svg>'
+        //     +'</i>'
+        // );
+        // contentCard.append(uitDropdownBox);
+        // uitDropdownBox.append(uitDropdown);
+        // uitDropdown.append(uitDropdownArrow);
+
+        // // 조회 유형 드롭다운메뉴 & 리스트
+        // var uitDropdownListWrap = $('<ul class="dropdown-menu"></ul>');
+        // var uitArry = uitdata.uitList;
+
+        // uitArry.forEach(function(arr) {
+            
+        //     if(uitdata.uit_code != arr.uit) {
+        //         let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.uit + '</a></li>');
+        //         uitDropdownListWrap.append(uitDropdownList);
+        //     }
+        // });
+
+        // uitDropdownBox.append(uitDropdownListWrap);
+
+        var uitPopupContetnBox = $('<div class="input-box"><label>변경 사유<b>*</b></label>');
+        var uitPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" style="height: 100px;" id="uitReason"></textarea>');
+        uitPopupContetnBox.append(uitPopupTextArea);
+
+        var uitPopupHelpText = $('<p style="font-size:12px;color:#898989;margin-top: 0px;font-weight: 400;">10자 이상, 120자 이하로 작성해 주세요.</p>');
+        uitPopupContetnBox.append(uitPopupHelpText);
+        contentCard.append(uitPopupContetnBox);
+
+        //// ------------- uit 변경 가능 체크 2
+        if(isRequest) {
+            btn = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" style="background-color: #E0205C;width: 100%;margin: 16px 0;">UIT 변경</button>')
+        }
+        else{
+            btn = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-" disabled>UIT 변경</button>');   // style="position:fixed; bottom:0px;"
+        }
+
+    }
+    
+    pluginForm.append(contentCard);
+    pluginForm.append(btn);
+    
+    const chg_error_msg = ['check_req_status', 'val org id null', 'Update Error : MTL_SYSTEM_ITEMS_B', 'change_uit exception', 'uit_main exception in cur_1', 'Part No not exists', 'uit_main exception'];
+    const chg_retry_msg = ['Previous request was not completed'];
+    
+    /* #########[ popup_footer ]######### */
+    pluginForm.find('button').on('click', function() {
+        if($(this).hasClass('btn-close')){
+            
+            closeBtn();
+            
+        }else if($(this).hasClass('btn-apply')){
+            
+            if($(this).hasClass('btn-disabled')) return;
+
+            //let chg_uit = $('#uit').text();
+            let remark = $('#uitReason').val();
+            
+            let inventory_item_id = uitdata.inventory_item_id;
+            let plant_id = uitdata.plant_id;
+            let pre_uit = bef_uit_code;     //uitdata.uit_code;
+            let chg_uit = aft_uit_code;
+            
+            LoadingWithMask();            
+            // uit 변경 신청
+            var requestParam = {
+                query: {
+                    "event": "uitChangeCreateEventGERP"
+                },
+                payload:{
+                    "plant_id": plant_id,
+                    "inventory_item_id":inventory_item_id,
+                    "bef_uit_code":pre_uit,
+                    "aft_uit_code":chg_uit,
+                    "employee_number":uitdata.empNo, 
+                    "change_reason":remark
+                }
+            };
+
+            console.log('uit 변경 요청....');
+            sendChatApi(requestParam, null, function(payload){
+                console.log('UIT 변경 요청 결과 : ', payload);
+                
+                var createInfo = '';
+                var regSuccessYn = '';
+                var errorMessage = '';
+                if (payload && payload.queryResult && payload.queryResult.messages.length > 0 && payload.queryResult.messages[0].response) {
+                    var createResponse = JSON.parse(payload.queryResult.messages[0].response);
+                    console.log(createResponse["successYn"]);
+                    
+                    if (createResponse["successYn"] == 'N') {
+                        console.log('errorMessage : '+createResponse["errorMessage"]);
+                        regSuccessYn = 'N';
+                        errorMessage = createResponse["errorMessage"];               // 에러메시지.
+                    } else {
+                        regSuccessYn = 'Y';
+                        if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0]) {
+                            
+                            createInfo = createResponse.template.outputs[0];
+                        }
+                    }
+                    
+                }
+                else{
+                    regSuccessYn = 'E';
+                }
+    
+                console.log('createInfo : ', createInfo);
+
+                if(regSuccessYn == 'N') {
+                    
+                    console.log('UIT 변경 요청 실패 : '+errorMessage);
+                    
+                    let showMsg = 'UIT 변경 중 챗봇 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ';
+                    for(var e=0; e<chg_retry_msg.length; e++) {
+                        if(errorMessage.indexOf(chg_retry_msg[e]) > -1) {
+                            showMsg = 'GERP 시스템에서 이전 요청이 완료되지 않았습니다.</br>1시간 후에 다시 시도해 주세요.';
+                            //console.log('retry...');
+                        }
+                    }
+                    for(var e=0; e<chg_error_msg.length; e++) {
+                        if(errorMessage.indexOf(chg_error_msg[e]) > -1) {
+                            showMsg = 'GERP 시스템에서 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ';
+                            //console.log('error...');
+                        }
+                    }
+                    
+                    //closeBtn();
+                    setTimeout(function() {
+                        showHtmlToastDialog(showMsg);
+                    }, 400);
+                    
+                }
+                else if(regSuccessYn == 'E') {          // 주문 생성 요청 에러. 
+                    console.log('UIT 변경 요청 에러 : ');
+    
+                    //closeBtn();
+                    setTimeout(function() {
+                        showHtmlToastDialog("UIT 변경 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                    }, 400);
+                    
+                }
+                else{
+                     console.log('UIT 변경 요청 완료 : ');
+                     
+                     uitdata.uptMaterial = createInfo.resultPartNo;
+                     uitdata.bef_uit_code = pre_uit;
+                     uitdata.aft_uit_code = chg_uit;
+    
+                    closeBtn();
+
+                    appendChatbotHtml(addUitChangeCardGERP(uitdata), true);    
+                }
+    
+                closeLoadingWithMask();
+
+            });
+        }       // 
+            
+    });
+    
+    pluginForm.find('#uitReason').on('keyup', function(e) {
+        var input = e.target.value;
+        var inputVal = input.toUpperCase();
+        var inputLength = inputVal.length;
+
+		var targetP = pluginForm.find('#uitReason').next('p');
+		var targetArea = pluginForm.find('#uitReason');
+
+        if(inputLength<10&&inputLength>0){
+            //10자 미만
+			targetP.text("10자 이상 작성해 주세요.")
+			targetP.css("color","#F94B50")
+			targetArea.css("border-color","#F94B50")
+        }else if(inputLength>120){
+            //120자 초과
+			targetP.text("120자 이하로 작성해 주세요.")
+			targetP.css("color","#F94B50")
+			targetArea.css("border-color","#F94B50")
+        }else{
+			targetP.text("10자 이상, 120자 이하로 작성해 주세요.")
+			targetP.css("color","#898989")
+			targetArea.css("border-color","#898989")
+		}
+
+        //// ------------- uit 변경 가능 체크 3
+        if(isRequest) {
+		    nextBtnEvent();
+        }
+    })
+    
+    /*  #########[ dropdown ]#########  */
+    // pluginForm.find('.btn-dropdown').on('click', function() {
+    //     dropdownBtnEvent(this);
+    //     //nextBtnEvent();
+    // });
+    // pluginForm.find('.dropdown-menu a').on('click', function() {
+    //     dropdownMenuEvent(this);
+    //     nextBtnEvent();
+    // });
+    
+    // function dropdownBtnEvent(target) {
+    //     if ($(target).hasClass('active')) {
+    //         uitDropdown.removeClass('active');
+    //         uitDropdownListWrap.removeClass('show');
+    //         uitDropdownListWrap.css("display","none");
+    //     }
+    //     else {
+    //         uitDropdown.addClass('active');
+    //         uitDropdownListWrap.addClass('show');
+    //         uitDropdownListWrap.css("display","flex");
+    //     }
+    // }
+    
+    // function dropdownMenuEvent(target) {
+    //     const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+    //     let targetText = $(target).text();
+    //     dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+    //     uitDropdown.removeClass('active');
+    //     uitDropdownListWrap.removeClass('show');
+    //     uitDropdownListWrap.css("display","none");
+    // }
+
+    function closeBtn(){
+        $('#uit-update').removeClass('show');
+        $('.plugin-dim').removeClass('show');
+        setTimeout(function() {
+            $('.plugin-dim').remove();
+            $('#uit-update').remove();
+            
+            uitDataInitGERP(uitdata);
+        }, 300);
+    }
+    
+    function nextBtnEvent(){
+		//var aftUitCode = pluginForm.find('.select').find('span').text();
+        var uitReasonText = pluginForm.find('#uitReason').val().length;
+
+//         if(aftUitCode === "변경할 UIT를 선택해 주세요."){
+// 			aftUitCode = "";
+// 		}
+        
+        if((uitReasonText>=10&&uitReasonText<=120)){
+        // if(aftUitCode&&(uitReasonText>=10&&uitReasonText<=120)){
+            pluginForm.find('.btn-apply').removeClass('btn-disabled');
+        }else{
+            pluginForm.find('.btn-apply').addClass('btn-disabled');
+        }
+	}
+
+    uitUpdateInputFormGERP = pluginForm;
+    
+    return uitUpdateInputFormGERP;
+};
+
+function uitDataInitGERP(uitdata) {
+
+    delete uitdata.plant;
+    delete uitdata.material;
+    
+    delete uitdata.plant_code;
+    delete uitdata.plant_id;
+    delete uitdata.plant_name;
+    
+    delete uitdata.part_no;
+    delete uitdata.inventory_item_id;
+    delete uitdata.material_name;
+    delete uitdata.uit_code;
+    delete uitdata.po_check;
+    delete uitdata.wo_check;
+    delete uitdata.po_err_msg;
+    delete uitdata.wo_err_msg;
+
+    delete uitdata.chg_uit_code;
+    
+    delete uitdata.bef_uit_code;
+    delete uitdata.aft_uit_code;
+    delete uitdata.uptMaterial;
+
+    uitdata.step = 1;
+
+}
+
+function addUitChangeCardGERP(uitdata){
+    console.log('UIT 변경 완료 : ', uitdata);
+    
+    var messageWrap = $('<div class="custom-message"></div>');
+    
+    var messageTextWrap = $('<div class="message simple-text"></div>');    
+    var messageBox = $('<div class="message"></div>');
+    var contentWarp = $('<div class="content-wrap"></div>');
+    var contentHeader = $('<div class="content-wrap-header">' + iconBell2 +'<h2>UIT가 변경되었어요.</h2></div>');
+    contentWarp.append(contentHeader);
+    
+    var chipStyleBef = "padding: 2px 4px 4px 4.5px;";
+    var chipStyleAft = "padding: 2px 4px 4px 4.5px;";
+    var bef_uit_code = uitdata.bef_uit_code;
+    var aft_uit_code = uitdata.aft_uit_code;
+    if(bef_uit_code === "M"||bef_uit_code === "G"){
+        chipStyleBef = "padding: 2px 5px 4px 4px;";
+    }else if(bef_uit_code === "F"){
+        chipStyleBef = "padding: 1px 5px 2px 6px;";
+    }
+    if(aft_uit_code === "M"||aft_uit_code === "G"){
+        chipStyleAft = "padding: 2px 5px 4px 4px;";
+    }else if(aft_uit_code === "F"){
+        chipStyleAft = "padding: 1px 5px 2px 6px;";
+    }
+    var contentBox = $(
+        '<div class="uit-content-box">'
+            +'<ul>'
+                +'<li>'
+                    +'<p class="item-header" style="margin: 0px !important;">Material no.</p>'
+                    +'<p class="item-content">'+uitdata.uptMaterial+'</p>'
+                +'</li>'
+                +'<li>'
+                    +'<p class="item-header" style="margin: 0px !important;">변경 UIT</p>'
+                    +'<div class="item-content status-chip">'
+                        +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+bef_uit_code+'</span>'
+                        +iconArrow2
+                        +'<span class="badge-base badge-pink" style="'+chipStyleAft+'">'+aft_uit_code+'</span>'
+                    +'</div>'
+                +'</li>'
+            +'</ul>'
+        +'</div>'
+    );
+
+    contentWarp.append(contentBox);
+    messageTextWrap.append(contentWarp);
+    messageWrap.append(messageTextWrap);
+    
+    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
+    var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
+    var update = $('<button type="button" class="btn-quick-reply btn-basic">UIT 변경</button>');
+    var list = $('<button type="button" class="btn-quick-reply btn-basic">UIT 변경 내역</button>');
+    quickBtnBox.append(update);
+    quickBtnBox.append(list);
+    messageTextWrap2.append(quickBtnBox);
+
+    uitDataInitGERP(uitdata);       // 물품 입력내용 초기화. 
+
+    update.on('click', function() {
+
+        chatui.sendMessage("UIT 변경");
+    });
+
+    list.on('click', function() {
+
+        chatui.sendMessage("UIT 변경 내역");
+    });
+
+    messageWrap.append(messageTextWrap2);
+
+    requestMsgScroll();
+    return messageWrap;
+}
+
+//Datepicker Module UIT GERP 
+const setDatepickerUITGERP = function() {
+    var $initEl;
+  
+    // 날짜 한글 변환
+    function fullDate(val, target) {
+      var today;
+      var strWeek = ["일요일","월요일","화요일", "수요일","목요일","금요일","토요일"]
+      var fullDate;
+  
+      if (target) {
+        today = new Date($(target).val());
+      } else {
+        today = new Date(val);
+      }
+  
+      fullDate = today.getFullYear() +'년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일 ' + strWeek[today.getDay()]
+      return fullDate;
+    }
+  
+    // open
+    function dpOpen(btn, target, callback){
+      var $input;
+      
+      var newDt = new Date();
+      var newDate = moment(newDt).format('YYYY.MM.DD');
+      var thirtyOneDaysAgo = new Date(newDt.setDate(newDt.getDate() - 31));
+      var thirtyOneDaysAgoDate = moment(thirtyOneDaysAgo).format('YYYY.MM.DD');
+      var oneMonthAgo = new Date(newDt.setMonth(newDt.getMonth() - 1));
+      var oneMonthAgoDate = moment(oneMonthAgo).format('YYYY.MM.DD');
+      
+      const startDate = new Date($('.startdate').val());
+      const startDateTrdOneDateAgo = moment(startDate.setDate(startDate.getDate() + 93)).format('YYYY.MM.DD');
+  
+      if ($(btn).closest(".schedule-input-wrap").length > 0) {
+        $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
+        $(".datepicker-chem:visible").not($initEl).fadeOut('fast', function(){
+          $(this).removeClass("show");
+        });
+      } else {
+        $initEl = $(btn).closest(".ui-input-date").find(".datepicker-chem");
+      }
+  
+      if (target) {
+        $input = $(target);
+      } else {
+        if ($(btn).closest(".schedule-wrap")) {
+          $input = $(btn).closest(".schedule-input-wrap").find(".input-schedule-date");
+        } else {
+          $input = $(btn).prev("input[type=text]");
+        }
+      }
+  
+      var minDate = '';
+      var maxDate = newDate;
+
+      if($(btn).hasClass('startdate')) {
+      }
+  
+      if($(btn).hasClass('enddate')) {
+        minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
+        if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > moment(newDate).format('YYYYMMDD')){
+            maxDate = newDate;
+        }else{
+            maxDate = startDateTrdOneDateAgo;
+        }
+      }
+  
+      if ($initEl.is(':visible')) {
+        dpClose();
+      } else {
+        $initEl.datepicker({
+          formatDate: "ATOM",
+          minDate: minDate,
+          maxDate: maxDate,
+          dateFormat: "yy.mm.dd",
+          defaultDate: $input.val(),
+          showOn: "",
+          buttonImageOnly: true,
+          showMonthAfterYear: true,
+          monthNames: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+          monthNamesShort: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"],
+          dayNamesMin: ['일','월','화','수','목','금','토'], 
+          altField: target,
+          showButtonPanel: true,
+          closeText: "close",
+          beforeShow: function() {
+          },
+          onChangeMonthYear: function() {
+          },
+          onSelect: function() {
+            $initEl.find('.selected-date').text(this.value);
+            $(btn).val(this.value);
+            
+            var endDt = moment($('.enddate').val()).format('YYYYMMDD');
+            var startDt = moment($('.startdate').val()).format('YYYYMMDD');
+            if(endDt < startDt) {
+                $('.enddate').val($('.startdate').val());
+            }
+            
+            // 93일 초과시 메시지 호출 종료일 = 시작일 + 93
+            const endDate = new Date($('.enddate').val());
+            const startDate = new Date($('.startdate').val());
+			
+            const diffDate = endDate.getTime() - startDate.getTime();
+              
+            var limitDate = Math.abs(diffDate / (1000 * 60 * 60 * 24));
+
+			var newDt = new Date();
+            var newDate = moment(newDt).format('YYYY.MM.DD');
+			var newLimitDt = moment(newDt).format('YYYYMMDD');
+            var startDateTrdOneDateAgo = startDate.setDate(startDate.getDate() + 93);
+			var thirtyOneDaysAgoDt = moment(thirtyOneDaysAgo).format('YYYYMMDD');
+			  
+            if(limitDate > 93){
+                $('.small-dialog').remove();
+                showHtmlSmallDialog('<div>최대 조회 기간은 3개월입니다.</div>');
+                //showHtmlToastDialogByDiv('<div>최대 조회 기간은 3개월입니다.</div>', $(".datepicker-chem.hasDatepicker.show > ui-datepicker"));
+                
+                if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
+                    $('.enddate').val(newDate);
+    				$('#datepickerEnd').datepicker("setDate", newDate);
+    				$('#datepickerEnd').find('.dp-header').find('.selected-date').text(newDate);
+                }else{
+    				$('.enddate').val(moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+    				$('#datepickerEnd').datepicker("setDate", moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+    				$('#datepickerEnd').find('.dp-header').find('.selected-date').text(moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+                }
+				
+            }
+            
+            // 시작일 변경시 마지막일 disabled 93일 and 오늘 이후
+            $("#datepickerEnd").datepicker("option", "minDate", $('.startdate').val());
+            
+            if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
+                $("#datepickerEnd").datepicker("option", "maxDate", newDate);
+            }else{
+                $("#datepickerEnd").datepicker("option", "maxDate", moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+            }
+
+            if (callback){
+              eval(callback);
+            }
+            
+          },
+          onClose: function() {
+              $(btn).focus();
+          }
+      });
+  
+      if(!$initEl.find('.dp-header').text()) {
+        if($(btn).hasClass('startdate')) {
+            $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>조회 시작일을 선택해 주세요.</p></div>');
+        }
+        if($(btn).hasClass('enddate')) {
+            $initEl.prepend('<div class="dp-header"><h3>날짜 선택</h3><p>조회 종료일을 선택해 주세요.</p></div>');
+        }
+      }
+             
+      if($initEl.find('.plugin-select-dim').length == 0) {
+        $initEl.prepend('<div class="plugin-select-dim"></div>');
+      }
+  
+      if($initEl.find('.selected-date').length == 0) {
+        if($(btn).hasClass('startdate')) {
+          $initEl.find('.dp-header').append('<div class="selected-date">' + thirtyOneDaysAgoDate + '</div>');
+        }
+    
+        if($(btn).hasClass('enddate')) {
+          $initEl.find('.dp-header').append('<div class="selected-date">' + $(btn).val() + '</div>');
+          //$initEl.find('.dp-header').append('<div class="selected-date">' + newDate + '</div>');
+        }
+      }
+          
+      if($initEl.find('.dtpicker-refresh').length == 0) {
+        $initEl.find('.dp-header').append('<div class="dtpicker-refresh">초기화</div>');
+      }
+  
+      $('.dtpicker-refresh').on('click', function(){
+          $('#datepickerStart').datepicker("setDate", thirtyOneDaysAgoDate);
+          $('#datepickerStart').find('.selected-date').text(thirtyOneDaysAgoDate);
+          $('.startdate').val(thirtyOneDaysAgoDate);
+          
+          $("#datepickerEnd").datepicker("option", "minDate", thirtyOneDaysAgoDate);
+          $("#datepickerEnd").datepicker("option", "maxDate", newDate);
+          $('#datepickerEnd').datepicker("setDate", newDate);
+          $('#datepickerEnd').find('.selected-date').text(newDate);
+          $('.enddate').val(newDate);
+         /*
+        if($(btn).hasClass('startdate')) {
+          $(btn).val(thirtyOneDaysAgoDate);
+          $('#datepickerStart').datepicker("setDate", thirtyOneDaysAgoDate);
+          $('#datepickerStart').find('.selected-date').text(thirtyOneDaysAgoDate);
+        }
+    
+        if($(btn).hasClass('enddate')) {
+          $("#datepickerEnd").datepicker("option", "minDate", thirtyOneDaysAgoDate);
+          $("#datepickerEnd").datepicker("option", "maxDate", newDate);
+          $('#datepickerEnd').datepicker("setDate", newDate);
+          $('#datepickerEnd').find('.selected-date').text(newDate);
+          $(btn).val(newDate);
+        }
+        */
+      });
+  
+      if($initEl.find('.btn-datepicker').length == 0) {
+        $initEl.append('<button type="button" class="btn-plugin btn-datepicker" onclick="datepicker.close();">확인</button>');  
+      }
+  
+      $initEl.fadeIn('fast', function(){  
+        $(this).find('.plugin-select-dim').addClass('show');
+        $(this).addClass("show");
+      });
+    }
+    }
+  
+    function dpClose() {
+      $(".datepicker-chem").fadeOut('fast', function(){
+        $(this).removeClass("show");
+      })
+    }
+  
+    return {
+      open: dpOpen,
+      close: dpClose,
+      fulldate: fullDate
+    }
+};
+
+
+/* #################### [ UIT 변경 (GERP) End ] #################### */
