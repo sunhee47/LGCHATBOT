@@ -3078,6 +3078,7 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">물품 청구</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">HS Code 조회</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">UIT 변경</button>'
   +     '</div>'
   +     '<h2>업무별 주요 정보 Check!</h2>'
   +     '<div class="btns">'
@@ -3753,7 +3754,12 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       return;
     }
 
-    if(resp.response.queryResult.intent.name == '기능_타계정주문_메뉴') {
+    // if(resp.response.queryResult.intent.name == '기능_타계정주문_메뉴') {
+    //     makeAnotherAccountOrderCard();
+        
+    //     return;
+    // }
+    if(resp.response.query.text == "타계정 주문" || resp.response.queryResult.intent.name.indexOf('기능_타계정주문_메뉴') > -1) {
         makeAnotherAccountOrderCard();
         
         return;
