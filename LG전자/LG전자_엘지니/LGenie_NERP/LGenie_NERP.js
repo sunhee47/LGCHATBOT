@@ -4552,6 +4552,7 @@ const setDatepickerArticleRequest = function() {
             if (callback){
               eval(callback);
             }
+
           },
           onClose: function() {
               $(btn).focus();
@@ -8581,11 +8582,10 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         }
         else if(message.type == 'uitPlannerListNERP') {
             console.log('planner list...');
-            //if(message.data.isSearch){
-                messageCard = uitPlannerListNERP(message.data); // Planner UIT 수정내역 조회
-            //}else{
-            //    messageCard = makeUitUpdateListNERP(message.data); // UIT 수정내역 조회(메시지카드)
-            //}
+            messageCard = uitPlannerListNERP(message.data); // Planner UIT 수정내역 조회
+        }
+        else if(message.type == 'uitListNERP') {
+            messageCard = makeUitListNERP(message.data); // UIT 수정내역 조회
         }
         else {
           console.log(message.type);
@@ -11982,6 +11982,7 @@ function requestItemsInputFirst(requestdata) {
     
     var selAccountCode = (requestdata.account_code == null)? '':requestdata.account_code;
     var selAccountName = (requestdata.account_name == null)? '':requestdata.account_name;
+    var selAccountId = (requestdata.account_id == null)? '':requestdata.account_id;
 
     $('#products-bill').css('height', '').css('max-height', '');
     $('.plugin-contents').css('overflow-y', 'auto');
@@ -12037,15 +12038,15 @@ function requestItemsInputFirst(requestdata) {
 
             orderUl1.empty();
             
-            //LoadingWithMask(); 
+            LoadingWithMask(); 
             
-            var apiParam = {
-                    ZTRNS_TYPE: '10', 
-                    BNAME: requestdata.empNo, 
-                    ZORGNAME: inval
-                };
+            // var apiParam = {
+            //         ZTRNS_TYPE: '10', 
+            //         BNAME: requestdata.empNo, 
+            //         ZORGNAME: inval
+            //     };
                 
-            let paramStr = getObjectInfo(apiParam);
+            // let paramStr = getObjectInfo(apiParam);
             
             var requestParam = {
                 query: {
@@ -12053,9 +12054,8 @@ function requestItemsInputFirst(requestdata) {
                 },
                 payload: {
                     ZTRNS_TYPE: '10', 
-                    BNAME: requestdata.empNo, 
-                    ZORGNAME: inval, 
-                    FILTER: paramStr
+                    BNAME: requestdata.userId, 
+                    ZORGNAME: inval
                 }
               };
 
@@ -12065,15 +12065,16 @@ function requestItemsInputFirst(requestdata) {
                 console.log('result', result);
                 
                 if(result == null) {
-                  var orderLi1 = $('<li class="no-res">Department 정보가 없습니다.</li>');
+                  var orderLi1 = $('<li class="no-res"Department 조회시 에러가 발생했습니다.</li>');
                   orderUl1.append(orderLi1);
                   departmentListCont.append(orderUl1);
                   
                   departmentListCont.addClass('show');      // 'department 목록' 같이 표시 
+                  closeLoadingWithMask();
                   return;
                 }
                 
-                if(result.resultCode == 'E') {
+                if(result.restSuccessYn == 'N') {
                     console.log('Error mesage : '+result.resultMessage);
                     
                   var orderLi1 = $('<li class="no-res">Department 조회시 에러가 발생했습니다. </li>');
@@ -12081,6 +12082,7 @@ function requestItemsInputFirst(requestdata) {
                   departmentListCont.append(orderUl1);
                   
                   departmentListCont.addClass('show');      // 'department 목록' 같이 표시 
+                  closeLoadingWithMask();
                   return;
                 } 
                 
@@ -12144,7 +12146,7 @@ function requestItemsInputFirst(requestdata) {
                   departmentListCont.addClass('show');              // 'department 목록' 같이 표시 
                 }
                 
-                //closeLoadingWithMask();
+                closeLoadingWithMask();
 
               });
 
@@ -12236,25 +12238,23 @@ function requestItemsInputFirst(requestdata) {
 
         LoadingWithMask(); 
         
-        var apiParam = {
-                ZTRNS_TYPE: '40', 
-                BNAME: requestdata.empNo, 
-                ZORGID: $('#department_code').val(), 
-                WERKS: $('#plant_code').val()
-            };
+        // var apiParam = {
+        //         ZTRNS_TYPE: '40', 
+        //         BNAME: requestdata.empNo, 
+        //         ZORGID: $('#department_code').val(), 
+        //         WERKS: $('#plant_code').val()
+        //     };
             
-        let paramStr = getObjectInfo(apiParam);
+        // let paramStr = getObjectInfo(apiParam);
         
         var requestParam = {
             query: {
               "event": "reqItemsAccountSearchEvent"
             },
             payload: {
-                ZTRNS_TYPE:'40', 
-                BNAME: requestdata.empNo, 
+                BNAME: requestdata.userId, 
                 ZORGID: $('#department_code').val(), 
-                WERKS: $('#plant_code').val(), 
-                FILTER: paramStr
+                WERKS: $('#plant_code').val()
             }
           };
 
@@ -12266,45 +12266,52 @@ function requestItemsInputFirst(requestdata) {
                 if(result == null) {
                     account_list = null;
                 }
-                else if(result.resultCode == 'E') {
+                else if(result.restSuccessYn == 'N') {
                     account_list = null;
-                    dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
-                    accountListListText = '<li class="dropdown-item"><p class="code text">계정 정보가 없습니다.</p></li>'
-                                        //+ '<span class="redidence_type" style="display:none;">'+account.ZCLSCODE+'</span>'
-                                        
-                    let dropdownListItem = $(accountListListText);
-                    
-                    dropdownMenuListWrap.append(dropdownListItem);
-                    dropdownBox.append(dropdownMenuListWrap);                                        
                 }
                 else{
                     account_list = result.resultList;
                     
-                    dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
-                    //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
-                    var accountListListText = '';    
-                    account_list.forEach(function(account, index) {
-                        var selected = '';
-                        if(account.ZCLSCODE == selAccountCode) {
-                            selected = 'selected';
-                        }
-                
-                        accountListListText += '<li class="dropdown-item"><a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><p class="code text">'+account.ZCLSCODE+'</p><p class="small text">'+account.ZCLCDTEXT+'</p></a>'
+                    if(account_list.length == 0) {
+                        account_list = null;
+                        dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
+                        accountListListText = '<li class="dropdown-item"><p class="code text">계정 정보가 없습니다.</p></li>'
                                             //+ '<span class="redidence_type" style="display:none;">'+account.ZCLSCODE+'</span>'
-                                            + '</li>';
-                    });        
-                    let dropdownListItem = $(accountListListText);
+                                            
+                        let dropdownListItem = $(accountListListText);
+                        
+                        dropdownMenuListWrap.append(dropdownListItem);
+                        dropdownBox.append(dropdownMenuListWrap);                                        
+                        
+                    }
+                    else{
+                        dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
+                        //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
+                        var accountListListText = '';    
+                        account_list.forEach(function(account, index) {
+                            var selected = '';
+                            if(account.ZCLSCODE == selAccountCode) {
+                                selected = 'selected';
+                            }
                     
-                    dropdownMenuListWrap.append(dropdownListItem);
-                    dropdownBox.append(dropdownMenuListWrap);
+                            accountListListText += '<li class="dropdown-item">'
+                                                + '<a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><p class="code text">'+account.ZCLSCODE+'</p><p class="small text">'+account.ZCLSTEXT+'</p></a>'
+                                                + '<span class="account_id" style="display:none;">'+account.SAKNR+'</span>'
+                                                + '</li>';
+                        });        
+                        let dropdownListItem = $(accountListListText);
+                        
+                        dropdownMenuListWrap.append(dropdownListItem);
+                        dropdownBox.append(dropdownMenuListWrap);
+                        
+                        if(selectflag == true) {
+                            setTimeout(function() {
+                                var selectedValue = dropdownMenuListWrap.find('li').find('.selected');
                     
-                    if(selectflag == true) {
-                        setTimeout(function() {
-                            var selectedValue = dropdownMenuListWrap.find('li').find('.selected');
-                
-                            console.log('selectedValue : ', selectedValue);
-                            selectedValue.trigger('click');
-                        }, 100);
+                                console.log('selectedValue : ', selectedValue);
+                                selectedValue.trigger('click');
+                            }, 100);
+                        }
                     }
                 }
                 
@@ -12399,30 +12406,29 @@ function requestItemsInputFirst(requestdata) {
             
             orderUl2.empty();
             
-            //LoadingWithMask(); 
+            LoadingWithMask(); 
 
             var deptCode = ($('#department_code').val() == null)? '':$('#department_code').val();
             //console.log('deptCode : '+deptCode);
             
-            var apiParam = {
-                    ZTRNS_TYPE: '20', 
-                    BNAME: requestdata.empNo, 
-                    WERKS: inval, 
-                    NAME1: inval
-                };
+            // var apiParam = {
+            //         ZTRNS_TYPE: '20', 
+            //         BNAME: requestdata.empNo, 
+            //         WERKS: inval, 
+            //         NAME1: inval
+            //     };
                 
-            let paramStr = getObjectInfo(apiParam);
+            // let paramStr = getObjectInfo(apiParam);
             
             var requestParam = {
                 query: {
                   "event": "reqItemsPlantSearchEvent"
                 },
                 payload: {
-                    BNAME: requestdata.empNo, 
+                    BNAME: requestdata.userId, 
                     ZORGID: deptCode, 
                     WERKS: inval, 
-                    NAME1: inval, 
-                    FILTER: paramStr
+                    NAME1: inval
                 }
               };
 
@@ -12432,13 +12438,16 @@ function requestItemsInputFirst(requestdata) {
                 console.log('result', result);
                 
                 if(result == null) {
-                    var orderLi2 = $('<li class="no-res">Plant 정보가 없습니다.</li>');
+                    var orderLi2 = $('<li class="no-res">Plant 조회시 에러가 발생했습니다.</li>');
                     orderUl2.append(orderLi2);
                     plantListCont.append(orderUl2);
                     plantListCont.addClass('show');
+                    
+                    closeLoadingWithMask();
+                    return;
                 }
                 
-                if(result.resultCode == 'E') {
+                if(result.restSuccessYn == 'N') {
                     console.log('Error mesage : '+result.resultMessage);
                     
                     var orderLi2 = $('<li class="no-res">Plant 조회시 에러가 발생했습니다.</li>');
@@ -12446,6 +12455,7 @@ function requestItemsInputFirst(requestdata) {
                     plantListCont.append(orderUl2);
                     plantListCont.addClass('show');
                     
+                    closeLoadingWithMask();
                   return;
                 } 
                 
@@ -12507,7 +12517,7 @@ function requestItemsInputFirst(requestdata) {
 
                 }
                 
-                //closeLoadingWithMask();
+                closeLoadingWithMask();
 
               });
 
@@ -12556,25 +12566,23 @@ function requestItemsInputFirst(requestdata) {
             
             orderUl3.empty();
             
-            //LoadingWithMask(); 
+            LoadingWithMask(); 
 
-            var apiParam = {
-                    ZTRNS_TYPE: '50', 
-                    BNAME: requestdata.empNo, 
-                    POST1: inval
-                };
+            // var apiParam = {
+            //         ZTRNS_TYPE: '50', 
+            //         BNAME: requestdata.empNo, 
+            //         POST1: inval
+            //     };
                 
-            let paramStr = getObjectInfo(apiParam);
+            // let paramStr = getObjectInfo(apiParam);
 
             var requestParam = {
                 query: {
                   "event": "reqItemsProjectSearchEvent"
                 },
                 payload: {
-                    ZTRNS_TYPE: '50', 
-                    BNAME: requestdata.empNo, 
-                    POST1: inval, 
-                    FILTER: paramStr
+                    BNAME: requestdata.userId, 
+                    POST1: inval
                 }
               };
 
@@ -12584,20 +12592,24 @@ function requestItemsInputFirst(requestdata) {
                 console.log('result', result);
                 
                 if(result == null) {
-                  var orderLi3 = $('<li class="no-res">Project 정보가 없습니다.</li>');
+                  var orderLi3 = $('<li class="no-res">Project 조회시 에러가 발생했습니다.</li>');
                   orderUl3.append(orderLi3);
                   projectListCont.append(orderUl3);
                   projectListCont.addClass('show');
+                  
+                  closeLoadingWithMask();
+                  return;
                 }
                 
-                if(result.resultCode == 'E') {
+                if(result.restSuccessYn == 'N') {
                     console.log('Error mesage : '+result.resultMessage);
                     
-                  var orderLi3 = $('<li class="no-res">Project 조회시 에러가 발생했습니다..</li>');
+                  var orderLi3 = $('<li class="no-res">Project 조회시 에러가 발생했습니다.</li>');
                   orderUl3.append(orderLi3);
                   projectListCont.append(orderUl3);
                   projectListCont.addClass('show');
 
+                  closeLoadingWithMask();
                   return;
                 } 
 
@@ -12623,7 +12635,8 @@ function requestItemsInputFirst(requestdata) {
                         
                         var projectInfo = $(
                             '<div class="data-wrap">'
-                                 +'<p>['+project.POSID+']' + project.POST1 
+                                 //+'<p>['+project.POSID+']' + project.POST1 
+                                 +'<p>' + project.POST1 
                                  + '</p>'
                             + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
                                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
@@ -12655,7 +12668,7 @@ function requestItemsInputFirst(requestdata) {
                   projectListCont.addClass('show');
                 }
                 
-                //closeLoadingWithMask();
+                closeLoadingWithMask();
 
               });
 
@@ -12705,6 +12718,7 @@ function requestItemsInputFirst(requestdata) {
     
     dropdownBox.append('<input type="hidden" value="" id="account_code"/>');
     dropdownBox.append('<input type="hidden" value="" id="account_name"/>');
+    dropdownBox.append('<input type="hidden" value="" id="account_id"/>');
     
     pluginForm.append(dropdownBox);
     
@@ -12915,11 +12929,13 @@ function requestItemsInputFirst(requestdata) {
 
         let accountCode = $(target).find('.code').text();
         let accountName = $(target).find('.small').text();
+        let accountId = $(target).parent().find('.account_id').text();
         
         $('#account_code').val(accountCode);
         $('#account_name').val(accountName);
+        $('#account_id').val(accountId);
         
-        //console.log('accountCode : '+accountCode+', accountName : '+accountName);
+        console.log('accountCode : '+accountCode+', accountName : '+accountName+', accountId : '+accountId);
         //console.log('dropBtn height before : '+$(dropBtn).outerHeight());
         dropBtn.removeClass('default active').addClass('select').find('span').html(accountCode).css('font-weight', '500');
         //dropBtn.removeClass('default active').addClass('select').find('span').html('<b>'+accountCode+'</b>');
@@ -12968,28 +12984,30 @@ function requestItemsInputFirst(requestdata) {
         let account_code = $('#account_code').val();
         let account_name = $('#account_name').val();
 
+        let account_id = $('#account_id').val();        // SAKNR
+
         // 물품 청구 예산 조회.        
         
-        var apiParam = {
-                    ZTRNS_TYPE: '80', 
-                    BNAME: requestdata.empNo, 
-                    ZORGID: department_code, 
-                    POSID: (project_code == null)? '':project_code, 
-                    ZCLSCODE: account_code
-                };
+        // var apiParam = {
+        //             ZTRNS_TYPE: '80', 
+        //             BNAME: requestdata.empNo, 
+        //             ZORGID: department_code, 
+        //             POSID: (project_code == null)? '':project_code, 
+        //             ZCLSCODE: account_code
+        //         };
                 
-        let paramStr = getObjectInfo(apiParam);
+        // let paramStr = getObjectInfo(apiParam);
             
         var requestParam = {
             query: {
                 "event": "reqItemsBudgetInquiryEvent"
             },
             payload: {
-                BNAME: chatui.getSetting("userId"), 
+                BNAME: requestdata.userId,  
                 ZORGID: department_code, 
                 POSID: (project_code == null)? '':project_code, 
                 ZCLSCODE: account_code, 
-                FILTER: paramStr
+                SAKNR: account_id
             }
         };        
             
@@ -13005,7 +13023,7 @@ function requestItemsInputFirst(requestdata) {
                 console.log('result', result);
                 var budgetInfo = result.resultList;
                 
-                if(result.resultCode == 'E') {
+                if(result.restSuccessYn == 'N') {
                     console.log('Error mesage : '+result.resultMessage);
                     
                     console.log('예산 조회 에러.');
@@ -13014,17 +13032,23 @@ function requestItemsInputFirst(requestdata) {
                         showSmallDialog('물품 청구 예산 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                     }, 500);
                     
-                  return;
+                    closeLoadingWithMask();
+                    return;
                 } 
                 
                 if(budgetInfo.length == 0) {
                       console.log('예산 결과 : 0건');
+
+                        setTimeout(function() {
+                            showSmallDialog('물품 청구할  예산이 없습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        }, 500);
                       
                 } else {
                     console.log('예산  조회 완료 : ', budgetInfo);
                     
-                    requestdata.valid_budget_amount = budgetInfo[0].ZREQUEST_BDJ_D;
-                    requestdata.currency_code = 'KRW';
+                    // requestdata.valid_budget_amount = budgetInfo[0].ZREQUEST_BDJ_D;
+                    requestdata.valid_budget_amount = budgetInfo[0].ZREMAIN_BDJ_D
+                    requestdata.currency_code = budgetInfo[0].WAERS;
                     
                     requestdata.step = 2;
 
@@ -13039,6 +13063,7 @@ function requestItemsInputFirst(requestdata) {
             
                     requestdata.account_code = account_code;
                     requestdata.account_name = account_name;
+                    requestdata.account_id = account_id;
             
                     if(plant_code != selPlantCode) {
                         delete requestdata.item_list;
@@ -13586,14 +13611,14 @@ function onlyNumber(obj) {
         $(this).parents('.tab-content.show').find('#item_qty').val(itemQty);
         
         // 물품 청구 품목 조회.   
-            var apiParam = {
-                    ZTRNS_TYPE: '30', 
-                    BNAME: requestdata.empNo, 
-                    WERKS: selPlantCode, 
-                    MATNR: itemId 
-                };
+            // var apiParam = {
+            //         ZTRNS_TYPE: '30', 
+            //         BNAME: requestdata.empNo, 
+            //         WERKS: selPlantCode, 
+            //         MATNR: itemId 
+            //     };
                 
-            let paramStr = getObjectInfo(apiParam);
+            // let paramStr = getObjectInfo(apiParam);
         
         
         var requestParam = {
@@ -13601,10 +13626,9 @@ function onlyNumber(obj) {
               "event": "reqItemsMeterialInquiryEvent"
             },
             payload: {
-                BNAME: chatui.getSetting("userId"), 
+                BNAME: requestdata.userId, 
                 WERKS: selPlantCode, 
-                MATNR: itemId, 
-                FILTER: paramStr
+                MATNR: itemId
             }
           };
 
@@ -13620,15 +13644,18 @@ function onlyNumber(obj) {
                 console.log('result', result);
                 var meterialInfo = result.resultList;
                 
-                if(result.resultCode == 'E') {
+                if(result.restSuccessYn == 'N') {
                     console.log('Error mesage : '+result.resultMessage);
                     
                     console.log('품목 조회 에러.');
                     
+                    inputBtn.parents('.tab-content').find('.help-message').text('');          // 물품명 초기화. 
+                    inputBtn.parents('.tab-content').find('.amount-box').removeClass('show');
                     setTimeout(function() {
                         showSmallDialog('품목 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                     }, 100);
 
+                    closeLoadingWithMask();
                       return;
                 } 
                 
@@ -13636,6 +13663,7 @@ function onlyNumber(obj) {
                       console.log('품목 결과 : 0건');
                       
                       inputBtn.parents('.tab-content').find('.help-message').text('');          // 물품명 초기화. 
+                      inputBtn.parents('.tab-content').find('.amount-box').removeClass('show');
                       setTimeout(function() {
                         showSmallDialog('유효하지 않은 물품ID입니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                       }, 100);                      
@@ -13676,6 +13704,9 @@ function onlyNumber(obj) {
             }
             else {
                 console.log('품목 조회 에러.');
+                
+                inputBtn.parents('.tab-content').find('.help-message').text('');          // 물품명 초기화. 
+                inputBtn.parents('.tab-content').find('.amount-box').removeClass('show');
                 
                 setTimeout(function() {
                     showSmallDialog('품목 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
@@ -14470,7 +14501,18 @@ function requestItemsInputThird(requestdata) {
     var itemList = (requestdata.item_list == null)? new Array():requestdata.item_list;
     var itemCnt = (requestdata.item_cnt == null)? 1:requestdata.item_cnt;
 
+    var selDeptCode = (requestdata.department_code == null)? '':requestdata.department_code;
+    var selDeptName = (requestdata.department_name == null)? '':requestdata.department_name;
+    
+    var selPlantCode = (requestdata.plant_code == null)? '':requestdata.plant_code;
+    var selPlantName = (requestdata.plant_name == null)? '':requestdata.plant_name;
+    
     var selProjectCode = (requestdata.project_code == null)? '':requestdata.project_code;
+    var selProjectName = (requestdata.project_name == null)? '':requestdata.project_name;
+    
+    var selAccountCode = (requestdata.account_code == null)? '':requestdata.account_code;
+    var selAccountName = (requestdata.account_name == null)? '':requestdata.account_name;
+    var selAccountId = (requestdata.account_id == null)? '':requestdata.account_id;
 
     var textBudget = (selProjectCode != '')? 'Project':'Department';
 
@@ -14709,6 +14751,28 @@ function requestItemsInputThird(requestdata) {
         console.log('itemList', itemList);   
         return itemList;
     };
+    
+    function requestItemLit() {
+        let productList = productsListWrap.find('.list-item');
+        
+        let itemList = new Array();
+    
+        for ( let i = 0; i <= (productList.length)-1; i++ ) {
+            let product = productList[i];
+            
+            let item = new Object();
+            
+            item.MATNR = $(product).find('.item-id').text();
+            item.BDMNG = Number($(product).find('#item_qty').val());    //$(product).find('.item-count').find('span').text();
+            item.BDTER = $(product).find('.item-date').find('span').text().replace(/\./gi, "");
+
+            itemList.push(item);
+        }        
+    
+        console.log('itemList', itemList);   
+        return itemList;
+        
+    }
 
     function toNumberAmount(amt) {
         let replaceAmt = amt.replace(/,/g,'').replace(budgetCurrency, '');
@@ -14779,7 +14843,8 @@ function requestItemsInputThird(requestdata) {
     pluginForm.append(submitDiv);
     submitBtn.on('click', function() {
 
-        let itemList = toArrayAllItem();
+        let reqItemList = requestItemLit();
+        let reqItemListStr = JSON.stringify(reqItemList);
         
         let firstProductId = itemList[0].item_id;
         let productCnt = itemList.length;
@@ -14791,7 +14856,12 @@ function requestItemsInputThird(requestdata) {
               "event": "requestItemsCreateEvent"
             },
             payload: {
-                "itemList": ''      // 추후 추가 해야 함. 
+                BNAME: requestdata.userId, 
+                ZORGID: selDeptCode, 
+                WERKS: selPlantCode, 
+                ZCLSCODE: selAccountCode, 
+                POSID: selProjectCode, 
+                "itemList": reqItemListStr      // 추후 추가 해야 함. 
             }
           };
           
@@ -14799,7 +14869,7 @@ function requestItemsInputThird(requestdata) {
           sendChatApi(requestParam, null, function(payload){
             console.log('물품 청구 신청 결과 : ', payload);
             
-            var createInfo = '';
+            var createReqInfo = '';
             var createModelList = null;
             var documentRefNo = '';
             var regSuccessYn = '';
@@ -14814,17 +14884,9 @@ function requestItemsInputThird(requestdata) {
                     errorMessage = createResponse["errorMessage"];               // 에러메시지.
                 } else {
                     regSuccessYn = 'Y';
-                    //if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].orderInfo_1) {
-                        
-                    //    createInfo = createResponse.template.outputs[0].orderInfo_1;
-                    //}
-                    //if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].apmsModelList_1) {
-                        
-                    //    createModelList = createResponse.template.outputs[0].apmsModelList_1;
-                    //}
                     if (createResponse.template && createResponse.template.outputs.length > 0 && createResponse.template.outputs[0] && createResponse.template.outputs[0].resultItem) {
                         
-                        documentRefNo = createResponse.template.outputs[0].resultItem;
+                        createReqInfo = createResponse.template.outputs[0].resultItem;
                     }
                 }
                 
@@ -14833,9 +14895,9 @@ function requestItemsInputThird(requestdata) {
                 regSuccessYn = 'E';
             }
 
-            console.log('createInfo : ', createInfo);
-            console.log('createModelList : ', createModelList);
-            console.log('documentRefNo : ', documentRefNo);
+            console.log('createInfo : ', createReqInfo);
+            // console.log('createModelList : ', createModelList);
+            // console.log('documentRefNo : ', documentRefNo);
             
             if(regSuccessYn == 'N') {
                 console.log('물품 청구 신청 실패 : '+errorMessage);
@@ -14868,12 +14930,12 @@ function requestItemsInputThird(requestdata) {
                 
             }
             else{
-                 console.log('물품청구 신청 완료 : ', documentRefNo);
+                 console.log('물품청구 신청 완료 : ', createReqInfo);
                  
-                 requestdata.documentRefNo = documentRefNo;
+                 requestdata.documentRefNo = createReqInfo[0].ZREQNO;
                  requestdata.firstProductId = firstProductId;
                  requestdata.productCnt = productCnt;
-                 requestdata.deepLink = '';
+                 requestdata.deepLink = createReqInfo[0].ZDEEPLINKID;
 
                 $('#products-bill').removeClass('show');
                 $('.plugin-dim').removeClass('show');
@@ -14983,7 +15045,7 @@ function productsBillResult(requestdata) {
             +'<ul class="content-list-wrap">'
                 +'<li>'
                     +'<h4>신청 번호</h4>'
-                    +'<div class="content-list-val text"><span>' + '5205522155DD' + '</span></div>'
+                    +'<div class="content-list-val text"><span>' + requestdata.documentRefNo + '</span></div>'
                 +'</li>'
                 +'<li>'
                    +'<h4>청구 물품</h4>'
@@ -14993,19 +15055,19 @@ function productsBillResult(requestdata) {
         +'</div>'
     );
 
+    var contentBtnDiv = $('<div class="btn"></div>');
     var contentBtn = $(
-        '<div class="btn">'
             //+'<button type="button" class="btn btn-default btn-big">물품청구 내역 조회</button>'
             //+'<button type="button" class="btn btn-plugin move_link btn-border-pink" data-outlink="" id="btn-deepLink">'
-            + '<button type="button" class="btn btn-default btn-big" data-outlink="' + requestdata.deepLink +'" id="btn-deepLink">'
+            '<button type="button" class="btn btn-default btn-big" data-outlink="' + requestdata.deepLink +'" id="btn-deepLink">'
                 +'통합결재 화면&nbsp;'
                 + iconNewWindowPink            
             +'</button>'
-        +'</div>'
     )
     contentBtn.on('click', function() {
         var outlink = $(this).data('outlink');
     
+        //console.log('outlink : '+outlink);
         if(!outlink){
             showHtmlSmallDialog('통합결재 URL이 유효하지 않습니다.');
             return false;
@@ -15013,7 +15075,9 @@ function productsBillResult(requestdata) {
         window.open(outlink, '_blank');
         //chatui.sendMessage("물품청구 내역 조회");          
     });
-    contentBox.append(contentBtn);
+    contentBtnDiv.append(contentBtn);
+    
+    contentBox.append(contentBtnDiv);
     contentWarp.append(contentBox);
     messageTextWrap.append(contentWarp);
     messageWrap.append(messageTextWrap);
@@ -15086,6 +15150,7 @@ function requestDataInit(requestdata) {
 
     delete requestdata.account_code;
     delete requestdata.account_name;
+    delete requestdata.account_id;
     delete requestdata.valid_budget_amount;
 
     delete requestdata.project_code;
@@ -15155,6 +15220,7 @@ function articleRequestListError(data) {
 
 // 물품청구 내역 조회
 function articleRequestList(data) {
+    console.log('물품청구 내역 : ', data);
     var items = data.items;
 
     var reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
@@ -15379,7 +15445,7 @@ function articleRequestList(data) {
                 chatui.sendEventMessage("importedHsCodeEvent", param);
                 */
 
-                addArticleReqDetailPopupOpen(item);
+                addArticleReqDetailPopupOpen(data.userId, item);
             });
           
         });
@@ -15437,6 +15503,7 @@ function articleRequestList(data) {
         chatui.sendMessage("물품 청구 신청");    
     });
 
+    requestMsgScroll();   
     return articleRequestListContents;
 }
 
@@ -15592,7 +15659,7 @@ function addArticleReqFilterPopupOpen(data){
     listStatusDropdownListWrap.append(listStatusDropdownList)
 
     listStatusArry.forEach(function(arr) {
-        let listStatusDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.RequestStatusText + '</a><input type="hidden" name="statusCode" value="' + arr.RequestStatus + '"/></li>');
+        let listStatusDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">' + arr.ZSTATUS_TXT + '</a><input type="hidden" name="statusCode" value="' + arr.ZSTATUS + '"/></li>');
         listStatusDropdownListWrap.append(listStatusDropdownList)
     });
 
@@ -15624,8 +15691,8 @@ function addArticleReqFilterPopupOpen(data){
             var endDt = moment($('.enddate').val()).format('YYYYMMDD');
 
             var isDepartment = $('#artReqFilter_isDepartment').find('span').text();
-            var zReqdateFrom = $('#start-date').val();
-            var zReqdateTo = $('#end-date').val();
+            var zReqdateFrom = $('#start-date').val().replace(/\./gi, "");;
+            var zReqdateTo = $('#end-date').val().replace(/\./gi, "");;
             var statusId = $('#artReqFilter_statusId').find('input').val();
             var statusName = $('#artReqFilter_statusId').find('span').text();
 
@@ -15640,50 +15707,68 @@ function addArticleReqFilterPopupOpen(data){
                 return;
             }
 
+            LoadingWithMask();
+            
             var requestParam = {
                 query: {
                     "event": "importedartReqFilterEvent"
                 },
                 payload:{
+                    "userId":data.userId, 
                     "ISDEPARTMENT":isDepartment,
                     "ZREQDATE_FR":zReqdateFrom,
                     "ZREQDATE_TO":zReqdateTo,
                     "STATUS_ID":statusId,
-                    "STATUS_NAME":statusName,
-                    "userName":data.userName,
-                    "loginDeptId":data.loginDeptId
+                    "STATUS_NAME":statusName
                 }
             };
 
             sendChatApi(requestParam, null, function(payload){
+                console.log("물품청구내역 : ", payload);
                 var message = payload.queryResult.messages[0];
                 var response = message.response;
                 var result = JSON.parse(response);
                 
+                console.log("result : ", result);
                 if(result == null){
-                    articleRequestListError(data);
+                    appendChatbotHtml(articleRequestListError(resultdata), true); 
                     addArtReqFilterPopupClose();
+                    closeLoadingWithMask();
                 }
 
-                var itemLength = result.template.outputs[0].data.items.length;
+                var resultdata = result.template.outputs[0].data;
 
+                if(resultdata.restSuccessYn == 'N') {
+                    console.log('물품청구 내역조회 에러 : ', resultdata.resultMessage);
+                    appendChatbotHtml(articleRequestListError(resultdata), true); 
+                    addArtReqFilterPopupClose();
+                    closeLoadingWithMask();
+                    
+                    return;
+                }
+                
+                var itemLength = resultdata.items.length;
                 if(itemLength == 0){
                     showHtmlSmallDialog('<div>조회된 청구 내역이 없습니다.</br>조회 필터를 다시 설정해 주세요.</div>');
+                    closeLoadingWithMask();
                     return;
                 }else{
                     console.log(isDepartment,zReqdateFrom,zReqdateTo,statusId);
 
-                    var param = {
-                        "ISDEPARTMENT":isDepartment,
-                        "ZREQDATE_FR":zReqdateFrom,
-                        "ZREQDATE_TO":zReqdateTo,
-                        "STATUS_ID":statusId,
-                        "STATUS_NAME":statusName,
-                        "researchYn":"Y"
-                    }
+                    resultdata.researchYn = 'Y';
+                    appendChatbotHtml(articleRequestList(resultdata), true); 
+                    // var param = {
+                    //     "ISDEPARTMENT":isDepartment,
+                    //     "ZREQDATE_FR":zReqdateFrom,
+                    //     "ZREQDATE_TO":zReqdateTo,
+                    //     "STATUS_ID":statusId,
+                    //     "STATUS_NAME":statusName,
+                    //     "researchYn":"Y"
+                    // }
                                         
-                    chatui.sendEventMessage("importedartReqFilterEvent", param);
+                    // chatui.sendEventMessage("importedartReqFilterEvent", param);
                     addArtReqFilterPopupClose();
+                    closeLoadingWithMask();                    
                 }
             });
         }
@@ -15846,7 +15931,7 @@ function checkArticleRequire(data) {
 }
 
 // 물품 청구 내역 조회 상세 
-function addArticleReqDetailPopupOpen(data){
+function addArticleReqDetailPopupOpen(loginUserId, data){
     console.log('data  : ', data);
         /* #########[ popup_wrap_start ]######### */
     
@@ -15931,7 +16016,7 @@ function addArticleReqDetailPopupOpen(data){
 
     var classInfo =$('<li class="subInfo-li">'
         +'<h5>계정</h5>'
-        +'<p>' + data.CLSTEXT +'</p>' 
+        +'<p>' + data.ZCLSTEXT +'</p>' 
         +'</li>'
     );
     articleReqSubInfoUi.append(classInfo);
@@ -15967,22 +16052,31 @@ function addArticleReqDetailPopupOpen(data){
         if(index == 0) {
             currency = item.WAERS;
         }
+        var damdangEmail = '';
+        if(item.ZPLANNER !== ""){
+            damdangEmail = '</br>(<a id="damdang_userEmail" href="#" style="text-decoration: underline; color: #0056b3;">' + item.ZPLANNER + '</a>)';
+        }
+        
         articleReqItemLiHtml += '<li>'
             +'<div class="item-count"><h5><font color="#E0205C">물품 ' + (index+1) + '</h5></font></div>'
             +'<div class="item-name">'
                 +'<h5>' + item.MATNR + '</h5>'
-                +'<div class="item-box">'
-                    +'<div class="item-info">'
+                +'<div class="item-list-box">'
+                    +'<div class="item-list-info">'
                         +'<p><font color="#898989">물품명</font></p>'
                         +'<p>' + item.MAKTX + '</p>'
                     +'</div>'
-                    +'<div class="item-info">'
+                    +'<div class="item-list-info">'
                         +'<p><font color="#898989">수량</font></p>'
                         +'<p>' + item.BDMNG + '</p>'
                     +'</div>'
-                    +'<div class="item-info">'
+                    +'<div class="item-list-info">'
                         +'<p><font color="#898989">Due date</font></p>'
                         +'<p>' + item.DBTER + '</p>'
+                    +'</div>'
+                    +'<div class="item-list-info">'
+                        +'<p><font color="#898989">담당자</font></p>'
+                        +'<p style="text-align: right;">' + item.ZREQUESTOR + damdangEmail + '</p>'
                     +'</div>'
                 +'</div>'
             +'</div>'
@@ -15996,6 +16090,19 @@ function addArticleReqDetailPopupOpen(data){
     addArtReqDetailContents.append(addArtReqDetailForm);
     addArtReqDetail.append(addArtReqDetailContents);
 
+    articleReqItemLi.find(".item-info").find("a").click(function() {
+        var emailAddr = $(this).text().trim();
+        console.log('emailAddr : '+emailAddr);
+        var temp = $('<textarea type="text" class="hidden-textbox" />');
+        $("body").append(temp);
+        temp.val(emailAddr).select();
+        document.execCommand('copy');
+        //showHtmlSmallDialog(temp);
+        temp.remove();
+        
+        showHtmlToastDialog('이메일 주소가 복사되었습니다.');
+    });
+    
     /* #########[ popup_footer ]######### */
     var addArticleReqFoot = $('<div class="articleRequestDetail-footer"></div>');
     var addTotalAmount = $(
@@ -16029,51 +16136,66 @@ function addArticleReqDetailPopupOpen(data){
     }
 
     if(selfRejValiArray.includes(data.DDTEXT)){
-        var articleReqSelfRejectBtn = $('<button type="button" class="btn btn-plugin btn-border-pink" id="btn-selfReject">Self Reject 하기</button>');
-        addArticleReqFoot.append(articleReqSelfRejectBtn);
-
-        articleReqSelfRejectBtn.on('click', function() {
-            pop.open(
-                'create',
-                $(this),
-                'Pop_SelfReject_ArticleRequest',
-                'loadEl.pop_selfReject_confirm("Self Reject", "Self Reject 시 해당 청구건은 자체적으로 반려되며<br />수정 및 재작성이 불가합니다.<br /><br />Self Reject 하시겠습니까?")'
-            );
-            $("#btnConfirm").click(function(){     
-                var reqNo = data.ZREQNO;
-                var requestParam = {
-                    query: {
-                        "event": "selfRejectEvent"
-                    },
-                    payload: {
-                        "ZREQNO" : reqNo
-                    }
-                };
-                sendChatApi(requestParam, null, function(payload){
-                    console.log("selfRejectEvent :: "+ JSON.stringify(payload));
-                    var message = payload.queryResult.messages[0];
-                    var response = message.response;
-                    var result = JSON.parse(response);
-
-                    var smallDialogStr = "";
-
-                    var restSuccessYn = result.restSuccessYn;
-                    var restErrorMessage = result.restErrorMessage;
-                    var ZREQNO = result.ZREQNO;
-
-                    if(restSuccessYn == "Y"){
-                        smallDialogStr = '<div>' + ZREQNO + '<div>Self Reject 했습니다.</div></div>';
-                    }else{
-                        smallDialogStr = restErrorMessage;
-                    }
-
-                    setTimeout(function() {
-                        showHtmlSmallDialog(smallDialogStr);
-                        pop.close($("#Pop_SelfReject_ArticleRequest"));
-                    }, 500);
+        
+        if(loginUserId == data.BNAME) {
+            console.log('본인 청구임 ');
+            var articleReqSelfRejectBtn = $('<button type="button" class="btn btn-plugin btn-border-pink" id="btn-selfReject">Self Reject 하기</button>');
+            addArticleReqFoot.append(articleReqSelfRejectBtn);
+    
+            articleReqSelfRejectBtn.on('click', function() {
+                //console.log('data.BNAME > '+data.BNAME);
+                
+                pop.open(
+                    'create',
+                    $(this),
+                    'Pop_SelfReject_ArticleRequest',
+                    'loadEl.pop_selfReject_confirm("Self Reject", "Self Reject 시 해당 청구건은 자체적으로 반려되며<br />수정 및 재작성이 불가합니다.<br /><br />Self Reject 하시겠습니까?")'
+                );
+                $("#btnConfirm").click(function(){     
+                    var reqNo = data.ZREQNO;
+                    var requestParam = {
+                        query: {
+                            "event": "selfRejectEvent"
+                        },
+                        payload: {
+                            "BNAME" : data.BNAME, 
+                            "ZREQNO" : reqNo
+                        }
+                    };
+                    sendChatApi(requestParam, null, function(payload){
+                        console.log("selfRejectEvent :: ",  payload);
+                        var message = payload.queryResult.messages[0];
+                        var response = message.response;
+                        var result = JSON.parse(response);
+    
+                        var smallDialogStr = "";
+    
+                        if(result == null) {
+                            console.log('에러 발생. ');
+                            showHtmlToastDialog('Self Reject에 문제가 발생했습니다.');
+                            return;
+                        }
+                        var restSuccessYn = result["restSuccessYn"];
+                        var resultMessage = result["resultMessage"];
+                        //var selfRejectInfo = createResponse["successYn"]
+                        var selfRejectInfo = result["selfRejectInfo"];
+    
+                        console.log(restSuccessYn, resultMessage, selfRejectInfo, result["FILTER"]);
+                        if(restSuccessYn == "Y"){
+                            var ZREQNO = selfRejectInfo[0].ZREQNO;
+                            smallDialogStr = '<div>' + ZREQNO + '<div>Self Reject 했습니다.</div></div>';
+                        }else{
+                            smallDialogStr = 'Self Reject에 문제가 발생했습니다.</br>에러 메시지 : '+resultMessage;
+                        }
+    
+                        setTimeout(function() {
+                            showHtmlToastDialog(smallDialogStr);
+                            pop.close($("#Pop_SelfReject_ArticleRequest"));
+                        }, 500);
+                    });
                 });
             });
-        });
+        }
     }
 
     var articleReqCheckBtn = $('<button type="button" class="btn btn-plugin btn-apply btn-check-close" id="btn-check">확인</button>');
@@ -16328,6 +16450,37 @@ var iconArrow2 = '<svg width="15" height="8" viewBox="0 0 15 8" fill="none" xmln
 +'<path d="M0.6 4.31V3.29H12.165C11.4 2.705 10.41 1.76 9.735 0.83L10.635 0.304999C11.64 1.625 13.14 2.945 14.475 3.8C13.14 4.655 11.64 5.975 10.635 7.295L9.735 6.77C10.41 5.84 11.4 4.895 12.165 4.31H0.6Z" fill="black"></path>'
 +'</svg>';
 
+var CHIP_STYLE_DEFAULT = "padding: 2px 4px 4px 4.5px;";//"padding: 2px 4px 4px 4.5px;";
+var CHIP_STYLE_M = "padding: 2px 5px 4px 4px;";
+var CHIP_STYLE_D = "padding: 2px 4px 4px 5px;";
+var CHIP_STYLE_X = "padding: 2px 4px 4px 5.5px;";
+var CHIP_STYLE_G = "padding: 2px 5px 4px 4.5px;";
+var CHIP_STYLE_S = "padding: 2px 4px 4px 5px;";
+var CHIP_STYLE_P = "padding: 2px 4px 4px 5px;";
+var CHIP_STYLE_R = "padding: 1px 5px 2px 6px;";
+var CHIP_STYLE_T = "padding: 2px 4px 3px 5px;";
+
+var CHIP_STYLE_MAP = new Map();
+CHIP_STYLE_MAP.set('M', CHIP_STYLE_M);
+CHIP_STYLE_MAP.set('D', CHIP_STYLE_D);
+CHIP_STYLE_MAP.set('X', CHIP_STYLE_X);
+CHIP_STYLE_MAP.set('G', CHIP_STYLE_G);
+CHIP_STYLE_MAP.set('S', CHIP_STYLE_S);
+CHIP_STYLE_MAP.set('P', CHIP_STYLE_P);
+CHIP_STYLE_MAP.set('R', CHIP_STYLE_R);
+CHIP_STYLE_MAP.set('T', CHIP_STYLE_T);
+
+var CHIP_STYPE_LIST = new Map();
+CHIP_STYPE_LIST.set('M', CHIP_STYLE_M);
+CHIP_STYPE_LIST.set('D', CHIP_STYLE_DEFAULT);
+CHIP_STYPE_LIST.set('X', CHIP_STYLE_DEFAULT);
+CHIP_STYPE_LIST.set('G', CHIP_STYLE_G);
+CHIP_STYPE_LIST.set('S', CHIP_STYLE_S);
+CHIP_STYPE_LIST.set('P', CHIP_STYLE_P);
+CHIP_STYPE_LIST.set('R', CHIP_STYLE_R);
+CHIP_STYPE_LIST.set('T', CHIP_STYLE_T);
+
+
 function uitUpdateInputNERP(data) {
     var uitUpdateCard = $('<div class="system-contents"></div>');
     var uitUpdateText = $(
@@ -16462,7 +16615,7 @@ function uitUpdateInputFirstNERP(uitdata){
             
             $('.small-dialog').remove();    
             //setTimeout(function() {
-            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
             //}, 100);    
                 
             var replaceVal = input.replace(engNum_pattern, '');
@@ -16512,7 +16665,7 @@ function uitUpdateInputFirstNERP(uitdata){
             
             $('.small-dialog').remove();    
             //setTimeout(function() {
-            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
             //}, 100);    
                 
             var replaceVal = input.replace(engNum_pattern, '');
@@ -16578,7 +16731,7 @@ function uitUpdateInputFirstNERP(uitdata){
                 var result_message = result.resultMessage;
                 var meterialInfo = result.resultList;
                 
-                if(result_code == 'E') {
+                if(result_code == 'E' && result_message != 'The material cannot be changed because there are open purchase orders, P/S orders.') {
 
                     if(result_message == 'User( '+uitdata.empNo+' ) is not found.') {
                         
@@ -16602,7 +16755,7 @@ function uitUpdateInputFirstNERP(uitdata){
                         console.log('Material no 조회 에러. '+result_message);
                         
                         setTimeout(function() {
-                            showSmallDialog('Material no 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                            showHtmlToastDialog('Material no 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                         }, 100);
                     }
                     
@@ -16636,7 +16789,7 @@ function uitUpdateInputFirstNERP(uitdata){
                 console.log('Material no 조회 에러 (인텐트)');
                 
                 setTimeout(function() {
-                    showSmallDialog('Material no 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                    showHtmlToastDialog('Material no 조회시 에러가 발생했습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                 }, 100);
                 
                 closeLoadingWithMask();
@@ -16698,19 +16851,23 @@ function uitUpdateInputSecondNERP(uitdata){
     var psCnt = (uitdata.psCnt == null)? '':uitdata.psCnt;
     
     var uit_flag = ''; 
+    var uit_reverse = false;
     if(poCnt == '0' && psCnt == '0'){
     //if(poCnt != '0' && psCnt != '0'){
         uit_flag = 'YES';       
+        uit_reverse = false;
     }
     else{
         if(uitStatus == 'G' || uitStatus == 'D') {
             console.log('예외..');
             // uit_flag = 'NO';       
             // UIT 원복 1
-            uit_flag = 'YES';       
+            uit_flag = 'YES';  
+            uit_reverse = true;
         }
         else{
-            uit_flag = 'NO';       
+            uit_flag = 'NO';  
+            uit_reverse = false;
         }
     }
     
@@ -16748,9 +16905,9 @@ function uitUpdateInputSecondNERP(uitdata){
     var statusChip;
     // 앞에 엑스,체크 아이콘 필요
     if(uit_flag == 'NO') {
-        statusChip = $('<span class="badge-base badge-pink">' + errorIcon + 'unavailable</span>'); 
+        statusChip = $('<span class="badge-base badge-pink">' + errorIcon + 'Unavailable</span>'); 
     }else{
-        statusChip = $('<span class="badge-base badge-green">' + confirmIcon + 'available</span>');
+        statusChip = $('<span class="badge-base badge-green">' + confirmIcon + 'Available</span>');
     }
     itemBox.append(statusChip);
     
@@ -16763,12 +16920,16 @@ function uitUpdateInputSecondNERP(uitdata){
     );
     itemBox.append(materialInfo);
 
-    var chipStyleBef = "padding: 2px 4px 4px 4.5px;";
-    if(uitStatus === "M"||uitStatus === "G"){
-        chipStyleBef = "padding: 2px 5px 4px 4px;";
-    }else if(uitStatus === "F"){
-        chipStyleBef = "padding: 1px 5px 2px 6px;";
-    }
+    // var chipStyleBef = CHIP_STYLE_DEFAULT;
+    // if(uitStatus === "M"||uitStatus === "G"){
+    //     chipStyleBef = CHIP_STYLE_M;    //"padding: 2px 5px 4px 4px;";
+    // }else if(uitStatus === "S"||uitStatus === "P"){
+    //     chipStyleBef = CHIP_STYLE_S;    //"padding: 2px 4px 4px 5px;";
+    // }else if(uitStatus === "F"){
+    //     chipStyleBef = CHIP_STYLE_F;    //"padding: 1px 5px 2px 6px;";
+    // }else if(uitStatus === "T"){
+    //     chipStyleBef = CHIP_STYLE_T;    //"padding: 2px 4px 3px 5px;";
+    // }
 
     // 현 UIT (성공 일 경우)
     //if(uit_flag == 'YES') {
@@ -16777,7 +16938,7 @@ function uitUpdateInputSecondNERP(uitdata){
                 +'<span class="uit-content-label">현재 UIT</span>'
                 // +'<span>' + uitStatus + '</span>'
                 +'<div class="item-content status-chip" style="padding: 3px 0px 2px 0px;">'
-                    +'<span class="badge-base badge-gray" style="width:20px;height:20px;'+chipStyleBef+'">'+uitStatus+'</span>'
+                    +'<span class="badge-base badge-gray" style="width:20px;height:20px;'+CHIP_STYLE_MAP.get(uitStatus)+'">'+uitStatus+'</span>'
                 +'</div>'
             +'</div>'
         );
@@ -16815,7 +16976,7 @@ function uitUpdateInputSecondNERP(uitdata){
                 +'<label>수정 UIT<b>*</b></label>'
             +'</div>'
         );
-        var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span>수정할 UIT를 선택해 주세요.</span></button>');
+        var uitDropdown = $('<button type="button" class="btn btn-dropdown select" id="uit"><span style="color: #6b6b6b;">수정할 UIT를 선택해 주세요.</span></button>');
         var uitDropdownArrow = $(
             '<i class="icons">'
                 +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -16832,11 +16993,11 @@ function uitUpdateInputSecondNERP(uitdata){
         var uitArry = uitdata.uitList;
 
         // UIT 원복 2
-        if(uitStatus == "G") {              // G
+        if(uit_reverse == true && uitStatus == "G") {              // 건수가 0이상이고 G
             let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">D</a></li>');
             uitDropdownListWrap.append(uitDropdownList);    
         }
-        else if(uitStatus == "D") {         // D
+        else if(uit_reverse == true && uitStatus == "D") {         // 건수가 0이상이고 D
             let uitDropdownList = $('<li class="dropdown-item"><a href="javascript:void(0)">G</a></li>');
             uitDropdownListWrap.append(uitDropdownList);    
         }
@@ -16856,7 +17017,7 @@ function uitUpdateInputSecondNERP(uitdata){
         var uitPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" style="height: 100px;" id="uitReason"></textarea>');
         uitPopupContetnBox.append(uitPopupTextArea);
 
-        var uitPopupHelpText = $('<p style="font-size:12px;color:#898989;margin-top: 0px;font-weight: 400;">10자 이상, 120자 이하로 작성해 주세요.</p>');
+        var uitPopupHelpText = $('<p style="font-size:12px;color:#898989;margin-top: 0px;font-weight: 400;">10자 이상, 100자 이하로 작성해 주세요.</p>');
         uitPopupContetnBox.append(uitPopupHelpText);
         // contentCard.append(uitPopupContetnBox);
     
@@ -17061,17 +17222,17 @@ function uitUpdateInputSecondNERP(uitdata){
                     closeBtn();
                     if(output_type == 'E' && subrc == '4'){
                         setTimeout(function() {
-                            showSmallHtmlDialog("시스템 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                            showHtmlSmallDialog("시스템 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
                         }, 400);
                     }
                     else if(output_type == 'E' && subrc == '5'){
                         setTimeout(function() {
-                            showSmallHtmlDialog("Planner 정보가 유효하지 않습니다.");
+                            showHtmlSmallDialog("Planner 정보가 유효하지 않습니다.");
                         }, 400);
                     }
                 
                     setTimeout(function() {
-                        showSmallHtmlDialog("N-ERP 시스템 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                        showHtmlSmallDialog("N-ERP 시스템 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
                     }, 400);
                     
                 }
@@ -17080,7 +17241,7 @@ function uitUpdateInputSecondNERP(uitdata){
     
                     closeBtn();
                     setTimeout(function() {
-                        showSmallHtmlDialog("UIT 수정 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
+                        showHtmlSmallDialog("UIT 수정 중 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요. ");
                     }, 400);
                     
                 }
@@ -17163,7 +17324,7 @@ function uitUpdateInputSecondNERP(uitdata){
                     
                     closeBtn();
                     setTimeout(function() {
-                        showSmallHtmlDialog("N-ERP 시스템 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요.");
+                        showHtmlSmallDialog("N-ERP 시스템 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요.");
                     }, 400);
                     
                 }
@@ -17172,7 +17333,7 @@ function uitUpdateInputSecondNERP(uitdata){
     
                     closeBtn();
                     setTimeout(function() {
-                        showSmallHtmlDialog("UIT 수정 중 챗봇 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요.");
+                        showHtmlSmallDialog("UIT 수정 중 챗봇 오류가 발생했습니다.</br>잠시 후 다시 시도해 주세요.");
                     }, 400);
                     
                 }
@@ -17183,9 +17344,10 @@ function uitUpdateInputSecondNERP(uitdata){
                      uitdata.bef_uit_code = createInfo[0].ZUIT;
                      uitdata.aft_uit_code = createInfo[0].ZCHG_UIT;
     
+                    appendChatbotHtml(addUitChangeCardNERP(uitdata), true);    
+
                     closeBtn();
 
-                    appendChatbotHtml(addUitChangeCardNERP(uitdata), true);    
                 }
     
                 closeLoadingWithMask();
@@ -17208,13 +17370,13 @@ function uitUpdateInputSecondNERP(uitdata){
 			targetP.text("10자 이상 작성해 주세요.")
 			targetP.css("color","#F94B50")
 			targetArea.css("border-color","#F94B50")
-        }else if(inputLength>120){
-            //120자 초과
-			targetP.text("120자 이하로 작성해 주세요.")
+        }else if(inputLength>100){
+            //100자 초과
+			targetP.text("100자 이하로 작성해 주세요.")
 			targetP.css("color","#F94B50")
 			targetArea.css("border-color","#F94B50")
         }else{
-			targetP.text("10자 이상, 120자 이하로 작성해 주세요.")
+			targetP.text("10자 이상, 100자 이하로 작성해 주세요.")
 			targetP.css("color","#898989")
 			targetArea.css("border-color","#898989")
 		}
@@ -17362,20 +17524,24 @@ function addUitChangeCardNERP(uitdata){
     var contentHeader = $('<div class="content-wrap-header">' + iconBell2 +'<h2>UIT가 수정되었어요.</h2></div>');
     contentWarp.append(contentHeader);
     
-    var chipStyleBef = "";
-    var chipStyleAft = "";
+    // var chipStyleBef = CHIP_STYLE_DEFAULT;      //"padding: 2px 4px 4px 4.5px;";
+    // var chipStyleAft = CHIP_STYLE_DEFAULT;      //"padding: 2px 4px 4px 4.5px;";
     var bef_uit_code = uitdata.bef_uit_code;
     var aft_uit_code = uitdata.aft_uit_code;
-    if(bef_uit_code === "M"||bef_uit_code === "G"){
-        chipStyleBef = "padding: 1px 5px 2px 4px;";
-    }else if(bef_uit_code === "F"){
-        chipStyleBef = "padding: 1px 5px 2px 6px;";
-    }
-    if(aft_uit_code === "M"||aft_uit_code === "G"){
-        chipStyleAft = "padding: 1px 5px 2px 4px;";
-    }else if(aft_uit_code === "F"){
-        chipStyleAft = "padding: 1px 5px 2px 6px;";
-    }
+    // if(bef_uit_code === "M"||bef_uit_code === "G"){
+    //     chipStyleBef = CHIP_STYLE_M;        //"padding: 2px 5px 4px 4px;";
+    // }else if(bef_uit_code === "F"){
+    //     chipStyleBef = CHIP_STYLE_F;        //"padding: 1px 5px 2px 6px;";
+    // }else if(bef_uit_code === "T"){
+    //     chipStyleBef = CHIP_STYLE_T;        //"padding: 2px 4px 4px 5px;";
+    // }
+    // if(aft_uit_code === "M"||aft_uit_code === "G"){
+    //     chipStyleAft = CHIP_STYLE_M;        //"padding: 2px 5px 4px 4px;";
+    // }else if(aft_uit_code === "F"){
+    //     chipStyleAft = CHIP_STYLE_F;        //"padding: 1px 5px 2px 6px;";
+    // }else if(aft_uit_code === "T"){
+    //     chipStyleAft = CHIP_STYLE_T;        //"padding: 2px 4px 4px 5px;";
+    // }
     var contentBox = $(
         '<div class="uit-content-box">'
             +'<ul>'
@@ -17386,9 +17552,9 @@ function addUitChangeCardNERP(uitdata){
                 +'<li>'
                     +'<p class="item-header" style="margin: 0px !important;">수정 UIT</p>'
                     +'<div class="item-content status-chip">'
-                        +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+bef_uit_code+'</span>'
+                        +'<span class="badge-base badge-gray" style="'+CHIP_STYLE_MAP.get(bef_uit_code)+'">'+bef_uit_code+'</span>'
                         +iconArrow2
-                        +'<span class="badge-base badge-pink" style="'+chipStyleAft+'">'+aft_uit_code+'</span>'
+                        +'<span class="badge-base badge-pink" style="'+CHIP_STYLE_MAP.get(aft_uit_code)+'">'+aft_uit_code+'</span>'
                     +'</div>'
                 +'</li>'
             +'</ul>'
@@ -17448,20 +17614,20 @@ function reqPlannerUitChangeCardNERP(uitdata){
     var contentHeader = $('<div class="content-wrap-header">' + iconBell2 +'<h2>UIT 수정 요청을 전송했어요</h2></div>');
     contentWarp.append(contentHeader);
     
-    var chipStyleBef = "padding: 2px 4px 4px 4.5px;";
-    var chipStyleAft = "padding: 2px 4px 4px 4.5px;";
+    // var chipStyleBef = CHIP_STYLE_DEFAULT;  //"padding: 2px 4px 4px 4.5px;";
+    // var chipStyleAft = CHIP_STYLE_DEFAULT;  //"padding: 2px 4px 4px 4.5px;";
     var bef_uit_code = uitdata.bef_uit_code;
     var aft_uit_code = uitdata.aft_uit_code;
-    if(bef_uit_code === "M"||bef_uit_code === "G"){
-        chipStyleBef = "padding: 2px 5px 4px 4px;";
-    }else if(bef_uit_code === "F"){
-        chipStyleBef = "padding: 1px 5px 2px 6px;";
-    }
-    if(aft_uit_code === "M"||aft_uit_code === "G"){
-        chipStyleAft = "padding: 2px 5px 4px 4px;";
-    }else if(aft_uit_code === "F"){
-        chipStyleAft = "padding: 1px 5px 2px 6px;";
-    }
+    // if(bef_uit_code === "M"||bef_uit_code === "G"){
+    //     chipStyleBef = CHIP_STYLE_M;        //"padding: 2px 5px 4px 4px;";
+    // }else if(bef_uit_code === "F"){
+    //     chipStyleBef = CHIP_STYLE_F;        //"padding: 1px 5px 2px 6px;";
+    // }
+    // if(aft_uit_code === "M"||aft_uit_code === "G"){
+    //     chipStyleAft = CHIP_STYLE_M;        //"padding: 2px 5px 4px 4px;";
+    // }else if(aft_uit_code === "F"){
+    //     chipStyleAft = CHIP_STYLE_F;        //"padding: 1px 5px 2px 6px;";
+    // }
 
     var contentBox = $(
         '<div class="uit-content-box">'
@@ -17481,9 +17647,9 @@ function reqPlannerUitChangeCardNERP(uitdata){
                 +'<li style="height: 35px;">'
                     +'<p class="item-header" style="margin: 0px !important;">요청 UIT</p>'
                     +'<div class="item-content status-chip">'
-                        +'<span class="badge-base badge-gray" style="'+chipStyleBef+'">'+bef_uit_code+'</span>'
+                        +'<span class="badge-base badge-gray" style="'+CHIP_STYLE_MAP.get(bef_uit_code)+'">'+bef_uit_code+'</span>'
                         +iconArrow2
-                        +'<span class="badge-base badge-pink" style="'+chipStyleAft+'">'+aft_uit_code+'</span>'
+                        +'<span class="badge-base badge-pink" style="'+CHIP_STYLE_MAP.get(aft_uit_code)+'">'+aft_uit_code+'</span>'
                     +'</div>'
                 +'</li>'
             +'</ul>'
@@ -17505,7 +17671,7 @@ function reqPlannerUitChangeCardNERP(uitdata){
         showHtmlSmallDialog(temp);
         temp.remove();
         
-        showHtmlSmallDialog('E-mail 주소가 복사되었습니다.');
+        showHtmlToastDialog('E-mail 주소가 복사되었습니다.');
     });
     
     var messageTextWrap3 = $('<div class="custom-message" style="margin-left: 0px;"></div>'); //
@@ -17607,6 +17773,49 @@ function makeUitUpdateListNERP(data) {
     
     systemBtn.click(function(){
         chatui.sendMessage("UIT 수정 요청");
+    });
+    
+    return uitUpdateCard;
+}
+
+function makeUitListNERP(data) {
+    var uitUpdateCard = $('<div class="system-contents"></div>');
+    var uitUpdateText = $(
+        '<div class="message simple-text">'
+        +   '<p>조회하실 UIT 수정 내역을 선택해 주세요.</p>'
+        +'</div>' )
+    uitUpdateCard.append(uitUpdateText);
+
+    var uitListBtnWrap = $('<div class="btn"></div>');
+    var uitSelfListBtn = $('<button type="button" class="btn btn-emphasis" style="margin-bottom: 6px;">Self UIT 수정 내역</button>');
+    var uitPlannerListBtn = $('<button type="button" class="btn btn-emphasis">Planner UIT 수정 내역</button>');
+    
+    uitSelfListBtn.on('click', function() {
+        //addDateSettingPopupOpenNERP(data);
+        chatui.sendMessage("Self UIT 수정 내역");
+    });
+    
+    uitPlannerListBtn.on('click', function() {
+        //addDateSettingPopupOpenNERP(data);
+        chatui.sendMessage("Planner UIT 수정 내역");
+    });
+    
+    uitListBtnWrap.append(uitSelfListBtn);
+    uitListBtnWrap.append(uitPlannerListBtn);
+    uitUpdateText.append(uitListBtnWrap);
+    
+    if(checkChatHistory == false) {
+        //addDateSettingPopupOpenNERP(data);
+    }
+
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var systemBtn = $('<span class="btn-custom-reply">UIT 수정</span>');
+    quickReplies.append(systemBtn);
+    uitUpdateCard.append(quickReplies);
+    
+    systemBtn.click(function(){
+        chatui.sendMessage("UIT 수정");
     });
     
     return uitUpdateCard;
@@ -17732,23 +17941,23 @@ function uitUpdateListNERP(data) {
                 var sysInfoList = $('<ul class="profile-info system"></ul>');
                 
                 /* 상태 아이콘 */
-                var chipStyle1 = 'style="padding: 2px 4px 4px 4.5px;"';
-                var chipStyle2 = 'style="padding: 2px 4px 4px 4.5px;"';
-                if(item.Z_OLD_VALUE == "M"||item.Z_OLD_VALUE == "G"){
-                    chipStyle1 = 'style="padding: 2px 5px 4px 4px;"';
-                }else if(item.Z_OLD_VALUE == "F"){
-                    chipStyle1 = 'style="padding: 1px 5px 2px 6px;"';
-                }
+                // var chipStyle1 = CHIP_STYLE_DEFAULT;        //"padding: 2px 4px 4px 4.5px;";
+                // var chipStyle2 = CHIP_STYLE_DEFAULT;        //"padding: 2px 4px 4px 4.5px;";
+                // if(item.Z_OLD_VALUE == "M"||item.Z_OLD_VALUE == "G"){
+                //     chipStyle1 = CHIP_STYLE_M;      //"padding: 2px 5px 4px 4px;";
+                // }else if(item.Z_OLD_VALUE == "F"){
+                //     chipStyle1 = CHIP_STYLE_F;      //"padding: 1px 5px 2px 6px;";
+                // }
     
-                if(item.Z_NEW_VALUE == "M"||item.Z_NEW_VALUE == "G"){
-                    chipStyle2 = 'style="padding: 2px 5px 4px 4px;"';
-                }else if(item.Z_NEW_VALUE == "F"){
-                    chipStyle2 = 'style="padding: 1px 5px 2px 6px;"';
-                }
+                // if(item.Z_NEW_VALUE == "M"||item.Z_NEW_VALUE == "G"){
+                //     chipStyle2 = CHIP_STYLE_M;      //"padding: 2px 5px 4px 4px;";
+                // }else if(item.Z_NEW_VALUE == "F"){
+                //     chipStyle2 = CHIP_STYLE_F;      //"padding: 1px 5px 2px 6px;";
+                // }
     
-                var liStatus = '<span class="badge-base badge-gray" '+chipStyle1+'>' + item.Z_OLD_VALUE + '</span>';
+                var liStatus = '<span class="badge-base badge-gray" style="'+CHIP_STYPE_LIST.get(item.Z_OLD_VALUE)+'">' + item.Z_OLD_VALUE + '</span>';
                 liStatus += iconArrow2;
-                liStatus += '<span class="badge-base badge-pink" '+chipStyle2+'>' + item.Z_NEW_VALUE + '</span>';
+                liStatus += '<span class="badge-base badge-pink" style="'+CHIP_STYPE_LIST.get(item.Z_NEW_VALUE)+'">' + item.Z_NEW_VALUE + '</span>';
                 
                 sysInfoList.append($(
                     '<li class="articleRequestList-li uit-content-box">'
@@ -17926,7 +18135,7 @@ function addDateSettingPopupOpenNERP(data){
             
         if(check.test(inputVal)){
             $('.small-dialog').remove();
-            showSmallDialog("영어, 숫자만 입력해주세요.");
+            showHtmlToastDialog("영어, 숫자만 입력해주세요.");
             $('#orgCode').val('');
             $('#orgCode').focus();
             return;
@@ -18122,7 +18331,7 @@ function addDateSettingPopupOpenNERP(data){
         
 
         if(startDt > endDt){
-            showHtmlSmallDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
+            showHtmlToastDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
             return;
         }
 
@@ -18148,7 +18357,7 @@ function addDateSettingPopupOpenNERP(data){
             var result = JSON.parse(response);
             
             if(result == null){
-                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
                 isLoading = false;
                 return;
             }
@@ -18291,26 +18500,34 @@ function addUITDetailPopupOpenNERP(data){
     );
     uitSubInfoUi.append(plantInfo);
 
-    var chipStyle1 = 'style="padding: 2px 4px 4px 4.5px;"';
-    var chipStyle2 = 'style="padding: 2px 4px 4px 4.5px;"';
-    if(data.Z_OLD_VALUE == "M"||data.Z_OLD_VALUE == "G"){
-        chipStyle1 = 'style="padding: 2px 5px 4px 4px;"';
-    }else if(data.Z_OLD_VALUE == "F"){
-        chipStyle1 = 'style="padding: 1px 5px 2px 6px;"';
-    }
+    // var chipStyle1 = CHIP_STYLE_DEFAULT;        //"padding: 2px 5px 3px 5px;";
+    // var chipStyle2 = CHIP_STYLE_DEFAULT;        //"padding: 2px 5px 3px 5px;";
+    // if(data.Z_OLD_VALUE == "M"||data.Z_OLD_VALUE == "G"){
+    //     chipStyle1 = CHIP_STYLE_M;      //"padding: 2px 5px 4px 4px;";
+    // }else if(data.Z_OLD_VALUE === "S"||data.Z_OLD_VALUE === "P"){
+    //     chipStyle1 = CHIP_STYLE_S;      //"padding: 2px 4px 4px 5px;";
+    // }else if(data.Z_OLD_VALUE == "F"){
+    //     chipStyle1 = CHIP_STYLE_F;      //"padding: 1px 5px 2px 6px;";
+    // }else if(data.Z_OLD_VALUE === "T"){
+    //     chipStyle1 = CHIP_STYLE_T;      //"padding: 2px 4px 3px 5px;";
+    // }
 
-    if(data.Z_NEW_VALUE == "M"||data.Z_NEW_VALUE == "G"){
-        chipStyle2 = 'style="padding: 2px 5px 4px 4px;"';
-    }else if(data.Z_NEW_VALUE == "F"){
-        chipStyle2 = 'style="padding: 1px 5px 2px 6px;"';
-    }
+    // if(data.Z_NEW_VALUE == "M"||data.Z_NEW_VALUE == "G"){
+    //     chipStyle2 = CHIP_STYLE_M;      //"padding: 2px 5px 4px 4px;";
+    // }else if(data.Z_NEW_VALUE === "S"||data.Z_NEW_VALUE === "P"){
+    //     chipStyle2 = CHIP_STYLE_S;      //"padding: 2px 4px 4px 5px;";
+    // }else if(data.Z_NEW_VALUE == "F"){
+    //     chipStyle2 = CHIP_STYLE_F;      //"padding: 1px 5px 2px 6px;";
+    // }else if(data.Z_NEW_VALUE === "T"){
+    //     chipStyle2 = CHIP_STYLE_T;      //"padding: 2px 4px 3px 5px;";
+    // }
 
     var uitNowInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
         +'<h5>수정 UIT</h5>'
         +'<p style="display: flex; justify-content: right; align-items: center;">'
-        +'<span class="badge-base-size20 badge-detali-card badge-gray" '+chipStyle1+'>' + data.Z_OLD_VALUE + '</span>' 
+        +'<span class="badge-base-size20 badge-detali-card badge-gray" style="'+CHIP_STYLE_MAP.get(data.Z_OLD_VALUE)+'">' + data.Z_OLD_VALUE + '</span>' 
         +iconArrow2
-        +'<span class="badge-base-size20 badge-detali-card badge-pink" '+chipStyle2+'>' + data.Z_NEW_VALUE + '</span>'
+        +'<span class="badge-base-size20 badge-detali-card badge-pink" style="'+CHIP_STYLE_MAP.get(data.Z_NEW_VALUE)+'">' + data.Z_NEW_VALUE + '</span>'
         +'</p>'
         +'</li>'
     );
@@ -18515,11 +18732,16 @@ function uitPlannerListNERP(data) {
             // 수정상태 (STATUS)
             var liStatus;
             if(item.STATUS == "00"){ // 노랑 badge : Waiting
-                liStatus = '<span class="badge-base badge-yellow" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+                liStatus = '<span class="badge-base badge-yellow">' + item.STATUS_TEXT + '</span>';             //  style="height:18px;"
             }else if(item.STATUS == "01"){ // 초록 badge : Completed
-                liStatus = '<span class="badge-base badge-green" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+                liStatus = '<span class="badge-base badge-green">' + item.STATUS_TEXT + '</span>';
             }else if(item.STATUS == "02"){ // 회색 badge : Rejected
-                liStatus = '<span class="badge-base badge-gray" style="height:18px;">' + item.STATUS_TEXT + '</span>';
+                liStatus = '<span class="badge-base badge-gray">' + item.STATUS_TEXT + '</span>';
+            }
+            
+            var uitTitle = '요청 UIT';
+            if(item.STATUS == "01") {
+                uitTitle = '수정 UIT';
             }
             
                 sysInfoList.append($(
@@ -18538,27 +18760,31 @@ function uitPlannerListNERP(data) {
                 ));
                 
                 /* 상태 아이콘 */
-                var chipStyle1;
-                var chipStyle2;
-                if(item.Z_OLD_VALUE == "M"||item.Z_OLD_VALUE == "G"){
-                    chipStyle1 = 'style="padding: 1px 5px 2px 4px;"'
-                }else if(item.Z_OLD_VALUE == "F"){
-                    chipStyle1 = 'style="padding: 1px 5px 2px 6px;"'
-                }
+                // var chipStyle1 = CHIP_STYLE_DEFAULT;        //"padding: 2px 4px 4px 4.5px;";
+                // var chipStyle2 = CHIP_STYLE_DEFAULT;        //"padding: 2px 4px 4px 4.5px;";
+                // if(item.Z_OLD_VALUE == "M"||item.Z_OLD_VALUE == "G"){
+                //     chipStyle1 = CHIP_STYLE_M;      //"padding: 2px 5px 4px 4px;";
+                // }else if(item.Z_OLD_VALUE == "F"){
+                //     chipStyle1 = CHIP_STYLE_F;      //"padding: 1px 5px 2px 6px;";
+                // }else if(item.Z_OLD_VALUE == "T"){
+                //     chipStyle1 = CHIP_STYLE_T;      //"padding: 2px 4px 4px 5px;";
+                // }
     
-                if(item.Z_NEW_VALUE == "M"||item.Z_NEW_VALUE == "G"){
-                    chipStyle2 = 'style="padding: 1px 5px 2px 4px;"'
-                }else if(item.Z_NEW_VALUE == "F"){
-                    chipStyle2 = 'style="padding: 1px 5px 2px 6px;"'
-                }
+                // if(item.Z_NEW_VALUE == "M"||item.Z_NEW_VALUE == "G"){
+                //     chipStyle2 = CHIP_STYLE_M;      //"padding: 2px 5px 4px 4px;";
+                // }else if(item.Z_NEW_VALUE == "F"){
+                //     chipStyle2 = CHIP_STYLE_F;      //"padding: 1px 5px 2px 6px;";
+                // }else if(item.Z_NEW_VALUE == "T"){
+                //     chipStyle2 = CHIP_STYLE_T;      //"padding: 2px 4px 4px 5px;";
+                // }
     
-                var liStatus = '<span class="badge-base badge-gray" '+chipStyle1+'>' + item.Z_OLD_VALUE + '</span>';
+                var liStatus = '<span class="badge-base badge-gray" style="'+CHIP_STYPE_LIST.get(item.Z_OLD_VALUE)+'">' + item.Z_OLD_VALUE + '</span>';
                 liStatus += iconArrow2;
-                liStatus += '<span class="badge-base badge-pink" '+chipStyle2+'>' + item.Z_NEW_VALUE + '</span>';
+                liStatus += '<span class="badge-base badge-pink" style="'+CHIP_STYPE_LIST.get(item.Z_NEW_VALUE)+'">' + item.Z_NEW_VALUE + '</span>';
                 
                 sysInfoList.append($(
                     '<li class="articleRequestList-li uit-content-box">'
-                        +'<h4>요청 UIT</h4>'
+                        +'<h4>'+uitTitle+'</h4>'
                         +'<div style="display: flex;justify-content: right;align-items: center;" class="status-chip">' + liStatus + '</div>'
                     +'</li>'
                 ));
@@ -18775,7 +19001,7 @@ function addPlannerSearchPopupOpenNERP(data){
         console.log('statusId : '+statusId);
 
         if(startDt > endDt){
-            showHtmlSmallDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
+            showHtmlToastDialog('<div>조회 기간을 다시 확인해 주세요.</div>');
             return;
         }
 
@@ -18799,7 +19025,7 @@ function addPlannerSearchPopupOpenNERP(data){
             var result = JSON.parse(response);
             
             if(result == null){
-                showHtmlSmallDialog('<div>시스템 오류 입니다.</div>');
+                showHtmlToastDialog('<div>시스템 오류 입니다.</div>');
                 isLoading = false;
                 return;
             }
@@ -19001,28 +19227,28 @@ function addPlannerDetailPopupOpenNERP(item){
     );
     uitSubInfoUi.append(plantInfo);
 
-    var chipStyle1 = '';
-    if(item.Z_OLD_VALUE == "M"||item.Z_OLD_VALUE == "G"){
-        chipStyle1 = 'style="padding: 1px 5px 2px 4px;"'
-    }else if(item.Z_OLD_VALUE == "F"){
-        chipStyle1 = 'style="padding: 1px 5px 2px 6px;"'
-    }
+    // var chipStyle1 = CHIP_STYLE_DEFAULT;        //"padding: 2px 5px 3px 5px;";
+    // if(item.Z_OLD_VALUE == "M"||item.Z_OLD_VALUE == "G"){
+    //     chipStyle1 = CHIP_STYLE_M;          //"padding: 1px 5px 2px 4px;";
+    // }else if(item.Z_OLD_VALUE == "F"){
+    //     chipStyle1 = CHIP_STYLE_F;          //"padding: 1px 5px 2px 6px;";
+    // }
 
-    var chipStyle2 = '';
-    if(item.Z_NEW_VALUE == "M"||item.Z_NEW_VALUE == "G"){
-        chipStyle2 = 'style="padding: 1px 5px 2px 4px;"'
-    }else if(item.Z_NEW_VALUE == "F"){
-        chipStyle2 = 'style="padding: 1px 5px 2px 6px;"'
-    }
+    // var chipStyle2 = CHIP_STYLE_DEFAULT;        //"padding: 2px 5px 3px 5px;";
+    // if(item.Z_NEW_VALUE == "M"||item.Z_NEW_VALUE == "G"){
+    //     chipStyle2 = CHIP_STYLE_M;          //"padding: 1px 5px 2px 4px;";
+    // }else if(item.Z_NEW_VALUE == "F"){
+    //     chipStyle2 = CHIP_STYLE_F;          //"padding: 1px 5px 2px 6px;";
+    // }
 
     var updateUitTitle = (item.STATUS == "01")? "수정 UIT":"요청 UIT";
     
     var uitNowInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
         +'<h5>'+updateUitTitle+'</h5>'
         +'<p style="display: flex; justify-content: right; align-items: center;">'
-        +'<span class="badge-base-size20 badge-detali-card badge-gray" '+chipStyle1+'>' + item.Z_OLD_VALUE + '</span>' 
+        +'<span class="badge-base-size20 badge-detali-card badge-gray" style="'+CHIP_STYLE_MAP.get(item.Z_OLD_VALUE)+'">' + item.Z_OLD_VALUE + '</span>' 
         +iconArrow2
-        +'<span class="badge-base-size20 badge-detali-card badge-pink" '+chipStyle2+'>' + item.Z_NEW_VALUE + '</span>'
+        +'<span class="badge-base-size20 badge-detali-card badge-pink" style="'+CHIP_STYLE_MAP.get(item.Z_NEW_VALUE)+'">' + item.Z_NEW_VALUE + '</span>'
         +'</p>'
         +'</li>'
     );
@@ -19070,7 +19296,7 @@ function addPlannerDetailPopupOpenNERP(item){
         //showHtmlSmallDialog(temp);
         temp.remove();
         
-        showHtmlToastDialog('E-mail 주소가 복사되었습니다.');
+        showHtmlToastDialog('이메일 주소가 복사되었습니다.');
     });
 
     function addUITDetailPopupClose() {

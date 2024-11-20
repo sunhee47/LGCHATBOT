@@ -8044,14 +8044,18 @@ color: var(--color-gray-900, #2c2c2c);
     padding-left: 5px;width: 91%;
 }
 
-.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-box{
-    margin: 5px 0px 5px 0px;
+.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-list-box{
+    margin: 10px 0px 5px 0px;
 }
 
-.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-info{
+.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-list-info{
     display: flex;
     justify-content: space-between;
-    height: 23px;
+    /* height: 23px;   */
+}
+
+.plugins .articleRequestDetail-contents .articleReqItemList .articleReq-list-wrap li .item-list-info p {
+    margin-top: 0px;
 }
 
 .plugins .articleRequestDetail-footer{
