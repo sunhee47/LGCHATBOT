@@ -4475,12 +4475,18 @@ const setDatepickerArticleRequest = function() {
       
       var newDt = new Date();
       var newDate = moment(newDt).format('YYYY.MM.DD');
+      var thirtyOneDaysAgo = new Date(newDt.setDate(newDt.getDate() - 31));
+      var thirtyOneDaysAgoDate = moment(thirtyOneDaysAgo).format('YYYY.MM.DD');
       var oneMonthAgo = new Date(newDt.setMonth(newDt.getMonth() - 1));
       var oneMonthAgoDate = moment(oneMonthAgo).format('YYYY.MM.DD');
-
-      //const startDate = new Date($('.startdate').val());
-      //const startDateTrdOneDateAgo = moment(startDate.setDate(startDate.getDate() + 31)).format('YYYY.MM.DD');
-
+      
+      let startDate = newDt;
+      let startDateTrdOneDateAgo = newDate;
+      if($('.startdate').val() != '') {
+          startDate = new Date($('.startdate').val());
+          startDateTrdOneDateAgo = moment(startDate.setDate(startDate.getDate() + 31)).format('YYYY.MM.DD');
+      }
+  
       if ($(btn).closest(".schedule-input-wrap").length > 0) {
         $initEl = $(btn).closest(".schedule-input-wrap").find(".datepicker-chem");
         $(".datepicker-chem:visible").not($initEl).fadeOut('fast', function(){
@@ -4508,9 +4514,9 @@ const setDatepickerArticleRequest = function() {
   
       if($(btn).hasClass('enddate')) {
         minDate = $(btn).closest('.schedule-wrap').find('.startdate').val();
-        //maxDate = startDateTrdOneDateAgo;
+        maxDate = (startDateTrdOneDateAgo > newDate)? newDate:startDateTrdOneDateAgo;
       }
-  
+
       if ($initEl.is(':visible')) {
         dpClose();
       } else {
@@ -4538,15 +4544,52 @@ const setDatepickerArticleRequest = function() {
             $initEl.find('.selected-date').text(this.value);
             $(btn).val(this.value);
 
-            $("#datepickerEnd").datepicker("option", "minDate", $('.startdate').val());
-
             var endDt = moment($('.enddate').val()).format('YYYYMMDD');
             var startDt = moment($('.startdate').val()).format('YYYYMMDD');
-            if(endDt < startDt) {
-              //$('#datepickerEnd').find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
-              //$('#datepickerEnd').find('.ui-state-active').removeClass('ui-state-active');
-              
-              $('.enddate').val($('.startdate').val());
+            if($('.startdate').val() != '' && endDt < startDt) {
+                $('.enddate').val($('.startdate').val());
+            }
+            
+            // 31일 초과시 메시지 호출 종료일 = 시작일 + 31
+            if($('.startdate').val() != '') {
+                const endDate = new Date($('.enddate').val());
+                const startDate = new Date($('.startdate').val());
+    			
+                const diffDate = endDate.getTime() - startDate.getTime();
+                  
+                var limitDate = Math.abs(diffDate / (1000 * 60 * 60 * 24));
+    
+    			var newDt = new Date();
+                var newDate = moment(newDt).format('YYYY.MM.DD');
+    			var newLimitDt = moment(newDt).format('YYYYMMDD');
+                var startDateTrdOneDateAgo = startDate.setDate(startDate.getDate() + 31);
+    			var thirtyOneDaysAgoDt = moment(thirtyOneDaysAgo).format('YYYYMMDD');
+    			  
+                if(limitDate > 31){
+                    $('.small-dialog').remove();
+                    showHtmlSmallDialog('<div>최대 조회 기간은 1개월입니다.</div>');
+                    
+    				
+                    if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
+                        $('.enddate').val(newDate);
+        				$('#datepickerEnd').datepicker("setDate", newDate);
+        				$('#datepickerEnd').find('.dp-header').find('.selected-date').text(newDate);
+                    }else{
+        				$('.enddate').val(moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+        				$('#datepickerEnd').datepicker("setDate", moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+        				$('#datepickerEnd').find('.dp-header').find('.selected-date').text(moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
+                    }
+    				
+                }
+            }
+            
+            // 시작일 변경시 마지막일 disabled 31일 and 오늘 이후
+            $("#datepickerEnd").datepicker("option", "minDate", $('.startdate').val());
+            
+            if(moment(startDateTrdOneDateAgo).format('YYYYMMDD') > newLimitDt){
+                $("#datepickerEnd").datepicker("option", "maxDate", newDate);
+            }else{
+                $("#datepickerEnd").datepicker("option", "maxDate", moment(startDateTrdOneDateAgo).format('YYYY.MM.DD'));
             }
 
             if (callback){
@@ -4617,17 +4660,17 @@ const setDatepickerArticleRequest = function() {
               inputVal = $('#endDateValue').val();
             }
 
-            if(inputVal != ""){
-              $initEl.datepicker("setDate", inputVal);
-              $initEl.find('.selected-date').text(inputVal);
-              $(btn).val(inputVal);
-            }else{
+            // if(inputVal != ""){
+            //   $initEl.datepicker("setDate", inputVal);
+            //   $initEl.find('.selected-date').text(inputVal);
+            //   $(btn).val(inputVal);
+            // }else{
               $initEl.datepicker("setDate", newDate);
               $initEl.find('.selected-date').text("");
               $(btn).val("");
               $initEl.find('.ui-datepicker-current-day').removeClass('ui-datepicker-current-day');
               $initEl.find('.ui-state-active').removeClass('ui-state-active');
-            }
+            // }
           });
 
           $initEl.find('.btn-datepicker-confirm').on('click', function(){
@@ -4668,6 +4711,7 @@ const setDatepickerArticleRequest = function() {
       close: dpClose,
       fulldate: fullDate
     }
+
 };
 
 function setTimePicker(timeinput) {
