@@ -894,15 +894,35 @@ chatui.onLoad = function(){
     if(val.length > 0 && (e.code == 'Enter' || e.keyCode == 13)) {
         if(!e.shiftKey){
 
-          var chgVal = val.replace(/\n/g, "");
+          // ChatBot 소스코드 변환 응답값 수정 (24.11.13) Start
+          var secVal = val.replace(/\n/g, "");
           $('.sendText').val('');
           $('.btn-send').removeClass('active');
           setTimeout(function() {
-              var keyWord = chkSecureText(chgVal);
+              var keyWord = chkSecureText(secVal);
+              
+              chgVal = replaceHtmlCodeForChar(val);
+              chgVal = replaceSqlCodeForChar(chgVal);
+              chgVal = replaceLinuxCodeForChar(chgVal);
+              console.log('chgVal : '+chgVal);                  
+              
               secBtnDisable();
-              appendQueryText(val);
-              chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":val,"keyWord":keyWord});
+              appendQueryText(chgVal);
+              chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":chgVal,"keyWord":keyWord});
           }, 100);
+         // ChatBot 소스코드 변환 응답값 수정 (24.11.13) End
+
+////////////////////////////////////////////////////////////////////// 
+
+        //   var chgVal = val.replace(/\n/g, "");
+        //   $('.sendText').val('');
+        //   $('.btn-send').removeClass('active');
+        //   setTimeout(function() {
+        //       var keyWord = chkSecureText(chgVal);
+        //       secBtnDisable();
+        //       appendQueryText(val);
+        //       chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":val,"keyWord":keyWord});
+        //   }, 100);
 
         }
     }
@@ -926,15 +946,36 @@ chatui.onLoad = function(){
     } else {
         if(val.length > 0) {
             var sessionId = chatui.getSessionId();
-          var chgVal = val.replace(/\n/g, "");
-          $('.sendText').val('');
-          $('.btn-send').removeClass('active');
-          setTimeout(function() {
-              var keyWord = chkSecureText(chgVal);
-              secBtnDisable();
-              appendQueryText(val);
-              chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":val,"keyWord":keyWord});
-          }, 100);
+            
+            // ChatBot 소스코드 변환 응답값 수정 (24.11.13) Start
+            var secVal = val.replace(/\n/g, "");
+            $('.sendText').val('');
+            $('.btn-send').removeClass('active');
+            setTimeout(function() {
+                var keyWord = chkSecureText(secVal);
+                
+                chgVal = replaceHtmlCodeForChar(val);
+                chgVal = replaceSqlCodeForChar(chgVal);
+                chgVal = replaceLinuxCodeForChar(chgVal);
+                console.log('chgVal : '+chgVal);                  
+                
+                secBtnDisable();
+                appendQueryText(chgVal);
+                chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":chgVal,"keyWord":keyWord});
+            }, 100);
+            // ChatBot 소스코드 변환 응답값 수정 (24.11.13) End
+
+////////////////////////////////////////////////////////////////////// 
+
+        //   var chgVal = val.replace(/\n/g, "");
+        //   $('.sendText').val('');
+        //   $('.btn-send').removeClass('active');
+        //   setTimeout(function() {
+        //       var keyWord = chkSecureText(chgVal);
+        //       secBtnDisable();
+        //       appendQueryText(val);
+        //       chatui.sendEventMessage("callGPT",{"languageCode": languageCode, "reqText":val,"keyWord":keyWord});
+        //   }, 100);
           
         }
     }
@@ -963,17 +1004,6 @@ chatui.onLoad = function(){
     }
   });
 
-    // Front UI Push 메시지 모니터링
-    setTimeout(() => {
-
-        $.getScript("https://storage.googleapis.com/singlex-chatbot-front/_common/chatclient-monitor/chatclient-monitor.min.js?t=" + Date.now(), function(data, textStatus,jqxhr) {
-
-            // 5분 주기로 모니터링 실행
-            chatuiMonitor.start(300);
-        });
-
-    }, 1000);  
-
     var hlscriptSrc = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
 
     loadScript(hlscriptSrc, function() {
@@ -990,6 +1020,98 @@ function loadScript(src, callback) {
     
     document.head.appendChild(script);
 }
+
+// ChatBot 소스코드 변환 응답값 수정 (24.11.13) Start
+
+// 발화내용 중 sql 관련 단어 포함된 경우 html 코드로 치환.
+function replaceSqlCodeForChar(val){
+    let chgVal = val.replace(/select/gi, "&#115;&#101;&#108;&#101;&#99;&#116; ")
+                .replace(/from/gi, "&#102;&#111;&#111;&#109; ")
+                .replace(/where/gi, "&#119;&#104;&#101;&#114;&#101; ")
+                .replace(/insert/gi, "&#105;&#110;&#115;&#101;&#114;&#116; ")
+                .replace(/update/gi, "&#117;&#112;&#100;&#97;&#116;&#101; ")
+                .replace(/delete/gi, "&#100;&#101;&#108;&#101;&#116;&#101; ")
+                .replace(/create/gi, "&#99;&#114;&#101;&#112;&#101;&#116;&#101; ")
+                .replace(/alter/gi, "&#97;&#108;&#116;&#101;&#114; ")
+                .replace(/drop/gi, "&#100;&#114;&#111;&#112; ")
+                .replace(/table/gi, "&#116;&#97;&#98;&#108;&#101; ")
+                .replace(/database/gi, "&#100;&#97;&#116;&#97;&#98;&#101;&#115;&#101; ")
+                .replace(/describe/gi, "&#100;&#101;&#115;&#99;&#114;&#105;&#112;&#101; ")
+                .replace(/values/gi, "&#118;&#97;&#108;&#117;&#101;&#115; ")
+                .replace(/exists/gi, "&#101;&#120;&#105;&#115;&#116;&#115; ")
+                .replace(/primary/gi, "&#112;&#114;&#105;&#109;&#97;&#114;&#121; ")
+                .replace(/foreign/gi, "&#102;&#111;&#114;&#101;&#105;&#103;&#110; ")
+                .replace(/key/gi, "&#107;&#101;&#121;")
+                ;
+                
+    return chgVal;
+}
+
+// 발화내용 중 linux 관련 단어 포함된 경우 html 코드로 치환.
+function replaceLinuxCodeForChar(val){
+    let chgVal = val.replace(/shutdown/gi, "&#115;&#104;&#117;&#116;&#100;&#111;&#119;&#110;")
+                .replace(/reboot/gi, "&#114;&#101;&#98;&#111;&#111;&#116; ")
+                .replace(/halt/gi, "&#104;&#97;&#108;&#116;")
+                .replace(/useradd/gi, "&#117;&#115;&#101;&#114;&#97;&#100;&#100; ")
+                .replace(/adduser/gi, "&#97;&#100;&#100;&#117;&#115;&#101;&#114; ")
+                .replace(/userdel/gi, "&#117;&#115;&#101;&#114;&#100;&#101;&#108; ")
+                .replace(/ifconfig/gi, "&#105;&#102;&#99;&#111;&#110;&#102;&#105;&#103; ")
+                .replace(/ipconfig/gi, "&#105;&#112;&#99;&#111;&#110;&#102;&#105;&#103; ")
+                .replace(/netstat/gi, "&#110;&#101;&#116;&#115;&#116;&#97;&#116; ")
+                .replace(/fdisk/gi, "&#102;&#100;&#105;&#115;&#107;")
+                .replace(/rm /gi, "&#114;&#109; ")
+                .replace(/chmod/gi, "&#99;&#104;&#109;&#111;&#100;")
+                .replace(/chown/gi, "&#99;&#104;&#111;&#119;&#110;")
+                .replace(/route/gi, "&#114;&#111;&#117;&#116;&#101;")
+                .replace(/on /gi, "&#79;&#110; ")
+                .replace(/err/gi, "&#69;&#114;&#114;")
+                .replace(/resume/gi, "&#82;&#101;&#115;&#117;&#109;&#101;")
+                .replace(/next/gi, "&#78;&#101;&#120;&#116;")
+                .replace(/import/gi, "&#105;&#109;&#112;&#111;&#114;&#116;")
+                .replace(/os /gi, "&#111;&#115; ")
+                .replace(/refer/gi, "&#82;&#101;&#102;&#101;&#114")
+                ;
+                 
+    return chgVal;
+}
+
+// 발화내용 중 특수문자 포함된 경우 html 코드로 치환.
+function replaceHtmlCodeForChar(val) {
+    let chgVal = val.replace(/\&/g,"&amp;")              // &#38; 
+                .replace(/\#/g,"&#35;")           // 치환한 html 문자에 포함되어 있어서 제일 먼저 치환함. 
+                .replace(/\(/g,"&#40;")
+                .replace(/\)/g,"&#41;")
+                .replace(/\"/gi,"&quot;")               // 	&#34;
+                .replace(/\'/gi,"&#39;")
+                .replace(/\$/g,"&#36;")
+                .replace(/\./g,"&#46;")
+                .replace(/\%/g,"&#37;")
+                .replace(/\</g,"&#60;")
+                .replace(/\>/g,"&#62;")
+                .replace(/\[/g,"&#91;")
+                .replace(/\]/g,"&#93;")
+                .replace(/\{/g,"&#123;")
+                .replace(/\}/g,"&#125;")
+                .replace(/\!/g,"&#33;")
+                .replace(/\*/g,"&#42;")
+                .replace(/\+/g,"&#43;")
+                .replace(/\,/g,"&#44;")
+                .replace(/\-/g,"&#45;")
+                .replace(/\//g,"&#47;")
+                .replace(/\:/g,"&#58;")
+                //.replace(/\;/g,"&#59;")       // 처리시 모든 특수문자뒤에 세미콜론이 붙는다...
+                .replace(/\=/g,"&#61;")
+                .replace(/\?/g,"&#63;")
+                .replace(/\@/g,"&#64;")
+                .replace(/\\/g,"&#92;")
+                .replace(/\^/g,"&#94;")
+                .replace(/\`/g,"&#96;")
+                .replace(/\~/g,"&#126;");
+                
+    return chgVal;
+} 
+
+// ChatBot 소스코드 변환 응답값 수정 (24.11.13) End
 
 var saveQuestion = false;
 
