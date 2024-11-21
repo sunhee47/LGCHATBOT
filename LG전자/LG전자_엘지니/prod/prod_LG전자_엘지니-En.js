@@ -2204,6 +2204,11 @@ function welcomeAppend(welcomeMessage) {
          
          welcomeMessage = $(
             '<div class="message">'
+        +   '<h2>✔<b>[GPT Mode] was terminated as of November 15th.</b></h2>'
+        +    '<p>'
+        +    '    · You can continue to use GPT and Gemini in the external menu of L-Genie.AI. We appreciate your continued use.</br>'
+        +    '</p>'
+        +    '</br>'
             +   '<h2>✔<b>Tips for 100% utilization of New L-Genie!</b></h2>'
             +    '<p>'
             +    '    · I organized the menu to make it easy to find the information you want. Even if you can\'t think of the exact search term, click the button to check the answer.</br>'
@@ -2610,9 +2615,9 @@ jQuery(document).ready(function(e){
 //      +'<li class="list-menu-fourth">학습봇 모드'
 //        + arrow2
 //    +'</li>'
-      +'<li class="list-menu-fifth">GPT Mode'
-        + arrow2
-    +'</li>'
+    //   +'<li class="list-menu-fifth">GPT Mode'
+    //     + arrow2
+    // +'</li>'
 //    +'<li class="list-menu-sixth">알림 설정'
 //        + arrow2
 //    +'</li>'
@@ -2793,7 +2798,7 @@ jQuery(document).ready(function(e){
   +   '<div class="faq-body">'
   +     '<h2>Check out this feature</h2>'
   +     '<div class="btns">'
-  +         '<button type="button" class="btn-s btn-text btn-sendtext">AI Trans</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">Trans Talk</button>'
   +     '</div>'
   +     '<h2>Main Categories</h2>'
   +     '<div class="btns">'
@@ -3097,7 +3102,7 @@ jQuery(document).ready(function(e){
 
   $('.sendText').on('click', function() {
   if(searchActive === false) {
-    $('.search-menu').addClass('show');
+    //$('.search-menu').addClass('show');
     //  $(".sendText").autocomplete("disable");
   }
   });
@@ -6611,8 +6616,8 @@ function makeGptBotModeCard(data) {
     //   openChatFrame();
     // };
   });
-  regBtnWrap.append(regBtn);
-  learningBotCard.append(regBtnWrap);
+  //regBtnWrap.append(regBtn);
+  //learningBotCard.append(regBtnWrap);
   
   return learningBotCard;
 }
