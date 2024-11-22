@@ -4334,6 +4334,7 @@ const setDatepicker = function() {
     }
 
     var minDate = '';
+    minDate = moment(new Date()).format('YYYY.MM.DD');
 
     if($(btn).hasClass('startdate')) {
       minDate = $(btn).val();
@@ -8558,6 +8559,8 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         }        
         else if(message.type == 'budgetInput') {                    // 예산조회 입력
           messageCard = makeBudgetInputCard(message.data); // [퍼블 수정 및 추가]
+            //  messageCard = reqPlannerUitChangeCardNERP(message.data);
+            // messageCard = productsBillResult(message.data);
     	}
         else if(message.type == 'searchBudgetResult') {                    // 예산조회 결과
           messageCard = budgetResult(message.data); // [퍼블 수정 및 추가]
@@ -11878,8 +11881,15 @@ var iconLink = (
 );
 var maxItemCount = 10;
 var isQuick = false;
+var loginDeptCode = '';
+var loginDeptName = '';
 // 물품 청구 신청 메세지
 function makeRequestItemsInput(requestdata) {
+    // console.log('물품청구신청 입력 : ', requestdata);
+    
+    loginDeptCode = requestdata.department_code;
+    loginDeptName = requestdata.department_name;
+
     var messageWrap = $('<div class="custom-message"></div>');
     //var messageWrap = $('<div class=""></div>');
     
@@ -11896,6 +11906,8 @@ function makeRequestItemsInput(requestdata) {
     );
     loadBtn.on('click', function() {
         requestdata.step = 1;
+        requestdata.department_code = loginDeptCode;
+        requestdata.department_name = loginDeptName;
         requestItemsPopupOpen(requestdata);
     });
     messageTextWrap.append(messageTextContent);
@@ -11939,6 +11951,7 @@ function makeRequestItemsInput(requestdata) {
 // [ 물품 청구 신청 입력 팝업 ]
 var requestItemsInputForm;
 function requestItemsPopupOpen(requestdata) {
+    
     /* #########[ popup_wrap_start ]######### */
     var pulginDim = $('<div class="plugin-dim show"></div>');
     //var addPlugin = $('<div class="plugins another-account-order" id="request-items"></div>');
@@ -12258,6 +12271,10 @@ function requestItemsInputFirst(requestdata) {
 
         $(btn).removeClass('active');
         $(btn).find('span').text('청구할 계정을 선택해 주세요.');
+        
+        $('#account_code').val('');
+        $('#account_name').val('');
+        $('#account_id').val('');
     }
     
     function sendAccountAPI(selectflag) {
@@ -12316,6 +12333,21 @@ function requestItemsInputFirst(requestdata) {
                 }
                 else{
                     account_list = result.resultList;
+                    
+                    console.log('account_list.length : '+account_list.length);
+                    
+                    var empthHeight = 200;
+                    if(account_list.length == 0 || account_list.length == 1 ){
+                        empthHeight = 50;
+                    }
+                    else if(account_list.length == 2 || account_list.length == 3) {
+                        empthHeight = account_list.length*50;
+                    }
+                    else{
+                        empthHeight = 200;
+                    }
+                    
+                    $('#empty_layer').css('height', empthHeight+'px');
                     
                     if(account_list.length == 0) {
                         account_list = null;
@@ -12378,7 +12410,7 @@ function requestItemsInputFirst(requestdata) {
         //input.attr('placeholder', plageHoderMsg);
         content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
         $(this).closest(".data-wrap").remove();
-        selected.css('width', '0px');
+        selected.css('width', '0px').css('height', '0px');
         
         scheduleorderWidth(content, selected, input);
 
@@ -12404,7 +12436,7 @@ function requestItemsInputFirst(requestdata) {
     var inputBoxText2 = $('<div class="input-box add-order"><label>Plant ID<b>*</b></label></div>');
     var inputTextContent2 = $('<div class="input-form order-select searchIcon"></div>');
     var plantSelected = $('<div class="selected-order"></div>');
-    var inputBox2 = $('<input type="text" placeholder="Plant ID 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
+    var inputBox2 = $('<input type="text" placeholder="Plant ID나 Plant 명 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
     var plantListCont = $('<div class="order-list"></div>');
 
     var plantListTitle = $('<span>Plant 목록</span>');
@@ -12416,21 +12448,22 @@ function requestItemsInputFirst(requestdata) {
     
     var orderUl2 = $('<ul></ul>');
     
-    var engNum_pattern = /[^a-zA-Z0-9]/g;
+    // var engNum_pattern = /[^a-zA-Z0-9]/g;
+    var engNumMark_pattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
     
     inputBox2.on('keyup', function(e) {        
 
         var inval = inputBox2.val();
         console.log('key : '+inval);
         
-        if(engNum_pattern.test(inval) == true) {
+        if(engNumMark_pattern.test(inval) == true) {
             //console.log('e.target ...'+e.key);
                 
             //setTimeout(function() {
-            showSmallDialog('영문, 숫자만 입력해 주세요.'); 
+            showSmallDialog('영문, 숫자, 기호로 입력해 주세요.'); 
             //}, 100);    
                 
-            var replaceVal = inval.replace(engNum_pattern, '');
+            var replaceVal = inval.replace(engNumMark_pattern, '');
 
             $(this).val(replaceVal);            
         }
@@ -12693,7 +12726,7 @@ function requestItemsInputFirst(requestdata) {
                             +'</div>'
                         );
                         
-                        projectSelected.css('width', '100%').css('height', '46px');        // 0717 추가 
+                        projectSelected.css('width', '100%').css('height', 'auto');     //.css('height', '46px');        // 0717 추가 
                         projectSelected.append(projectInfo);
                         
                         // [퍼블 수정 및 추가]
@@ -13433,7 +13466,7 @@ function onlyNumber(obj) {
         var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
         var itemDateWrap = $('<div class="schedule-wrap"></div>');
         var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date startdate" placeholder="'+item.due_date+'" id="due_date" onclick="datepicker.open(this)" value="'+item.due_date+'" autocomplete="off"/>');
+        var itemDateInput = $('<input type="text" class="input-schedule-date" placeholder="'+item.due_date+'" id="due_date" onclick="datepicker.open(this)" value="'+item.due_date+'" autocomplete="off"/>');
 
         itemDateBox.append(itemDateInput);
         
@@ -14419,7 +14452,7 @@ function onlyNumber(obj) {
         var itemDateText = $('<div class="input-box"><label>Due Date <b>*</b></label></div>');
         var itemDateWrap = $('<div class="schedule-wrap"></div>');
         var itemDateBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
-        var itemDateInput = $('<input type="text" class="input-schedule-date startdate" placeholder="'+placeholderToday+'" id="due_date" onclick="datepicker.open(this)" value="'+placeholderToday+'" autocomplete="off"/>');
+        var itemDateInput = $('<input type="text" class="input-schedule-date" placeholder="'+placeholderToday+'" id="due_date" onclick="datepicker.open(this)" value="'+placeholderToday+'" autocomplete="off"/>');
     
         itemDateBox.append(itemDateInput);
         
@@ -15079,7 +15112,14 @@ function requestItemsInputThird(requestdata) {
 function productsBillResult(requestdata) {
     var messageWrap = $('<div class="custom-message"></div>');
     
-    var messageTextWrap = $('<div class="message simple-text"></div>');    
+    // if(requestdata.documentRefNo == null) {
+        
+    //     requestdata.productCnt = 3;
+    //     requestdata.firstProductId = 'firstProductId';
+    //     requestdata.deepLink = '';
+    //     requestdata.documentRefNo = 'documentRefNo';        
+    // } 
+    var messageTextWrap = $('<div class="message simple-text" style="margin-top: 8px !important;"></div>');    
     var messageBox = $('<div class="message"></div>');
     var contentWarp = $('<div class="content-wrap"></div>');
     var contentHeader = $('<div class="content-wrap-header">' + iconBell +'<h2>물품 청구 신청</h2></div>');
@@ -15664,7 +15704,7 @@ function addArticleReqFilterPopupOpen(data){
     var dateEndVal = $('<input type="hidden" id="endDateValue" value=""/>');
     var datepickerEnd = $('<div class="datepicker-chem" id="datepickerEnd"></div>');
 
-    var smail = $('<small style="font-size: 12px;color: #828282;">물품 청구 신청 일을 기준으로 조회합니다. 조회 기간을 입력하지 않으면 최근 청구 내역을 조회합니다.</small>');
+    var smail = $('<small style="font-size: 12px;color: #828282;">최대 조회 기간은 1개월이며 조회 기간을 입력하지 않으면 최근 청구 내역을 조회합니다.</small>');
 
     dateTimeStartBox.append(dateStartInput);
     dateTimeStartBox.append(datepickerStart);
@@ -15683,7 +15723,7 @@ function addArticleReqFilterPopupOpen(data){
     /*  ###[ 조회 상태 ]###  */
     var listStatusDropdownBox = $(
         '<div class="dropdown-box dropdown-listStatus">'
-            +'<label>조회 유형</label>'
+            +'<label>조회 상태</label>'
         +'</div>'
     );
     var listStatusDropdown = $('<button type="button" class="btn btn-dropdown select" id="artReqFilter_statusId"><span>' + data.STATUS_NAME + '</span><input type="hidden" id="statusId" value="' + data.STATUS_ID + '"/></button>');
@@ -16507,11 +16547,11 @@ var iconArrow2 = '<svg width="15" height="8" viewBox="0 0 15 8" fill="none" xmln
 +'</svg>';
 
 var CHIP_STYLE_DEFAULT = "padding: 2px 4px 4px 4.5px;";//"padding: 2px 4px 4px 4.5px;";
-var CHIP_STYLE_T = ["padding: 2px 4px 3px 5px;", "padding: 2px 4px 3px 4.5px;"];
+var CHIP_STYLE_T = ["padding: 2px 4px 3px 5px;", "padding: 2px 4px 3.5px 4.5px;"];
 var CHIP_STYLE_P = ["padding: 2px 4px 4px 5px;", "padding: 2px 4px 4px 5px;"];
 var CHIP_STYLE_S = ["padding: 2px 4px 4px 5px;", "padding: 2px 4px 4px 4.5px;"];
 var CHIP_STYLE_M = ["padding: 2px 5px 4px 4px;", "padding: 2px 5px 4px 3.5px;"];
-var CHIP_STYLE_R = ["padding: 1px 5px 2px 5px;", "padding: 1px 5px 2px 4.5px;"];
+var CHIP_STYLE_R = ["padding: 1px 5px 2px 5px;", "padding: 1px 5px 3px 4.5px;"];
 var CHIP_STYLE_G = ["padding: 2px 5px 4px 4.5px;", "padding: 2px 5px 4px 4px;"];
 var CHIP_STYLE_D = ["padding: 2px 4px 4px 5px;", "padding: 2px 4px 4px 4.5px;"];
 var CHIP_STYLE_X = ["padding: 2px 4px 4px 5.5px;", "padding: 2px 4px 4px 4.5px;"];
@@ -16671,7 +16711,7 @@ function uitUpdateInputFirstNERP(uitdata){
             
             $('.small-dialog').remove();    
             //setTimeout(function() {
-            showHtmlToastDialog('영문,숫자만 입력해 주세요.'); 
+            showHtmlToastDialog('영문, 숫자만 입력해 주세요.'); 
             //}, 100);    
                 
             var replaceVal = input.replace(engNum_pattern, '');
@@ -16724,7 +16764,7 @@ function uitUpdateInputFirstNERP(uitdata){
             
             $('.small-dialog').remove();    
             //setTimeout(function() {
-            showHtmlToastDialog('영문,숫자,기호만 입력해 주세요.'); 
+            showHtmlToastDialog('영문, 숫자, 기호로 입력해 주세요.'); 
             //}, 100);    
                 
             var replaceVal = input.replace(engNumMark_pattern, '');
@@ -17088,11 +17128,11 @@ function uitUpdateInputSecondNERP(uitdata){
         var titleMsg = "";
         //if(uitdata.wo_check === "Fail"){
         if(psCnt > 0 && poCnt == 0) {
-            titleMsg = $('<div class="uit-title">P/S 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');    
+            titleMsg = $('<div class="uit-title">P/S 가 있어 엘지니 챗봇에서 UIT 변경이 불가합니다. </div>');    
         }else if(poCnt > 0 && psCnt == 0){
-            titleMsg = $('<div class="uit-title">P/O 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');
+            titleMsg = $('<div class="uit-title">P/O 가 있어 엘지니 챗봇에서 UIT 변경이 불가합니다. </div>');
         }else if(poCnt > 0 && psCnt > 0){
-            titleMsg = $('<div class="uit-title">P/S, P/O 가 있어 엘지니에서 UIT 변경이 불가합니다. </div>');
+            titleMsg = $('<div class="uit-title">P/S, P/O 가 있어 엘지니 챗봇에서 UIT 변경이 불가합니다. </div>');
         }
         
         contentCard.append(titleMsg);
@@ -17201,7 +17241,7 @@ function uitUpdateInputSecondNERP(uitdata){
         contentCard.append(uitDropdownBox);
         contentCard.append(uitPopupContetnBox);
         
-        btn = $('<button type="button" class="btn btn-plugin btn-apply btn-self btn-disabled" style="background-color: #E0205C;width: 100%;margin: 16px 0;">UIT 변경 신청</button>')
+        btn = $('<button type="button" class="btn btn-plugin btn-apply btn-self btn-disabled" style="background-color: #E0205C;width: 100%;margin: 16px 0;">UIT 변경</button>')
 
     }
     
@@ -17611,9 +17651,9 @@ function addUitChangeCardNERP(uitdata){
                 +'<li>'
                     +'<p class="item-header" style="margin: 0px !important;">변경 UIT</p>'
                     +'<div class="item-content status-chip">'
-                        +'<span class="badge-base badge-gray" style="'+CHIP_STYLE_MAP.get(bef_uit_code)+'">'+bef_uit_code+'</span>'
+                        +'<span class="badge-base badge-gray" style="'+CHIP_STYPE_LIST.get(bef_uit_code)+'">'+bef_uit_code+'</span>'
                         +iconArrow2
-                        +'<span class="badge-base badge-pink" style="'+CHIP_STYLE_MAP.get(aft_uit_code)+'">'+aft_uit_code+'</span>'
+                        +'<span class="badge-base badge-pink" style="'+CHIP_STYPE_LIST.get(aft_uit_code)+'">'+aft_uit_code+'</span>'
                     +'</div>'
                 +'</li>'
             +'</ul>'
@@ -17668,6 +17708,13 @@ function reqPlannerUitChangeCardNERP(uitdata){
     
     var messageWrap = $('<div class="custom-message"></div>');
     
+    // if(uitdata.uptMaterial == null) {
+    // uitdata.bef_uit_code = 'T';
+    // uitdata.aft_uit_code = 'F';
+    // uitdata.plannerName = 'Youngho Sul';
+    // uitdata.plannerEmail = 'youngho.sul123456@lge.com';
+    // uitdata.uptMaterial = '0CK101BK4EA';        
+    // } 
     var messageTextWrap = $('<div class="message simple-text"></div>');    
     var messageBox = $('<div class="message"></div>');
     var contentWarp = $('<div class="content-wrap"></div>');
@@ -17698,7 +17745,7 @@ function reqPlannerUitChangeCardNERP(uitdata){
                 // +'</li>'
                 +'<li style="height: unset;">'
                     +'<p class="item-header" style="margin: 0px !important;align-self: start;">Planner</p>'
-                    +'<p class="item-content" style="margin: 0px !important;display:block;align-self: start;">'+uitdata.plannerName+' </br>(<a id="planner_userEmail" href="#" style="text-decoration: underline;font-size: 13px;font-weight: 500; ">'+uitdata.plannerEmail+'</a>)'+'</p>'
+                    +'<p class="item-content" style="margin: 0px 12px 0px 12px !important; display:block;align-self: start;">'+uitdata.plannerName+' </br>(<a id="planner_userEmail" href="#" style="text-decoration: underline;font-size: 13px;font-weight: 500; ">'+uitdata.plannerEmail+'</a>)'+'</p>'
                 +'</li>'
                 +'<li style="height: 35px;">'
                     +'<p class="item-header" style="margin: 0px !important;">Material no.</p>'
@@ -17707,9 +17754,9 @@ function reqPlannerUitChangeCardNERP(uitdata){
                 +'<li style="height: 35px;">'
                     +'<p class="item-header" style="margin: 0px !important;">요청 UIT</p>'
                     +'<div class="item-content status-chip">'
-                        +'<span class="badge-base badge-gray" style="'+CHIP_STYLE_MAP.get(bef_uit_code)+'">'+bef_uit_code+'</span>'
+                        +'<span class="badge-base badge-gray" style="'+CHIP_STYPE_LIST.get(bef_uit_code)+'">'+bef_uit_code+'</span>'
                         +iconArrow2
-                        +'<span class="badge-base badge-pink" style="'+CHIP_STYLE_MAP.get(aft_uit_code)+'">'+aft_uit_code+'</span>'
+                        +'<span class="badge-base badge-pink" style="'+CHIP_STYPE_LIST.get(aft_uit_code)+'">'+aft_uit_code+'</span>'
                     +'</div>'
                 +'</li>'
             +'</ul>'
@@ -17731,7 +17778,7 @@ function reqPlannerUitChangeCardNERP(uitdata){
         //showHtmlSmallDialog(temp);
         temp.remove();
         
-        showHtmlSmallDialog('E-mail 주소가 복사되었습니다.');
+        showHtmlSmallDialog('이메일 주소가 복사되었습니다.');
     });
     
     var messageTextWrap3 = $('<div class="custom-message" style="margin-left: 0px;"></div>'); //
@@ -18111,6 +18158,7 @@ function uitUpdateListNERP(data) {
         chatui.sendMessage("UIT 변경");    
     });
     
+    requestMsgScroll();  
     return uitUpdateListContents;
 }
 
@@ -18926,6 +18974,7 @@ function uitPlannerListNERP(data) {
         chatui.sendMessage("UIT 변경");    
     });
     
+    requestMsgScroll();   
     return uitUpdateListContents;
 }
 
