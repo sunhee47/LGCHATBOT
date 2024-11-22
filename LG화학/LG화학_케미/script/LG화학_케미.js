@@ -1002,28 +1002,33 @@ function searchActiveSchedule() {
 };
 
 
-function searchActiveMrc() {
-  searchActiveTrue();
-  searchType = 'ai';
- $('.search-desc').find('h1').html('<svg width="24" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
- +'<path d="M8 13.4C8 13.0687 8.26863 12.8 8.6 12.8H15.4C15.7314 12.8 16 13.0687 16 13.4C16 13.7314 15.7314 14 15.4 14H8.6C8.26863 14 8 13.7314 8 13.4Z" fill="#6B6B6B"/>'
- +'<path d="M8.6 15.8C8.26863 15.8 8 16.0687 8 16.4C8 16.7314 8.26863 17 8.6 17H13.4C13.7314 17 14 16.7314 14 16.4C14 16.0687 13.7314 15.8 13.4 15.8H8.6Z" fill="#6B6B6B"/>'
- +'<path fill-rule="evenodd" clip-rule="evenodd" d="M4 5C4 3.34315 5.34315 2 7 2H12.7574C13.553 2 14.3161 2.31607 14.8787 2.87868L19.1213 7.12132C19.6839 7.68393 20 8.44699 20 9.24264V19C20 20.6569 18.6569 22 17 22H7C5.34315 22 4 20.6569 4 19V5ZM17 20.8H7C6.00589 20.8 5.2 19.9941 5.2 19V5C5.2 4.00589 6.00589 3.2 7 3.2H12.7574C12.8051 3.2 12.8527 3.2019 12.8999 3.20565V7C12.8999 8.1598 13.8401 9.1 14.9999 9.1H18.7943C18.7981 9.14728 18.8 9.19486 18.8 9.24264V19C18.8 19.9941 17.9941 20.8 17 20.8ZM18.2029 7.9L14.0999 3.79696V7C14.0999 7.49706 14.5028 7.9 14.9999 7.9H18.2029Z" fill="#6B6B6B"/>'
- +'</svg>'
- +'AI 검색 (/AI)'
- );
+// function searchActiveMrc() {
+//   searchActiveTrue();
+//   searchType = 'ai';
+//  $('.search-desc').find('h1').html('<svg width="24" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//  +'<path d="M8 13.4C8 13.0687 8.26863 12.8 8.6 12.8H15.4C15.7314 12.8 16 13.0687 16 13.4C16 13.7314 15.7314 14 15.4 14H8.6C8.26863 14 8 13.7314 8 13.4Z" fill="#6B6B6B"/>'
+//  +'<path d="M8.6 15.8C8.26863 15.8 8 16.0687 8 16.4C8 16.7314 8.26863 17 8.6 17H13.4C13.7314 17 14 16.7314 14 16.4C14 16.0687 13.7314 15.8 13.4 15.8H8.6Z" fill="#6B6B6B"/>'
+//  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M4 5C4 3.34315 5.34315 2 7 2H12.7574C13.553 2 14.3161 2.31607 14.8787 2.87868L19.1213 7.12132C19.6839 7.68393 20 8.44699 20 9.24264V19C20 20.6569 18.6569 22 17 22H7C5.34315 22 4 20.6569 4 19V5ZM17 20.8H7C6.00589 20.8 5.2 19.9941 5.2 19V5C5.2 4.00589 6.00589 3.2 7 3.2H12.7574C12.8051 3.2 12.8527 3.2019 12.8999 3.20565V7C12.8999 8.1598 13.8401 9.1 14.9999 9.1H18.7943C18.7981 9.14728 18.8 9.19486 18.8 9.24264V19C18.8 19.9941 17.9941 20.8 17 20.8ZM18.2029 7.9L14.0999 3.79696V7C14.0999 7.49706 14.5028 7.9 14.9999 7.9H18.2029Z" fill="#6B6B6B"/>'
+//  +'</svg>'
+//  +'AI 검색 (/AI)'
+//  );
 
- $('.search-desc').find('.desc').html('ECM 특정 문서함에 업로드 된 문서를 학습하고 안내합니다.<br />'
- +'케미를 직접 학습시키고 검색해 보세요.<br/><br />'
- +'예) 권장휴가 알려줘, 거점오피스가 뭐야<br />'
- +'* AI 검색 : AI 알고리즘이 스스로 문서를 학습하여 질문에 최적화된 답을 제공하는 검색 기능<br />'
- +'* 케미 학습 경로 :  ‘ECM > 공유문서함 > (AI검색) 전사공유 또는 담당문서함’<br />'
- +'* 파일 포맷 / 이미지 품질에 따라 인식률이 상이할 수 있으며, 관련 문의사항은 담당자에게 문의해 주세요.<br />'
- +'* ECM 문서 일반 검색은 ‘ECM 문서 검색’ 기능을 활용해 주세요.<br />');
- $('.search-desc').addClass('show');
- $('.form-group').append('<span class="search-pre">/AI </span>')
-  $('.sendText').addClass('search-active-ai');
-  $('.sendText').attr("placeholder", "검색어를 입력해 주세요.");
+//  $('.search-desc').find('.desc').html('ECM 특정 문서함에 업로드 된 문서를 학습하고 안내합니다.<br />'
+//  +'케미를 직접 학습시키고 검색해 보세요.<br/><br />'
+//  +'예) 권장휴가 알려줘, 거점오피스가 뭐야<br />'
+//  +'* AI 검색 : AI 알고리즘이 스스로 문서를 학습하여 질문에 최적화된 답을 제공하는 검색 기능<br />'
+//  +'* 케미 학습 경로 :  ‘ECM > 공유문서함 > (AI검색) 전사공유 또는 담당문서함’<br />'
+//  +'* 파일 포맷 / 이미지 품질에 따라 인식률이 상이할 수 있으며, 관련 문의사항은 담당자에게 문의해 주세요.<br />'
+//  +'* ECM 문서 일반 검색은 ‘ECM 문서 검색’ 기능을 활용해 주세요.<br />');
+//  $('.search-desc').addClass('show');
+//  $('.form-group').append('<span class="search-pre">/AI </span>')
+//   $('.sendText').addClass('search-active-ai');
+//   $('.sendText').attr("placeholder", "검색어를 입력해 주세요.");
+// }
+
+function erpChatbotActive() {
+    var url = "https://dataiku.lgchem.com/public-webapps/CDS202404231424_jhlee511/iM8Gfld/";
+    window.open(url, "erpChatbot", "top=500, left=500, width=500, height=700, toolbar=1, scrollbars=1, resizable=1");
 }
 
 function searchActiveEmployee() {
@@ -1241,10 +1246,10 @@ const autoSearchEmployees = function(inputVal) {
                     '    <dt>/where</dt>' +
                     '    <dd>키워드로 장소를 검색하고 추천합니다.</dd>' + 
                     '</dl>' +
-                    '<dl class="search-guide search-guide-mrc" onclick="searchActiveMrc()">' +
-                    '    <dt>/mrc</dt>' +
-                    '    <dd>ECM 내 MRC 폴더의 문서를 키워드로 검색합니다.</dd>' + 
-                    '</dl>' +
+                    // '<dl class="search-guide search-guide-mrc" onclick="searchActiveMrc()">' +
+                    // '    <dt>/mrc</dt>' +
+                    // '    <dd>ECM 내 MRC 폴더의 문서를 키워드로 검색합니다.</dd>' + 
+                    // '</dl>' +
                     '<dl class="search-guide search-guide-dict" onclick="searchActiveDict()">' +
                     '    <dt>/dict</dt>' +
                     '    <dd>표준 용어, 약어 등 업무용어 정보를 검색합니다.</dd>' +
@@ -2365,7 +2370,38 @@ function welcomeAppend(welcomeMessage) {
   };
 
   welcomeContent.append(userName);
-  welcomeContent.append(characterBox);
+//   welcomeContent.append(characterBox);
+  
+  //////
+  var welcomeMessage = $(
+        '<div class="message">'
+        +   '<h2>✔<b>G Cloud 접속 프로그램 변경 안내</b></h2>'
+        +    '<p>'
+        +    '    · G Cloud 기존 접속 프로그램인 Citrix 라이선스 종료에 따라 아래 일정으로 신규 솔루션 변경 작업을 진행합니다. G Cloud 유저분들께서는 일정을 확인해 주시기 바랍니다.</br>'
+        +    '</p>'
+        +    '</br>'
+        +   '<h2>✔<b>전환 대상 : G Cloud PC 사용자 전체</b></h2>'
+        +    '<p>'
+        +    '    · 국내 G Cloud 사용하는 주재원 포함</br>'
+        +    '</p>'
+        +    '</br>'
+        +    '<h2>✔<b>전환 일정 : 11/22 (금) 00:00 ~ 11/28 (목) 24:00</b></h2>'
+        +    '<p>'
+        +    '    · 1차 (11/22, 금) : CFO 및 협력사 / 총 1,214 명</br>'
+        +    '    · 2차 (11/26, 목) : 첨단, 생명과학, CHO, CSEO, CSSO / 총 5,137명</br>'
+        +    '    · 3차 (11/28, 목) : 석유화학, CTO, 팜한농, LG-HYBCM, TW 바이오매스 / 총 5,502명</br>'
+        +    '</p>'
+        +    '</br>'
+        +    '<h2>✔<b>기타 사항</b></h2>'
+        +    '<p>'
+        +    '    · 비상 대응 상황실 : 02-2099-5425, 5426, 5427</br>'
+        +    '    · IT HelpDesk : 1644-7119</br>'
+        +    '    · 상세 안내는 케미에 ‘지클 접속’ 키워드로 검색해 주세요.</br>'
+        +    '</p>'
+        +'</div>' )
+  
+  welcomeContent.append(welcomeMessage);
+  //////
   
   var welcomeList = $('<ul></ul>');
   var todayTodo = $('<li>'
@@ -2900,13 +2936,13 @@ jQuery(document).ready(function(e){
   +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
   +            '</svg>'
   +         '임직원 그룹사 검색</button>'
-  +         '<button type="button" class="btn-s btn-icon btn-text search-ai">'
+  +         '<button type="button" class="btn-s btn-icon btn-text erp-chatbot">'
   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
   +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#E0205C"/>'
   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#E0205C"/>'
   +'</svg>'
-  +         'AI 검색</button>'
+  +         'ERP 봇</button>'
   +         '<button type="button" class="btn-s btn-icon btn-text search-schedule">'
   +            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#E0205C"/>'
@@ -3029,14 +3065,14 @@ jQuery(document).ready(function(e){
     } else if(val.indexOf("/where") != -1){
         appendQueryText(val);
         chatui.sendMessage(val);
-    } else if(val.indexOf("/ai") != -1) {
-      var findMessage = val;
-      var payload = {
-        question: findMessage,
-        userId : chatui.getSetting('userId')
-      }
-      appendQueryText(val);
-      chatui.sendEventMessage("MRC", payload);
+    // } else if(val.indexOf("/ai") != -1) {
+    //   var findMessage = val;
+    //   var payload = {
+    //     question: findMessage,
+    //     userId : chatui.getSetting('userId')
+    //   }
+    //   appendQueryText(val);
+    //   chatui.sendEventMessage("MRC", payload);
     } else if(val.indexOf("/rpa") != -1){   
 	    var rpaSubject = val.replace("/rpa ","");
 	    if(rpaSubject.includes("help")) appendQueryText("RPA HELP");
@@ -3124,16 +3160,16 @@ jQuery(document).ready(function(e){
       window.open(url, "ecmSearch", "width=1024,height=550,resizable=1,scrollbars=1");
       searchActiveFalse();
       return;
-    } else if(searchType == 'ai' && (e.code == 'Enter' || e.keyCode == 13)) {
-      var findMessage = '/ai ' + val;
-      var payload = {
-        question: findMessage,
-        userId : chatui.getSetting('userId')
-      }
-      appendQueryText(findMessage);
-      chatui.sendEventMessage("MRC", payload);
-      searchActiveFalse();
-      return;
+    // } else if(searchType == 'ai' && (e.code == 'Enter' || e.keyCode == 13)) {
+    //   var findMessage = '/ai ' + val;
+    //   var payload = {
+    //     question: findMessage,
+    //     userId : chatui.getSetting('userId')
+    //   }
+    //   appendQueryText(findMessage);
+    //   chatui.sendEventMessage("MRC", payload);
+    //   searchActiveFalse();
+    //   return;
     } else if(searchType == 'employee' && (e.code == 'Enter' || e.keyCode == 13)) {
       var findMessage = val;
       chatui.sendMessage(findMessage);
@@ -3277,10 +3313,15 @@ jQuery(document).ready(function(e){
     faqOriginalHide();
   });
 
-  $('.search-ai').on('click', function() {
-    searchActiveMrc();
+//   $('.search-ai').on('click', function() {
+//     searchActiveMrc();
+//     faqOriginalHide(); 
+//   });
+  $('.erp-chatbot').on('click', function() {
+    erpChatbotActive();
     faqOriginalHide(); 
   });
+
 
   $('.search-employee').on('click', function() {
     searchActiveEmployee();
@@ -6541,27 +6582,27 @@ function makeHelpCard() {
     });
     help3.append(btn8);    
     
-    var btn9 = $('<li class="send-message" data-message="AI 검색">'
-      +   '<span class="file-icon">'
-      +   '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-      +'<path fill-rule="evenodd" clip-rule="evenodd" d="M7.15994 20.5521C7.0716 20.9065 6.73934 21.1287 6.41781 21.0485C6.09628 20.9684 5.90724 20.6161 5.99558 20.2618L7.28976 15.0712L3.60071 15.0712C3.26895 15.0712 3 14.8025 3 14.4712C3 14.1398 3.26895 13.8712 3.60071 13.8712H7.58895L8.78573 9.07117L4.60071 9.07117C4.26895 9.07117 4 8.80254 4 8.47117C4 8.1398 4.26895 7.87117 4.60071 7.87117L9.08492 7.87117L10.4209 2.51274C10.5093 2.15843 10.8415 1.93619 11.1631 2.01636C11.4846 2.09653 11.6736 2.44874 11.5853 2.80305L10.3217 7.87117L16.2493 7.87117L17.5853 2.51274C17.6736 2.15843 18.0059 1.93619 18.3274 2.01636C18.649 2.09653 18.838 2.44874 18.7497 2.80305L17.486 7.87117L21.2203 7.87117C21.5521 7.87117 21.821 8.1398 21.821 8.47117C21.821 8.80254 21.5521 9.07117 21.2203 9.07117L17.1868 9.07117L15.9901 13.8712L20.2203 13.8712C20.5521 13.8712 20.821 14.1398 20.821 14.4712C20.821 14.8025 20.5521 15.0712 20.2203 15.0712L15.6909 15.0712L14.3243 20.5521C14.236 20.9065 13.9037 21.1287 13.5822 21.0485C13.2606 20.9684 13.0716 20.6161 13.16 20.2618L14.4541 15.0712L8.5265 15.0712L7.15994 20.5521ZM8.82569 13.8712H14.7533L15.9501 9.07117L10.0225 9.07117L8.82569 13.8712Z" fill="#6B6B6B"/>'
-      +'</svg>'
-      +   '</span>'
-      +   '<p>AI 검색</p>'
-      + '</li>');
-    btn9.on('click', function() {
-      searchActiveFalse();
-      searchActiveMrc(); 
-      searchActive2 = true;
-      setTimeout(function() {
-        searchActive2 = false;
-      }, 500)  
-    })
+    // var btn9 = $('<li class="send-message" data-message="AI 검색">'
+    //   +   '<span class="file-icon">'
+    //   +   '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M7.15994 20.5521C7.0716 20.9065 6.73934 21.1287 6.41781 21.0485C6.09628 20.9684 5.90724 20.6161 5.99558 20.2618L7.28976 15.0712L3.60071 15.0712C3.26895 15.0712 3 14.8025 3 14.4712C3 14.1398 3.26895 13.8712 3.60071 13.8712H7.58895L8.78573 9.07117L4.60071 9.07117C4.26895 9.07117 4 8.80254 4 8.47117C4 8.1398 4.26895 7.87117 4.60071 7.87117L9.08492 7.87117L10.4209 2.51274C10.5093 2.15843 10.8415 1.93619 11.1631 2.01636C11.4846 2.09653 11.6736 2.44874 11.5853 2.80305L10.3217 7.87117L16.2493 7.87117L17.5853 2.51274C17.6736 2.15843 18.0059 1.93619 18.3274 2.01636C18.649 2.09653 18.838 2.44874 18.7497 2.80305L17.486 7.87117L21.2203 7.87117C21.5521 7.87117 21.821 8.1398 21.821 8.47117C21.821 8.80254 21.5521 9.07117 21.2203 9.07117L17.1868 9.07117L15.9901 13.8712L20.2203 13.8712C20.5521 13.8712 20.821 14.1398 20.821 14.4712C20.821 14.8025 20.5521 15.0712 20.2203 15.0712L15.6909 15.0712L14.3243 20.5521C14.236 20.9065 13.9037 21.1287 13.5822 21.0485C13.2606 20.9684 13.0716 20.6161 13.16 20.2618L14.4541 15.0712L8.5265 15.0712L7.15994 20.5521ZM8.82569 13.8712H14.7533L15.9501 9.07117L10.0225 9.07117L8.82569 13.8712Z" fill="#6B6B6B"/>'
+    //   +'</svg>'
+    //   +   '</span>'
+    //   +   '<p>AI 검색</p>'
+    //   + '</li>');
+    // btn9.on('click', function() {
+    //   searchActiveFalse();
+    //   searchActiveMrc(); 
+    //   searchActive2 = true;
+    //   setTimeout(function() {
+    //     searchActive2 = false;
+    //   }, 500)  
+    // })
      
-    help3.append(btn9);  
+    // help3.append(btn9);  
     helpWarper.append(help3);
 
-    var help4 = $('<ul class="three"></ul>');
+    // var help4 = $('<ul class="three"></ul>');
     var btn10 = $('<li class="send-message" data-message="표준문서검색">'
       +   '<span class="file-icon">'
       +     '<svg width="24" height="24" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -6579,8 +6620,11 @@ function makeHelpCard() {
         searchActive2 = false;
       }, 500);
     });
-    help4.append(btn10);
-    helpWarper.append(help4);
+    
+    help3.append(btn10);
+    helpWarper.append(help3);
+    // help4.append(btn10);
+    // helpWarper.append(help4);
 
     return helpWarper;
 };
@@ -7120,23 +7164,23 @@ function makeDefaultFallbackCard(data) {
   });
   btnList.append(searchEmployeeBtn);
 
-  var searchAiBtn = $('<span class="btn-custom-reply btn-icon btn-text search-ai">'
-  +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
-  +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#E0205C"/>'
-  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#E0205C"/>'
-  +'</svg>'
-  +'AI 검색</span>');
-  searchAiBtn.on('click', function() {
-    searchActiveFalse();
-    searchActiveMrc(); 
-    searchActive2 = true;
-    setTimeout(function() {
-      searchActive2 = false;
-    }, 500)
+//   var searchAiBtn = $('<span class="btn-custom-reply btn-icon btn-text search-ai">'
+//   +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//   +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
+//   +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#E0205C"/>'
+//   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#E0205C"/>'
+//   +'</svg>'
+//   +'AI 검색</span>');
+//   searchAiBtn.on('click', function() {
+//     searchActiveFalse();
+//     searchActiveMrc(); 
+//     searchActive2 = true;
+//     setTimeout(function() {
+//       searchActive2 = false;
+//     }, 500)
  
-  });
-  btnList.append(searchAiBtn);
+//   });
+//   btnList.append(searchAiBtn);
 
   var searchScheduleBtn = $('<span class="btn-custom-reply btn-icon btn-text search-schedule">'
   +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'

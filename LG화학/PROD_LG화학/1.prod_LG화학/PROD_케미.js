@@ -497,11 +497,11 @@ function intentEvent(btn,type,param){
 		}
 		
 	    // mrc 기술문서 질문
-		case "mrc" : {
-		  //  chatui.sendEventMessage("mrcTechQeuryEvent", {"userId" : param });
-		    chatui.sendEventMessage("mrcNoTextboxQuery", {"userId" : param });
-		    break;
-		}
+// 		case "mrc" : {
+// 		  //  chatui.sendEventMessage("mrcTechQeuryEvent", {"userId" : param });
+// 		    chatui.sendEventMessage("mrcNoTextboxQuery", {"userId" : param });
+// 		    break;
+// 		}
 		
 		// RPA 프로세스 선택
 		case "rpa" : {
@@ -1002,28 +1002,32 @@ function searchActiveSchedule() {
 };
 
 
-function searchActiveMrc() {
-  searchActiveTrue();
-  searchType = 'ai';
- $('.search-desc').find('h1').html('<svg width="24" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
- +'<path d="M8 13.4C8 13.0687 8.26863 12.8 8.6 12.8H15.4C15.7314 12.8 16 13.0687 16 13.4C16 13.7314 15.7314 14 15.4 14H8.6C8.26863 14 8 13.7314 8 13.4Z" fill="#6B6B6B"/>'
- +'<path d="M8.6 15.8C8.26863 15.8 8 16.0687 8 16.4C8 16.7314 8.26863 17 8.6 17H13.4C13.7314 17 14 16.7314 14 16.4C14 16.0687 13.7314 15.8 13.4 15.8H8.6Z" fill="#6B6B6B"/>'
- +'<path fill-rule="evenodd" clip-rule="evenodd" d="M4 5C4 3.34315 5.34315 2 7 2H12.7574C13.553 2 14.3161 2.31607 14.8787 2.87868L19.1213 7.12132C19.6839 7.68393 20 8.44699 20 9.24264V19C20 20.6569 18.6569 22 17 22H7C5.34315 22 4 20.6569 4 19V5ZM17 20.8H7C6.00589 20.8 5.2 19.9941 5.2 19V5C5.2 4.00589 6.00589 3.2 7 3.2H12.7574C12.8051 3.2 12.8527 3.2019 12.8999 3.20565V7C12.8999 8.1598 13.8401 9.1 14.9999 9.1H18.7943C18.7981 9.14728 18.8 9.19486 18.8 9.24264V19C18.8 19.9941 17.9941 20.8 17 20.8ZM18.2029 7.9L14.0999 3.79696V7C14.0999 7.49706 14.5028 7.9 14.9999 7.9H18.2029Z" fill="#6B6B6B"/>'
- +'</svg>'
- +'AI 검색 (/AI)'
- );
+// function searchActiveMrc() {
+//   searchActiveTrue();
+//   searchType = 'ai';
+//  $('.search-desc').find('h1').html('<svg width="24" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//  +'<path d="M8 13.4C8 13.0687 8.26863 12.8 8.6 12.8H15.4C15.7314 12.8 16 13.0687 16 13.4C16 13.7314 15.7314 14 15.4 14H8.6C8.26863 14 8 13.7314 8 13.4Z" fill="#6B6B6B"/>'
+//  +'<path d="M8.6 15.8C8.26863 15.8 8 16.0687 8 16.4C8 16.7314 8.26863 17 8.6 17H13.4C13.7314 17 14 16.7314 14 16.4C14 16.0687 13.7314 15.8 13.4 15.8H8.6Z" fill="#6B6B6B"/>'
+//  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M4 5C4 3.34315 5.34315 2 7 2H12.7574C13.553 2 14.3161 2.31607 14.8787 2.87868L19.1213 7.12132C19.6839 7.68393 20 8.44699 20 9.24264V19C20 20.6569 18.6569 22 17 22H7C5.34315 22 4 20.6569 4 19V5ZM17 20.8H7C6.00589 20.8 5.2 19.9941 5.2 19V5C5.2 4.00589 6.00589 3.2 7 3.2H12.7574C12.8051 3.2 12.8527 3.2019 12.8999 3.20565V7C12.8999 8.1598 13.8401 9.1 14.9999 9.1H18.7943C18.7981 9.14728 18.8 9.19486 18.8 9.24264V19C18.8 19.9941 17.9941 20.8 17 20.8ZM18.2029 7.9L14.0999 3.79696V7C14.0999 7.49706 14.5028 7.9 14.9999 7.9H18.2029Z" fill="#6B6B6B"/>'
+//  +'</svg>'
+//  +'AI 검색 (/AI)'
+//  );
 
- $('.search-desc').find('.desc').html('ECM 특정 문서함에 업로드 된 문서를 학습하고 안내합니다.<br />'
- +'케미를 직접 학습시키고 검색해 보세요.<br/><br />'
- +'예) 권장휴가 알려줘, 거점오피스가 뭐야<br />'
- +'* AI 검색 : AI 알고리즘이 스스로 문서를 학습하여 질문에 최적화된 답을 제공하는 검색 기능<br />'
- +'* 케미 학습 경로 :  ‘ECM > 공유문서함 > (AI검색) 전사공유 또는 담당문서함’<br />'
- +'* 파일 포맷 / 이미지 품질에 따라 인식률이 상이할 수 있으며, 관련 문의사항은 담당자에게 문의해 주세요.<br />'
- +'* ECM 문서 일반 검색은 ‘ECM 문서 검색’ 기능을 활용해 주세요.<br />');
- $('.search-desc').addClass('show');
- $('.form-group').append('<span class="search-pre">/AI </span>')
-  $('.sendText').addClass('search-active-ai');
-  $('.sendText').attr("placeholder", "검색어를 입력해 주세요.");
+//  $('.search-desc').find('.desc').html('ECM 특정 문서함에 업로드 된 문서를 학습하고 안내합니다.<br />'
+//  +'케미를 직접 학습시키고 검색해 보세요.<br/><br />'
+//  +'예) 권장휴가 알려줘, 거점오피스가 뭐야<br />'
+//  +'* AI 검색 : AI 알고리즘이 스스로 문서를 학습하여 질문에 최적화된 답을 제공하는 검색 기능<br />'
+//  +'* 케미 학습 경로 :  ‘ECM > 공유문서함 > (AI검색) 전사공유 또는 담당문서함’<br />'
+//  +'* 파일 포맷 / 이미지 품질에 따라 인식률이 상이할 수 있으며, 관련 문의사항은 담당자에게 문의해 주세요.<br />'
+//  +'* ECM 문서 일반 검색은 ‘ECM 문서 검색’ 기능을 활용해 주세요.<br />');
+//  $('.search-desc').addClass('show');
+//  $('.form-group').append('<span class="search-pre">/AI </span>')
+//   $('.sendText').addClass('search-active-ai');
+//   $('.sendText').attr("placeholder", "검색어를 입력해 주세요.");
+// }
+function erpChatbotActive() {
+    var url = "https://dataiku.lgchem.com/public-webapps/CDS202404231424_jhlee511/iM8Gfld/";
+    window.open(url, "erpChatbot", "top=500, left=500, width=500, height=700, toolbar=1, scrollbars=1, resizable=1");
 }
 
 function searchActiveEmployee() {
@@ -1121,12 +1125,12 @@ const setAutocomplete = function() {
       $(".test-sentence-input").val('/dict '); //공백추가
       $(".test-sentence-input").focus();
   });
-   $(".btn-search-mrc").on('click', function(e){
-      userId = chatui.getSetting("userId"); 
-      intentEvent(null, 'mrc', "'"+userId+"'");
-      e.preventDefault ? e.preventDefault() : (e.returnValue = false);
+//   $(".btn-search-mrc").on('click', function(e){
+//       userId = chatui.getSetting("userId"); 
+//       intentEvent(null, 'mrc', "'"+userId+"'");
+//       e.preventDefault ? e.preventDefault() : (e.returnValue = false);
           
-  });
+//   });
   
   // Close Autocomplete
   $(document).on('click', function(e){
@@ -1242,10 +1246,10 @@ const autoSearchEmployees = function(inputVal) {
                     '    <dt>/where</dt>' +
                     '    <dd>키워드로 장소를 검색하고 추천합니다.</dd>' + 
                     '</dl>' +
-                    '<dl class="search-guide search-guide-mrc" onclick="searchActiveMrc()">' +
-                    '    <dt>/mrc</dt>' +
-                    '    <dd>ECM 내 MRC 폴더의 문서를 키워드로 검색합니다.</dd>' + 
-                    '</dl>' +
+                    // '<dl class="search-guide search-guide-mrc" onclick="searchActiveMrc()">' +
+                    // '    <dt>/mrc</dt>' +
+                    // '    <dd>ECM 내 MRC 폴더의 문서를 키워드로 검색합니다.</dd>' + 
+                    // '</dl>' +
                     '<dl class="search-guide search-guide-dict" onclick="searchActiveDict()">' +
                     '    <dt>/dict</dt>' +
                     '    <dd>표준 용어, 약어 등 업무용어 정보를 검색합니다.</dd>' +
@@ -1674,222 +1678,222 @@ function closeSMSPopup() {
   }, 300);
 }
 
-function sendSMSPopupOpen(data, targetName, targetDept, targetMobileNum) {
+// function sendSMSPopupOpen(data, targetName, targetDept, targetMobileNum) {
 
-  var userId = null;
+//   var userId = null;
 
-  if(data) {
-    userId = data.userId;  
-  } else {
-    userId = chatui.getSetting("userId");
-  }
+//   if(data) {
+//     userId = data.userId;  
+//   } else {
+//     userId = chatui.getSetting("userId");
+//   }
 
-  var pulginDim = $('<div class="plugin-dim"></div>');
+//   var pulginDim = $('<div class="plugin-dim"></div>');
 
-  var smsPopup = $('<div class="plugins" id="sendSms"></div>');
-  var smsPoupHeader = $('<div class="plugin-header">'
-   +'<h1>SMS 발송</h1>'
-   +'<span class="close-plugin" onclick="closeSMSPopup()">'
-   +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
-   +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
-   + '</svg>'
-   +'</span>'
-   + '</div>'); 
+//   var smsPopup = $('<div class="plugins" id="sendSms"></div>');
+//   var smsPoupHeader = $('<div class="plugin-header">'
+//   +'<h1>SMS 발송</h1>'
+//   +'<span class="close-plugin" onclick="closeSMSPopup()">'
+//   +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//   +'<path d="M5.74478 4.75483C5.47141 4.48146 5.0282 4.48146 4.75483 4.75483C4.48146 5.0282 4.48146 5.47141 4.75483 5.74478L13.01 13.9999L4.75506 22.2548C4.48169 22.5282 4.48169 22.9714 4.75506 23.2448C5.02843 23.5181 5.47164 23.5181 5.74501 23.2448L13.9999 14.9899L22.2548 23.2448C22.5282 23.5181 22.9714 23.5181 23.2448 23.2448C23.5181 22.9714 23.5181 22.5282 23.2448 22.2548L14.9899 13.9999L23.245 5.74478C23.5184 5.47141 23.5184 5.0282 23.245 4.75483C22.9716 4.48146 22.5284 4.48146 22.2551 4.75483L13.9999 13.01L5.74478 4.75483Z" fill="#2C2C2C"/>'
+//   + '</svg>'
+//   +'</span>'
+//   + '</div>'); 
 
-  smsPopup.append(smsPoupHeader);
+//   smsPopup.append(smsPoupHeader);
 
-  var smsPopupContetns = $('<div class="plugin-contents"></div>');
-  var smsPopUpForm = $('<div class="form-sms form-schedule" data-userId="' + userId +'"></div>');
+//   var smsPopupContetns = $('<div class="plugin-contents"></div>');
+//   var smsPopUpForm = $('<div class="form-sms form-schedule" data-userId="' + userId +'"></div>');
  
-  var smsPopUpType = $('<div class="input-box"><label>구분<b>*</b></label></div>');
-  var smsPopUpTypeRadio = $('<ul class="radio-list"></ul>');
-  var smsPopupTypePerson = $('<li>'
-  +'<label class="input-radio">'
-  +'<input type="radio" name="voice-select" id="person" value="person" checked="checked"  />'
-  +'<span class="radiomark"></span>'
-  +'개인'
-  +'</label>'
-  +'</li>');
+//   var smsPopUpType = $('<div class="input-box"><label>구분<b>*</b></label></div>');
+//   var smsPopUpTypeRadio = $('<ul class="radio-list"></ul>');
+//   var smsPopupTypePerson = $('<li>'
+//   +'<label class="input-radio">'
+//   +'<input type="radio" name="voice-select" id="person" value="person" checked="checked"  />'
+//   +'<span class="radiomark"></span>'
+//   +'개인'
+//   +'</label>'
+//   +'</li>');
 
-  smsPopupTypePerson.on('click', function() {
-    $('.selected-members').empty();
-    $('#attendees').removeClass('hide');
-    $('#department').addClass('hide');
-  });
+//   smsPopupTypePerson.on('click', function() {
+//     $('.selected-members').empty();
+//     $('#attendees').removeClass('hide');
+//     $('#department').addClass('hide');
+//   });
 
-  smsPopUpTypeRadio.append(smsPopupTypePerson);
-  var smsPopUpTypeGroup = $('<li>'
-  +'<label class="input-radio">'
-  +'<input type="radio" name="voice-select" id="group" value="group" />'
-  +'<span class="radiomark"></span> 조직'
-  +'</label>'
-  +'</li>');
+//   smsPopUpTypeRadio.append(smsPopupTypePerson);
+//   var smsPopUpTypeGroup = $('<li>'
+//   +'<label class="input-radio">'
+//   +'<input type="radio" name="voice-select" id="group" value="group" />'
+//   +'<span class="radiomark"></span> 조직'
+//   +'</label>'
+//   +'</li>');
 
-  smsPopUpTypeGroup.on('click', function() {
-    $('.selected-members').empty();
-    $('#attendees').addClass('hide');
-    $('#department').removeClass('hide');
-  });
-  smsPopUpTypeRadio.append(smsPopUpTypeGroup);
-  smsPopUpType.append(smsPopUpTypeRadio);
-  smsPopUpForm.append(smsPopUpType);
+//   smsPopUpTypeGroup.on('click', function() {
+//     $('.selected-members').empty();
+//     $('#attendees').addClass('hide');
+//     $('#department').removeClass('hide');
+//   });
+//   smsPopUpTypeRadio.append(smsPopUpTypeGroup);
+//   smsPopUpType.append(smsPopUpTypeRadio);
+//   smsPopUpForm.append(smsPopUpType);
   
-  var smsPopupMemberInputBox = $('<div class="input-box"><label>받는 사람<b>*</b></label></div>');
-  var memberList = $('<div class="schedule-join-member"></div>');
-  var selectedMembersFold = $('<span class="member-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#6B6B6B"/>'
-  +'</svg></span>');
+//   var smsPopupMemberInputBox = $('<div class="input-box"><label>받는 사람<b>*</b></label></div>');
+//   var memberList = $('<div class="schedule-join-member"></div>');
+//   var selectedMembersFold = $('<span class="member-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#6B6B6B"/>'
+//   +'</svg></span>');
 
-  selectedMembersFold.on('click',function() {
-    if($(this).parent().find('.selected-members').hasClass('long')) {
-      $(this).parent().find('.selected-members').removeClass('long');
-      $(this).addClass('unfold');
-    } else {
-      $(this).parent().find('.selected-members').addClass('long');
-      $(this).removeClass('unfold');
-    }
-  });
-  memberList.append(selectedMembersFold);
-  var selectedMembers = $('<div class="selected-members fold"></div>');
+//   selectedMembersFold.on('click',function() {
+//     if($(this).parent().find('.selected-members').hasClass('long')) {
+//       $(this).parent().find('.selected-members').removeClass('long');
+//       $(this).addClass('unfold');
+//     } else {
+//       $(this).parent().find('.selected-members').addClass('long');
+//       $(this).removeClass('unfold');
+//     }
+//   });
+//   memberList.append(selectedMembersFold);
+//   var selectedMembers = $('<div class="selected-members fold"></div>');
 
-  if(targetName && targetDept && targetMobileNum) {
-    var targetMemberInfo = $('<div class="member-info">'
-    +targetName
-          + '<button type="button" class="btn btn-delete">' 
-            +  '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-            +  '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-            +  '</svg>'
-          + '</button>'
-        +'<div class="auto-detail-tooltip">'+targetDept+'</div>'
-        + '<input type="hidden" value="'+targetMobileNum+'" class="person-mobile"/>'
-        + '<input type="hidden" value="'+targetName+'" class="person-name"/>'
-    +'</div>');
-    selectedMembers.append(targetMemberInfo);
-  };
+//   if(targetName && targetDept && targetMobileNum) {
+//     var targetMemberInfo = $('<div class="member-info">'
+//     +targetName
+//           + '<button type="button" class="btn btn-delete">' 
+//             +  '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//             +  '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+//             +  '</svg>'
+//           + '</button>'
+//         +'<div class="auto-detail-tooltip">'+targetDept+'</div>'
+//         + '<input type="hidden" value="'+targetMobileNum+'" class="person-mobile"/>'
+//         + '<input type="hidden" value="'+targetName+'" class="person-name"/>'
+//     +'</div>');
+//     selectedMembers.append(targetMemberInfo);
+//   };
 
-  memberList.append(selectedMembers);
-  var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-3" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
-  memberList.append(autocompleteMember);
-  var memberInput = $('<input type="text" placeholder="이름을 입력해 주세요." id="attendees" class="search-input" />');
-  setAutocompleteJoinMember(memberInput);
-  memberList.append(memberInput);
+//   memberList.append(selectedMembers);
+//   var autocompleteMember = $('<div class="autocomplete-member"><ul id="ui-id-3" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></div>');
+//   memberList.append(autocompleteMember);
+//   var memberInput = $('<input type="text" placeholder="이름을 입력해 주세요." id="attendees" class="search-input" />');
+//   setAutocompleteJoinMember(memberInput);
+//   memberList.append(memberInput);
 
-  var groupInput = $('<input type="text" placeholder="조직명을 입력해 주세요." id="department" class="search-input hide" />');
-  setAutocompleteJoinGroup(groupInput);
-  memberList.append(groupInput);
+//   var groupInput = $('<input type="text" placeholder="조직명을 입력해 주세요." id="department" class="search-input hide" />');
+//   setAutocompleteJoinGroup(groupInput);
+//   memberList.append(groupInput);
 
-  smsPopupMemberInputBox.append(memberList);
-  smsPopUpForm.append(smsPopupMemberInputBox);
+//   smsPopupMemberInputBox.append(memberList);
+//   smsPopUpForm.append(smsPopupMemberInputBox);
 
-  var smsPopupContetnBox = $('<div class="input-box"><label>내용<b>*</b></label>');
-  var smsPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" name="smsMessage" id="smsMessage"></textarea>');
-  smsPopupTextArea.on('keyup', function() {
-    smsContent = $(this).val();
-    smsCheck();
-  });
-  smsPopupContetnBox.append(smsPopupTextArea);
-  smsPopUpForm.append(smsPopupContetnBox);
+//   var smsPopupContetnBox = $('<div class="input-box"><label>내용<b>*</b></label>');
+//   var smsPopupTextArea = $('<textarea placeholder="내용을 입력해 주세요" name="smsMessage" id="smsMessage"></textarea>');
+//   smsPopupTextArea.on('keyup', function() {
+//     smsContent = $(this).val();
+//     smsCheck();
+//   });
+//   smsPopupContetnBox.append(smsPopupTextArea);
+//   smsPopUpForm.append(smsPopupContetnBox);
 
-  var isMobile = Mobile();
+//   var isMobile = Mobile();
 
-  if(!isMobile) {
-    var smsDetailLink = $('<p class="detail-submit">'
-    +'<a href="http://gportal.lgchem.com/support/sms/sms.do?gubun=&receiverId=" target="_blank">예약문자 등 상세 기능을 이용하려면 여기를 클릭해 주세요.</a>'
-    + '</p>');
-    smsPopUpForm.append(smsDetailLink);
-  }
+//   if(!isMobile) {
+//     var smsDetailLink = $('<p class="detail-submit">'
+//     +'<a href="http://gportal.lgchem.com/support/sms/sms.do?gubun=&receiverId=" target="_blank">예약문자 등 상세 기능을 이용하려면 여기를 클릭해 주세요.</a>'
+//     + '</p>');
+//     smsPopUpForm.append(smsDetailLink);
+//   }
   
-  var smsPopupSubmitButton = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-sms">발송</button>');
+//   var smsPopupSubmitButton = $('<button type="button" class="btn btn-plugin btn-apply btn-disabled" id="btn-sms">발송</button>');
 
-  smsPopupSubmitButton.on('click', function(){
-    if(!$(this).hasClass('btn-disabled')) {
-      closeSMSPopup();
+//   smsPopupSubmitButton.on('click', function(){
+//     if(!$(this).hasClass('btn-disabled')) {
+//       closeSMSPopup();
      
-      var sendNumbers = '';
-      var sendNames = '';
+//       var sendNumbers = '';
+//       var sendNames = '';
       
-      var numberInputs = $(this).parents(".form-sms").find('.person-mobile');
+//       var numberInputs = $(this).parents(".form-sms").find('.person-mobile');
       
-      for(var i = 0; i<numberInputs.length; i++) {
-        if(i == numberInputs.length-1) {
-          sendNumbers += $(numberInputs[i]).val();
-        } else {
-          sendNumbers += $(numberInputs[i]).val() + ',';
-        } 
-      };
+//       for(var i = 0; i<numberInputs.length; i++) {
+//         if(i == numberInputs.length-1) {
+//           sendNumbers += $(numberInputs[i]).val();
+//         } else {
+//           sendNumbers += $(numberInputs[i]).val() + ',';
+//         } 
+//       };
   
-      var nameInputs = $(this).parents(".form-sms").find('.person-name');
+//       var nameInputs = $(this).parents(".form-sms").find('.person-name');
      
-      for(var k=0; k < nameInputs.length; k++) {
-        if(k == nameInputs.length-1) {
-          sendNames += $(nameInputs[k]).val()
-        } else {
-          sendNames += $(nameInputs[k]).val() + ','
-        }
-      }
+//       for(var k=0; k < nameInputs.length; k++) {
+//         if(k == nameInputs.length-1) {
+//           sendNames += $(nameInputs[k]).val()
+//         } else {
+//           sendNames += $(nameInputs[k]).val() + ','
+//         }
+//       }
 
-      var targetType = $(this).closest('.form-sms').find("input[name='voice-select']:checked").val();
-      var depNames = $(this).parent('.form-sms').find('.dept-name');
+//       var targetType = $(this).closest('.form-sms').find("input[name='voice-select']:checked").val();
+//       var depNames = $(this).parent('.form-sms').find('.dept-name');
 
-      for(var k=0; k < depNames.length; k++) {
-        if(k == depNames.length-1) {
-          sendNames += $(depNames[k]).val()
-        } else {
-          sendNames += $(depNames[k]).val() + ','
-        }
-      }
+//       for(var k=0; k < depNames.length; k++) {
+//         if(k == depNames.length-1) {
+//           sendNames += $(depNames[k]).val()
+//         } else {
+//           sendNames += $(depNames[k]).val() + ','
+//         }
+//       }
       
-      smsNames = sendNames;
+//       smsNames = sendNames;
 
-      if(targetType == 'group') {
+//       if(targetType == 'group') {
 
-        var depInputs = $(this).parent('.form-sms').find('.dept-id');
+//         var depInputs = $(this).parent('.form-sms').find('.dept-id');
      
-        for(var j=0; j<depInputs.length; j++) {
-          var depId = $(depInputs[j]).val();
-          var payload = 
-            {
-              "subject" : '',
-              "targetList" : depId,
-              "targetDiv" : targetType,
-              "message": smsContent
-            };
+//         for(var j=0; j<depInputs.length; j++) {
+//           var depId = $(depInputs[j]).val();
+//           var payload = 
+//             {
+//               "subject" : '',
+//               "targetList" : depId,
+//               "targetDiv" : targetType,
+//               "message": smsContent
+//             };
             
-          chatui.sendEventMessage('sendSmsNew', payload);
-        }
+//           chatui.sendEventMessage('sendSmsNew', payload);
+//         }
         
-      } else {
+//       } else {
 
-        var payload = {
-          "subject" : '',
-          "targetList" : sendNumbers,
-          "targetDiv" : targetType,
-          "message": smsContent
-        }
+//         var payload = {
+//           "subject" : '',
+//           "targetList" : sendNumbers,
+//           "targetDiv" : targetType,
+//           "message": smsContent
+//         }
         
-        chatui.sendEventMessage('sendSmsNew', payload);
-      }
+//         chatui.sendEventMessage('sendSmsNew', payload);
+//       }
 
-    } else {
-      return;
-    }
-  });
+//     } else {
+//       return;
+//     }
+//   });
   
-  smsPopUpForm.append(smsPopupSubmitButton);
-  smsPopupContetns.append(smsPopUpForm);
-  smsPopup.append(smsPopupContetns);
+//   smsPopUpForm.append(smsPopupSubmitButton);
+//   smsPopupContetns.append(smsPopUpForm);
+//   smsPopup.append(smsPopupContetns);
 
-  $('.test-panel').append(pulginDim);
-  $('.test-panel').append(smsPopup);
+//   $('.test-panel').append(pulginDim);
+//   $('.test-panel').append(smsPopup);
 
-  $('.plugin-dim').css('display', 'block');
-  $('#sendSms').css('display', 'block');
+//   $('.plugin-dim').css('display', 'block');
+//   $('#sendSms').css('display', 'block');
 
-  setTimeout(function() {
-    $('.plugin-dim').addClass('show');
-    $('#sendSms').addClass('show');
-  }, 100);
-};
+//   setTimeout(function() {
+//     $('.plugin-dim').addClass('show');
+//     $('#sendSms').addClass('show');
+//   }, 100);
+// };
 
 function closeSettingPopup() {
   $('#notiSetting').removeClass('show');
@@ -2367,7 +2371,36 @@ function welcomeAppend(welcomeMessage) {
   };
 
   welcomeContent.append(userName);
-  welcomeContent.append(characterBox);
+//   welcomeContent.append(characterBox);
+  
+  var welcomeMessage = $(
+        '<div class="message">'
+        +   '<h2>✔<b>G Cloud 접속 프로그램 변경 안내</b></h2>'
+        +    '<p>'
+        +    '    · G Cloud 기존 접속 프로그램인 Citrix 라이선스 종료에 따라 아래 일정으로 신규 솔루션 변경 작업을 진행합니다. G Cloud 유저분들께서는 일정을 확인해 주시기 바랍니다.</br>'
+        +    '</p>'
+        +    '</br>'
+        +   '<h2>✔<b>전환 대상 : G Cloud PC 사용자 전체</b></h2>'
+        +    '<p>'
+        +    '    · 국내 G Cloud 사용하는 주재원 포함</br>'
+        +    '</p>'
+        +    '</br>'
+        +    '<h2>✔<b>전환 일정 : 11/22 (금) 00:00 ~ 11/28 (목) 24:00</b></h2>'
+        +    '<p>'
+        +    '    · 1차 (11/22, 금) : CFO 및 협력사 / 총 1,214 명</br>'
+        +    '    · 2차 (11/26, 목) : 첨단, 생명과학, CHO, CSEO, CSSO / 총 5,137명</br>'
+        +    '    · 3차 (11/28, 목) : 석유화학, CTO, 팜한농, LG-HYBCM, TW 바이오매스 / 총 5,502명</br>'
+        +    '</p>'
+        +    '</br>'
+        +    '<h2>✔<b>기타 사항</b></h2>'
+        +    '<p>'
+        +    '    · 비상 대응 상황실 : 02-2099-5425, 5426, 5427</br>'
+        +    '    · IT HelpDesk : 1644-7119</br>'
+        +    '    · 상세 안내는 케미에 ‘지클 접속’ 키워드로 검색해 주세요.</br>'
+        +    '</p>'
+        +'</div>' )
+  
+  welcomeContent.append(welcomeMessage);
   
   var welcomeList = $('<ul></ul>');
   var todayTodo = $('<li>'
@@ -2484,50 +2517,50 @@ function welcomeAppend(welcomeMessage) {
 
 var smsNames = '';
 
-function sendSmsNewAppend(data) {
+// function sendSmsNewAppend(data) {
 
-  var parameters = data.parameters;
+//   var parameters = data.parameters;
 
-    $('.chat-message.left').last().remove();
+//     $('.chat-message.left').last().remove();
     
-    var message = '<div class="custom-message"><div class="message category-list">'
-      +'<div class="list-header-title">'
-        +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-          +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00004 13.8673C11.2401 13.8673 13.8667 11.2407 13.8667 8.00065C13.8667 4.76058 11.2401 2.13398 8.00004 2.13398C4.75997 2.13398 2.13337 4.76058 2.13337 8.00065C2.13337 11.2407 4.75997 13.8673 8.00004 13.8673ZM8.00004 14.6673C11.6819 14.6673 14.6667 11.6825 14.6667 8.00065C14.6667 4.31875 11.6819 1.33398 8.00004 1.33398C4.31814 1.33398 1.33337 4.31875 1.33337 8.00065C1.33337 11.6825 4.31814 14.6673 8.00004 14.6673Z" fill="#2C2C2C"/>'
-          +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10.9503 6.38447C11.1065 6.54068 11.1065 6.79395 10.9503 6.95016L7.61692 10.2835C7.46073 10.4397 7.2075 10.4397 7.05128 10.2835L5.05058 8.28354C4.89434 8.12736 4.8943 7.87409 5.05048 7.71786C5.20666 7.56162 5.45993 7.56158 5.61617 7.71776L7.33403 9.43502L10.3846 6.38447C10.5408 6.22827 10.794 6.22827 10.9503 6.38447Z" fill="#2C2C2C"/>'
-        +'</svg>'
-        +'<span>' + data.messages[0].message + '</span>'
-      +'</div>'
-      +'<div class="category-text">'
-        +'<dl>'
-          +'<dt>구분</dt>'
-          +'<dd>' + ( parameters.targetDiv == 'person' ? '개인' : '그룹' ) + '</dd>'
-        +'</dl>'
-        +'<dl>'
-          +'<dt>받는사람</dt>'
-          +'<dd>' + smsNames + '</dd>'
-        +'</dl>'
-        +'<dl>'
-          +'<dt>내용</dt>'
-          +'<dd>' + parameters.message + '</dd>'
-        +'</dl>'
-      +'</div>'
-    +'</div>'
-    +'</div>';
+//     var message = '<div class="custom-message"><div class="message category-list">'
+//       +'<div class="list-header-title">'
+//         +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//           +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00004 13.8673C11.2401 13.8673 13.8667 11.2407 13.8667 8.00065C13.8667 4.76058 11.2401 2.13398 8.00004 2.13398C4.75997 2.13398 2.13337 4.76058 2.13337 8.00065C2.13337 11.2407 4.75997 13.8673 8.00004 13.8673ZM8.00004 14.6673C11.6819 14.6673 14.6667 11.6825 14.6667 8.00065C14.6667 4.31875 11.6819 1.33398 8.00004 1.33398C4.31814 1.33398 1.33337 4.31875 1.33337 8.00065C1.33337 11.6825 4.31814 14.6673 8.00004 14.6673Z" fill="#2C2C2C"/>'
+//           +'<path fill-rule="evenodd" clip-rule="evenodd" d="M10.9503 6.38447C11.1065 6.54068 11.1065 6.79395 10.9503 6.95016L7.61692 10.2835C7.46073 10.4397 7.2075 10.4397 7.05128 10.2835L5.05058 8.28354C4.89434 8.12736 4.8943 7.87409 5.05048 7.71786C5.20666 7.56162 5.45993 7.56158 5.61617 7.71776L7.33403 9.43502L10.3846 6.38447C10.5408 6.22827 10.794 6.22827 10.9503 6.38447Z" fill="#2C2C2C"/>'
+//         +'</svg>'
+//         +'<span>' + data.messages[0].message + '</span>'
+//       +'</div>'
+//       +'<div class="category-text">'
+//         +'<dl>'
+//           +'<dt>구분</dt>'
+//           +'<dd>' + ( parameters.targetDiv == 'person' ? '개인' : '그룹' ) + '</dd>'
+//         +'</dl>'
+//         +'<dl>'
+//           +'<dt>받는사람</dt>'
+//           +'<dd>' + smsNames + '</dd>'
+//         +'</dl>'
+//         +'<dl>'
+//           +'<dt>내용</dt>'
+//           +'<dd>' + parameters.message + '</dd>'
+//         +'</dl>'
+//       +'</div>'
+//     +'</div>'
+//     +'</div>';
     
-    var sendMoreCustoms = $('<div class="custom-quick-reply"></div>');
+//     var sendMoreCustoms = $('<div class="custom-quick-reply"></div>');
 
-    var sendMore = $('<span class="btn-custom-reply" data-message="추가 발송">추가발송</span>');
-    sendMore.on('click', function() {
-      sendSMSPopupOpen();
-    })
-    sendMoreCustoms.append(sendMore);
+//     var sendMore = $('<span class="btn-custom-reply" data-message="추가 발송">추가발송</span>');
+//     sendMore.on('click', function() {
+//       sendSMSPopupOpen();
+//     })
+//     sendMoreCustoms.append(sendMore);
   
 
-    var customMessage = $(message);
-    customMessage.append(sendMoreCustoms);
-    appendChatbotText2(customMessage);
-}
+//     var customMessage = $(message);
+//     customMessage.append(sendMoreCustoms);
+//     appendChatbotText2(customMessage);
+// }
 
 
 function searchActiveFalse() {
@@ -2894,13 +2927,20 @@ jQuery(document).ready(function(e){
   +            '<path fill-rule="evenodd" clip-rule="evenodd" d="M9.86621 8.8667C9.86621 8.64579 10.0453 8.4667 10.2662 8.4667H10.9329C12.9948 8.4667 14.6663 10.1382 14.6663 12.2V12.6C14.6663 12.8209 14.4872 13 14.2663 13C14.0454 13 13.8663 12.8209 13.8663 12.6V12.2C13.8663 10.58 12.553 9.2667 10.9329 9.2667H10.2662C10.0453 9.2667 9.86621 9.08761 9.86621 8.8667Z" fill="#E0205C"/>'
   +            '</svg>'
   +         '임직원 그룹사 검색</button>'
-  +         '<button type="button" class="btn-s btn-icon btn-text search-ai">'
+//   +         '<button type="button" class="btn-s btn-icon btn-text search-ai">'
+//   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//   +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
+//   +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#E0205C"/>'
+//   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#E0205C"/>'
+//   +'</svg>'
+//   +         'AI 검색</button>'
+  +         '<button type="button" class="btn-s btn-icon btn-text erp-chatbot">'
   +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
   +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#E0205C"/>'
   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#E0205C"/>'
   +'</svg>'
-  +         'AI 검색</button>'
+  +         'ERP 봇</button>'
   +         '<button type="button" class="btn-s btn-icon btn-text search-schedule">'
   +            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
   +'<path d="M17.4 14.5999L15.893 14.5999C15.5617 14.5999 15.293 14.3313 15.293 13.9999C15.293 13.6685 15.5617 13.3999 15.893 13.3999L17.4 13.3999C17.7314 13.3999 18 13.6685 18 13.9999C18 14.3313 17.7314 14.5999 17.4 14.5999Z" fill="#E0205C"/>'
@@ -3023,14 +3063,14 @@ jQuery(document).ready(function(e){
     } else if(val.indexOf("/where") != -1){
         appendQueryText(val);
         chatui.sendMessage(val);
-    } else if(val.indexOf("/ai") != -1) {
-      var findMessage = val;
-      var payload = {
-        question: findMessage,
-        userId : chatui.getSetting('userId')
-      }
-      appendQueryText(val);
-      chatui.sendEventMessage("MRC", payload);
+    // } else if(val.indexOf("/ai") != -1) {
+    //   var findMessage = val;
+    //   var payload = {
+    //     question: findMessage,
+    //     userId : chatui.getSetting('userId')
+    //   }
+    //   appendQueryText(val);
+    //   chatui.sendEventMessage("MRC", payload);
     } else if(val.indexOf("/rpa") != -1){   
 	    var rpaSubject = val.replace("/rpa ","");
 	    if(rpaSubject.includes("help")) appendQueryText("RPA HELP");
@@ -3117,16 +3157,16 @@ jQuery(document).ready(function(e){
       window.open(url, "ecmSearch", "width=1024,height=550,resizable=1,scrollbars=1");
       searchActiveFalse();
       return;
-    } else if(searchType == 'ai' && (e.code == 'Enter' || e.keyCode == 13)) {
-      var findMessage = '/ai ' + val;
-      var payload = {
-        question: findMessage,
-        userId : chatui.getSetting('userId')
-      }
-      appendQueryText(findMessage);
-      chatui.sendEventMessage("MRC", payload);
-      searchActiveFalse();
-      return;
+    // } else if(searchType == 'ai' && (e.code == 'Enter' || e.keyCode == 13)) {
+    //   var findMessage = '/ai ' + val;
+    //   var payload = {
+    //     question: findMessage,
+    //     userId : chatui.getSetting('userId')
+    //   }
+    //   appendQueryText(findMessage);
+    //   chatui.sendEventMessage("MRC", payload);
+    //   searchActiveFalse();
+    //   return;
     } else if(searchType == 'employee' && (e.code == 'Enter' || e.keyCode == 13)) {
       var findMessage = val;
       chatui.sendMessage(findMessage);
@@ -3267,8 +3307,12 @@ jQuery(document).ready(function(e){
     faqOriginalHide();
   });
 
-  $('.search-ai').on('click', function() {
-    searchActiveMrc();
+//   $('.search-ai').on('click', function() {
+//     searchActiveMrc();
+//     faqOriginalHide(); 
+//   });
+  $('.erp-chatbot').on('click', function() {
+    erpChatbotActive();
     faqOriginalHide(); 
   });
 
@@ -3556,10 +3600,11 @@ chatui.onReceiveResponse = function(resp, isHistory) {
       return;
     }
 
-    if(resp.response.query.event == 'sendSmsNew') {
-      sendSmsNewAppend(resp.response.queryResult);
-      return;
-    }
+    // SMS 기능 삭제.
+    // if(resp.response.query.event == 'sendSmsNew') {
+    //   sendSmsNewAppend(resp.response.queryResult);
+    //   return;
+    // }
 
     for(var i = 0; i < resp.response.queryResult.messages.length; i++) {
       var message = resp.response.queryResult.messages[i];
@@ -5889,13 +5934,14 @@ function connectMessenger(userId, targetId){
         +'</svg>')
       +'</span><span class="b-text">메신저</span></button>';
     }
-		
-     dpContactHtml +=	'<button type="button" class="icon-btn" onClick="sendSMSPopupOpen(null,\''+data.userNm+'\',\''+data.deptNm+'\',\''+data.empMobile+'\')">'
-     +'<span class="b-icon">'
-     +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-     +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5 4.2C4.00703 4.2 3.2 5.0061 3.2 6.00304V19.4955C3.2 19.7664 3.52435 19.8967 3.7117 19.7091L6.81171 16.606C7.31813 16.099 8.0053 15.8142 8.72186 15.8142H19C19.993 15.8142 20.8 15.0081 20.8 14.0111V6.00304C20.8 5.0061 19.993 4.2 19 4.2H5ZM2 6.00304C2 4.34451 3.34315 3 5 3H19C20.6569 3 22 4.34451 22 6.00304V14.0111C22 15.6697 20.6569 17.0142 19 17.0142H8.72186C8.32377 17.0142 7.94201 17.1724 7.66067 17.4541L4.56066 20.5572C3.61571 21.5031 2 20.8332 2 19.4955V6.00304Z" fill="#6B6B6B"/>'
-     +'</svg>')
-      +'</span><span class="b-text">문자</span></button>';
+	
+	// SMS 기능 삭제.		
+    //  dpContactHtml +=	'<button type="button" class="icon-btn" onClick="sendSMSPopupOpen(null,\''+data.userNm+'\',\''+data.deptNm+'\',\''+data.empMobile+'\')">'
+    //  +'<span class="b-icon">'
+    //  +('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M5 4.2C4.00703 4.2 3.2 5.0061 3.2 6.00304V19.4955C3.2 19.7664 3.52435 19.8967 3.7117 19.7091L6.81171 16.606C7.31813 16.099 8.0053 15.8142 8.72186 15.8142H19C19.993 15.8142 20.8 15.0081 20.8 14.0111V6.00304C20.8 5.0061 19.993 4.2 19 4.2H5ZM2 6.00304C2 4.34451 3.34315 3 5 3H19C20.6569 3 22 4.34451 22 6.00304V14.0111C22 15.6697 20.6569 17.0142 19 17.0142H8.72186C8.32377 17.0142 7.94201 17.1724 7.66067 17.4541L4.56066 20.5572C3.61571 21.5031 2 20.8332 2 19.4955V6.00304Z" fill="#6B6B6B"/>'
+    //  +'</svg>')
+    //   +'</span><span class="b-text">문자</span></button>';
 			
     if(!isMobile) {
      dpContactHtml +=	'<button type="button" class="icon-btn" onClick="intentEvent(null, \'email\', \''+data.empMail+'\');">'
@@ -6337,25 +6383,25 @@ return messageWeather;
  * 'SMS발송 공통 카드 생성' 함수
  * @param {object} SMS 형 응답 데이터
  */
- function makeSmsSendCardNew(data) {
-  var smsCard = $('<div class="message simple-text"></div>');
-  var smsText = $('<p>SMS를 발송하시려면 아래 버튼을 눌러주세요!</p>');
-  smsCard.append(smsText);
-  if(checkChatHistory == false) {
-    sendSMSPopupOpen(data);
-  }
+//  function makeSmsSendCardNew(data) {
+//   var smsCard = $('<div class="message simple-text"></div>');
+//   var smsText = $('<p>SMS를 발송하시려면 아래 버튼을 눌러주세요!</p>');
+//   smsCard.append(smsText);
+//   if(checkChatHistory == false) {
+//     sendSMSPopupOpen(data);
+//   }
 
-  var smsBtns = $('<div class="btns"></div>')
-  var smsBtn = $('<button type="button" class="btn btn-emphasis">SMS 발송</button>');
-  smsBtn.on('click', function() {
-    sendSMSPopupOpen(data);
-  })
+//   var smsBtns = $('<div class="btns"></div>')
+//   var smsBtn = $('<button type="button" class="btn btn-emphasis">SMS 발송</button>');
+//   smsBtn.on('click', function() {
+//     sendSMSPopupOpen(data);
+//   })
 
-  smsBtns.append(smsBtn);
-  smsCard.append(smsBtns);
+//   smsBtns.append(smsBtn);
+//   smsCard.append(smsBtns);
 
-  return smsCard;
-}
+//   return smsCard;
+// }
 
 /** 
  * 메일 연결
@@ -6514,25 +6560,25 @@ function makeHelpCard() {
     });
     help3.append(btn8);    
     
-    var btn9 = $('<li class="send-message" data-message="AI 검색">'
-      +   '<span class="file-icon">'
-      +   '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
-      +'<path fill-rule="evenodd" clip-rule="evenodd" d="M7.15994 20.5521C7.0716 20.9065 6.73934 21.1287 6.41781 21.0485C6.09628 20.9684 5.90724 20.6161 5.99558 20.2618L7.28976 15.0712L3.60071 15.0712C3.26895 15.0712 3 14.8025 3 14.4712C3 14.1398 3.26895 13.8712 3.60071 13.8712H7.58895L8.78573 9.07117L4.60071 9.07117C4.26895 9.07117 4 8.80254 4 8.47117C4 8.1398 4.26895 7.87117 4.60071 7.87117L9.08492 7.87117L10.4209 2.51274C10.5093 2.15843 10.8415 1.93619 11.1631 2.01636C11.4846 2.09653 11.6736 2.44874 11.5853 2.80305L10.3217 7.87117L16.2493 7.87117L17.5853 2.51274C17.6736 2.15843 18.0059 1.93619 18.3274 2.01636C18.649 2.09653 18.838 2.44874 18.7497 2.80305L17.486 7.87117L21.2203 7.87117C21.5521 7.87117 21.821 8.1398 21.821 8.47117C21.821 8.80254 21.5521 9.07117 21.2203 9.07117L17.1868 9.07117L15.9901 13.8712L20.2203 13.8712C20.5521 13.8712 20.821 14.1398 20.821 14.4712C20.821 14.8025 20.5521 15.0712 20.2203 15.0712L15.6909 15.0712L14.3243 20.5521C14.236 20.9065 13.9037 21.1287 13.5822 21.0485C13.2606 20.9684 13.0716 20.6161 13.16 20.2618L14.4541 15.0712L8.5265 15.0712L7.15994 20.5521ZM8.82569 13.8712H14.7533L15.9501 9.07117L10.0225 9.07117L8.82569 13.8712Z" fill="#6B6B6B"/>'
-      +'</svg>'
-      +   '</span>'
-      +   '<p>AI 검색</p>'
-      + '</li>');
-    btn9.on('click', function() {
-      searchActiveFalse();
-      searchActiveMrc(); 
-      searchActive2 = true;
-      setTimeout(function() {
-        searchActive2 = false;
-      }, 500)  
-    })
+    // var btn9 = $('<li class="send-message" data-message="AI 검색">'
+    //   +   '<span class="file-icon">'
+    //   +   '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M7.15994 20.5521C7.0716 20.9065 6.73934 21.1287 6.41781 21.0485C6.09628 20.9684 5.90724 20.6161 5.99558 20.2618L7.28976 15.0712L3.60071 15.0712C3.26895 15.0712 3 14.8025 3 14.4712C3 14.1398 3.26895 13.8712 3.60071 13.8712H7.58895L8.78573 9.07117L4.60071 9.07117C4.26895 9.07117 4 8.80254 4 8.47117C4 8.1398 4.26895 7.87117 4.60071 7.87117L9.08492 7.87117L10.4209 2.51274C10.5093 2.15843 10.8415 1.93619 11.1631 2.01636C11.4846 2.09653 11.6736 2.44874 11.5853 2.80305L10.3217 7.87117L16.2493 7.87117L17.5853 2.51274C17.6736 2.15843 18.0059 1.93619 18.3274 2.01636C18.649 2.09653 18.838 2.44874 18.7497 2.80305L17.486 7.87117L21.2203 7.87117C21.5521 7.87117 21.821 8.1398 21.821 8.47117C21.821 8.80254 21.5521 9.07117 21.2203 9.07117L17.1868 9.07117L15.9901 13.8712L20.2203 13.8712C20.5521 13.8712 20.821 14.1398 20.821 14.4712C20.821 14.8025 20.5521 15.0712 20.2203 15.0712L15.6909 15.0712L14.3243 20.5521C14.236 20.9065 13.9037 21.1287 13.5822 21.0485C13.2606 20.9684 13.0716 20.6161 13.16 20.2618L14.4541 15.0712L8.5265 15.0712L7.15994 20.5521ZM8.82569 13.8712H14.7533L15.9501 9.07117L10.0225 9.07117L8.82569 13.8712Z" fill="#6B6B6B"/>'
+    //   +'</svg>'
+    //   +   '</span>'
+    //   +   '<p>AI 검색</p>'
+    //   + '</li>');
+    // btn9.on('click', function() {
+    //   searchActiveFalse();
+    //   searchActiveMrc(); 
+    //   searchActive2 = true;
+    //   setTimeout(function() {
+    //     searchActive2 = false;
+    //   }, 500)  
+    // })
      
-    help3.append(btn9);  
-    helpWarper.append(help3);
+    // help3.append(btn9);  
+    // helpWarper.append(help3);
 
     var help4 = $('<ul class="three"></ul>');
     var btn10 = $('<li class="send-message" data-message="표준문서검색">'
@@ -6552,50 +6598,52 @@ function makeHelpCard() {
         searchActive2 = false;
       }, 500);
     });
-    help4.append(btn10);
-    helpWarper.append(help4);
+    // help4.append(btn10);
+    // helpWarper.append(help4);
+    help3.append(btn10);  
+    helpWarper.append(help3);
 
     return helpWarper;
 };
 
 
-function changeMrcRateOpen(id) {
-  $('#mrc-id-' + id).find('.rate-select').addClass('show');
-}
+// function changeMrcRateOpen(id) {
+//   $('#mrc-id-' + id).find('.rate-select').addClass('show');
+// }
 
-function showMrcDetail(id) {
-  if($('#mrc-id-' + id).hasClass('closed-mrc')) {
-    $('#mrc-id-' + id).removeClass('closed-mrc');
-  } else {
-    $('#mrc-id-' + id).addClass('closed-mrc');
-  }
+// function showMrcDetail(id) {
+//   if($('#mrc-id-' + id).hasClass('closed-mrc')) {
+//     $('#mrc-id-' + id).removeClass('closed-mrc');
+//   } else {
+//     $('#mrc-id-' + id).addClass('closed-mrc');
+//   }
   
-}
+// }
 
-function changeMrcRate(number, id) {
-  var requestParam = {
-    query: {
-			"event": "feedback_event"
-		},
-		payload: {
-			"feedback": number,
-      "session_id": id
-		}
-  }
-  sendChatApi(requestParam, null, function(payload) {
-    $('#mrc-id-' + id).find('.rate').remove();
-    if(number == 1) {
-      $('#mrc-id-' + id).find('.rate-please').append('<span class="rate">' + iconZero + "전혀 달라요." + '</span>');
-    } else if(number == 3) {
-      $('#mrc-id-' + id).find('.rate-please').append('<span class="rate">' + iconOne + "정확해요!" + '</span>');
-    } else if(number == 2) {
-      $('#mrc-id-' + id).find('.rate-please').append('<span class="rate">' + iconTwo + "애매해요." + '</span>');
-    }
-    $('#mrc-id-' + id).find('.rate-select').removeClass('show');
-  });
-  //chatui.sendEventMessage("feedback_event", {"session_id":id, "feedback":number});
+// function changeMrcRate(number, id) {
+//   var requestParam = {
+//     query: {
+// 			"event": "feedback_event"
+// 		},
+// 		payload: {
+// 			"feedback": number,
+//       "session_id": id
+// 		}
+//   }
+//   sendChatApi(requestParam, null, function(payload) {
+//     $('#mrc-id-' + id).find('.rate').remove();
+//     if(number == 1) {
+//       $('#mrc-id-' + id).find('.rate-please').append('<span class="rate">' + iconZero + "전혀 달라요." + '</span>');
+//     } else if(number == 3) {
+//       $('#mrc-id-' + id).find('.rate-please').append('<span class="rate">' + iconOne + "정확해요!" + '</span>');
+//     } else if(number == 2) {
+//       $('#mrc-id-' + id).find('.rate-please').append('<span class="rate">' + iconTwo + "애매해요." + '</span>');
+//     }
+//     $('#mrc-id-' + id).find('.rate-select').removeClass('show');
+//   });
+//   //chatui.sendEventMessage("feedback_event", {"session_id":id, "feedback":number});
  
-}
+// }
 
 function escapeRegExp(string) {
   return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -6613,87 +6661,87 @@ function boldString(str, substr) {
   return result;
 }
 
-function makeMrcListCard(data) {
-  var mrcResultUl = $('<ul></ul>');
-  var isMobile = Mobile();
-    if (data.items && data.items.length > 0) {
-        for (let i = 0; i < data.items.length; i++) {
-            var item = data.items[i];
-            var mrcResultLi = '<li class="list-box closed-mrc" id="mrc-id-' + item.sessionId + '">';
-            if (i > 3) {
-                mrcResultLi = '<li class="list-box closed-mrc disp-none" id="mrc-id-' + item.sessionId + '">';
-            };
-            mrcResultLi += '<h1 onclick="showMrcDetail(' + item.sessionId + ')">' + item.filename + '</h1>';
-            mrcResultLi += '<p class="category-date" onclick="showMrcDetail(' + item.sessionId + ')"><span class="cabinet-name">' + item.cabinetName + '</span>' + ' · ' + item.date + '</p>';
-            mrcResultLi += '<span class="arrow" onclick="showMrcDetail(' + item.sessionId + ')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">';
-            mrcResultLi += '<path fill-rule="evenodd" clip-rule="evenodd" d="M7.60177 10.3805C7.8291 10.5825 8.17167 10.5825 8.399 10.3805L13.7346 5.63769C13.8998 5.49092 14.1526 5.50579 14.2994 5.67091C14.4461 5.83602 14.4312 6.08885 14.2661 6.23562L8.9305 10.9784C8.40005 11.4499 7.60072 11.4499 7.07028 10.9784L1.73464 6.23562C1.56953 6.08885 1.55466 5.83602 1.70142 5.67091C1.84819 5.50579 2.10102 5.49092 2.26613 5.63769L7.60177 10.3805Z" fill="#A5A5A5"/>';
-            mrcResultLi += '</svg></span>';
-            mrcResultLi += '<div class="mrc-rate" onclick="changeMrcRateOpen(' + item.sessionId + ')">';
-            mrcResultLi += '<span class="rate-please">';
-            mrcResultLi += '<span class="rate">' + iconRate + "평가하기" + '</span>';
-            // + (item.rate === null ? '<span class="rate">' + iconRate + "평가하기" + '</span>' : '')
-            // + (item.rate === 0 ? '<span class="rate">' + iconZero + "전혀 달라요." + '</span>' : '')
-            // + (item.rate === 1 ? '<span class="rate">' + iconOne + "정확해요!" + '</span>' : '')
-            // + (item.rate === 2 ? '<span class="rate">' + iconTwo + "애매해요." + '</span>' : '')
-            mrcResultLi += '<span class="rate-tooltip">찾으시던 내용이 맞나요?</span></span>';
-            mrcResultLi += '</div>';
-            mrcResultLi += '<div class="rate-select">';
-            mrcResultLi += '<ul>';
-            mrcResultLi += '<li><span class="rate-one" onclick="changeMrcRate(3,' + item.sessionId + ')">' + iconOne + '정확해요!</span></li>';
-            mrcResultLi += '<li><span class="rate-two" onclick="changeMrcRate(2,' + item.sessionId + ')">' + iconTwo + '애매해요.</span></li>';
-            mrcResultLi += '<li><span class="rate-zero" onclick="changeMrcRate(1,' + item.sessionId + ')">' + iconZero + '전혀 달라요.</span></li>';
-            mrcResultLi += '</ul>';
-            mrcResultLi += '</div>';
-            mrcResultLi += '<div class="mrc-more">';
+// function makeMrcListCard(data) {
+//   var mrcResultUl = $('<ul></ul>');
+//   var isMobile = Mobile();
+//     if (data.items && data.items.length > 0) {
+//         for (let i = 0; i < data.items.length; i++) {
+//             var item = data.items[i];
+//             var mrcResultLi = '<li class="list-box closed-mrc" id="mrc-id-' + item.sessionId + '">';
+//             if (i > 3) {
+//                 mrcResultLi = '<li class="list-box closed-mrc disp-none" id="mrc-id-' + item.sessionId + '">';
+//             };
+//             mrcResultLi += '<h1 onclick="showMrcDetail(' + item.sessionId + ')">' + item.filename + '</h1>';
+//             mrcResultLi += '<p class="category-date" onclick="showMrcDetail(' + item.sessionId + ')"><span class="cabinet-name">' + item.cabinetName + '</span>' + ' · ' + item.date + '</p>';
+//             mrcResultLi += '<span class="arrow" onclick="showMrcDetail(' + item.sessionId + ')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">';
+//             mrcResultLi += '<path fill-rule="evenodd" clip-rule="evenodd" d="M7.60177 10.3805C7.8291 10.5825 8.17167 10.5825 8.399 10.3805L13.7346 5.63769C13.8998 5.49092 14.1526 5.50579 14.2994 5.67091C14.4461 5.83602 14.4312 6.08885 14.2661 6.23562L8.9305 10.9784C8.40005 11.4499 7.60072 11.4499 7.07028 10.9784L1.73464 6.23562C1.56953 6.08885 1.55466 5.83602 1.70142 5.67091C1.84819 5.50579 2.10102 5.49092 2.26613 5.63769L7.60177 10.3805Z" fill="#A5A5A5"/>';
+//             mrcResultLi += '</svg></span>';
+//             mrcResultLi += '<div class="mrc-rate" onclick="changeMrcRateOpen(' + item.sessionId + ')">';
+//             mrcResultLi += '<span class="rate-please">';
+//             mrcResultLi += '<span class="rate">' + iconRate + "평가하기" + '</span>';
+//             // + (item.rate === null ? '<span class="rate">' + iconRate + "평가하기" + '</span>' : '')
+//             // + (item.rate === 0 ? '<span class="rate">' + iconZero + "전혀 달라요." + '</span>' : '')
+//             // + (item.rate === 1 ? '<span class="rate">' + iconOne + "정확해요!" + '</span>' : '')
+//             // + (item.rate === 2 ? '<span class="rate">' + iconTwo + "애매해요." + '</span>' : '')
+//             mrcResultLi += '<span class="rate-tooltip">찾으시던 내용이 맞나요?</span></span>';
+//             mrcResultLi += '</div>';
+//             mrcResultLi += '<div class="rate-select">';
+//             mrcResultLi += '<ul>';
+//             mrcResultLi += '<li><span class="rate-one" onclick="changeMrcRate(3,' + item.sessionId + ')">' + iconOne + '정확해요!</span></li>';
+//             mrcResultLi += '<li><span class="rate-two" onclick="changeMrcRate(2,' + item.sessionId + ')">' + iconTwo + '애매해요.</span></li>';
+//             mrcResultLi += '<li><span class="rate-zero" onclick="changeMrcRate(1,' + item.sessionId + ')">' + iconZero + '전혀 달라요.</span></li>';
+//             mrcResultLi += '</ul>';
+//             mrcResultLi += '</div>';
+//             mrcResultLi += '<div class="mrc-more">';
 
-            var contents = boldString(item.content, item.sentence);
-
-
-            mrcResultLi += '<div class="mrc-contents">' + contents + '</div>';
-            if (!isMobile) {
-                mrcResultLi += '<div class="mrc-btns">';
-                mrcResultLi += '<a href="' + item.property_url + '"' + ' class="btn btn-text btn-mrc-info" target="_blank">문서 정보 조회 ';
-                mrcResultLi += '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">';
-                mrcResultLi += '<path d="M9.53353 2.06797C9.53353 1.84705 9.71261 1.66797 9.93353 1.66797H12.9335C13.7067 1.66797 14.3335 2.29477 14.3335 3.06797V6.06797C14.3335 6.28888 14.1544 6.46797 13.9335 6.46797C13.7126 6.46797 13.5335 6.28888 13.5335 6.06797V3.06797C13.5335 3.05676 13.5332 3.04562 13.5326 3.03457L7.94977 8.61741C7.79356 8.77362 7.54029 8.77362 7.38408 8.61741C7.22787 8.4612 7.22787 8.20794 7.38408 8.05173L12.9669 2.46888C12.9559 2.46828 12.9447 2.46797 12.9335 2.46797H9.93353C9.71261 2.46797 9.53353 2.28888 9.53353 2.06797Z" fill="#2C2C2C"/>';
-                mrcResultLi += '<path d="M3.66699 3.13464C3.00425 3.13464 2.46699 3.67189 2.46699 4.33464V12.3346C2.46699 12.9974 3.00425 13.5346 3.66699 13.5346H11.667C12.3297 13.5346 12.867 12.9974 12.867 12.3346V9.00124C12.867 8.78032 13.0461 8.60124 13.267 8.60124C13.4879 8.60124 13.667 8.78032 13.667 9.00124V12.3346C13.667 13.4392 12.7716 14.3346 11.667 14.3346H3.66699C2.56242 14.3346 1.66699 13.4392 1.66699 12.3346V4.33464C1.66699 3.23007 2.56242 2.33464 3.66699 2.33464H7.00032C7.22124 2.33464 7.40032 2.51372 7.40032 2.73464C7.40032 2.95555 7.22124 3.13464 7.00032 3.13464H3.66699Z" fill="#2C2C2C"/>';
-                mrcResultLi += '</svg>';
-                mrcResultLi += '</a>';
-                mrcResultLi += '<a href="' + item.file_url + '"' + ' class="btn btn-emphasis btn-mrc-link" target="_blank">문서 바로가기 ';
-                mrcResultLi += '<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">';
-                mrcResultLi += '<path d="M10.0335 2.06797C10.0335 1.84705 10.2126 1.66797 10.4335 1.66797H13.4335C14.2067 1.66797 14.8335 2.29477 14.8335 3.06797V6.06797C14.8335 6.28888 14.6544 6.46797 14.4335 6.46797C14.2126 6.46797 14.0335 6.28888 14.0335 6.06797V3.06797C14.0335 3.05676 14.0332 3.04562 14.0326 3.03457L8.44977 8.61741C8.29356 8.77362 8.04029 8.77362 7.88408 8.61741C7.72787 8.4612 7.72787 8.20794 7.88408 8.05173L13.4669 2.46888C13.4559 2.46828 13.4447 2.46797 13.4335 2.46797H10.4335C10.2126 2.46797 10.0335 2.28888 10.0335 2.06797Z" fill="#E0205C"/>';
-                mrcResultLi += '<path d="M4.16699 3.13464C3.50425 3.13464 2.96699 3.67189 2.96699 4.33464V12.3346C2.96699 12.9974 3.50425 13.5346 4.16699 13.5346H12.167C12.8297 13.5346 13.367 12.9974 13.367 12.3346V9.00124C13.367 8.78032 13.5461 8.60124 13.767 8.60124C13.9879 8.60124 14.167 8.78032 14.167 9.00124V12.3346C14.167 13.4392 13.2716 14.3346 12.167 14.3346H4.16699C3.06242 14.3346 2.16699 13.4392 2.16699 12.3346V4.33464C2.16699 3.23007 3.06242 2.33464 4.16699 2.33464H7.50032C7.72124 2.33464 7.90032 2.51372 7.90032 2.73464C7.90032 2.95555 7.72124 3.13464 7.50032 3.13464H4.16699Z" fill="#E0205C"/>';
-                mrcResultLi += '</svg>';
-                mrcResultLi += '</a>';
-                mrcResultLi += '</div>';
-            }
-            mrcResultLi += '</div>';
-            mrcResultLi += '</li>';
-
-            mrcResultLi = $(mrcResultLi);
-            mrcResultUl.append(mrcResultLi);
-        }
-    }
+//             var contents = boldString(item.content, item.sentence);
 
 
+//             mrcResultLi += '<div class="mrc-contents">' + contents + '</div>';
+//             if (!isMobile) {
+//                 mrcResultLi += '<div class="mrc-btns">';
+//                 mrcResultLi += '<a href="' + item.property_url + '"' + ' class="btn btn-text btn-mrc-info" target="_blank">문서 정보 조회 ';
+//                 mrcResultLi += '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">';
+//                 mrcResultLi += '<path d="M9.53353 2.06797C9.53353 1.84705 9.71261 1.66797 9.93353 1.66797H12.9335C13.7067 1.66797 14.3335 2.29477 14.3335 3.06797V6.06797C14.3335 6.28888 14.1544 6.46797 13.9335 6.46797C13.7126 6.46797 13.5335 6.28888 13.5335 6.06797V3.06797C13.5335 3.05676 13.5332 3.04562 13.5326 3.03457L7.94977 8.61741C7.79356 8.77362 7.54029 8.77362 7.38408 8.61741C7.22787 8.4612 7.22787 8.20794 7.38408 8.05173L12.9669 2.46888C12.9559 2.46828 12.9447 2.46797 12.9335 2.46797H9.93353C9.71261 2.46797 9.53353 2.28888 9.53353 2.06797Z" fill="#2C2C2C"/>';
+//                 mrcResultLi += '<path d="M3.66699 3.13464C3.00425 3.13464 2.46699 3.67189 2.46699 4.33464V12.3346C2.46699 12.9974 3.00425 13.5346 3.66699 13.5346H11.667C12.3297 13.5346 12.867 12.9974 12.867 12.3346V9.00124C12.867 8.78032 13.0461 8.60124 13.267 8.60124C13.4879 8.60124 13.667 8.78032 13.667 9.00124V12.3346C13.667 13.4392 12.7716 14.3346 11.667 14.3346H3.66699C2.56242 14.3346 1.66699 13.4392 1.66699 12.3346V4.33464C1.66699 3.23007 2.56242 2.33464 3.66699 2.33464H7.00032C7.22124 2.33464 7.40032 2.51372 7.40032 2.73464C7.40032 2.95555 7.22124 3.13464 7.00032 3.13464H3.66699Z" fill="#2C2C2C"/>';
+//                 mrcResultLi += '</svg>';
+//                 mrcResultLi += '</a>';
+//                 mrcResultLi += '<a href="' + item.file_url + '"' + ' class="btn btn-emphasis btn-mrc-link" target="_blank">문서 바로가기 ';
+//                 mrcResultLi += '<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">';
+//                 mrcResultLi += '<path d="M10.0335 2.06797C10.0335 1.84705 10.2126 1.66797 10.4335 1.66797H13.4335C14.2067 1.66797 14.8335 2.29477 14.8335 3.06797V6.06797C14.8335 6.28888 14.6544 6.46797 14.4335 6.46797C14.2126 6.46797 14.0335 6.28888 14.0335 6.06797V3.06797C14.0335 3.05676 14.0332 3.04562 14.0326 3.03457L8.44977 8.61741C8.29356 8.77362 8.04029 8.77362 7.88408 8.61741C7.72787 8.4612 7.72787 8.20794 7.88408 8.05173L13.4669 2.46888C13.4559 2.46828 13.4447 2.46797 13.4335 2.46797H10.4335C10.2126 2.46797 10.0335 2.28888 10.0335 2.06797Z" fill="#E0205C"/>';
+//                 mrcResultLi += '<path d="M4.16699 3.13464C3.50425 3.13464 2.96699 3.67189 2.96699 4.33464V12.3346C2.96699 12.9974 3.50425 13.5346 4.16699 13.5346H12.167C12.8297 13.5346 13.367 12.9974 13.367 12.3346V9.00124C13.367 8.78032 13.5461 8.60124 13.767 8.60124C13.9879 8.60124 14.167 8.78032 14.167 9.00124V12.3346C14.167 13.4392 13.2716 14.3346 12.167 14.3346H4.16699C3.06242 14.3346 2.16699 13.4392 2.16699 12.3346V4.33464C2.16699 3.23007 3.06242 2.33464 4.16699 2.33464H7.50032C7.72124 2.33464 7.90032 2.51372 7.90032 2.73464C7.90032 2.95555 7.72124 3.13464 7.50032 3.13464H4.16699Z" fill="#E0205C"/>';
+//                 mrcResultLi += '</svg>';
+//                 mrcResultLi += '</a>';
+//                 mrcResultLi += '</div>';
+//             }
+//             mrcResultLi += '</div>';
+//             mrcResultLi += '</li>';
 
-    var mrcCard = $('<div class="mrc-list"></div>');
-    var mrcHeader = $('<div class="list-header-title">' + listHeaderIcon + 'AI 문서 검색결과</div>');
-    mrcCard.append(mrcHeader);
-    mrcCard.append(mrcResultUl);
+//             mrcResultLi = $(mrcResultLi);
+//             mrcResultUl.append(mrcResultLi);
+//         }
+//     }
 
-    var seeMore = $('<div class="see-more">'
-        + '<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
-        + '<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
-        + '</svg>더보기'
-        + '</div>');
 
-    if (data.items.length > 4) {
-        mrcCard.append(seeMore);
-    }
-    var mrcMessage = $('<div class="message"></div>');
-    mrcMessage.append(mrcCard);
-    return mrcMessage;
-}
+
+//     var mrcCard = $('<div class="mrc-list"></div>');
+//     var mrcHeader = $('<div class="list-header-title">' + listHeaderIcon + 'AI 문서 검색결과</div>');
+//     mrcCard.append(mrcHeader);
+//     mrcCard.append(mrcResultUl);
+
+//     var seeMore = $('<div class="see-more">'
+//         + '<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//         + '<path d="M7.09998 13.7666C7.09998 13.9875 7.27906 14.1666 7.49998 14.1666C7.72089 14.1666 7.89998 13.9875 7.89998 13.7666V7.89985H13.7667C13.9876 7.89985 14.1667 7.72077 14.1667 7.49985C14.1667 7.27894 13.9876 7.09985 13.7667 7.09985H7.89998V1.23325C7.89998 1.01234 7.72089 0.833252 7.49998 0.833252C7.27906 0.833252 7.09998 1.01234 7.09998 1.23325V7.09985H1.23337C1.01246 7.09985 0.833374 7.27894 0.833374 7.49985C0.833374 7.72077 1.01246 7.89985 1.23337 7.89985H7.09998V13.7666Z" fill="#2C2C2C"/>'
+//         + '</svg>더보기'
+//         + '</div>');
+
+//     if (data.items.length > 4) {
+//         mrcCard.append(seeMore);
+//     }
+//     var mrcMessage = $('<div class="message"></div>');
+//     mrcMessage.append(mrcCard);
+//     return mrcMessage;
+// }
 
 function makeLawDutyHoursCard(data) {
   var messsageResult = $('<div class="custom-message"></div>');
@@ -7093,23 +7141,23 @@ function makeDefaultFallbackCard(data) {
   });
   btnList.append(searchEmployeeBtn);
 
-  var searchAiBtn = $('<span class="btn-custom-reply btn-icon btn-text search-ai">'
-  +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
-  +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
-  +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#E0205C"/>'
-  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#E0205C"/>'
-  +'</svg>'
-  +'AI 검색</span>');
-  searchAiBtn.on('click', function() {
-    searchActiveFalse();
-    searchActiveMrc(); 
-    searchActive2 = true;
-    setTimeout(function() {
-      searchActive2 = false;
-    }, 500)
+//   var searchAiBtn = $('<span class="btn-custom-reply btn-icon btn-text search-ai">'
+//   +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+//   +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#E0205C"/>'
+//   +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#E0205C"/>'
+//   +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#E0205C"/>'
+//   +'</svg>'
+//   +'AI 검색</span>');
+//   searchAiBtn.on('click', function() {
+//     searchActiveFalse();
+//     searchActiveMrc(); 
+//     searchActive2 = true;
+//     setTimeout(function() {
+//       searchActive2 = false;
+//     }, 500)
  
-  });
-  btnList.append(searchAiBtn);
+//   });
+//   btnList.append(searchAiBtn);
 
   var searchScheduleBtn = $('<span class="btn-custom-reply btn-icon btn-text search-schedule">'
   +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -7350,14 +7398,14 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
           messageCard = makeAnniversaryCard(message.data.items);
         } else if(message.type == 'sms') { // sms발송
           messageCard  = makeSmsSendCard(message.data);
-        } else if(message.type == 'smsNew') { // sms발송(새로운 타입)
-            messageCard  = makeSmsSendCardNew(message.data);
+        // } else if(message.type == 'smsNew') { // sms발송(새로운 타입)
+        //     messageCard  = makeSmsSendCardNew(message.data);
         } else if(message.type == 'email') { // 메일 발송
             if (isHistory != true ) {
                 messageCard = connectEmail(message.data);
             }
-        } else if(message.type == 'mrcList') {
-          messageCard = makeMrcListCard(message.data);
+        // } else if(message.type == 'mrcList') {
+        //   messageCard = makeMrcListCard(message.data);
         } else if(message.type == 'lawDutyHours') {
           messageCard = makeLawDutyHoursCard(message.data);
         } else if(message.type == 'useHoliday') {
@@ -7867,9 +7915,9 @@ function replaceAnchorForWmo() {
               var parts = window.location.href.split("/");
               var downloadUrl = parts[0] + "//" + parts[2] + "/" + chatui.getSetting("chatbotId") + "/download/" + encodeURIComponent(fileName) + "?url=" + encodeURIComponent(fileUrl);
 
-              if (fileType == "MRC") {
-                  downloadUrl += "&token=" + encodeURIComponent(chatui.getSetting("apiToken"));
-              }
+            //   if (fileType == "MRC") {
+            //       downloadUrl += "&token=" + encodeURIComponent(chatui.getSetting("apiToken"));
+            //   }
 
               try {
                   _emsUtil.showAttachmentPolaris(downloadUrl, fileName);
