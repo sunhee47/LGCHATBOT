@@ -8564,9 +8564,11 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
     	}
         else if(message.type == 'searchBudgetResult') {                    // 예산조회 결과
           messageCard = budgetResult(message.data); // [퍼블 수정 및 추가]
+          requestLeftMsgScroll();
     	}
         else if(message.type == 'budgetResultError') {                    // 예산조회 실패
           messageCard = budgetResultError(message.data); 
+          requestLeftMsgScroll();
     	}
     	/* [퍼블 수정 및 추가] 수입화물 조회 */
         else if (message.type == 'importCargoInput') {
@@ -9545,6 +9547,12 @@ function addBudgetPopupOpen(data) {
     
 }
 
+var iconOutLink = '<svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+          + '<path d="M18.0964 6.50024L24.097 6.50066C24.6493 6.5007 25.0969 6.9484 25.0969 7.50066L25.0969 13.5002" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"  style="fill:none;" />'
+          + '<path d="M16.3394 14.9355L24.5962 7.00098" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"  style="fill:none;" />'
+          + '<path d="M14 8H9C7.89543 8 7 8.89543 7 10V23C7 24.1046 7.89543 25 9 25H22C23.1046 25 24 24.1046 24 23V18" stroke="#E0205C" stroke-width="1.2" stroke-linecap="round"  style="fill:none;" />'
+          + '</svg>';
+
 // 예산 조회 결과 메세지
 function budgetResult(data) {
     var budgetResultMessage = $('<div class="custom-message"></div>');
@@ -9631,6 +9639,37 @@ function budgetResult(data) {
         
     });
     
+    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
+    var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
+    var gevsBtn = $('<button type="button" class="btn-quick-reply btn-basic">비용처리 GEVS'+iconOutLink+'</button>');
+    var ibtsBtn = $('<button type="button" class="btn-quick-reply btn-basic">해외출장비처리 IBTS'+iconOutLink+'</button>');
+    var budgetBtn = $('<button type="button" class="btn-quick-reply btn-basic">잔여 예산 조회</button>');
+    quickBtnBox.append(gevsBtn);
+    quickBtnBox.append(ibtsBtn);
+    quickBtnBox.append(budgetBtn);
+    messageTextWrap2.append(quickBtnBox);
+
+    gevsBtn.on('click', function() {
+        console.log('비용처리 GEVS');
+        
+        window.open('http://lgegltase9q.lge.com:8080/OA_HTML/jsp/xxevf/common/main/epMain.jsp?parameter=gevseptop=full&oas=xFGY4h1BIr1Cj6a7aj0LuA', '_blank');
+        //chatui.sendMessage("물품청구 내역 조회");  
+    });
+    ibtsBtn.on('click', function() {
+        console.log('해외출장비처리 IBTS');
+        
+        window.open('https://ibts.lge.com/cm/ibts/index.ncd', '_blank');
+        //chatui.sendMessage("물품청구 가이드");  
+    });
+    budgetBtn.on('click', function() {
+        console.log('잔여 예산 조회');
+        
+        isQuick = true;
+        chatui.sendMessage("잔여 예산 조회");  
+    });
+    
+    budgetResultMessage.append(messageTextWrap2);
+    
     return budgetResultMessage;
 }
 
@@ -9669,6 +9708,29 @@ function budgetResultError(data) {
     budgetMessageResult.append(budgetResultErrorWrap);
     budgetResultMessage.append(budgetMessageResult);
             
+    var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
+    var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
+    var gevsBtn = $('<button type="button" class="btn-quick-reply btn-basic">비용처리 GEVS'+iconOutLink+'</button>');
+    var ibtsBtn = $('<button type="button" class="btn-quick-reply btn-basic">해외출장비처리 IBTS'+iconOutLink+'</button>');
+    quickBtnBox.append(gevsBtn);
+    quickBtnBox.append(ibtsBtn);
+    messageTextWrap2.append(quickBtnBox);
+
+    gevsBtn.on('click', function() {
+        console.log('비용처리 GEVS');
+        
+        window.open('http://lgegltase9q.lge.com:8080/OA_HTML/jsp/xxevf/common/main/epMain.jsp?parameter=gevseptop=full&oas=xFGY4h1BIr1Cj6a7aj0LuA', '_blank');
+        //chatui.sendMessage("물품청구 내역 조회");  
+    });
+    ibtsBtn.on('click', function() {
+        console.log('해외출장비처리 IBTS');
+        
+        window.open('https://ibts.lge.com/cm/ibts/index.ncd', '_blank');
+        //chatui.sendMessage("물품청구 가이드");  
+    });
+
+    budgetResultMessage.append(messageTextWrap2);
+         
     return budgetResultMessage;
 }
 
@@ -10711,7 +10773,9 @@ function appendChatbotText3(firstMsg, message, customQuick) {
  * '화면 스크롤 최하단으로 내리기' 함수
  */
  function descendScroll() {
+    //  let tm = (t==null)? 50:t;
 	setTimeout(function() {
+	    console.log('descend.');
         var e = document.getElementById("divScroll");
         e.scrollTop = e.scrollHeight
     }, 50)
@@ -12271,6 +12335,10 @@ function requestItemsInputFirst(requestdata) {
 
         $(btn).removeClass('active');
         $(btn).find('span').text('청구할 계정을 선택해 주세요.');
+
+        // 추가.
+        $(btn).removeClass('select').addClass('default');
+        $(btn).find('span').css('font-weight', '');
         
         $('#account_code').val('');
         $('#account_name').val('');
@@ -15212,6 +15280,9 @@ function ascendScroll() {
     }, 50)
 }
 
+/**
+ * right message 기준 scroll
+ */
 function requestMsgScroll() {
     setTimeout(function() {
         var sclTarget = $('#divScroll');
@@ -15221,6 +15292,21 @@ function requestMsgScroll() {
             var lastRightMsg = sclTarget.find('.chat-message.right').last().height();
             console.log('스크롤', sclHeight, lastLeftMsg, lastRightMsg);
             sclTarget.scrollTop(sclHeight - lastLeftMsg - lastRightMsg - 230);
+        }
+    },100);    
+}
+
+/**
+ * left message 기준 scroll
+ */
+function requestLeftMsgScroll() {
+    setTimeout(function() {
+        var sclTarget = $('#divScroll');
+        if (sclTarget.find('.chat-message').hasClass('left')) {
+            var sclHeight = sclTarget.prop('scrollHeight');
+            var lastLeftMsg = sclTarget.find('.chat-message.left').last().height();
+            console.log('스크롤', sclHeight, lastLeftMsg);
+            sclTarget.scrollTop(sclHeight - lastLeftMsg - 230);
         }
     },100);    
 }
