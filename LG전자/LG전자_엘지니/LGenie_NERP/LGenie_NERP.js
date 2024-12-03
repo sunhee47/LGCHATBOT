@@ -8558,8 +8558,8 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
           messageCard = makeSystemCardFirst(message.data.items);
         }        
         else if(message.type == 'budgetInput') {                    // 예산조회 입력
-          messageCard = makeBudgetInputCard(message.data); // [퍼블 수정 및 추가]
-            //  messageCard = reqPlannerUitChangeCardNERP(message.data);
+           messageCard = makeBudgetInputCard(message.data); // [퍼블 수정 및 추가]
+           //  messageCard = reqPlannerUitChangeCardNERP(message.data);
             // messageCard = productsBillResult(message.data);
     	}
         else if(message.type == 'searchBudgetResult') {                    // 예산조회 결과
@@ -9652,7 +9652,7 @@ function budgetResult(data) {
     gevsBtn.on('click', function() {
         console.log('비용처리 GEVS');
         
-        window.open('http://lgegltase9q.lge.com:8080/OA_HTML/jsp/xxevf/common/main/epMain.jsp?parameter=gevseptop=full&oas=xFGY4h1BIr1Cj6a7aj0LuA', '_blank');
+        window.open('http://sso.lge.com/agentless/seoul/gerpAgentless.jsp?tp=formid=^respkey=^parameter=gevseptop=full^LGEP='+data.empNo, '_blank');
         //chatui.sendMessage("물품청구 내역 조회");  
     });
     ibtsBtn.on('click', function() {
@@ -9719,7 +9719,7 @@ function budgetResultError(data) {
     gevsBtn.on('click', function() {
         console.log('비용처리 GEVS');
         
-        window.open('http://lgegltase9q.lge.com:8080/OA_HTML/jsp/xxevf/common/main/epMain.jsp?parameter=gevseptop=full&oas=xFGY4h1BIr1Cj6a7aj0LuA', '_blank');
+        window.open('http://sso.lge.com/agentless/seoul/gerpAgentless.jsp?tp=formid=^respkey=^parameter=gevseptop=full^LGEP='+data.empNo, '_blank');
         //chatui.sendMessage("물품청구 내역 조회");  
     });
     ibtsBtn.on('click', function() {
@@ -15395,7 +15395,7 @@ function articleRequestListError(data) {
 function articleRequestList(data) {
     console.log('물품청구 내역 : ', data);
     var items = data.items;
-
+    
     var reqDateFr = data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
     var reqDateTo = data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
 
@@ -15617,6 +15617,11 @@ function articleRequestList(data) {
             	
                 chatui.sendEventMessage("importedHsCodeEvent", param);
                 */
+                
+                if(item.DDTEXT == 'Canceled') {
+                    showHtmlSmallDialog('삭제된 항목입니다.');
+                    return;
+                }
 
                 addArticleReqDetailPopupOpen(data.userId, item);
             });
@@ -16189,7 +16194,7 @@ function addArticleReqDetailPopupOpen(loginUserId, data){
 
     var classInfo =$('<li class="subInfo-li">'
         +'<h5>계정</h5>'
-        +'<p>' + data.ZCLSTEXT +'</p>' 
+        +'<p>' + data.ZCLSCODE +'</p>' 
         +'</li>'
     );
     articleReqSubInfoUi.append(classInfo);
@@ -16662,7 +16667,7 @@ CHIP_STYPE_LIST.set('P', CHIP_STYLE_P[1]);
 CHIP_STYPE_LIST.set('R', CHIP_STYLE_R[1]);
 CHIP_STYPE_LIST.set('T', CHIP_STYLE_T[1]);
 
-
+var showUitUpdate = false;
 function uitUpdateInputNERP(data) {
     var uitUpdateCard = $('<div class="system-contents"></div>');
     var uitUpdateText = $(
@@ -16685,8 +16690,10 @@ function uitUpdateInputNERP(data) {
     uitUpdateBtnWrap.append(uitUpdateBtn);
     uitUpdateText.append(uitUpdateBtnWrap);
     
-    if(checkChatHistory == false) {
-        //uitUpdatePopupOpenGERP(data);
+    if(showUitUpdate == true) {
+        data.step = 1;
+        uitUpdatePopupOpenNERP(data);
+        showUitUpdate = false;
     }
 
     // quickReplies 템플릿
@@ -16771,7 +16778,7 @@ function uitUpdateInputFirstNERP(uitdata){
     /* #########[ popup_content ]######### */
     
     /*  ###[ ORG Code ]###  */
-    var plantInputBox = $('<div class="input-box"><label>Plant ID<b>*</b></label></div>');
+    var plantInputBox = $('<div class="input-box"><label>Plant<b>*</b></label></div>');
     var plantInput = $('<div class="input-form"><input type="text" placeholder="내용을 입력해 주세요." max-length="50" id="plant" value="'+plant+'" autocomplete="off"/></div>');
 
     var plantBtnClose = $(
@@ -16839,21 +16846,21 @@ function uitUpdateInputFirstNERP(uitdata){
     materialInputBox.append(materialInput);
     pluginForm.append(materialInputBox);
     
-    // var engNumMark_pattern = /[^a-zA-Z0-9~!@#$%";'^,&*()_+|</>=>`?:{}]/g;
-    var engNumMark_pattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+    // // var engNumMark_pattern = /[^a-zA-Z0-9~!@#$%";'^,&*()_+|</>=>`?:{}]/g;
+    // var engNumMark_pattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
     
     materialInput.on('blur keyup', function(e) {
         var input = e.target.value;
         
-        if(engNumMark_pattern.test(input) == true) {
+        if(engNum_pattern.test(input) == true) {
             //console.log('e.target ...'+e.key);
             
             $('.small-dialog').remove();    
             //setTimeout(function() {
-            showHtmlToastDialog('영문, 숫자, 기호로 입력해 주세요.'); 
+            showHtmlToastDialog('영문, 숫자로 입력해 주세요.'); 
             //}, 100);    
                 
-            var replaceVal = input.replace(engNumMark_pattern, '');
+            var replaceVal = input.replace(engNum_pattern, '');
 
             $(this).find('input').val(replaceVal);
         }
@@ -16927,7 +16934,7 @@ function uitUpdateInputFirstNERP(uitdata){
                     else if(result_message == 'Plant( '+plant+' ) is not found.' || result_message == 'Plant(  ) is not found.') {
                         
                       setTimeout(function() {
-                        showHtmlToastDialog('Plant ID가 유효하지 않습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        showHtmlToastDialog('Plant가 유효하지 않습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
                       }, 100);                      
                     }
                     else if(result_message == 'Material( '+material+' ), Plant( '+plant+' ) is not found.') {
@@ -16958,6 +16965,8 @@ function uitUpdateInputFirstNERP(uitdata){
                     uitdata.uitStatus = meterialInfo[0].ZUIT;
                     uitdata.poCnt = meterialInfo[0].ZPO_CNT;
                     uitdata.psCnt = meterialInfo[0].ZPSO_CNT;
+                    
+                    uitdata.zplanner = meterialInfo[0].ZPLANNER;
                     
                     pluginForm.removeClass('show');
                     pluginForm.remove();
@@ -17034,6 +17043,8 @@ function uitUpdateInputSecondNERP(uitdata){
     var uitStatus = (uitdata.uitStatus == null)? '':uitdata.uitStatus;          // 현재 UIT 
     var poCnt = (uitdata.poCnt == null)? '':uitdata.poCnt;
     var psCnt = (uitdata.psCnt == null)? '':uitdata.psCnt;
+    
+    var zplanner = (uitdata.zplanner == null)? '':uitdata.zplanner;
     
     var uit_flag = ''; 
     var uit_reverse = false;
@@ -17364,6 +17375,7 @@ function uitUpdateInputSecondNERP(uitdata){
                     "material":materialNo, 
                     "preUIT":uitStatus,
                     "chgUIT":chg_uit,
+                    "plannerEmpNo":zplanner, 
                     "remark":remark
                 }
             };
@@ -17753,10 +17765,11 @@ function addUitChangeCardNERP(uitdata){
     messageWrap.append(messageTextWrap);
     
     var uitListBtnWrap = $('<div class="btn"></div>');
-    var uitListBtn = $('<button type="button" class="btn btn-emphasis">Self UIT 변경 내역</button>');
+    var uitListBtn = $('<button type="button" class="btn btn-emphasis">UIT 추가 변경</button>');
     
     uitListBtn.on('click', function() {
-        chatui.sendMessage("Self UIT 변경 내역");
+        showUitUpdate = true;
+        chatui.sendMessage("UIT 변경");
     });
     
     uitListBtnWrap.append(uitListBtn);
@@ -17764,7 +17777,7 @@ function addUitChangeCardNERP(uitdata){
 
     var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
     var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
-    var update = $('<button type="button" class="btn-quick-reply btn-basic">UIT 변경</button>');
+    var update = $('<button type="button" class="btn-quick-reply btn-basic">Self UIT 변경 내역</button>');
     var planner = $('<button type="button" class="btn-quick-reply btn-basic">Planner UIT 변경 내역</button>');
     quickBtnBox.append(update);
     quickBtnBox.append(planner);
@@ -17775,7 +17788,7 @@ function addUitChangeCardNERP(uitdata){
 
     update.on('click', function() {
 
-        chatui.sendMessage("UIT 변경");
+        chatui.sendMessage("Self UIT 변경 내역");
     });
     
     planner.on('click', function() {
@@ -17824,7 +17837,7 @@ function reqPlannerUitChangeCardNERP(uitdata){
 
     var contentBox = $(
         '<div class="uit-content-box">'
-            +'<ul>'
+            +'<ul style="margin-bottom: 0px;">'
                 // +'<li style="height: 35px;">'
                 //     +'<p class="item-header" style="margin: 0px !important;align-self: start;">신청번호</p>'
                 //     +'<p class="item-content" style="margin: 0px !important;display:block;align-self: start;">'+uitdata.eventId+'</p>'
@@ -17885,23 +17898,24 @@ function reqPlannerUitChangeCardNERP(uitdata){
 
     // 버튼. 
     var uitListBtnWrap = $('<div class="btn"></div>');
-    var uitListBtn = $('<button type="button" class="btn btn-emphasis">Planner UIT 변경 내역</button>');
+    var uitListBtn = $('<button type="button" class="btn btn-emphasis">UIT 추가 변경</button>');
     
     uitListBtn.on('click', function() {
-        chatui.sendMessage("Planner UIT 변경 내역");
+        showUitUpdate = true;
+        chatui.sendMessage("UIT 변경");
     });
     
     uitListBtnWrap.append(uitListBtn);
-    //contentWarp.append(uitListBtnWrap);
+    contentWarp.append(uitListBtnWrap);
     //messageBox3.append(uitListBtnWrap);
-    reqPlannerMsg.append(uitListBtnWrap);
+    //reqPlannerMsg.append(uitListBtnWrap);
 
     messageWrap.append(messageTextWrap3);
     
     // quick button
     var messageTextWrap2 = $('<div class="custom-message" style="margin-left: 0px;"></div>');
     var quickBtnBox = $('<div class="btn btn-quick-reply"></div>');
-    var update = $('<button type="button" class="btn-quick-reply btn-basic">UIT 변경</button>');
+    var update = $('<button type="button" class="btn-quick-reply btn-basic">Planner UIT 변경 내역</button>');
     var selfList = $('<button type="button" class="btn-quick-reply btn-basic">Self UIT 변경 내역</button>');
     quickBtnBox.append(update);
     quickBtnBox.append(selfList);
@@ -17912,7 +17926,7 @@ function reqPlannerUitChangeCardNERP(uitdata){
 
     update.on('click', function() {
 
-        chatui.sendMessage("UIT 변경");
+        chatui.sendMessage("Planner UIT 변경 내역");
     });
     
     selfList.on('click', function() {
@@ -18688,7 +18702,7 @@ function addUITDetailPopupOpenNERP(data){
     uitSubInfoUi.append(meterialNameInfo);
 
     var plantInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>Plant ID</h5>'
+        +'<h5>Plant</h5>'
         +'<p>' + data.WERKS +'</p>' 
         +'</li>'
     );
@@ -19416,7 +19430,7 @@ function addPlannerDetailPopupOpenNERP(item){
     uitSubInfoUi.append(meterialNameInfo);
 
     var plantInfo =$('<li class="detailInfo-li" style="margin-bottom: 5px;">'
-        +'<h5>Plant ID</h5>'
+        +'<h5>Plant</h5>'
         +'<p>' + item.WERKS +'</p>' 
         +'</li>'
     );
