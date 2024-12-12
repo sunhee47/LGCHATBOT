@@ -3621,8 +3621,8 @@ jQuery(document).ready(function(e){
             targetParent = "F";
             
             //chatbotRecover.style.display = "block";
-            chatbotWinopen.style.display = "block";
-            chatbotCollapse.style.display = "block";
+            //chatbotWinopen.style.display = "block";
+            //chatbotCollapse.style.display = "block";
         }
         else {
             targetParent = "P";
@@ -15404,6 +15404,11 @@ function articleRequestList(data) {
     // 상위 문구 조회필터 버튼 영역
     var msgCon = $('<div class="message simple-text"></div>');
     var text;
+    var icontDate = '<svg width="178" height="13" viewBox="0 0 178 13" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                + '<path d="M0 12.84H12V0.84H0V12.84ZM20.496 2.088H21.492V12.936H20.496V2.088ZM17.316 3.252H18.3C18.3 6.396 16.884 9.144 13.26 10.92L12.732 10.116C15.864 8.604 17.316 6.3 17.316 3.42V3.252ZM13.224 3.252H17.748V4.068H13.224V3.252ZM27.8871 3.108H28.7751V3.432C28.7751 5.268 26.8191 6.552 24.5991 6.888L24.2271 6.084C26.1471 5.832 27.8871 4.752 27.8871 3.432V3.108ZM28.3071 3.108H29.1831V3.432C29.1831 4.752 30.9351 5.832 32.8551 6.084L32.4711 6.888C30.2631 6.552 28.3071 5.268 28.3071 3.432V3.108ZM24.5271 2.628H32.5551V3.432H24.5271V2.628ZM23.6271 7.668H33.4551V8.484H23.6271V7.668ZM28.1151 8.172H29.1111V10.668H28.1151V8.172ZM24.8751 11.88H32.3631V12.696H24.8751V11.88ZM24.8751 9.624H25.8591V12.192H24.8751V9.624ZM37.7141 2.484C39.3341 2.484 40.5221 3.468 40.5221 4.896C40.5221 6.312 39.3341 7.296 37.7141 7.296C36.1061 7.296 34.9181 6.312 34.9181 4.896C34.9181 3.468 36.1061 2.484 37.7141 2.484ZM37.7141 3.3C36.6701 3.3 35.8781 3.96 35.8781 4.896C35.8781 5.832 36.6701 6.48 37.7141 6.48C38.7701 6.48 39.5501 5.832 39.5501 4.896C39.5501 3.96 38.7701 3.3 37.7141 3.3ZM42.5621 2.088H43.5701V7.644H42.5621V2.088ZM36.5501 8.172H43.5701V10.812H37.5461V12.444H36.5741V10.068H42.5861V8.976H36.5501V8.172ZM36.5741 12H43.9301V12.792H36.5741V12ZM48.5732 3.024H49.3892V4.968C49.3892 7.464 48.0452 9.78 46.2692 10.68L45.6572 9.864C47.2652 9.096 48.5732 7.02 48.5732 4.968V3.024ZM48.7412 3.024H49.5572V4.968C49.5572 6.948 50.8532 8.94 52.4612 9.684L51.8612 10.476C50.0972 9.612 48.7412 7.38 48.7412 4.968V3.024ZM53.5892 2.076H54.5852V12.948H53.5892V2.076ZM60.4958 7.32C60.0638 7.32 59.7158 6.984 59.7158 6.492C59.7158 5.988 60.0638 5.652 60.4958 5.652C60.9398 5.652 61.2998 5.988 61.2998 6.492C61.2998 6.984 60.9398 7.32 60.4958 7.32ZM60.4958 12.168C60.0638 12.168 59.7158 11.82 59.7158 11.328C59.7158 10.824 60.0638 10.488 60.4958 10.488C60.9398 10.488 61.2998 10.824 61.2998 11.328C61.2998 11.82 60.9398 12.168 60.4958 12.168ZM65.3913 12V11.364C68.1513 8.952 69.4113 7.188 69.4113 5.688C69.4113 4.68 68.8953 3.936 67.8033 3.936C67.0833 3.936 66.4593 4.38 65.9673 4.956L65.3313 4.344C66.0513 3.564 66.8193 3.048 67.9353 3.048C69.5073 3.048 70.4913 4.068 70.4913 5.64C70.4913 7.404 69.1113 9.192 67.0353 11.148C67.5033 11.1 68.0313 11.064 68.4753 11.064H70.9113V12H65.3913ZM74.8555 12.168C73.1755 12.168 72.1075 10.644 72.1075 7.572C72.1075 4.524 73.1755 3.048 74.8555 3.048C76.5115 3.048 77.5795 4.524 77.5795 7.572C77.5795 10.644 76.5115 12.168 74.8555 12.168ZM74.8555 11.28C75.8515 11.28 76.5235 10.164 76.5235 7.572C76.5235 5.016 75.8515 3.924 74.8555 3.924C73.8475 3.924 73.1635 5.016 73.1635 7.572C73.1635 10.164 73.8475 11.28 74.8555 11.28ZM78.7038 12V11.364C81.4638 8.952 82.7238 7.188 82.7238 5.688C82.7238 4.68 82.2078 3.936 81.1158 3.936C80.3958 3.936 79.7718 4.38 79.2798 4.956L78.6438 4.344C79.3638 3.564 80.1318 3.048 81.2478 3.048C82.8198 3.048 83.8038 4.068 83.8038 5.64C83.8038 7.404 82.4238 9.192 80.3478 11.148C80.8158 11.1 81.3438 11.064 81.7878 11.064H84.2238V12H78.7038ZM88.9 12V6.012C88.9 5.568 88.936 4.86 88.972 4.404H88.912C88.696 4.836 88.456 5.28 88.216 5.712L86.212 8.712H91.108V9.576H85.06V8.856L88.72 3.204H89.932V12H88.9ZM92.0403 9.072V8.232H95.1123V9.072H92.0403ZM96.7044 12V11.088H98.6604V4.536H97.0884V3.828C97.8804 3.696 98.4444 3.492 98.9124 3.204H99.7524V11.088H101.528V12H96.7044ZM102.833 12V11.364C105.593 8.952 106.853 7.188 106.853 5.688C106.853 4.68 106.337 3.936 105.245 3.936C104.525 3.936 103.901 4.38 103.409 4.956L102.773 4.344C103.493 3.564 104.261 3.048 105.377 3.048C106.949 3.048 107.933 4.068 107.933 5.64C107.933 7.404 106.553 9.192 104.477 11.148C104.945 11.1 105.473 11.064 105.917 11.064H108.353V12H102.833ZM109.513 9.072V8.232H112.585V9.072H109.513ZM116.277 12.168C114.897 12.168 114.045 11.592 113.469 10.956L114.021 10.236C114.537 10.776 115.197 11.256 116.205 11.256C117.249 11.256 117.993 10.62 117.993 9.612C117.993 8.556 117.285 7.86 115.257 7.86V7.008C117.069 7.008 117.681 6.288 117.681 5.328C117.681 4.488 117.117 3.936 116.205 3.936C115.497 3.936 114.873 4.296 114.381 4.8L113.793 4.092C114.453 3.492 115.233 3.048 116.241 3.048C117.717 3.048 118.797 3.852 118.797 5.256C118.797 6.324 118.173 7.032 117.237 7.368V7.416C118.269 7.668 119.109 8.448 119.109 9.66C119.109 11.22 117.849 12.168 116.277 12.168ZM120.833 12V11.088H122.789V4.536H121.217V3.828C122.009 3.696 122.573 3.492 123.041 3.204H123.881V11.088H125.657V12H120.833ZM132.329 12V11.364C135.089 8.952 136.349 7.188 136.349 5.688C136.349 4.68 135.833 3.936 134.741 3.936C134.021 3.936 133.397 4.38 132.905 4.956L132.269 4.344C132.989 3.564 133.757 3.048 134.873 3.048C136.445 3.048 137.429 4.068 137.429 5.64C137.429 7.404 136.049 9.192 133.973 11.148C134.441 11.1 134.969 11.064 135.413 11.064H137.849V12H132.329ZM141.613 12.168C140.233 12.168 139.381 11.592 138.805 10.956L139.357 10.236C139.873 10.776 140.533 11.256 141.541 11.256C142.585 11.256 143.329 10.62 143.329 9.612C143.329 8.556 142.621 7.86 140.593 7.86V7.008C142.405 7.008 143.017 6.288 143.017 5.328C143.017 4.488 142.453 3.936 141.541 3.936C140.833 3.936 140.209 4.296 139.717 4.8L139.129 4.092C139.789 3.492 140.569 3.048 141.577 3.048C143.053 3.048 144.133 3.852 144.133 5.256C144.133 6.324 143.509 7.032 142.573 7.368V7.416C143.605 7.668 144.445 8.448 144.445 9.66C144.445 11.22 143.185 12.168 141.613 12.168ZM146.769 7.32C146.337 7.32 145.989 6.984 145.989 6.492C145.989 5.988 146.337 5.652 146.769 5.652C147.213 5.652 147.573 5.988 147.573 6.492C147.573 6.984 147.213 7.32 146.769 7.32ZM146.769 12.168C146.337 12.168 145.989 11.82 145.989 11.328C145.989 10.824 146.337 10.488 146.769 10.488C147.213 10.488 147.573 10.824 147.573 11.328C147.573 11.82 147.213 12.168 146.769 12.168ZM151.585 12.168C150.217 12.168 149.377 11.592 148.777 10.992L149.329 10.272C149.821 10.788 150.469 11.256 151.477 11.256C152.521 11.256 153.349 10.452 153.349 9.18C153.349 7.92 152.629 7.164 151.537 7.164C150.949 7.164 150.577 7.356 150.073 7.692L149.485 7.32L149.761 3.204H154.045V4.14H150.721L150.493 6.684C150.889 6.468 151.285 6.336 151.813 6.336C153.277 6.336 154.465 7.2 154.465 9.144C154.465 11.064 153.061 12.168 151.585 12.168ZM157.917 12.168C156.957 12.168 156.285 11.784 155.793 11.268L156.405 10.572C156.777 11.004 157.317 11.256 157.881 11.256C159.057 11.256 160.077 10.236 160.077 7.224C160.077 5.064 159.393 3.9 158.157 3.9C157.317 3.9 156.669 4.692 156.669 5.904C156.669 7.08 157.197 7.86 158.241 7.86C158.829 7.86 159.513 7.512 160.089 6.636L160.149 7.512C159.597 8.208 158.817 8.664 158.061 8.664C156.585 8.664 155.637 7.728 155.637 5.904C155.637 4.2 156.789 3.048 158.157 3.048C159.849 3.048 161.109 4.428 161.109 7.224C161.109 10.8 159.573 12.168 157.917 12.168ZM163.422 7.32C162.99 7.32 162.642 6.984 162.642 6.492C162.642 5.988 162.99 5.652 163.422 5.652C163.866 5.652 164.226 5.988 164.226 6.492C164.226 6.984 163.866 7.32 163.422 7.32ZM163.422 12.168C162.99 12.168 162.642 11.82 162.642 11.328C162.642 10.824 162.99 10.488 163.422 10.488C163.866 10.488 164.226 10.824 164.226 11.328C164.226 11.82 163.866 12.168 163.422 12.168ZM168.237 12.168C166.869 12.168 166.029 11.592 165.429 10.992L165.981 10.272C166.473 10.788 167.121 11.256 168.129 11.256C169.173 11.256 170.001 10.452 170.001 9.18C170.001 7.92 169.281 7.164 168.189 7.164C167.601 7.164 167.229 7.356 166.725 7.692L166.137 7.32L166.413 3.204H170.697V4.14H167.373L167.145 6.684C167.541 6.468 167.937 6.336 168.465 6.336C169.929 6.336 171.117 7.2 171.117 9.144C171.117 11.064 169.713 12.168 168.237 12.168ZM174.57 12.168C173.61 12.168 172.938 11.784 172.446 11.268L173.058 10.572C173.43 11.004 173.97 11.256 174.534 11.256C175.71 11.256 176.73 10.236 176.73 7.224C176.73 5.064 176.046 3.9 174.81 3.9C173.97 3.9 173.322 4.692 173.322 5.904C173.322 7.08 173.85 7.86 174.894 7.86C175.482 7.86 176.166 7.512 176.742 6.636L176.802 7.512C176.25 8.208 175.47 8.664 174.714 8.664C173.238 8.664 172.29 7.728 172.29 5.904C172.29 4.2 173.442 3.048 174.81 3.048C176.502 3.048 177.762 4.428 177.762 7.224C177.762 10.8 176.226 12.168 174.57 12.168Z" fill="#6B6B6B"/>'
+                + '</svg>';
+    var baseDate = '📍&nbsp;기준일시 : ' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+    
     if(items.length == 0){
         text = $('<p>'
                 + '<font color="#E0205C"><b>' + data.userName + '님</b></font>의 물품 청구 내역은 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요. '
@@ -15420,6 +15425,7 @@ function articleRequestList(data) {
     }else{
         if(data.researchYn != "Y"){
             text = $('<p>'
+                    +'<span style="font-size: 12px;color: #898989;">'+baseDate+'</span></br>'
                     + '<font color="#E0205C"><b>' + data.userName + '님</b></font>의 물품 청구 내역은 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요. '
                     + '팀 청구내역, 조회기간, 상태 등 조회 필터를 설정할 수 있어요!'
                 + '</p>'
@@ -15431,12 +15437,14 @@ function articleRequestList(data) {
             if(data.ISDEPARTMENT == "내 청구 내역"){
                 if(data.ZREQDATE_FR == "" || data.ZREQDATE_TO == ""){
                     text = $('<p>'
+                            +'<span style="font-size: 12px;color: #898989;">'+baseDate+'</span></br>'
                             + '<b style="color: #333333;">' + data.userName + ', ' + data.STATUS_NAME + '</b> '
                             + '물품 청구 내역은 총 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
                         + '</p>'
                     );  
                 }else {
                     text = $('<p>'
+                            +'<span style="font-size: 12px;color: #898989;">'+baseDate+'</span></br>'    
                             + '<b style="color: #333333;">' + data.userName + ', ' + reqDateFr + ' - ' + reqDateTo + ', ' + data.STATUS_NAME + '</b> '
                             + '물품 청구 내역은 총 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
                         + '</p>'
@@ -15445,12 +15453,14 @@ function articleRequestList(data) {
             }else if(data.ISDEPARTMENT = "팀 청구 내역"){
                 if(data.ZREQDATE_FR == "" || data.ZREQDATE_TO == ""){
                     text = $('<p>'
+                            +'<span style="font-size: 12px;color: #898989;">'+baseDate+'</span></br>'
                             + '<b style="color: #333333;">' + data.loginDeptName + ', ' + data.STATUS_NAME + '</b> '
                             + '물품 청구 내역은 총 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
                         + '</p>'
                     );  
                 }else {
                     text = $('<p>'
+                            +'<span style="font-size: 12px;color: #898989;">'+baseDate+'</span></br>'
                             + '<b style="color: #333333;">' + data.loginDeptName + ', ' + reqDateFr + ' - ' + reqDateTo + ', ' + data.STATUS_NAME + '</b> '
                             + '물품 청구 내역은 총 <font color="#E0205C"><b>' + items.length + '건</b></font>이에요.'
                         + '</p>'
@@ -15623,7 +15633,7 @@ function articleRequestList(data) {
                     return;
                 }
 
-                addArticleReqDetailPopupOpen(data.userId, item);
+                addArticleReqDetailPopupOpen(data.userId, item, data);
             });
           
         });
@@ -16109,7 +16119,7 @@ function checkArticleRequire(data) {
 }
 
 // 물품 청구 내역 조회 상세 
-function addArticleReqDetailPopupOpen(loginUserId, data){
+function addArticleReqDetailPopupOpen(loginUserId, data, list){
     console.log('data  : ', data);
         /* #########[ popup_wrap_start ]######### */
     
@@ -16135,7 +16145,8 @@ function addArticleReqDetailPopupOpen(loginUserId, data){
 
     /* #########[ popup_content_wrap_start ]######### */
     var deepValiArray = ['New','Saved'];
-    var selfRejValiArray = ['New','Saved','Requested'];
+    var selfRejValiArray = ['New','Saved', 'Requested'];
+    //var deleteValiArray = ['New','Saved'];
     
     var addArtReqDetailContents = $('<div class="plugin-contents articleRequestDetail-contents"></div>');
     
@@ -16325,8 +16336,12 @@ function addArticleReqDetailPopupOpen(loginUserId, data){
     if(selfRejValiArray.includes(data.DDTEXT)){
         
         if(loginUserId == data.BNAME) {
-            console.log('본인 청구임 ');
-            var articleReqSelfRejectBtn = $('<button type="button" class="btn btn-plugin btn-border-pink" id="btn-selfReject">Self Reject 하기</button>');
+            console.log('본인 청구임 ');    // 
+            var title = (data.DDTEXT == 'Requested')? 'Self Reject':'삭제';
+            var message = (data.DDTEXT == 'Requested')? 'Self Reject 시 해당 청구건은 자체적으로 반려되며<br />수정 및 재작성이 불가합니다.<br /><br />Self Reject 하시겠습니까?':'해당 청구 건이 영구 삭제되며 조회 및 복구가 불가합니다.<br /><br />삭제 하시겠습니까?';
+            var endMsg = (data.DDTEXT == 'Requested')? 'Self Reject 했습니다.':'삭제되었습니다.';
+            
+            var articleReqSelfRejectBtn = $('<button type="button" class="btn btn-plugin btn-border-pink" id="btn-selfReject">'+((data.DDTEXT == 'Requested')? 'Self Reject 하기':'삭제')+'</button>');
             addArticleReqFoot.append(articleReqSelfRejectBtn);
     
             articleReqSelfRejectBtn.on('click', function() {
@@ -16336,7 +16351,7 @@ function addArticleReqDetailPopupOpen(loginUserId, data){
                     'create',
                     $(this),
                     'Pop_SelfReject_ArticleRequest',
-                    'loadEl.pop_selfReject_confirm("Self Reject", "Self Reject 시 해당 청구건은 자체적으로 반려되며<br />수정 및 재작성이 불가합니다.<br /><br />Self Reject 하시겠습니까?")'
+                    'loadEl.pop_selfReject_confirm("'+title+'", "'+message+'")'
                 );
                 $("#btnConfirm").click(function(){     
                     var reqNo = data.ZREQNO;
@@ -16359,7 +16374,7 @@ function addArticleReqDetailPopupOpen(loginUserId, data){
     
                         if(result == null) {
                             console.log('에러 발생. ');
-                            showHtmlToastDialog('Self Reject에 문제가 발생했습니다.');
+                            showHtmlToastDialog(title+'에 문제가 발생했습니다.');
                             return;
                         }
                         var restSuccessYn = result["restSuccessYn"];
@@ -16370,14 +16385,20 @@ function addArticleReqDetailPopupOpen(loginUserId, data){
                         console.log(restSuccessYn, resultMessage, selfRejectInfo, result["FILTER"]);
                         if(restSuccessYn == "Y"){
                             var ZREQNO = selfRejectInfo[0].ZREQNO;
-                            smallDialogStr = '<div>' + ZREQNO + '<div>Self Reject 했습니다.</div></div>';
+                            smallDialogStr = '<div>' + ZREQNO + '<div>'+endMsg+'</div></div>';
                         }else{
-                            smallDialogStr = 'Self Reject에 문제가 발생했습니다.</br>에러 메시지 : '+resultMessage;
+                            smallDialogStr = title+'에 문제가 발생했습니다.</br>에러 메시지 : '+resultMessage;
                         }
     
                         setTimeout(function() {
                             showHtmlToastDialog(smallDialogStr);
                             pop.close($("#Pop_SelfReject_ArticleRequest"));
+                            
+                            if(restSuccessYn == "Y"){
+                                addArtReqDetailPopupClose();
+                                //articleRequestList(list);
+                                chatui.sendMessage("물품청구 내역 조회");
+                            }
                         }, 500);
                     });
                 });
@@ -18028,12 +18049,15 @@ function makeUitListNERP(data) {
     return uitUpdateCard;
 }
 
+const UIT_LIST_MAX_COUNT = 50;
 // UIT 수정내역 조회
 function uitUpdateListNERP(data) {
     console.log('uit 변경내역 : ', data);
 
         var items = data.items;
     
+        console.log('items length : '+items.length);
+        
         var reqDateFr = data.ZREQDATE_FR.replace(/-/gi, '.'); //data.ZREQDATE_FR.substr(0, 4) + '.' + data.ZREQDATE_FR.substr(4, 2) + '.' + data.ZREQDATE_FR.substr(6, 2);
         var reqDateTo = data.ZREQDATE_TO.replace(/-/gi, '.'); //data.ZREQDATE_TO.substr(0, 4) + '.' + data.ZREQDATE_TO.substr(4, 2) + '.' + data.ZREQDATE_TO.substr(6, 2);
     
@@ -18070,14 +18094,14 @@ function uitUpdateListNERP(data) {
         var msgCon = $('<div class="message simple-text"></div>');
         
         var periodMsg = '<b>최근 1개월</b> 간 ';
-        var addMsg = '엘지니에서 UIT 변경 확정된 내역을 최대 20건 조회해 드릴 수 있어요.';
+        var addMsg = '엘지니에서 UIT 변경 확정된 내역을 최대 '+UIT_LIST_MAX_COUNT+'건 조회해 드릴 수 있어요.';
         if(items.length == 0) {
                 addMsg = '조회 기간을 변경해 보세요. 참고로 엘지니의 최대 조회 기간은 3개월 입니다.';     
         }
         else {
             if(data.isSearch == 'true'){
                 periodMsg = '<b style="color: #333333;">' + reqDateFr + ' - ' + reqDateTo + '</b> 에 ';
-                addMsg = '엘지니에선 최대 20건 조회해 드릴 수 있어요.';     
+                addMsg = '엘지니에선 최대 '+UIT_LIST_MAX_COUNT+'건 조회해 드릴 수 있어요.';     
             } 
         }    
         var text = $(
@@ -18122,8 +18146,8 @@ function uitUpdateListNERP(data) {
         	listWrap.append(listUl);
     
             // 최대 20건
-        	if(items.length > 20){
-        	    items.splice(20, items.length - 20);
+        	if(items.length > UIT_LIST_MAX_COUNT){
+        	    items.splice(UIT_LIST_MAX_COUNT, items.length - UIT_LIST_MAX_COUNT);
         	}
         	
             items.forEach(function(item,index){
@@ -18851,7 +18875,7 @@ function uitPlannerListNERP(data) {
         var msgCon = $('<div class="message simple-text"></div>');
         
         var periodMsg = '<b>최근 1개월</b> 간 <b>Planner</b>에게 요청하신 UIT 변경 건수는 ';
-        var addMsg = '엘지니에선 UIT 변경 확정된 내역을 최대 20건 조회해 드릴 수 있어요.';
+        var addMsg = '엘지니에선 UIT 변경 확정된 내역을 최대 '+UIT_LIST_MAX_COUNT+'건 조회해 드릴 수 있어요.';
         if(items.length == 0) {
                 addMsg = '조회 기간, 상태 필터를 설정해 청구 내역을 다시 조회해 보세요!';     
         }
@@ -18867,7 +18891,7 @@ function uitPlannerListNERP(data) {
                     periodMsg += ' 중 <b style="color: #333333;">'+data.STATUS_NAME+'</b> 상태는 ';
                 }
 
-                addMsg = '엘지니에선 최대 20건 조회해 드릴 수 있어요.';     
+                addMsg = '엘지니에선 최대 '+UIT_LIST_MAX_COUNT+'건 조회해 드릴 수 있어요.';     
             } 
         }    
         var text = $(
@@ -18911,8 +18935,8 @@ function uitPlannerListNERP(data) {
         	listWrap.append(listUl);
     
             // 최대 20건
-        	if(items.length > 20){
-        	    items.splice(20, items.length - 20);
+        	if(items.length > UIT_LIST_MAX_COUNT){
+        	    items.splice(UIT_LIST_MAX_COUNT, items.length - UIT_LIST_MAX_COUNT);
         	}
         	
             items.forEach(function(item,index){
