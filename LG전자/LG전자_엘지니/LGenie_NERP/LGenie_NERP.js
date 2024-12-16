@@ -19927,7 +19927,22 @@ function addHsCodePopupOpen(data) {
     
     console.log('hscode : ', data);
     
-    var selCorpCode = (data.corpCode == null)? '':data.corpCode;
+    var selPlant = (data.plant == null)? '':data.plant;
+    var selPlantName = (data.plantName == null)? '':data.plantName;
+
+    var selPartNo = (data.partNo == null)? '':data.partNo;
+    var selPartNoName = (data.partNoName == null)? '':data.partNoName;
+
+    var selImportCountry = (data.importCountry == null)? '':data.importCountry;
+    var selimportCountryName = (data.importCountryName == null)? '':data.importCountryName;
+
+    var selCorpCode = (data.importCorporation == null)? '':data.importCorporation;
+    var selCorpName = (data.importCorporationName == null)? '':data.importCorporationName;
+    
+    var selExportCountry = (data.exportCountry == null)? '':data.exportCountry;
+    var selExportCountryName = (data.exportCountryName == null)? '':data.exportCountryName;
+
+    //var selCorpCode = (data.corpCode == null)? '':data.corpCode;
     
     /* #########[ popup_wrap_start ]######### */
     
@@ -20430,11 +20445,21 @@ function addHsCodePopupOpen(data) {
     
     addHsCodeSubmit.on('click', function() {
         
-        var plant_code = $('#plant_code').val().toUpperCase();
+        var plant_code = $('#plant_code').val();
         var partno_code = $('#partno_code').val().toUpperCase();
         var import_country_code = impSelectedMembers.find('.country-code').val();
         var export_country_code = expSelectedMembers.find('.country-code').val();
         var corporation_code = $('#corporation_code').val();
+
+        var plant_name = $('#plant_name').val();
+        var partno_name = $('#partno_name').val().toUpperCase();
+        var import_country_name = impSelectedMembers.find('.country-name').val();
+        var export_country_name = expSelectedMembers.find('.country-name').val();
+        var corporation_name = $('#corporation_name').val();
+        
+        if(plant_code) {
+            plant_code = plant_code.toUpperCase();
+        }
         
         corporation_code = 'EKHQ';
 
@@ -20443,11 +20468,17 @@ function addHsCodePopupOpen(data) {
                 "event": "hsCodeInquiryEvent"
             },
             payload:{
+                "userId" : chatui.getSetting("userId"), 
                 "WERKS" : plant_code,
                 "MATNR" : partno_code,
                 "IMP_COUNTRY_CD" : import_country_code,
                 "IMP_CORP_CD" : corporation_code,
-                "EXP_COUNTRY_CD" : export_country_code
+                "EXP_COUNTRY_CD" : export_country_code, 
+                "WERKS_NAME" : plant_name, 
+                "MATNR_NAME" : partno_name, 
+                "IMP_COUNTRY_NAME" : import_country_name, 
+                "IMP_CORP_NAME" : corporation_name, 
+                "EXP_COUNTRY_NAME" : export_country_name 
             }
         };
         
@@ -20539,9 +20570,13 @@ function addHsCodePopupOpen(data) {
                         else{
                             console.log('HS Code 조회 : 0건.');
                             
-                            setTimeout(function() {
-                                showSmallHtmlDialog('HS Code 조회 건수가 없습니다. </br>다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-                            }, 100);                    
+                            addHsCodePopupClose();
+                            
+                            appendChatbotHtml(hsCodeResultError(hscodeInfo), true);
+                            
+                            // setTimeout(function() {
+                            //     showSmallHtmlDialog('HS Code 조회 건수가 없습니다. </br>다시 검색해 보세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+                            // }, 100);                    
                             
                         }
                     
@@ -20581,7 +20616,9 @@ function addHsCodePopupOpen(data) {
             inputObj.css('display', "block");
             $(this).closest('.country-form').find(".selected-members").css("height", "0px");
             
-            selectBoxAction(dropdownMainBtn, false, null);
+            if(inputKind == 'import_country') {
+                selectBoxAction(dropdownMainBtn, false, null);
+            }
             nextBtnEvent();
         }
     });
@@ -20794,7 +20831,7 @@ function addHsCodePopupOpen(data) {
                                 var selectedValue = dropdownMenuListWrap.find('li').find('.selected');
                     
                                 console.log('selectedValue : ', selectedValue);
-                                //selectedValue.trigger('click');
+                                selectedValue.trigger('click');
                             }, 100);
                         }
                     }
@@ -20820,12 +20857,13 @@ function addHsCodePopupOpen(data) {
             console.log('ddmenu height : '+ddmenu.outerHeight()+', conetne : '+$('.plugin-contents').height());
             
         if ($(target).hasClass('active')) {
-
+            console.log('active');
             //pluginForm.find('#empty_layer').css('display', 'none');
             
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
+            console.log('no active');
 
             // //pluginForm.find('.btn').find('button').prepend(emptylayer);
             // pluginForm.find('#empty_layer').css('display', 'block');
@@ -21097,6 +21135,90 @@ function addHsCodePopupOpen(data) {
       
     };
     
+    
+    if (selPlant != '') {
+
+        var hiddenInfo = $(
+            '<div class="data-wrap">'
+                 +'<p>['+selPlant+']' + selPlantName 
+                 + '</p>'
+                 //+ deleteBtn
+                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                 + '</button>'                 
+                +'<input type="hidden" value="'+ selPlant +'" id="plant_code"/>'
+                +'<input type="hidden" value="'+ selPlantName +'" id="plant_name"/>'
+            +'</div>'
+        );
+          
+        plantSelected.empty();
+        plantSelected.append(hiddenInfo);
+
+        inputBox1.css('display', 'none'); 
+        
+    }
+
+    if (selPartNo != '') {
+
+        var hiddenInfo = $(
+            '<div class="data-wrap">'
+                 +'<p>['+selPartNo+']' + selPartNoName 
+                 + '</p>'
+                 //+ deleteBtn
+                 + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                 + '</button>'                 
+                +'<input type="hidden" value="'+ selPartNo +'" id="partno_code"/>'
+                +'<input type="hidden" value="'+ selPartNoName +'" id="partno_name"/>'
+            +'</div>'
+        );
+          
+        partNoSelected.empty();
+        partNoSelected.append(hiddenInfo);
+
+        inputBox2.css('display', 'none'); 
+        
+    }
+
+    if (selImportCountry != '') {
+
+            //var $memList = $(".form-hsCode").find(".selected-members");
+        var htmlStr;
+            
+        htmlStr = '<div class="member-info">'
+              + '<input type="hidden" value="'+selimportCountryName+'" class="country-name"/>'
+              + '<input type="hidden" value="" class="country-nameKo"/>'
+              + '<input type="hidden" value="'+selImportCountry+'" class="country-code"/>'
+              + '<input type="hidden" value="" class="country-codeTrd"/>'
+              + '<input type="hidden" value="" class="country-isoNum"/>'
+              +'</div>';
+              
+        impSelectedMembers.append(htmlStr);
+
+        impCountryInput.val(selimportCountryName);
+        impCountryInput.closest('.input-form').find('.input-val-del').addClass('show');
+
+    }
+    
+    if (selExportCountry != '') {
+
+        var htmlStr;
+            
+        htmlStr = '<div class="member-info">'
+              + '<input type="hidden" value="'+selExportCountryName+'" class="country-name"/>'
+              + '<input type="hidden" value="" class="country-nameKo"/>'
+              + '<input type="hidden" value="'+selExportCountry+'" class="country-code"/>'
+              + '<input type="hidden" value="" class="country-codeTrd"/>'
+              + '<input type="hidden" value="" class="country-isoNum"/>'
+              +'</div>';
+              
+        expSelectedMembers.append(htmlStr);
+
+        expCountryInput.val(selExportCountryName);
+        expCountryInput.closest('.input-form').find('.input-val-del').addClass('show');
+
+    }
+    
     if (selCorpCode != '') {
         
         setTimeout(function() {
@@ -21108,6 +21230,8 @@ function addHsCodePopupOpen(data) {
     else{
         selectBoxAction(dropdownMainBtn, false, null);
     }    
+    
+    nextBtnEvent();
 }
 
 
@@ -21131,6 +21255,8 @@ function addHsCodePopupClose() {
     
     closeLoadingWithMask();
 
+    $(document).off("click");
+    
     $('#addHsCode').removeClass('show');
     $('.plugin-dim').removeClass('show');
     setTimeout(function() {
@@ -21217,18 +21343,18 @@ function hsCodeResult(data) {
     }
     
     // 수입국 : 항상 출력 
-    var hsCodeImportCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수입국</h4><div class="hsCode-li-content"><span>the Republic of Korea</span></div></li>';
+    var hsCodeImportCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수입국</h4><div class="hsCode-li-content"><span>'+data.importCountryName+'</span></div></li>';
     // 조회일시 : 항상 출력 
     var hsCodeResultDate = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">조회일시</h4><div class="hsCode-li-content"><span>'+moment().format('YYYY-MM-DD')+'</span></div></li>';
     var ftaContent = (isFTA == true)? '<div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* FTA 협정세율을 적용 받으려면, 원산지 결정기준을 충족하고, 원산지 증명서를 제출해야 합니다.</div>':'';
     
     var hsCodeResultLiCountry = "";
     if(data.exportCountry != ""){
-        hsCodeResultLiCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수출국</h4><div class="hsCode-li-content"><span>' + data.exportCountry + '</span></div></li>';
+        hsCodeResultLiCountry = '<li style="align-items: flex-start;"><h4 class="hsCode-li-header" style="margin-top: 3px;">수출국</h4><div class="hsCode-li-content"><span>' + data.exportCountryName + '</span></div></li>';
     }
    
     var hsCodeResultLiUserBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 조회</button></li>');
-    var hsCodeResultLiUserBtnNEEP = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사업부 및 담당자 조회</button></li>');
+    var hsCodeResultLiUserBtnNERP = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">사용 중인 사업부 조회</button></li>');
 
     var hsCodeCentralBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">본부별 관세담당자</button></li>');
     
@@ -21248,8 +21374,8 @@ function hsCodeResult(data) {
                 +'</li>'
                 +'<li></li>'
                 +'<li>'
-                    +'<h4>HS Code</h4>'
-                    +'<div class="hsCode-li-header"><span class="hsCode-li-content"><h5>' + item.hsCode + '</h5></span></div>'
+                    +'<h4 class="hsCode-li-header" style="margin-top: 3px;">HS Code</h4>'
+                    +'<div class="hsCode-li-content"><span><h5>' + item.hsCode + '</h5></span></div>'
                 +'</li>'
                 +hsCodeResultLiCountry
                 +hsCodeImportCountry
@@ -21278,7 +21404,7 @@ function hsCodeResult(data) {
     );
     
     if(item.userList.length > 1){
-        hsCodeResultContentUi.append(hsCodeResultLiUserBtn);
+        hsCodeResultContentUi.append(hsCodeResultLiUserBtnNERP);
     }
     
     hsCodeResultContentUi.append(hsCodeCentralBtn);
@@ -21319,12 +21445,12 @@ function hsCodeResult(data) {
     });
     */
     
-    hsCodeResultLiUserBtn.click(function(){
+    hsCodeResultLiUserBtnNERP.click(function(){
         addHsCodeSeachUserPopupOpen(item.userList);
     });
     
     hsCodeCentralBtn.click(function(){
-        addHsCodeSeachCentralPopupOpen(data.userType);
+        addHsCodeSeachCentralPopupOpen(data.corp_gubun);
     });
     
     return hsCodeResult;
@@ -21448,7 +21574,7 @@ function addHsCodeSeachUserPopupOpen(data) {
 
     /* #########[ popup_header ]######### */
     var addHsCodeHeader = $('<div class="plugin-header"><h1>사업부 조회</h1></div>');
-    var addHsCodeHeaderNERP = $('<div class="plugin-header"><h1>사업부 및 담당자 조회</h1></div>');
+    var addHsCodeHeaderNERP = $('<div class="plugin-header"><h1>사용 중인 사업부 조회</h1></div>');
     var addHsCodeClose = $(
         '<span class="close-plugin">'
             +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -21460,8 +21586,8 @@ function addHsCodeSeachUserPopupOpen(data) {
     addHsCodeClose.on('click', function() {
         addHsCodePopupClose();
     })
-    addHsCodeHeader.append(addHsCodeClose);
-    addHsCode.append(addHsCodeHeader);
+    addHsCodeHeaderNERP.append(addHsCodeClose);
+    addHsCode.append(addHsCodeHeaderNERP);
 
     /* #########[ popup_content_wrap_start ]######### */
     var addHsCodeContents = $('<div class="plugin-contents" style="max-height: calc(92vh - 170px); scrollbar-width: auto;"></div>');
@@ -21545,6 +21671,7 @@ function addHsCodeSeachUserPopupOpen(data) {
 
 // HSCode 조회 결과 메세지 (없음)
 function hsCodeResultError(data) {
+    console.log('HS Code 조회 없음(에러) : ', data);
     
     if(data.errorYn == "Y"){
         var hsCodeResultError = $('<div class="message simple-text"></div>');
@@ -21574,15 +21701,23 @@ function hsCodeResultError(data) {
                 +'<li></li>'
                 +'<li>'
                     +'<h4 style="width: 110px;">사업부 코드</h4>'
-                    +'<div class="hsCode-li-content"><span>' + data.orgId + '</span></div>'
+                    +'<div class="hsCode-li-content"><span>' + data.plant + '</span></div>'
                 +'</li>'
                 +'<li>'
                     +'<h4 style="width: 110px;">Part/Model No.</h4>'
                     +'<div class="hsCode-li-content"><span>' + data.partNo + '</span></div>'
                 +'</li>'
                 +'<li style="align-items: flex-start;">'
+                    +'<h4 style="width: 110px; margin-top: 3px;">수입국</h4>'
+                    +'<div class="hsCode-li-content"><span>' + data.importCountryName + '</span></div>'
+                +'</li>'
+                +'<li style="align-items: flex-start;">'
+                    +'<h4 style="width: 110px; margin-top: 3px;">수입법인</h4>'
+                    +'<div class="hsCode-li-content"><span>' + data.importCorporationName + '</span></div>'
+                +'</li>'
+                +'<li style="align-items: flex-start;">'
                     +'<h4 style="width: 110px; margin-top: 3px;">수출국</h4>'
-                    +'<div class="hsCode-li-content"><span>' + data.countryNameEn + '</span></div>'
+                    +'<div class="hsCode-li-content"><span>' + data.exportCountryName + '</span></div>'
                 +'</li>'
                 +'<li></li>'
             +'</ul>'
@@ -21600,7 +21735,7 @@ function hsCodeResultError(data) {
    
     var text;
 
-	var loginCorp = data.orgItems[0].ATTRIBUTE2;
+	var loginCorp = data.corp_gubun;
 	
 	if(loginCorp == "EKHQ"){
 	    let add_text = '<p><span style="color: #898989; font-size: 11px;">※ VS본부 사업부의 HS Code는 조회되지 않습니다.</span></p>';
@@ -21632,67 +21767,67 @@ function hsCodeResultError(data) {
         var isoNum = data.isoNum;
         var orgItems = data.orgItems;
         
-        if(orgId != ""){
-            var $selectedOrg = $(".orgId-form").find(".selected-org");
-            var htmlStr;
+        // if(orgId != ""){
+        //     var $selectedOrg = $(".orgId-form").find(".selected-org");
+        //     var htmlStr;
             
-            var attr2;
-            var attr4;
-            var companyCode;
-            var orgCode;
-            var orgName;
+        //     var attr2;
+        //     var attr4;
+        //     var companyCode;
+        //     var orgCode;
+        //     var orgName;
             
-            orgItems.forEach(function(item){
-                if(item.ORGANIZATION_CODE == orgId){
-                    attr2 = item.ATTRIBUTE2
-                    attr4 = item.ATTRIBUTE4
-                    companyCode = item.COMPANY_CODE
-                    orgCode = item.ORGANIZATION_CODE
-                    orgName = item.ORGANIZATION_NAME
-                    return;
-                }
-            });
+        //     orgItems.forEach(function(item){
+        //         if(item.ORGANIZATION_CODE == orgId){
+        //             attr2 = item.ATTRIBUTE2
+        //             attr4 = item.ATTRIBUTE4
+        //             companyCode = item.COMPANY_CODE
+        //             orgCode = item.ORGANIZATION_CODE
+        //             orgName = item.ORGANIZATION_NAME
+        //             return;
+        //         }
+        //     });
             
-            htmlStr = '<div class="sel-org-info" style="display: none;">'
-                + '<input type="hidden" value="'+ attr2 +'" class="sel-org-atr2"/>'
-                + '<input type="hidden" value="'+ attr4 +'" class="sel-org-atr4"/>'
-                + '<input type="hidden" value="'+ companyCode +'" class="sel-org-companyCode"/>'
-                + '<input type="hidden" value="'+ orgCode +'" class="sel-org-Code"/>'
-                + '<input type="hidden" value="'+ orgName +'" class="sel-org-Name"/>'
-                +'</div>'
-            ;
+        //     htmlStr = '<div class="sel-org-info" style="display: none;">'
+        //         + '<input type="hidden" value="'+ attr2 +'" class="sel-org-atr2"/>'
+        //         + '<input type="hidden" value="'+ attr4 +'" class="sel-org-atr4"/>'
+        //         + '<input type="hidden" value="'+ companyCode +'" class="sel-org-companyCode"/>'
+        //         + '<input type="hidden" value="'+ orgCode +'" class="sel-org-Code"/>'
+        //         + '<input type="hidden" value="'+ orgName +'" class="sel-org-Name"/>'
+        //         +'</div>'
+        //     ;
                 
-            $selectedOrg.empty();
-            $selectedOrg.append(htmlStr);
+        //     $selectedOrg.empty();
+        //     $selectedOrg.append(htmlStr);
             
-            $("#hsCode_orgId").val(orgCode);
-            $("#hsCode_orgId").closest('.input-form').find('.input-val-del').addClass('show');
-        }
+        //     $("#hsCode_orgId").val(orgCode);
+        //     $("#hsCode_orgId").closest('.input-form').find('.input-val-del').addClass('show');
+        // }
         
-        if(partNo != ""){
-            $("#hsCode_partNo").val(partNo);
-            $("#hsCode_partNo").closest('.input-form').find('.input-val-del').addClass('show');
-            checkHsCodeRequire();
-        }
+        // if(partNo != ""){
+        //     $("#hsCode_partNo").val(partNo);
+        //     $("#hsCode_partNo").closest('.input-form').find('.input-val-del').addClass('show');
+        //     checkHsCodeRequire();
+        // }
         
-        if(origCntryCode != ""){
+        // if(origCntryCode != ""){
             
-            var $memList = $(".form-hsCode").find(".selected-members");
-            var htmlStr;
+        //     var $memList = $(".form-hsCode").find(".selected-members");
+        //     var htmlStr;
             
-            htmlStr = '<div class="member-info">'
-              + '<input type="hidden" value="'+countryNameEn+'" class="country-name"/>'
-              + '<input type="hidden" value="'+countryNameKo+'" class="country-nameKo"/>'
-              + '<input type="hidden" value="'+origCntryCode+'" class="country-code"/>'
-              + '<input type="hidden" value="'+countryCdTrd+'" class="country-codeTrd"/>'
-              + '<input type="hidden" value="'+isoNum+'" class="country-isoNum"/>'
-              +'</div>';
+        //     htmlStr = '<div class="member-info">'
+        //       + '<input type="hidden" value="'+countryNameEn+'" class="country-name"/>'
+        //       + '<input type="hidden" value="'+countryNameKo+'" class="country-nameKo"/>'
+        //       + '<input type="hidden" value="'+origCntryCode+'" class="country-code"/>'
+        //       + '<input type="hidden" value="'+countryCdTrd+'" class="country-codeTrd"/>'
+        //       + '<input type="hidden" value="'+isoNum+'" class="country-isoNum"/>'
+        //       +'</div>';
               
-            $memList.append(htmlStr);
+        //     $memList.append(htmlStr);
 
-            $("#attendees").val(countryNameEn);
-            $("#attendees").closest('.input-form').find('.input-val-del').addClass('show');
-        }
+        //     $("#attendees").val(countryNameEn);
+        //     $("#attendees").closest('.input-form').find('.input-val-del').addClass('show');
+        // }
     });
 
     // quickReplies 템플릿
