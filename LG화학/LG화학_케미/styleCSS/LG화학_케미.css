@@ -4962,3 +4962,247 @@ body {
 .test-panel .panel-wrapper .chat-panel .welcome-contents .message b {
   color: #E0205C;
 }
+
+/* 다큐봇 */ 
+.docubot-panel .docubot-channel {
+  background-color: #424952; 
+  height: 100%;
+}
+
+.docubot-panel .docubot-channel .channel-header {
+  height: 80px;
+}
+.docubot-panel .docubot-channel .channel-content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);  
+  text-align: center;
+}
+.docubot-panel .docubot-channel .channel-content p {
+  color: white;
+  font-size: 13px;
+}
+.docubot-panel .docubot-channel .channel-header .collapse {
+  width: 28px;
+  height: 28px;
+  display: block;
+  position: absolute;
+  right: 16px;
+  top: 25px;
+  cursor: pointer;
+}
+.docubot-panel .docubot-channel .channel-header .collapse svg {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: block;
+  left: 50%;
+  top: 50%;
+}
+.docubot-panel .docubot-channel .channel-header .collapse svg path {
+  fill: white;
+}
+/*.docubot-panel .docubot-channel .channel-header .collapse:hover svg path {*/
+/*  stroke: #E31962;*/
+/*}*/
+
+.docubot-panel .docubot-channel .channel-header .home, .docubot-panel .docubot-channel .channel-header .open-menu {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  top: 25px;
+  cursor: pointer;
+}
+.docubot-panel .docubot-channel .channel-header .home svg, .docubot-panel .docubot-channel .channel-header .open-menu svg {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: block;
+  left: 50%;
+  top: 50%;
+}
+.docubot-panel .docubot-channel .channel-header .home svg path, .docubot-panel .docubot-channel .channel-header .open-menu svg path {
+  fill: white;
+}
+.docubot-panel .docubot-channel .channel-header .home:hover svg path, .docubot-panel .docubot-channel .channel-header .open-menu:hover svg path {
+  fill: #E31962;
+}
+.docubot-panel .docubot-channel .channel-header .home {
+  left: 54px;
+}
+.docubot-panel .docubot-channel .channel-header .open-menu {
+  left: 16px;
+}
+
+.docubot-panel .docubot-channel .channel-header .list-menu {
+  z-index: 100;
+  min-height: 100vh;
+  width: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu .list-menu-back {
+  height: 100vh;
+  z-index: 1;
+  position: fixed;
+  width: 100%;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu .list-menu-header {
+  width: 100%;
+  height: 80px;
+  background-color: #2C2C2C;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu .list-menu-header .menu-title {
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 80px;
+  text-align: center;
+  color: white;
+  display: block;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu .list-menu-header .close {
+  width: 28px;
+  height: 28px;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  margin-top: -14px;
+  cursor: pointer;
+  display: block;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu .list-menu-header .close svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.docubot-panel .docubot-channel .channel-header .list-menu .list-menu-header .close svg path {
+  fill: white;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu ul.list-menu-body {
+  display: block;
+  position: relative;
+  padding: 0 10px;
+  background: white;
+  width: 100%;
+  z-index: 2;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu ul.list-menu-body li {
+  list-style: none;
+  padding: 18px 16px;
+  width: 100%;
+  border-bottom: 1px solid #DADADA;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #2C2C2C;
+  position: relative;
+  cursor: pointer;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu ul.list-menu-body li:hover {
+  background-color: #F5F5F5;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu ul.list-menu-body li svg {
+  position: absolute;
+  right: 17px;
+  top: 20px;
+}
+.docubot-panel .docubot-channel .channel-header .list-menu ul.list-menu-body li:last-child {
+  border-bottom: 0;
+}
+
+.docubot-panel .docubot-channel .channel-header .docu-header {
+  /*margin: 0 auto;*/
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+}
+.docubot-panel .docubot-channel .channel-header .docu-header h1 {
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 28px;
+  text-align: center;
+  color: white;
+  margin: 0;
+}
+.docubot-panel .docubot-channel .channel-header .docu-header .dot-flashing {
+  margin: 6px auto;
+  height: 5px;
+  display: block;
+  position: relative;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #04B395;
+  color: #04B395;
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: 0.5s;
+}
+.docubot-panel .docubot-channel .channel-header .docu-header .dot-flashing::before, .docubot-panel .docubot-channel .channel-header .docu-header .dot-flashing::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+.docubot-panel .docubot-channel .channel-header .docu-header .dot-flashing::before {
+  left: -9px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #04B395;
+  color: #04B395;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+.docubot-panel .docubot-channel .channel-header .docu-header .dot-flashing::after {
+  left: 9px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #04B395;
+  color: #04B395;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+@keyframes dotFlashing {
+  0% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0.2;
+  }
+}
+
+.docubot-panel .docubot-channel .channel-content .btn-s {
+  border-radius: 100px;
+  padding: 7px 12px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 20px;
+  border: 0;
+  display: inline-block;
+  margin-right: 4px;
+  margin-bottom: 8px;
+  width: 200px;
+  text-align: left;
+}
+.docubot-panel .docubot-channel .channel-content .btn-s.btn-text {
+  background: white;
+  border: 1px solid #424952;
+  color: #424952;
+}
+.docubot-panel .docubot-channel .channel-content .btn-s.btn-text:hover {
+  background-color: #dde8f3;
+}
+
+.docubot-panel .docubot-channel .channel-content-frame {
+    height: calc(100% - 80px);
+}
+

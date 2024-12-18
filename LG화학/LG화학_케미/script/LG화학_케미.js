@@ -2730,6 +2730,20 @@ jQuery(document).ready(function(e){
         
     }
     
+    // 다큐봇
+    if(paramInitMode == "DOCU_LEGAL") {             // 법무 챗봇
+        
+        openDocuBot(LEGAL_URL, LEGAL_PARAMS, '법무');
+    }
+    if(paramInitMode == "DOCU_ENVSAFE") {             // 환경안전 챗봇
+        
+        openDocuBot(ENVSAFE_URL, ENVSAFE_PARAMS, '환경안전');
+    }
+    if(paramInitMode == "DOCU_ERP") {             // ERP 챗봇
+        
+        openDocuBot(ERP_URL, ERP_PARAMS, 'ERP');
+    }
+
     // 2023.11.21 GPT 팝업시 처리. 
 
   var is_mobile = Mobile();
@@ -2795,6 +2809,9 @@ jQuery(document).ready(function(e){
         + arrow2
     +'</li>'
     +'<li class="list-menu-sixth">알림 설정'
+        + arrow2
+    +'</li>'
+    +'<li class="list-menu-seventh">다큐봇 모드'
         + arrow2
     +'</li>'
     +'</ul>'
@@ -2892,6 +2909,10 @@ jQuery(document).ready(function(e){
     showNotiSettings();
   });
 
+  $('.list-menu-seventh').on('click', function() {
+    startDocuBot();
+    $('.list-menu').fadeOut();
+  });
   
   var isMobile = Mobile();
   $('.test-panel .panel-wrapper .chat-panel').append(
@@ -7950,3 +7971,294 @@ function replaceAnchorForWmo() {
           });
   });
 }
+
+/* ---------------------- [다큐봇 Start] ---------------------- */
+var arrow10 = '<svg width="9" height="21" viewBox="0 0 9 21" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute;right: 45px;">'
+          +'<path fill-rule="evenodd" clip-rule="evenodd" d="M7.57267 9.90216C7.87578 10.2432 7.87578 10.757 7.57267 11.098L0.458487 19.1015C0.238336 19.3491 0.260644 19.7284 0.508313 19.9485C0.755983 20.1687 1.13523 20.1464 1.35538 19.8987L8.46956 11.8953C9.17681 11.0996 9.17681 9.90059 8.46956 9.10493L1.35538 1.10147C1.13523 0.853804 0.755983 0.831495 0.508313 1.05165C0.260644 1.2718 0.238336 1.65104 0.458487 1.89871L7.57267 9.90216Z" fill="#c3ccd5"/>'
+        +'</svg>';
+
+const ERP_URL = "https://chatclient-stg.ai.lgstation.com"+"/"+"f5fda7ea-204b-43ce-a137-d94b852457f4"+"/chat";          // LG전자 NERP 챗봇
+const ENVSAFE_URL = "https://chatclient-stg.ai.lgstation.com"+"/"+"f06db48b-68e1-4003-a1fe-96396847e092"+"/chat";      // LG전자 엘지니 en 
+const LEGAL_URL = "https://chatclient-stg.ai.lgstation.com"+"/"+"3ace0979-8ff0-49f3-814b-84c500f5fbef"+"/chat";         // LG전자 엘지니 ko
+
+var ERP_PARAMS = {
+    languageCode: "ko",                       // Front UI Default 파라미터
+    token: "test",                            // Front UI Default 파라미터
+    userId: "sojung.im",                     // Front UI Default 파라미터
+};
+var ENVSAFE_PARAMS = {
+    languageCode: "en",                       // Front UI Default 파라미터
+    token: "test",                            // Front UI Default 파라미터
+    userId: "sojung.im",                     // Front UI Default 파라미터
+};
+var LEGAL_PARAMS = {
+    languageCode: "ko",                       // Front UI Default 파라미터
+    token: "test",                            // Front UI Default 파라미터
+    userId: "sojung.im",                     // Front UI Default 파라미터
+};
+
+function startDocuBot() {
+    $('body').append('<div id="caas-chatbot-container"><div class="docubot-panel" style="height:100%;"></div></div>');
+    
+    var channelDocuCont = $('<div class="docubot-channel"></div>');
+    
+    $('.docubot-panel').append(channelDocuCont);
+    
+    
+    var channelHeader = $('<div class="channel-header">'
+                      +'<div class="collapse" id="chatbot-collapse">'
+                      +  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                      +    '<path d="M4.92465 4.07613C4.69034 3.84181 4.31044 3.84181 4.07613 4.07613C3.84181 4.31044 3.84181 4.69034 4.07613 4.92465L11.152 12.0005L4.07632 19.0761C3.84201 19.3104 3.84201 19.6903 4.07632 19.9247C4.31064 20.159 4.69054 20.159 4.92485 19.9247L12.0005 12.849L19.0761 19.9247C19.3104 20.159 19.6903 20.159 19.9247 19.9247C20.159 19.6903 20.159 19.3104 19.9247 19.0761L12.849 12.0005L19.9249 4.92465C20.1592 4.69034 20.1592 4.31044 19.9249 4.07613C19.6905 3.84181 19.3106 3.84181 19.0763 4.07613L12.0005 11.152L4.92465 4.07613Z" fill="#2C2C2C"/>'
+                      +  '</svg>'
+                      +'</div>'
+                      +'</div>');
+                      
+    channelDocuCont.append(channelHeader);
+    
+    var channelText = $('<div class="channel-content">'
+                    +'<p><b>다큐봇에서 필요한 정보를<br/>검색해 보세요.</b></p>'
+                    +'<p style="font-size:11px;">다양한 사내 문서를 학습한 AI 어시스턴트입니다.<br/>'
+                    +'필요한 정보를 검색해 보세요.</p>'
+                    +'</br></br>'
+                    +'</div>');
+
+    channelDocuCont.append(channelText);
+
+    var erpbot = $('<button type="button" class="btn-s btn-icon btn-text erp-chatbot">'
+                  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                  +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#424952"/>'
+                  +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#424952"/>'
+                  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#424952"/>'
+                  +'</svg>'
+                  +' ERP' + arrow10
+                  +'</button>');
+
+    var envsafebot = $('<button type="button" class="btn-s btn-icon btn-text erp-chatbot">'
+                  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                  +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#424952"/>'
+                  +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#424952"/>'
+                  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#424952"/>'
+                  +'</svg>'
+                  +' 환경안전' + arrow10
+                  +'</button>');
+
+    var legalbot = $('<button type="button" class="btn-s btn-icon btn-text erp-chatbot">'
+                  +            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                  +'<path d="M5.33366 8.93402C5.33366 8.7131 5.51274 8.53402 5.73366 8.53402H10.267C10.4879 8.53402 10.667 8.7131 10.667 8.93402C10.667 9.15493 10.4879 9.33402 10.267 9.33402H5.73366C5.51274 9.33402 5.33366 9.15493 5.33366 8.93402Z" fill="#424952"/>'
+                  +'<path d="M5.73366 10.534C5.51274 10.534 5.33366 10.7131 5.33366 10.934C5.33366 11.1549 5.51274 11.334 5.73366 11.334H8.93366C9.15457 11.334 9.33366 11.1549 9.33366 10.934C9.33366 10.7131 9.15457 10.534 8.93366 10.534H5.73366Z" fill="#424952"/>'
+                  +'<path fill-rule="evenodd" clip-rule="evenodd" d="M2.66699 3.33398C2.66699 2.22941 3.56242 1.33398 4.66699 1.33398H8.50523C9.03566 1.33398 9.54437 1.5447 9.91944 1.91977L12.7479 4.7482C13.1229 5.12327 13.3337 5.63198 13.3337 6.16241V12.6673C13.3337 13.7719 12.4382 14.6673 11.3337 14.6673H4.66699C3.56242 14.6673 2.66699 13.7719 2.66699 12.6673V3.33398ZM11.3337 13.8673H4.66699C4.00425 13.8673 3.46699 13.3301 3.46699 12.6673V3.33398C3.46699 2.67124 4.00425 2.13398 4.66699 2.13398H8.50523C8.53706 2.13398 8.56876 2.13525 8.60026 2.13775V4.66732C8.60026 5.44052 9.22706 6.06732 10.0003 6.06732H12.5299C12.5324 6.09884 12.5337 6.13056 12.5337 6.16241V12.6673C12.5337 13.3301 11.9964 13.8673 11.3337 13.8673ZM12.1356 5.26732L9.40026 2.53196V4.66732C9.40026 4.99869 9.66889 5.26732 10.0003 5.26732H12.1356Z" fill="#424952"/>'
+                  +'</svg>'
+                  +' 법무' + arrow10
+                  +'</button>');
+                  
+    channelText.append(erpbot);
+    channelText.append(envsafebot);
+    channelText.append(legalbot);
+    
+    channelHeader.find('.collapse').on('click', function() {
+        $('#caas-chatbot-container').remove();
+    });
+
+    erpbot.on('click', function() {
+        //console.log('물품 청구 가이드');
+      console.log('erp open..');
+
+      var params = {
+         languageCode: "ko",                       // Front UI Default 파라미터
+         token: "test",                            // Front UI Default 파라미터
+         userId: "ok.jihe",                         // Front UI Default 파라미터
+         initMode: "DOCU_ERP"                       // 팝업일 경우 케미 팝업에 프레임으로 ERP docubot 호출
+      };
+
+      var url = "https://chatclient-stg.ai.lgstation.com"+"/"+"d88153ab-4e9a-4849-b56c-2b2521ea5057"+"/chat";       // 화학 케미 
+      var target = "chatDocuBot";
+
+      openChatWindow(url, target, params);
+        
+    });
+    
+    envsafebot.on('click', function() {
+        //console.log('물품 청구 가이드');
+      console.log('envsafe open..');
+
+      var params = {
+         languageCode: "ko",                       // Front UI Default 파라미터
+         token: "test",                            // Front UI Default 파라미터
+         userId: "ok.jihe",                     // Front UI Default 파라미터
+         initMode: "DOCU_ENVSAFE"                           // 팝업일 경우 케미 팝업에 프레임으로 환경안전 docubot 호출
+      };
+
+      var url = "https://chatclient-stg.ai.lgstation.com"+"/"+"d88153ab-4e9a-4849-b56c-2b2521ea5057"+"/chat";       // 화학 케미 
+      var target = "chatDocuBot";
+
+      openChatWindow(url, target, params);
+        
+    });
+    
+    legalbot.on('click', function() {
+        //console.log('물품 청구 가이드');
+      console.log('legal open..');
+
+      var params = {
+         languageCode: "ko",                       // Front UI Default 파라미터
+         token: "test",                            // Front UI Default 파라미터
+         userId: "ok.jihe",                     // Front UI Default 파라미터
+         initMode: "DOCU_LEGAL"                           // 팝업일 경우 케미 팝업에 프레임으로 법무 docubot 호출
+      };
+
+      var url = "https://chatclient-stg.ai.lgstation.com"+"/"+"d88153ab-4e9a-4849-b56c-2b2521ea5057"+"/chat";       // 화학 케미 
+      var target = "chatDocuBot";
+
+      openChatWindow(url, target, params);
+        
+    });
+    
+}
+
+/**
+   * 팝업창 으로 챗봇창을 오픈한다. 
+   */
+function openChatWindow(url, target, params) {
+   var paramForm = document.createElement("form");
+
+   var openWindow = window.open("", target, "width=700, height=900, toolbar=1, scrollbars=1, resizable=1");
+
+   $(paramForm).attr('action', url);
+   $(paramForm).attr('target', target);
+   $(paramForm).attr('method', 'post');
+
+   if (params) {
+      for (param in params) {
+          var obj = document.createElement("input");
+          obj.setAttribute("type", "hidden");
+          obj.setAttribute("name", param);
+          obj.setAttribute("value", params[param]);
+          paramForm.appendChild(obj);
+      }
+  }   
+   document.body.appendChild(paramForm);
+   paramForm.submit();
+
+   setTimeout(function() { paramForm.parentNode.removeChild(paramForm); }, 1000);
+}
+
+function openDocuBotFrame(url, params) {
+//   var languageCode = "ko";
+//   var token = "test";
+//   var userId = chatui.getSetting('userId');
+
+  //var url = "http://www.naver.com";
+
+  var form = document.createElement("form");
+  form.setAttribute("target", "channel-content-iframe");
+  form.setAttribute("method", "POST");
+  form.setAttribute("action", url);
+
+  console.log('url : '+url);
+  //var param = null;
+
+   if (params) {
+      for (param in params) {
+          var obj = document.createElement("input");
+          obj.setAttribute("type", "hidden");
+          obj.setAttribute("name", param);
+          obj.setAttribute("value", params[param]);
+          form.appendChild(obj);
+      }
+  }   
+
+  document.body.appendChild(form);
+  form.submit();
+
+  setTimeout(function() { form.parentNode.removeChild(form); }, 1000);
+  
+}
+
+function openDocuBot(url, params, docuName) {
+    $('body').append('<div id="caas-chatbot-container"><div class="docubot-panel" style="height:100%;"></div></div>');
+    
+    var channelDocuCont = $('<div class="docubot-channel"></div>');
+    
+    $('.docubot-panel').append(channelDocuCont);
+    
+    
+    var channelHeader = $('<div class="channel-header">'
+    
+                      +'<div class="open-menu">'
+                      + '<svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                      +   '<path fill-rule="evenodd" clip-rule="evenodd" d="M0.500122 1.36678C0.500122 0.980179 0.813523 0.666779 1.20012 0.666779H20.8001C21.1867 0.666779 21.5001 0.980179 21.5001 1.36678C21.5001 1.75338 21.1867 2.06678 20.8001 2.06678H1.20012C0.813523 2.06678 0.500122 1.75338 0.500122 1.36678Z" />'
+                      +   '<path fill-rule="evenodd" clip-rule="evenodd" d="M0.500122 18.6332C0.500122 18.2466 0.813523 17.9332 1.20012 17.9332H20.8001C21.1867 17.9332 21.5001 18.2466 21.5001 18.6332C21.5001 19.0198 21.1867 19.3332 20.8001 19.3332H1.20012C0.813523 19.3332 0.500122 19.0198 0.500122 18.6332Z" />'
+                      +   '<path fill-rule="evenodd" clip-rule="evenodd" d="M0.500122 10C0.500122 9.6134 0.813523 9.3 1.20012 9.3H20.8001C21.1867 9.3 21.5001 9.6134 21.5001 10C21.5001 10.3866 21.1867 10.7 20.8001 10.7H1.20012C0.813523 10.7 0.500122 10.3866 0.500122 10Z" />'
+                      + '</svg>      '
+                      +'</div>'
+    
+                      +'<div class="docu-header">'
+                      +'<h1>'+docuName+' 다큐봇</h1>'
+                      +'<div class="dot-flashing">'
+                      +'</div>'
+                      +'</div>'
+    
+                      +'<div class="collapse" id="chatbot-collapse">'
+                      +  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                      +    '<path d="M4.92465 4.07613C4.69034 3.84181 4.31044 3.84181 4.07613 4.07613C3.84181 4.31044 3.84181 4.69034 4.07613 4.92465L11.152 12.0005L4.07632 19.0761C3.84201 19.3104 3.84201 19.6903 4.07632 19.9247C4.31064 20.159 4.69054 20.159 4.92485 19.9247L12.0005 12.849L19.0761 19.9247C19.3104 20.159 19.6903 20.159 19.9247 19.9247C20.159 19.6903 20.159 19.3104 19.9247 19.0761L12.849 12.0005L19.9249 4.92465C20.1592 4.69034 20.1592 4.31044 19.9249 4.07613C19.6905 3.84181 19.3106 3.84181 19.0763 4.07613L12.0005 11.152L4.92465 4.07613Z" fill="#2C2C2C"/>'
+                      +  '</svg>'
+                      +'</div>'
+                      
+                      +'<div class="list-menu">'
+                      +'<div class="list-menu-back"></div>'
+                        +'<div class="list-menu-header">'
+                          +'<span class="menu-title">채널</span>'
+                          +'<span class="close">'
+                          + '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                          +     '<path d="M1.92417 1.07564C1.68985 0.841324 1.30995 0.841324 1.07564 1.07564C0.841324 1.30995 0.841324 1.68985 1.07564 1.92417L8.15147 9L1.07583 16.0756C0.841519 16.31 0.841519 16.6899 1.07583 16.9242C1.31015 17.1585 1.69005 17.1585 1.92436 16.9242L9 9.84853L16.0756 16.9242C16.31 17.1585 16.6899 17.1585 16.9242 16.9242C17.1585 16.6899 17.1585 16.31 16.9242 16.0756L9.84853 9L16.9244 1.92417C17.1587 1.68985 17.1587 1.30995 16.9244 1.07564C16.69 0.841324 16.3101 0.841324 16.0758 1.07564L9 8.15147L1.92417 1.07564Z" />'
+                          +  '</svg>'
+                          +'</span>'
+                        +'</div>'
+                        +'<ul class="list-menu-body">'
+                          +'<li class="list-menu-first">ERP'
+                            + arrow2
+                          +'</li>'
+                          +'<li class="list-menu-second">환경안전'
+                          + arrow2
+                          +'</li>'
+                          +'<li class="list-menu-third">법무'
+                            + arrow2
+                          +'</li>'
+                        +'</ul>'
+                      +'</div>'
+                      
+                    +'</div>');
+                      
+    channelDocuCont.append(channelHeader);
+    
+    var channelContent = $('<div class="channel-content-frame"></div>');
+    var channelFrame = $('<iframe id="channel-content-iframe" name="channel-content-iframe" src="about:blank" allow="microphone; autoplay" allowusermedia="true" style="position: relative!important;height:100%!important;width: 100%!important;border: none!important;"></iframe>');
+    
+    channelContent.append(channelFrame);
+    channelDocuCont.append(channelContent);
+    
+    //console.log('openDocuBot : '+url);
+    
+    if (!document.getElementById("channel-content-iframe").isLoaded) {
+        //console.log('openDocuBot :: '+url);
+        document.getElementById("channel-content-iframe").isLoaded = true;
+        openDocuBotFrame(url, params);
+    }    
+    
+    channelHeader.find('.list-menu-first').on('click', function() {
+        $('.docu-header').find('h1').text('ERP 다큐봇');
+        openDocuBotFrame(ERP_URL, ERP_PARAMS);
+        channelHeader.find('.list-menu').fadeOut();
+    });
+    channelHeader.find('.list-menu-second').on('click', function() {
+        $('.docu-header').find('h1').text('환경안전 다큐봇');
+        openDocuBotFrame(ENVSAFE_URL, ENVSAFE_PARAMS);
+        channelHeader.find('.list-menu').fadeOut();
+    });
+    channelHeader.find('.list-menu-third').on('click', function() {
+        $('.docu-header').find('h1').text('법무 다큐봇');
+        openDocuBotFrame(LEGAL_URL, LEGAL_PARAMS);
+        channelHeader.find('.list-menu').fadeOut();
+    });
+}
+/* ---------------------- [다큐봇 End] ---------------------- */
