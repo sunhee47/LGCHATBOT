@@ -2356,7 +2356,7 @@ function welcomeAppend(welcomeMessage) {
 
 //23.02.07 처음 접속 여부에 따른 메시지 변경 처리  
 //   var userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님,<br />좋은 하루 보내세요.</h1>');
-  var userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님 안녕하세요.<br />오늘도 멋진 하루 보내세요!</h1>');
+  var userName = '';//$('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님 안녕하세요.<br />오늘도 멋진 하루 보내세요!</h1>');
   if(alarmInfo.firstMessage == "N") userName = $('<h1>케미를 다시 찾아주셨네요.<br />무엇을 도와드릴까요?</h1>');
   if(birthDayYn == 'Y') {
     userName = $('<h1>' + userInfo.userKorName + ' ' + userInfo.jobTitle +'님<br />생일을 축하 드립니다!</h1>');
@@ -2377,26 +2377,30 @@ function welcomeAppend(welcomeMessage) {
         '<div class="message">'
         +   '<h2>✔<b>G Cloud 접속 프로그램 변경 안내</b></h2>'
         +    '<p>'
-        +    '    · G Cloud 기존 접속 프로그램인 Citrix 라이선스 종료에 따라 아래 일정으로 신규 솔루션 변경 작업을 진행합니다. G Cloud 유저분들께서는 일정을 확인해 주시기 바랍니다.</br>'
+        +    'G Cloud 접속 프로그램 긴급 전환 작업에 적극 협조해주신 임직원 여러분께 진심으로 감사의 말씀을 드립니다. '
+        +    '현재 남아있는 기능상 미비점들은 아래 일정대로 조치될 예정이오니 참고 부탁드립니다.</br>'
         +    '</p>'
         +    '</br>'
-        +   '<h2>✔<b>전환 대상 : G Cloud PC 사용자 전체</b></h2>'
+        
+        +   '<h2>▶ 기능 미비점 개선 일정</h2>'
         +    '<p>'
-        +    '    · 국내 G Cloud 사용하는 주재원 포함</br>'
+        +    '1. Secure Work Folder 사용 제한 : \'24.12.20 (금)</br>'
+        +    '2. Dul Monitor 확장 기능 제약 및 접속 지연 : \'25.1.17 (금)</br>'
+        +    '3. Smart Device 사용성 저하 (해상도 관련) : \'24.12.20 (금)</br>'
+        +    '4. 기타 잔여 이슈 : \'25.1.17 (금)'
         +    '</p>'
         +    '</br>'
-        +    '<h2>✔<b>전환 일정 : 11/22 (금) 00:00 ~ 11/28 (목) 24:00</b></h2>'
+        
+        +    '<h2>▶ 문의처</h2>'
         +    '<p>'
-        +    '    · 1차 (11/22, 금) : CFO 및 협력사 / 총 1,214 명</br>'
-        +    '    · 2차 (11/26, 목) : 첨단, 생명과학, CHO, CSEO, CSSO / 총 5,137명</br>'
-        +    '    · 3차 (11/28, 목) : 석유화학, CTO, 팜한농, LG-HYBCM, TW 바이오매스 / 총 5,502명</br>'
+        +    '- 비상 대응 상황실 : 02-2099-5425, 5426, 5427</br>'
+        +    '- IT HelpDesk (1644-7119) 및 PC유지보수실'
         +    '</p>'
         +    '</br>'
-        +    '<h2>✔<b>기타 사항</b></h2>'
+        
+        +    '<h2>▶ 기타</h2>'
         +    '<p>'
-        +    '    · 비상 대응 상황실 : 02-2099-5425, 5426, 5427</br>'
-        +    '    · IT HelpDesk : 1644-7119</br>'
-        +    '    · 상세 안내는 케미에 ‘지클 접속’ 키워드로 검색해 주세요.</br>'
+        +    '- 상세 안내는 케미에 \'지클 접속\' 키워드로 검색해 주세요.'
         +    '</p>'
         +'</div>' )
   
