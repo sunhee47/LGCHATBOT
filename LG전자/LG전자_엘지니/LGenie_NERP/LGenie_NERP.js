@@ -19869,12 +19869,12 @@ function hsCodeMenuNERP(data) {
         +    '</p>'
 
         +    '<p>'
-        +    '✔ N-ERP IMP 모듈 내 HS Code Master 데이터는 업데이트 지연이 발생할 수 있습니다.</br>'
-        +     '상세 적용이 필요한 경우에 본부별 관세 담당자에게 문의해 주세요.'        
+        +    '✔ N-ERP CDM 모듈 내 HS Code Master 데이터는 업데이트 지연이 발생할 수 있습니다. '
+        +     '상세 확인이 필요한 경우 본부별 HS 담당자에게 문의해 주세요.'        
         +    '</p>'
 
         +    '<p>'
-        +    '✔ 사업 수익성 분석에 사용되는 HS Code 및 세율 정보는 반드시 관세 담당자에게 별도 문의가 필요합니다.'
+        +    '✔ 사업 수익성 분석에 사용되는 HS Code 및 세율 정보는 반드시 HS 담당자에게 별도 문의가 필요합니다. '
         +     '(수익성의 경우 연도별 관세율, FTA 원산지, 생산지별 실효 세율 등을 확인하여야 함)'        
         +    '</p>'
         +'</div>' )
@@ -19882,14 +19882,14 @@ function hsCodeMenuNERP(data) {
 
     var hsCodeBtnWrap = $('<div class="btn"></div>');
     var hsCodeSearchBtn = $('<button type="button" class="btn btn-emphasis">HS Code 조회</button>');
-    var hsCodeManagerBtn = $('<button type="button" class="btn btn-emphasis">본부별 관세 담당자</button>');
+    var hsCodeManagerBtn = $('<button type="button" class="btn btn-emphasis">본부별 HS 담당자</button>');
     
     hsCodeSearchBtn.on('click', function() {
         chatui.sendMessage("HS Code 조회");
     });
 
     hsCodeManagerBtn.on('click', function() {
-        chatui.sendMessage("본부별 관세담당자");
+        chatui.sendMessage("본부별 HS 담당자");
     });
     
     hsCodeBtnWrap.append(hsCodeSearchBtn);
@@ -19953,6 +19953,15 @@ function makeHsCodeCard(data) {
     
     messageWrap.append(messageTextWrap);
 
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var systemBtn = $('<span class="btn-custom-reply">본부별 HS 담당자</span>');
+    quickReplies.append(systemBtn);
+    messageWrap.append(quickReplies);
+    
+    systemBtn.click(function(){
+        chatui.sendMessage("본부별 HS 담당자");
+    });
+
     return messageWrap;
 }
 
@@ -19964,12 +19973,12 @@ function makeHsCodeManagerCard(data) {
     var hsCodeCard = $('<div class="message simple-text"></div>');
         var hsCodeText = $(
         '<div class="message">'
-        +   '<p><b>본부별 관세 담당자</b>를 확인하려면 아래 버튼을 눌러 입력해주세요.</p>'
+        +   '<p><b>본부별 HS 담당자</b>를 확인하려면 아래 버튼을 눌러 입력해주세요.</p>'
         +'</div>' )
     hsCodeCard.append(hsCodeText);
 
     var hsCodeBtnWrap = $('<div class="btn"></div>');
-    var hsCodeBtn = $('<button type="button" class="btn btn-emphasis">본부별 관세 담당자</button>');
+    var hsCodeBtn = $('<button type="button" class="btn btn-emphasis">본부별 HS 담당자</button>');
     
     hsCodeBtn.on('click', function() {
         addHsCodeSeachCentralPopupOpen(data.corp_gubun);
@@ -19996,11 +20005,11 @@ function makeHsCodeManagerCard(data) {
 
     var hscodeAddMsg = $('<div class="message simple-text">'
                 +    '<p>'
-                +    '✔ N-ERP IMP 모듈 내 HS Code Master 데이터는 업데이트 지연이 발생할 수 있습니다. '
-                +     '상세 적용이 필요한 경우 본부별 관세 담당자에게 문의해 주세요.'        
+                +    '✔ N-ERP CDM 모듈 내 HS Code Master 데이터는 업데이트 지연이 발생할 수 있습니다. '
+                +     '상세 확인이 필요한 경우 본부별 HS 담당자에게 문의해 주세요.'        
                 +    '</p>'
                 +    '<p>'
-                +    '✔ 사업 수익성 분석에 사용되는 HS Code 및 세율 정보는 반드시 관세 담당자에게 별도 문의가 필요합니다. '
+                +    '✔ 사업 수익성 분석에 사용되는 HS Code 및 세율 정보는 반드시 HS 담당자에게 별도 문의가 필요합니다. '
                 +     '(수익성의 경우 연도별 관세율, FTA 원산지, 생산지별 실효 세율 등을 확인하여야 함)'        
                 +    '</p>'
                     + '</div>'); 
@@ -20017,7 +20026,11 @@ function makeHsCodeManagerCard(data) {
 function addHsCodePopupOpen(data) {
     
     console.log('hscode : ', data);
-    
+
+    var loginCountry = (data.loginCountry == null)? '':data.loginCountry;
+    var loginCorporation = (data.loginCorporation == null)? '':data.loginCorporation;
+    var loginCorporationName = (data.loginCorporationName == null)? '':data.loginCorporationName;
+
     var selPlant = (data.plant == null)? '':data.plant;
     var selPlantName = (data.plantName == null)? '':data.plantName;
 
@@ -20033,7 +20046,28 @@ function addHsCodePopupOpen(data) {
     var selExportCountry = (data.exportCountry == null)? '':data.exportCountry;
     var selExportCountryName = (data.exportCountryName == null)? '':data.exportCountryName;
 
-    //var selCorpCode = (data.corpCode == null)? '':data.corpCode;
+    if(loginCountry != '') {
+        selImportCountry = loginCountry;
+        
+        data.countryList.forEach(function(country, index) {
+            if(country.COUNTRY == selImportCountry) {
+                selimportCountryName = country.COUNTRY_DESC;
+                
+                return false;
+            }
+        });
+        
+    }
+    if(loginCorporation != '') {
+        selCorpCode = loginCorporation;
+    }
+    
+    if(loginCorporationName != '') {
+        selCorpName = loginCorporationName;   
+    }
+    
+    //console.log('loginCountry : '+loginCountry+', loginCorporation : '+loginCorporation+', loginCorporationName : '+loginCorporationName);
+    //console.log('selImportCountry : '+selImportCountry+', selimportCountryName : '+selimportCountryName+', selCorpCode : '+selCorpCode+', selCorpName : '+selCorpName);
     
     /* #########[ popup_wrap_start ]######### */
     
@@ -20058,12 +20092,32 @@ function addHsCodePopupOpen(data) {
     addHsCode.append(addHsCodeHeader);
 
     /* #########[ popup_content_wrap_start ]######### */
-    var addHsCodeContents = $('<div class="plugin-contents" style="max-height: calc(90vh - 170px);"></div>');
+    var addHsCodeContents = $('<div class="plugin-contents" id="hscode_contents" style="max-height: calc(90vh - 170px);"></div>');
     var addHsCodeForm = $('<form class="form-hsCode"></form>');
     
     /* #########[ popup_content ]######### */
     /* ###[ Plant 코드 ]###  */
-    var inputBoxText1 = $('<div class="input-box add-order"><label>Plant</label></div>');
+    var inputBoxText1 = $('<div class="input-box add-order"></div>');
+    
+    var label1 = $('<label>Plant </label>');
+    var tooltipIcon1 = $('<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M9.9974 17.3332C14.0475 17.3332 17.3307 14.0499 17.3307 9.99984C17.3307 5.94975 14.0475 2.6665 9.9974 2.6665C5.94731 2.6665 2.66406 5.94975 2.66406 9.99984C2.66406 14.0499 5.94731 17.3332 9.9974 17.3332ZM9.9974 18.3332C14.5998 18.3332 18.3307 14.6022 18.3307 9.99984C18.3307 5.39746 14.5998 1.6665 9.9974 1.6665C5.39502 1.6665 1.66406 5.39746 1.66406 9.99984C1.66406 14.6022 5.39502 18.3332 9.9974 18.3332Z" fill="#2C2C2C"/>'
+                        +'<path d="M9.3724 9.37484C9.3724 9.02966 9.65222 8.74984 9.9974 8.74984C10.3426 8.74984 10.6224 9.02966 10.6224 9.37484V13.1248C10.6224 13.47 10.3426 13.7498 9.9974 13.7498C9.65222 13.7498 9.3724 13.47 9.3724 13.1248V9.37484Z" fill="#2C2C2C"/>'
+                        +'<path d="M10.8307 6.6665C10.8307 7.12674 10.4576 7.49984 9.9974 7.49984C9.53716 7.49984 9.16406 7.12674 9.16406 6.6665C9.16406 6.20627 9.53716 5.83317 9.9974 5.83317C10.4576 5.83317 10.8307 6.20627 10.8307 6.6665Z" fill="#2C2C2C"/>'
+                        +'</svg>');
+                        
+    var plantTooltip1 = $('<div class="message-tooltip">'
+                        +'<svg width="36" height="7" viewBox="0 0 36 7" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M27.2407 0.8858C27.6398 0.420188 28.3602 0.420188 28.7593 0.8858L34 7H22L27.2407 0.8858Z" fill="#424242"/>'
+                        +'</svg> '   
+                        +'<div class="message-text">'
+                        +'<div class="text-1-line" style="color:white;">2자 이상, 최대 30자까지 검색 가능합니다.</div>'
+                        +'</div>'
+                        +'</div>');
+                        
+    label1.append(tooltipIcon1);  
+    label1.append(plantTooltip1);
+    
     var inputTextContent1 = $('<div class="input-form order-select searchIcon"></div>');
     var plantSelected = $('<div class="selected-order"></div>');
     var inputBox1 = $('<input type="text" placeholder="Plant명 또는 코드 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
@@ -20223,12 +20277,36 @@ function addHsCodePopupOpen(data) {
         //////        
     });
     
+    inputBoxText1.append(label1);
+    
+    //inputBoxText1.append(plantTooltip1);
+    
     inputBoxText1.append(inputTextContent1);
     inputBoxText1.append(note);
     addHsCodeForm.append(inputBoxText1);
 
     /* ###[ Material ]###  */
-    var inputBoxText2 = $('<div class="input-box add-order"><label>Material<b>*</b></label></div>');
+    var inputBoxText2 = $('<div class="input-box add-order"></div>');
+    
+    var label2 = $('<label>Material<b>*</b> </label>');
+    var tooltipIcon2 = $('<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path fill-rule="evenodd" clip-rule="evenodd" d="M9.9974 17.3332C14.0475 17.3332 17.3307 14.0499 17.3307 9.99984C17.3307 5.94975 14.0475 2.6665 9.9974 2.6665C5.94731 2.6665 2.66406 5.94975 2.66406 9.99984C2.66406 14.0499 5.94731 17.3332 9.9974 17.3332ZM9.9974 18.3332C14.5998 18.3332 18.3307 14.6022 18.3307 9.99984C18.3307 5.39746 14.5998 1.6665 9.9974 1.6665C5.39502 1.6665 1.66406 5.39746 1.66406 9.99984C1.66406 14.6022 5.39502 18.3332 9.9974 18.3332Z" fill="#2C2C2C"/>'
+                        +'<path d="M9.3724 9.37484C9.3724 9.02966 9.65222 8.74984 9.9974 8.74984C10.3426 8.74984 10.6224 9.02966 10.6224 9.37484V13.1248C10.6224 13.47 10.3426 13.7498 9.9974 13.7498C9.65222 13.7498 9.3724 13.47 9.3724 13.1248V9.37484Z" fill="#2C2C2C"/>'
+                        +'<path d="M10.8307 6.6665C10.8307 7.12674 10.4576 7.49984 9.9974 7.49984C9.53716 7.49984 9.16406 7.12674 9.16406 6.6665C9.16406 6.20627 9.53716 5.83317 9.9974 5.83317C10.4576 5.83317 10.8307 6.20627 10.8307 6.6665Z" fill="#2C2C2C"/>'
+                        +'</svg>');
+                        
+    var plantTooltip2 = $('<div class="message-tooltip" style="left: 45px;">'
+                        +'<svg width="36" height="7" viewBox="0 0 36 7" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M27.2407 0.8858C27.6398 0.420188 28.3602 0.420188 28.7593 0.8858L34 7H22L27.2407 0.8858Z" fill="#424242"/>'
+                        +'</svg> '   
+                        +'<div class="message-text">'
+                        +'<div class="text-1-line" style="color:white;">3자 이상, 최대 40자까지 검색 가능합니다.</div>'
+                        +'</div>'
+                        +'</div>');
+    
+    label2.append(tooltipIcon2);  
+    label2.append(plantTooltip2);
+    
     var inputTextContent2 = $('<div class="input-form order-select searchIcon"></div>');
     var partNoSelected = $('<div class="selected-order partno-select"></div>');
     var inputBox2 = $('<input type="text" placeholder="Material 또는 Description 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
@@ -20386,6 +20464,8 @@ function addHsCodePopupOpen(data) {
          }   // end if 
         //////        
     });
+
+    inputBoxText2.append(label2);
     
     inputBoxText2.append(inputTextContent2);
     addHsCodeForm.append(inputBoxText2);
@@ -20493,7 +20573,7 @@ function addHsCodePopupOpen(data) {
     
     dropdownBox.append('<input type="hidden" value="" id="corporation_code"/>');
     dropdownBox.append('<input type="hidden" value="" id="corporation_name"/>');
-
+    
     addHsCodeForm.append(dropdownBox);
     
     
@@ -20537,13 +20617,13 @@ function addHsCodePopupOpen(data) {
     addHsCodeSubmit.on('click', function() {
         
         var plant_code = $('#plant_code').val();
-        var partno_code = $('#partno_code').val().toUpperCase();
+        var partno_code = $('#partno_code').val();
         var import_country_code = impSelectedMembers.find('.country-code').val();
         var export_country_code = expSelectedMembers.find('.country-code').val();
         var corporation_code = $('#corporation_code').val();
 
         var plant_name = $('#plant_name').val();
-        var partno_name = $('#partno_name').val().toUpperCase();
+        var partno_name = $('#partno_name').val();
         var import_country_name = impSelectedMembers.find('.country-name').val();
         var export_country_name = expSelectedMembers.find('.country-name').val();
         var corporation_name = $('#corporation_name').val();
@@ -20551,7 +20631,13 @@ function addHsCodePopupOpen(data) {
         if(plant_code) {
             plant_code = plant_code.toUpperCase();
         }
-        
+        if(partno_code) {
+            partno_code = partno_code.toUpperCase();
+        }
+
+        if(corporation_name == '0') {
+            corporation_code = '';
+        }
         //corporation_code = 'EKHQ';
 
         var requestParam = {
@@ -20572,6 +20658,8 @@ function addHsCodePopupOpen(data) {
                 "EXP_COUNTRY_NAME" : export_country_name 
             }
         };
+        
+        console.log('조회 : ', requestParam);
         
         var abledFlag = $('#btn-hsCode').hasClass("btn-disabled");
         if(!abledFlag){
@@ -20709,6 +20797,7 @@ function addHsCodePopupOpen(data) {
             
             if(inputKind == 'import_country') {
                 selectBoxAction(dropdownMainBtn, false, null);
+                dropdownBox.find('#empty_layer').remove();
             }
             nextBtnEvent();
         }
@@ -20897,18 +20986,49 @@ function addHsCodePopupOpen(data) {
                         dropdownBox.append(dropdownMenuListWrap);                                        
                         
                     }
+                    else if(corporation_list.length == 1) {
+                        dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
+                        //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
+                        var corporationListText = '';    
+                        corporation_list.forEach(function(corporation, index) {
+                            var selected = 'selected';
+
+                            var bukrsDesc = (corporation.BUKRS_DESC == '0')? '':corporation.BUKRS_DESC;
+                            corporationListText += '<li class="dropdown-item">'
+                                                + '<a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><p class="code text">'+corporation.BUKRS+'</p><p class="small text">'+bukrsDesc+'</p></a>'
+                                                //+ '<span class="account_id" style="display:none;">'+account.SAKNR+'</span>'
+                                                + '</li>';
+                        });        
+                        let dropdownListItem = $(corporationListText);
+                        
+                        dropdownMenuListWrap.append(dropdownListItem);
+                        dropdownBox.append(dropdownMenuListWrap);
+                        
+                        setTimeout(function() {
+                            var selectedValue = dropdownMenuListWrap.find('li').find('.selected');
+                
+                            console.log('selectedValue : ', selectedValue);
+                            selectedValue.trigger('click');
+                        }, 100);
+
+                    }
                     else{
                         dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
                         //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
                         var corporationListText = '';    
                         corporation_list.forEach(function(corporation, index) {
                             var selected = '';
-                            if(corporation.BUKRS == selCorpCode) {
+                            
+                            if(corporation.BUKRS_DESC == selCorpName) {
                                 selected = 'selected';
                             }
-                    
+                            //if(corporation.BUKRS == selCorpCode) {
+                            //    selected = 'selected';
+                            //}
+                            
+                            var bukrsDesc = (corporation.BUKRS_DESC == '0')? '':corporation.BUKRS_DESC;                    
                             corporationListText += '<li class="dropdown-item">'
-                                                + '<a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><p class="code text">'+corporation.BUKRS+'</p><p class="small text">'+corporation.BUKRS_DESC+'</p></a>'
+                                                + '<a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><p class="code text">'+corporation.BUKRS+'</p><p class="small text">'+bukrsDesc+'</p></a>'
                                                 //+ '<span class="account_id" style="display:none;">'+account.SAKNR+'</span>'
                                                 + '</li>';
                         });        
@@ -20949,19 +21069,23 @@ function addHsCodePopupOpen(data) {
             
         if ($(target).hasClass('active')) {
             console.log('active');
-            //pluginForm.find('#empty_layer').css('display', 'none');
+            
+            dropdownBox.find('#empty_layer').remove();
+            //addHsCodeForm.find('#empty_layer').remove()
             
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
             console.log('no active');
 
-            // //pluginForm.find('.btn').find('button').prepend(emptylayer);
-            // pluginForm.find('#empty_layer').css('display', 'block');
-            // setTimeout(function() {
-            //         var e = document.getElementById("item-content");
-            //         e.scrollTop = e.scrollHeight
-            // }, 50)            
+            //pluginForm.find('.btn').find('button').prepend(emptylayer);
+            //addHsCodeForm.find('#empty_layer').css('display', 'block');
+            dropdownBox.append('<div id="empty_layer" style="height:200px;"></div>');
+
+            setTimeout(function() {
+                    var e = document.getElementById("hscode_contents");
+                    e.scrollTop = e.scrollHeight;
+            }, 50)            
             
             $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
             $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
@@ -20975,12 +21099,19 @@ function addHsCodePopupOpen(data) {
         let corporationCode = $(target).find('.code').text();
         let corporationName = $(target).find('.small').text();
 
+        corporationName = (corporationName == '')? '0':corporationName;
+        
          $('#corporation_code').val(corporationCode);
          $('#corporation_name').val(corporationName);
 
         console.log('corporationCode : '+corporationCode+', corporationName : '+corporationName);
         //console.log('dropBtn height before : '+$(dropBtn).outerHeight());
-        dropBtn.removeClass('default active').addClass('select').find('span').html(corporationCode).css('font-weight', '500');
+        //if(corporationCode == '') {
+        //    dropBtn.removeClass('default active').addClass('select').find('span').html(corporationName).css('font-weight', '500');
+        //}
+        //else{
+            dropBtn.removeClass('default active').addClass('select').find('span').html(corporationCode).css('font-weight', '500');
+        //}
         //dropBtn.removeClass('default active').addClass('select').find('span').html('<b>'+accountCode+'</b>');
         
         let gap = $(dropBtn).outerHeight() - 48;
@@ -20989,6 +21120,7 @@ function addHsCodePopupOpen(data) {
         //$(target).parents('.dropdown-box').find('#redidence_type').val(redidence_type);
         dropmenu.stop().slideUp().removeClass('show');
 
+        dropdownBox.find('#empty_layer').remove();
         //pluginForm.find('#empty_layer').css('display', 'none');
         
         //console.log('dropBtn height after : '+$(dropBtn).outerHeight());
@@ -21319,8 +21451,17 @@ function addHsCodePopupOpen(data) {
         
     }
     else{
-        selectBoxAction(dropdownMainBtn, false, null);
+        if(selCorpName == '0') {
+            setTimeout(function() {
+                selectBoxAction(dropdownMainBtn, true, null);
+                
+            }, 100);
+        }
+        else{
+            selectBoxAction(dropdownMainBtn, false, null);
+        }
     }    
+    
     
     nextBtnEvent();
 }
@@ -21450,7 +21591,7 @@ function hsCodeResult(data, index) {
     var hsCodeResultLiUserBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">Plant 조회</button></li>');
     var hsCodeResultLiUserBtnNERP = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">Plant 및 담당자 조회</button></li>');
 
-    var hsCodeCentralBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">본부별 관세담당자</button></li>');
+    var hsCodeCentralBtn = $('<li><button type="button" id="hsCodeUserBtn"" class="btn btn-emphasis">본부별 HS 담당자</button></li>');
     
     var hsCodeResultContent = $('<div class="importCargo-content"></div>');
 
@@ -21478,13 +21619,13 @@ function hsCodeResult(data, index) {
                 +hsCodeResultDate
                 +'<li>'
                     +'<div class="importCargo-remain">'
-                        +'<div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* 본 데이터는 현재 시점에 GERP IMP 모듈 내 HS Code Master 데이터 조회 결과입니다. '
-                        +'데이터 업데이트 지연 등이 발생할 수 있으므로, 상세 적용이 필요한 경우 본부별 관세 담당자에게 문의해 주세요.</div>'
+                        +'<div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* 본 데이터는 현재 시점에 N-ERP CDM 모듈 내 HS Code Master 데이터 조회 결과입니다. '
+                        +'데이터 업데이트 지연 등이 발생할 수 있으므로, 상세 확인이 필요한 경우 본부별 HS 담당자에게 문의해 주세요.</div>'
                     +'</div>'
                 +'</li>'
                 +'<li>'
                     +'<div class="importCargo-remain">'
-                        +'<div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* 사업 수익성 분석에 사용되는 HS Code 및 세율 정보는 반드시 관세 담당자에게 별도 문의가 필요합니다. '
+                        +'<div style="color: #6b6b6b; font-size: 12px;line-height: 18px;">* 사업 수익성 분석에 사용되는 HS Code 및 세율 정보는 반드시 HS 담당자에게 별도 문의가 필요합니다. '
                         +'(수익성의 경우 연도별 관세율, FTA 원산지, 생산지별 실효 세율 등을 확인하여야 함)</div>'
                         //+ftaContent
                     +'</div>'
@@ -21554,7 +21695,7 @@ function addHsCodeSeachCentralPopupOpen(userType) {
     var addHsCode = $('<div class="plugins" id="addHsCode"></div>');
 
     /* #########[ popup_header ]######### */
-    var addHsCodeHeader = $('<div class="plugin-header"><h1>본부별 관세 담당자</h1></div>');
+    var addHsCodeHeader = $('<div class="plugin-header"><h1>본부별 HS 담당자</h1></div>');
     var addHsCodeClose = $(
         '<span class="close-plugin">'
             +'<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -21791,6 +21932,8 @@ function hsCodeResultError(data) {
     );
     hsCodeResultErrorContentWrap.append(hsCodeResultErrorHeader);
     
+    var importCorpName = (data.importCorporationName == '0')? '':data.importCorporationName;
+    
     var hsCodeResultErrorContent = $(
         '<div class="importCargo-content">'
             +'<ul class="importCargo-list-wrap">' 
@@ -21809,7 +21952,7 @@ function hsCodeResultError(data) {
                 +'</li>'
                 +'<li style="align-items: flex-start;">'
                     +'<h4 style="width: 110px; margin-top: 3px;">수입법인</h4>'
-                    +'<div class="hsCode-li-content"><span>' + data.importCorporationName + '</span></div>'
+                    +'<div class="hsCode-li-content"><span>' + importCorpName + '</span></div>'
                 +'</li>'
                 +'<li style="align-items: flex-start;">'
                     +'<h4 style="width: 110px; margin-top: 3px;">수출국</h4>'
@@ -21835,9 +21978,9 @@ function hsCodeResultError(data) {
 	
 	if(loginCorp == "EKHQ"){
 	    let add_text = '<p><span style="color: #898989; font-size: 11px;">※ VS본부의 HS Code는 조회되지 않습니다.</span></p>';
-		text = $('<p>입력하신 정보로 조회되는 HS Code가 없습니다. 작성 하신 내용을 정확히 확인 후 다시 조회하거나 관세팀으로 문의해주세요.</p>'+add_text);	
+		text = $('<p>입력하신 정보로 조회되는 HS Code가 없습니다. 작성 하신 내용을 정확히 확인 후 다시 조회하거나 HS 담당자에게 문의해주세요.</p>'+add_text);	
 	}else if(loginCorp == "EKLM"){
-		text = $('<p>입력하신 정보로 조회되는 HS Code가 없습니다. 작성 하신 내용을 정확히 확인 후 다시 조회하거나 관세 담당자에게 문의해주세요.</p>');
+		text = $('<p>입력하신 정보로 조회되는 HS Code가 없습니다. 작성 하신 내용을 정확히 확인 후 다시 조회하거나 HS 담당자에게 문의해주세요.</p>');
 	}
     msgCon.append(text);
     

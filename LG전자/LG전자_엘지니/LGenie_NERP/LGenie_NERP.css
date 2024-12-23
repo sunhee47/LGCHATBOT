@@ -8766,6 +8766,45 @@ li::marker {
     display: flex;
     align-items: flex-start;
 }
+
+
+.message-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  box-shadow: var(
+    --elevation-white-depth2-box-shadow,
+    0px 4px 5px 0px rgba(0, 0, 0, 0.11)
+  );
+}
+
+.message-text {
+  background: var(--color-gray-800, #424242);
+  border-radius: 4px;
+  padding: 7px 12px 7px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.plugins .add-order label svg + .message-tooltip  {
+    position: absolute;
+    z-index: 9;
+    left: 21px;
+    display: none;
+}
+.plugins .add-order label svg:hover + .message-tooltip  {
+    display: flex;
+}
+
 /*.test-panel .chat-message.left .message .importCargo-wrap .importCargo-content .hsCodeResult-list-wrap h4 {*/
 /*    width: 80px;*/
 /*    color: #898989;*/
