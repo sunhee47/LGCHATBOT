@@ -17,10 +17,10 @@ let checkChatHistory = false;
 let employeeQueryEvent = "employeeQueryEvent";
 let scheduleDeleteEvent = "scheduleDeleteEvent";
 let scheduleAttendEvent = "scheduleAttendEvent";
-let saveNotificationEvent = "saveNotificationEvent";
+let saveNotificationEvent = "saveNotificationEvent";      
 let readNotificationEvent = "readNotificationEvent";
 let employeeSmsQueryEvent = "employeeSmsQueryEvent";
-let teamSmsQueryEvent = "teamSmsQueryEvent";
+let teamSmsQueryEvent = "teamSmsQueryEvent";        
 let scheduleRegEvent = "scheduleRegEvent";
 let dictDetailQueryEvent = "dictDetailQueryEvent";
 let groupQueryEvent = "groupQueryEvent";
@@ -3068,6 +3068,8 @@ jQuery(document).ready(function(e){
   +         '<button type="button" class="btn-s btn-text btn-sendtext">UIT 변경</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">UIT 변경내역조회</button>'
   +         '<button type="button" class="btn-s btn-text btn-sendtext">HS Code</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 주문</button>'
+  +         '<button type="button" class="btn-s btn-text btn-sendtext">타계정 간편 입력</button>'
   +     '</div>'
   
   +     '<h2>주요 메뉴</h2>'
@@ -8645,6 +8647,9 @@ chatui.createCustomResponseMessage = function(response, isHistory) {
         }
         else if(message.type == 'hsCodeManager') {
           messageCard = makeHsCodeManagerCard(message.data);
+        }
+        else if(message.type == 'otherAccountsMenuNERP') {
+          messageCard = makeAnotherAccountOrderCard(message.data);
         }
         else {
           console.log(message.type);
@@ -17850,7 +17855,7 @@ function addUitChangeCardNERP(uitdata){
         // showUitUpdate = true;
         // chatui.sendMessage("UIT 변경");
         preUitData.plant = prePlant;
-        preUitData.materialNo = preMaterialNo;
+        //preUitData.materialNo = preMaterialNo;        // materialno 는 제외
         preUitData.remark = preRemark;
 
         uitUpdatePopupOpenNERP(preUitData);
@@ -17993,7 +17998,7 @@ function reqPlannerUitChangeCardNERP(uitdata){
         // showUitUpdate = true;
         // chatui.sendMessage("UIT 변경");
         preUitData.plant = prePlant;
-        preUitData.materialNo = preMaterialNo;
+        //preUitData.materialNo = preMaterialNo;        // materialno 는 제외
         preUitData.remark = preRemark;
 
         uitUpdatePopupOpenNERP(preUitData);
@@ -22135,3 +22140,139 @@ function hsCodeResultList(data) {
 }
 
 /* #################### [ Hs Code 조회 End ] #################### */
+
+/* #################### [ 타계정 주문 START ] #################### */
+
+var externalLinks = '<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                + '<path d="M10.0306 2.06699C10.0306 1.84608 10.2097 1.66699 10.4306 1.66699H13.4306C14.2038 1.66699 14.8306 2.29379 14.8306 3.06699V6.06699C14.8306 6.28791 14.6515 6.46699 14.4306 6.46699C14.2097 6.46699 14.0306 6.28791 14.0306 6.06699V3.06699C14.0306 3.05578 14.0303 3.04465 14.0297 3.03359L8.44684 8.61644C8.29063 8.77265 8.03736 8.77265 7.88115 8.61644C7.72494 8.46023 7.72494 8.20696 7.88115 8.05075L13.464 2.46791C13.4529 2.4673 13.4418 2.46699 13.4306 2.46699H10.4306C10.2097 2.46699 10.0306 2.28791 10.0306 2.06699Z" fill="#E0205C"/>'
+                + '<path d="M4.16406 3.13366C3.50132 3.13366 2.96406 3.67092 2.96406 4.33366V12.3337C2.96406 12.9964 3.50132 13.5337 4.16406 13.5337H12.1641C12.8268 13.5337 13.3641 12.9964 13.3641 12.3337V9.00026C13.3641 8.77935 13.5431 8.60026 13.7641 8.60026C13.985 8.60026 14.1641 8.77935 14.1641 9.00026V12.3337C14.1641 13.4382 13.2686 14.3337 12.1641 14.3337H4.16406C3.05949 14.3337 2.16406 13.4382 2.16406 12.3337V4.33366C2.16406 3.22909 3.05949 2.33366 4.16406 2.33366H7.4974C7.71831 2.33366 7.8974 2.51274 7.8974 2.73366C7.8974 2.95457 7.71831 3.13366 7.4974 3.13366H4.16406Z" fill="#E0205C"/>'
+                + '</svg>';
+
+function makeAnotherAccountOrderCard(data) {
+    
+    var anotherAccountCard = $('<div class="system-contents"></div>');    
+    
+    var anotherAccountOrderResultMessage = $(
+        '<div class="message simple-text">'
+            +'<p>'
+                +'<b>타계정 주문</b>에 대해 알려드릴게요.<br><br>'
+                +'✔ 사전에 부서예산(GBMS) 또는 광고판촉비(APMS) 품의를 통해 비용을 확보한 후 주문해 주세요.<br><br>'
+                +'✔ 간편 입력은 주문 목적이 연구 또는 제 3자에게 제공일 경우에만 가능하며, 판매처 주문은 지원하지 않습니다.'
+            +'</p>'
+        +'</div>'
+    );
+    var anotherAccountOrderBtnWrap = $('<div class="btn"></div>');
+    var guideBtn = $('<button type="button" class="btn btn-emphasis btn-big btn-link">타계정 주문 절차 및 가이드 <div class="link-icon">'+externalLinks+'</div></button>');
+    var gbmsBtn = $('<button type="button" class="btn btn-emphasis btn-big">부서 예산 조회</button>');
+    var apmsBtn = $('<button type="button" class="btn btn-emphasis btn-big">광고판촉비 조회</button>');
+    var orderInputBtn = $('<button type="button" class="btn btn-emphasis btn-big btn-tooltip">간편 입력</button>');
+    var orderListViewBtn = $('<button type="button" class="btn btn-emphasis btn-big">주문 현황 조회</button>');
+    
+    var buttonTooltip = $('<div class="message-tooltip" style="top: 56%;">'
+                        +'<div class="message-text">'
+                        +'<div class="text-input" style="color:white;">챗봇에서 바로 입력할 수 있어요.</div>'
+                        +'</div>'
+                        +'<svg width="34" height="7" viewBox="0 0 34 7" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M27.2407 6.1142C27.6398 6.57981 28.3602 6.57981 28.7593 6.1142L34 0H22L27.2407 6.1142Z" fill="#424242"/>'
+                        +'</svg>'
+                        +'</div>');
+    
+    anotherAccountOrderBtnWrap.append(guideBtn);
+    anotherAccountOrderBtnWrap.append(gbmsBtn);
+    anotherAccountOrderBtnWrap.append(apmsBtn);
+
+    anotherAccountOrderBtnWrap.append(orderInputBtn);
+    anotherAccountOrderBtnWrap.append(buttonTooltip);
+
+    anotherAccountOrderBtnWrap.append(orderListViewBtn);
+    anotherAccountOrderResultMessage.append(anotherAccountOrderBtnWrap);
+
+    guideBtn.on('click', function() {
+        console.log('타계정 주문 절차 및 가이드 클릭');
+        var outlink = 'https://storage.googleapis.com/singlex-ai-chatbot-contents-stg/3ace0979-8ff0-49f3-814b-84c500f5fbef/response/%EC%B1%97%EB%B4%87%EC%9D%84%20%ED%86%B5%ED%95%9C%20%ED%83%80%EA%B3%84%EC%A0%95%20%EC%A3%BC%EB%AC%B8%20%EB%B0%9C%ED%96%89%20%EA%B0%80%EC%9D%B4%EB%93%9C_VER1_0910.pdf';
+        //window.parent.location.href = weblink;
+         window.open(outlink, '_blank');
+    })
+    gbmsBtn.on('click', function() { // console.log('부서 예산(GBMS) 조회 클릭');
+        //$('.chat-message.left').last().append(makeCardGBMS());
+        //gbmsPopupOpen();
+        chatui.sendMessage("부서 예산 조회");
+    })
+    apmsBtn.on('click', function() { // console.log('광고판촉비(APMS) 조회 클릭');
+        //$('.chat-message.left').last().append(makeCardAPMS());
+        //apmsPopupOpen();
+        chatui.sendMessage("광고판촉비 조회");        
+    })
+    orderInputBtn.on('click', function() { // console.log('타계정 주문 입력 클릭');
+        //$('.chat-message.left').last().append(makeCardAnotherAccountOrder()); // 조회
+        //anotherAccountPopupOpen();
+        chatui.sendMessage("타계정 간편 입력");   
+    })
+    orderListViewBtn.on('click', function() { // console.log('타계정 주문 현황 조회 클릭');
+        //$('.chat-message.left').last().append(makeCardAALV());
+        //anotherAccountListViewPopupOpen();
+        chatui.sendMessage("주문 현황 조회");   
+    })
+
+    anotherAccountCard.append(anotherAccountOrderResultMessage);
+    
+    // quickReplies 템플릿
+    var quickReplies = $('<div class="custom-quick-reply"></div>');
+    var quickNormalBtn = $('<span class="btn-custom-reply btn-tooltip">일반 입력'+externalLinks+'</span>');
+    var quickExcelBtn = $('<span class="btn-custom-reply btn-tooltip">엑셀업로드 입력'+externalLinks+'</span>');
+    var quickSimulationBtn = $('<span class="btn-custom-reply btn-tooltip">예산 시뮬레이션'+externalLinks+'</span>');
+    quickReplies.append(quickNormalBtn);
+
+    var quickNormalTooltip = $('<div class="message-tooltip" style="top: 76%; left: 40%;">'
+                        +'<div class="message-text">'
+                        +'<div class="text-input" style="color:white;">N-ERP 주문 화면에서 입력해 보세요.</div>'
+                        +'</div>'
+                        +'<svg width="34" height="7" viewBox="0 0 34 7" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                        +'<path d="M27.2407 6.1142C27.6398 6.57981 28.3602 6.57981 28.7593 6.1142L34 0H22L27.2407 6.1142Z" fill="#424242"/>'
+                        +'</svg>'
+                        +'</div>');
+
+    quickReplies.append(quickNormalTooltip);
+    
+    quickReplies.append(quickExcelBtn);
+    
+    var quickExcelTooltip = $('<div class="message-tooltip" style="top: 73%; left: 60%;width: 250px;">'
+                        +'<div class="message-text">'
+                        +'<div class="text-input" style="color:white;">N-ERP 주문 화면에서 엑셀 업로드 기능을 활용해 보세요.</div>'
+                        +'</div>'
+                        +'<svg width="34" height="7" viewBox="0 0 34 7" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; left: 80px; top: 50px;">'
+                        +'<path d="M27.2407 6.1142C27.6398 6.57981 28.3602 6.57981 28.7593 6.1142L34 0H22L27.2407 6.1142Z" fill="#424242"/>'
+                        +'</svg>'
+                        +'</div>');
+    quickReplies.append(quickExcelTooltip);
+    
+    quickReplies.append(quickSimulationBtn);
+
+    var quickSimulationTooltip = $('<div class="message-tooltip" style="top: 73%; left: 68%;width: 280px;">'
+                        +'<div class="message-text">'
+                        +'<div class="text-input" style="color:white;">타계정 주문에 필요한 예산이 얼마인지 시뮬레이션해 보세요.</div>'
+                        +'</div>'
+                        +'<svg width="34" height="7" viewBox="0 0 34 7" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; left: 180px; top: 50px;">'
+                        +'<path d="M27.2407 6.1142C27.6398 6.57981 28.3602 6.57981 28.7593 6.1142L34 0H22L27.2407 6.1142Z" fill="#424242"/>'
+                        +'</svg>'
+                        +'</div>');
+    quickReplies.append(quickSimulationTooltip);
+
+    anotherAccountCard.append(quickReplies);
+    
+    quickNormalBtn.click(function(){
+        console.log('일반 입력. ');
+    });
+    
+    quickExcelBtn.click(function(){
+        console.log('엑셀업로드 입력. ');
+    });
+    
+    quickSimulationBtn.click(function(){
+        console.log('예산 시뮬레이션. ');
+    });
+    
+    return anotherAccountCard;
+}
+
+/* #################### [ 타계정 주문 End ] #################### */
