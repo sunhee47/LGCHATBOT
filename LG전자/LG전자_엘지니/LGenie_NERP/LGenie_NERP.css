@@ -5058,7 +5058,7 @@ body {
 }
 .schedule-join-member .selected-members .member-info:hover .auto-detail-tooltip, .schedule-join-member .selected-members .dept-info:hover .auto-detail-tooltip {
   /* [퍼블 수정 및 추가] - display: block; 제거 */
-  /* display: block; */
+   /*display: block; */
 }
 .schedule-join-member .selected-members .member-info .btn-delete, .schedule-join-member .selected-members .dept-info .btn-delete {
   right: 7px;
@@ -8805,6 +8805,16 @@ li::marker {
     display: flex;
 }
 
+.products-bill .balance-box span svg + .message-tooltip  {
+    position: absolute;
+    z-index: 9;
+    left: 21px;
+    display: none;
+}
+.products-bill .balance-box span svg:hover + .message-tooltip  {
+    display: flex;
+}
+
 /*.test-panel .chat-message.left .message .importCargo-wrap .importCargo-content .hsCodeResult-list-wrap h4 {*/
 /*    width: 80px;*/
 /*    color: #898989;*/
@@ -8908,6 +8918,11 @@ li::marker {
 /*}*/
 .chat-message.left .system-contents .btn-tooltip:hover + .message-tooltip  {
     display: flex;
+}
+
+.schedule-join-member .selected-members .team-member:hover .auto-detail-tooltip {
+  /* [퍼블 수정 및 추가] - display: block; 제거 */
+   display: block; 
 }
 
 /***##### 타계정 주문 End #####***/ 
