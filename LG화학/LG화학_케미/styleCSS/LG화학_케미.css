@@ -4965,7 +4965,7 @@ body {
 
 /* 다큐봇 */ 
 .docubot-panel .docubot-channel {
-  background-color: #424952; 
+  background-color: #454545; 
   height: 100%;
 }
 
@@ -4978,11 +4978,162 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);  
   text-align: center;
+  width: 400px;
+}
+.docubot-panel .docubot-channel .channel-content img {
+  position: relative;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  height: 202.53px;
+  object-fit: cover;    
+}
+.docubot-panel .docubot-channel .channel-content .text-content {
+  width: 400px;
+  height: 104px;
+  position: static;
+}
+
+.docubot-panel .docubot-channel .channel-content .text-content .docu-bot {
+  color: var(--color-gray-white, #ffffff);
+  text-align: center;
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: var(--font-chatbot-common-h2-b-font-size, 17px);
+  line-height: var(--font-chatbot-common-h2-b-line-height, 28px);
+  font-weight: var(--font-chatbot-common-h2-b-font-weight, 700);
+  position: absolute;
+  left: 0px;
+  top: 222.53px;
+  width: 400px;
+  height: 58px;
+}
+.docubot-panel .docubot-channel .channel-content .text-content .ai {
+  color: #ffffff;
+  text-align: center;
+  font-family:  "Noto Sans KR", sans-serif;
+  font-size: var(--font-chatbot-pc-caption-1-r-font-size, 12px);
+  line-height: var(--font-chatbot-pc-caption-1-r-line-height, 18px);
+  font-weight: var(--font-chatbot-pc-caption-1-r-font-weight, 400);
+  position: absolute;
+  left: 0px;
+  top: 290.53px;
+  width: 400px;
 }
 .docubot-panel .docubot-channel .channel-content p {
   color: white;
-  font-size: 13px;
+  font-family: 'Noto Sans CJK KR';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 28px;
 }
+.docubot-panel .docubot-channel .channel-content span {
+  color: white;
+  /*font-family: 'Noto Sans CJK KR';*/
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+}
+.docubot-panel .docubot-channel .channel-content .buttons {
+  border-radius: 16px;
+  padding: 0px 0px 4px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  height: 90px;
+  position: relative;
+  overflow: hidden;
+}
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper button {
+  background: var(--color-gray-50, #f5f5f5);
+  border-radius: 13px;
+  align-self: stretch;
+  flex-shrink: 0;
+  width: 90px;
+  position: relative;
+  overflow: hidden;
+}
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper button .icon-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  left: 50%;
+  translate: -50%;
+  top: 12px;
+  width: 80px;  
+}
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper button .icon-wrapper .div {
+ color: #2C2C2C;    
+  text-align: center;
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 11px;
+  line-height: 15px;
+  font-weight: 400;
+  position: relative; 
+}
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper button .icon-wrapper:hover .div {
+ color: #CE0A0A;    
+}
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper button .button-icon {
+  background: var(--color-gray-100, #e8e8e8);
+  border-radius: 22px;
+  padding: 9px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}       
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper button .button-icon:hover {
+    background: #FBE4E9;
+}
+
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper button .button-icon svg path{
+  fill: #6b6b6b;
+}
+.docubot-panel .docubot-channel .channel-content .buttons .button-wapper button .button-icon:hover svg path{
+  fill: #E0205C;        /* #CE0A0A */ 
+}
+
+.docubot-panel .docubot-channel .channel-header .winopen {
+  width: 28px;
+  height: 28px;
+  display: block;
+  position: absolute;
+  right: 46px;
+  top: 25px;
+  cursor: pointer;
+}
+.docubot-panel .docubot-channel .channel-header .winopen svg {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: block;
+  left: 50%;
+  top: 50%;
+}
+.docubot-panel .docubot-channel .channel-header .winopen svg path {
+  fill: white;
+}
+
 .docubot-panel .docubot-channel .channel-header .collapse {
   width: 28px;
   height: 28px;
