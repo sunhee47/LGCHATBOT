@@ -8925,5 +8925,11 @@ li::marker {
    display: block; 
 }
 
+.material-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
 /***##### 타계정 주문 End #####***/ 
 

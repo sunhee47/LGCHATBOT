@@ -11999,7 +11999,7 @@ var isQuick = false;
 var loginDeptCode = '';
 var loginDeptName = '';
 
-var unLimitedAmount = '9999999999999';
+var unLimitedAmount = '99999999999999';
 
 // 물품 청구 신청 메세지
 function makeRequestItemsInput(requestdata) {
@@ -12179,7 +12179,7 @@ function requestItemsInputFirst(requestdata) {
     // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
     var inputTextContent1 = $('<div class="input-form order-select searchIcon" id="input_content1"></div>');
     var departmentSelected = $('<div class="selected-order" id="input_selected1"></div>');
-    var inputBox1 = $('<input type="text" placeholder="Department명 또는 코드 입력 후 \'Enter\'로 검색" max-length="50" id="department-name"  autocomplete="off"/>');
+    var inputBox1 = $('<input type="text" placeholder="Department명 입력 후 \'Enter\'로 검색" max-length="50" id="department-name"  autocomplete="off"/>');
     var departmentListCont = $('<div class="order-list"></div>');
     
     var departmentListTitle = $('<span>Department 목록</span>');
@@ -12409,6 +12409,8 @@ function requestItemsInputFirst(requestdata) {
         $(btn).removeClass('select').addClass('default');
         $(btn).find('span').css('font-weight', '');
         
+        pluginForm.find('#empty_layer').css('display', 'none');      
+        
         $('#account_code').val('');
         $('#account_name').val('');
         $('#account_id').val('');
@@ -12484,7 +12486,7 @@ function requestItemsInputFirst(requestdata) {
                         empthHeight = 200;
                     }
                     
-                    $('#empty_layer').css('height', empthHeight+'px');
+                    //$('#empty_layer').css('height', empthHeight+'px');
                     
                     if(account_list.length == 0) {
                         account_list = null;
@@ -12536,6 +12538,14 @@ function requestItemsInputFirst(requestdata) {
         return account_list;
     }
     
+    function initBoxAction($input, $costSelected, hloderMsg) {
+        
+        $costSelected.empty();
+        $input.val('');
+        if(hloderMsg)        $input.attr('placeholder', hloderMsg);
+        $input.css('display', 'block');
+    }
+    
     $(document).off("click").on('click', '.data-wrap .btn-delete', function(){
         console.log('delete....');
         var content = $(this).parents(".order-select");
@@ -12554,6 +12564,10 @@ function requestItemsInputFirst(requestdata) {
         // department, plant 값을 삭제한 경우. 
         if(label.text() == 'Receipt Department*' || label.text() == 'Plant*') {
             selectBoxAction(dropdownMainBtn, false, null);
+            
+            inputBoxText3.find('label').html('Project');
+            initBoxAction(inputBox3, projectSelected, "Project명 입력 후 \'Enter\'로 검색");        // project 선택된 데이터 삭제
+            nextBoxAction(inputBox3, inputTextContent3, 'disabled');                                // project 항목 disabled
         }
         
         nextBtnEvent();  
@@ -12566,6 +12580,8 @@ function requestItemsInputFirst(requestdata) {
     
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             $('.order-select').removeClass('focus');
+            
+            pluginForm.find('#empty_layer1').css('display', 'none');    
         }
     });
     
@@ -12786,10 +12802,10 @@ function requestItemsInputFirst(requestdata) {
     
     var emptylayer = $('<div id="empty_layer" style="height:200px;display:none;"></div>');
     pluginForm.append(emptylayer);
-
+    
     dropdownTitle.find('a').on('click', function() {
-        // let url = 'https://clink.dev.nerp.lge.com:9090/PclHttp.dll?get&pVersion=0047&contRep=ZD&docId=CF3657C22D5E1EEF99D5CB464CDB4BD1&compId=%25EC%2597%25B0%25EA%25B5%25AC%25EC%2586%258C_%25EB%25AC%25BC%25ED%2592%2588%25EC%25B2%25AD%25EA%25B5%25AC_%25EC%25B1%2597%25EB%25B4%2587_%25EA%25B3%2584%25EC%25A0%2595%25EC%2584%25A4%25EB%25AA%2585.xlsx&accessMode=r&authId=CN%3dS4D%2cOU%3dSAP-HEC%2cC%3dDE&expiration=99991231235959&secKey=MIIBGgYJKoZIhvcNAQcCoIIBCzCCAQcCAQExCzAJBgUrDgMCGgUAMAsGCSqGSIb3DQEHATGB5zCB5AIBATA5MC0xCzAJBgNVBAYTAkRFMRAwDgYDVQQLEwdTQVAtSEVDMQwwCgYDVQQDEwNTNEQCCAogIxECFkcBMAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4MzAwOTAyMjRaMCMGCSqGSIb3DQEJBDEWBBRI27uH%2fKGSrqHkc2fP2L4fz27A4jAJBgcqhkjOOAQDBC8wLQIVAKAxFakoEjdejXnRU%2baECqBBEr%2flAhQD%2fDL%2b%2fG5%2b4woXUbNoqJ17eYvP4w%3d%3d';    // 계정 가이드 
-        let url = 'https://clink.dev.nerp.lge.com:9090/PclHttp.dll';
+         let url = 'https://clink.dev.nerp.lge.com:9090/PclHttp.dll?get&pVersion=0047&contRep=ZD&docId=CF3657C22D5E1EEF99D5CB464CDB4BD1&compId=%25EC%2597%25B0%25EA%25B5%25AC%25EC%2586%258C_%25EB%25AC%25BC%25ED%2592%2588%25EC%25B2%25AD%25EA%25B5%25AC_%25EC%25B1%2597%25EB%25B4%2587_%25EA%25B3%2584%25EC%25A0%2595%25EC%2584%25A4%25EB%25AA%2585.xlsx&accessMode=r&authId=CN%3dS4D%2cOU%3dSAP-HEC%2cC%3dDE&expiration=99991231235959&secKey=MIIBGgYJKoZIhvcNAQcCoIIBCzCCAQcCAQExCzAJBgUrDgMCGgUAMAsGCSqGSIb3DQEHATGB5zCB5AIBATA5MC0xCzAJBgNVBAYTAkRFMRAwDgYDVQQLEwdTQVAtSEVDMQwwCgYDVQQDEwNTNEQCCAogIxECFkcBMAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4MzAwOTAyMjRaMCMGCSqGSIb3DQEJBDEWBBRI27uH%2fKGSrqHkc2fP2L4fz27A4jAJBgcqhkjOOAQDBC8wLQIVAKAxFakoEjdejXnRU%2baECqBBEr%2flAhQD%2fDL%2b%2fG5%2b4woXUbNoqJ17eYvP4w%3d%3d';    // 계정 가이드 
+        //let url = 'https://clink.dev.nerp.lge.com:9090/PclHttp.dll';
          let params = {
              "get": null, 
             //  "isindex": "get", 
@@ -12804,7 +12820,7 @@ function requestItemsInputFirst(requestdata) {
             "secKey": "MIIBGgYJKoZIhvcNAQcCoIIBCzCCAQcCAQExCzAJBgUrDgMCGgUAMAsGCSqGSIb3DQEHATGB5zCB5AIBATA5MC0xCzAJBgNVBAYTAkRFMRAwDgYDVQQLEwdTQVAtSEVDMQwwCgYDVQQDEwNTNEQCCAogIxECFkcBMAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4MzAwOTAyMjRaMCMGCSqGSIb3DQEJBDEWBBRI27uH%2fKGSrqHkc2fP2L4fz27A4jAJBgcqhkjOOAQDBC8wLQIVAKAxFakoEjdejXnRU%2baECqBBEr%2flAhQD%2fDL%2b%2fG5%2b4woXUbNoqJ17eYvP4w%3d%3d" 
             };
                
-        openDeepLink(url, params);  
+        //openDeepLink(url, params);  
          
         window.open(url, '_blank');
     });
@@ -12813,7 +12829,7 @@ function requestItemsInputFirst(requestdata) {
     var inputBoxText3 = $('<div class="input-box add-order"><label>Project</label></div>');
     var inputTextContent3 = $('<div class="input-form order-select searchIcon"></div>');
     var projectSelected = $('<div class="selected-order"></div>');
-    var inputBox3 = $('<input type="text" placeholder="Project명 또는 코드 입력 후 \'Enter\'로 검색" max-length="50" id="project-name" autocomplete="off" />');
+    var inputBox3 = $('<input type="text" placeholder="Project명 입력 후 \'Enter\'로 검색" max-length="50" id="project-name" autocomplete="off" />');
     var projectListCont = $('<div class="order-list"></div>');
     
     var projectListTitle = $('<span>Project 목록</span>');
@@ -12942,10 +12958,19 @@ function requestItemsInputFirst(requestdata) {
                         inputBox3.val('');
                         scheduleorderWidth(inputTextContent3, projectSelected, inputBox3);
                         
+                        pluginForm.find('#empty_layer1').css('display', 'none');    
+                        nextBtnEvent();
                     });
                     
                     orderUl3.append(orderLi3);
                   });
+  
+                  pluginForm.find('#empty_layer1').css('display', 'block');  
+                    setTimeout(function() {
+                            var e = document.getElementById("item-content");
+                            e.scrollTop = e.scrollHeight
+                    }, 50)            
+                  
                   projectListCont.append(orderUl3);
                   projectListCont.addClass('show');
                 }
@@ -12965,148 +12990,9 @@ function requestItemsInputFirst(requestdata) {
     
     pluginForm.append(inputBoxText3);
 
-    //var inputBoxText4 = $('<div class="input-box add-order"><div class="with-guide"><label>계정<b>*</b></label><label><a href="#">계정 가이드 보기</a></label></div></div>');
-    //var inputTextContent4 = $('<div class="input-form order-select disable-searchIcon"></div>');
-    //var accountSelected = $('<div class="selected-order"></div>');
-    //var inputBox4 = $('<input type="text" placeholder="청구할 계정을 선택해 주세요." max-length="50" id="account-name" autocomplete="off" readonly disabled/>');
-    //var accountListCont = $('<div class="order-list"></div>');
-    
-    //var accountListTitle = $('<span>계정 목록</span>');
-    //accountListCont.append(accountListTitle);
-    
-    //inputTextContent4.append(accountSelected);
-    //inputTextContent4.append(inputBox4);
-    //inputTextContent4.append(accountListCont);
-    
-    //var orderUl4 = $('<ul></ul>');
-    /*
-    inputBox4.on('click', function(e) {        
+    var emptylayer1 = $('<div id="empty_layer1" style="height:200px;display:none;"></div>');
+    pluginForm.append(emptylayer1);
 
-        // [퍼블 수정 및 추가] - order-select 스타일 변경
-        inputTextContent4.addClass('focus');
-                
-        // 목록을 위로 펼치기 위해서 스타일 변경.         
-        accountListCont.css('top', 'auto').css('bottom', 'calc(100% + 2px)');       
-        
-        //accountListCont.addClass('show');
-        accountListCont.removeClass('show');
-        
-        orderUl4.empty();
-            
-        if(isNull($('#department_code').val())) {
-            
-            setTimeout(function() {
-                showSmallDialog('Department를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-            }, 100);
-            
-            return;
-        }
-        if(isNull($('#plant_code').val())) {
-            
-            setTimeout(function() {
-                showSmallDialog('Plant를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-            }, 100);
-            
-            return;
-        }
-
-        //LoadingWithMask(); 
-        var requestParam = {
-            query: {
-              "event": "reqItemsAccountSearchEvent"
-            },
-            payload: {
-                BNAME: chatui.getSetting("userId"), 
-                ZORGID: $('#department_code').val(), 
-                WERKS: $('#plant_code').val()
-            }
-          };
-
-          sendChatApi(requestParam, null, function(payload){
-                //console.log('payload > ', payload);
-                var result = JSON.parse(payload.queryResult.messages[0].response);
-                console.log('result', result);
-                
-                if(result == null) {
-                  var orderLi4 = $('<li class="no-res">계정 정보가 없습니다.</li>');
-                  orderUl4.append(orderLi4);
-                  accountListCont.append(orderUl4);
-                  accountListCont.addClass('show');
-                }
-                
-                accountList = result.resultList;
-                
-                if(accountList.length == 0) {
-                  var orderLi4 = $('<li class="no-res">계정 정보가 없습니다.</li>');
-                  orderUl4.append(orderLi4);
-                  accountListCont.append(orderUl4);
-                  accountListCont.addClass('show');
-                } else {
-                  accountList.map(account => {
-                      
-                    var orderLi4 = $(
-                        '<li>'
-                            //+'<p>['+account.ZCLSCODE+'] '+ account.ZCLCDTEXT // + '()' 
-                            //+'</p>'
-                            +'<p>'+ account.ZCLSCODE // 
-                            +'</p>'
-                            +'<p class="small">'
-                            + account.ZCLCDTEXT
-                            +'</p>'
-                        +'</li>'
-                    );
-                    
-                    // 목록 리스트 클릭
-                    orderLi4.on('click', function() {
-                        
-                        var accountInfo = $(
-                            '<div class="data-wrap">'
-                                // +'<p>['+account.ZCLSCODE+']' + account.ZCLCDTEXT 
-                                // + '</p>'
-                                +'<p>'+ account.ZCLSCODE // 
-                                +'</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ account.ZCLSCODE +'" id="account_code"/>'
-                              + '<input type="hidden" value="'+ account.ZCLCDTEXT +'" id="account_name"/>'
-                            +'</div>'
-                        );
-                        
-                        accountSelected.css('width', '100%');        // 0717 추가 
-                        accountSelected.append(accountInfo);
-                        
-                        // [퍼블 수정 및 추가]
-                        var targetHeight = accountSelected.height();
-                        inputTextContent4.removeClass('focus');
-                        console.log(targetHeight);
-                
-                        accountListCont.removeClass('show');
-                        accountListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-
-                        inputBox4.val('');
-                        scheduleorderWidth(inputTextContent4, accountSelected, inputBox4);
-
-                        nextBtnEvent();                        
-                    });
-                    
-                    orderUl4.append(orderLi4);
-                  });
-                  accountListCont.append(orderUl4);
-                  accountListCont.addClass('show');
-                }
-                
-                //closeLoadingWithMask();
-
-              });
-
-        //////        
-    });
-    */
-    
-    //inputBoxText4.append(inputTextContent4);
-    //pluginForm.append(inputBoxText4);
-    
 /////////////////////////////////////////////////////////////////////////////////
 
     // dropdown
@@ -13133,7 +13019,8 @@ function requestItemsInputFirst(requestdata) {
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
-
+            
+            console.log('aaaa');
             //pluginForm.find('.btn').find('button').prepend(emptylayer);
             pluginForm.find('#empty_layer').css('display', 'block');
             setTimeout(function() {
@@ -13227,7 +13114,7 @@ function requestItemsInputFirst(requestdata) {
                         nextBoxAction(inputBox3, inputTextContent3, 'enabled');
 
                         if(requireProjectYN == 'Y') {
-                            inputBoxText3.find('label').append('<b>*</b>');
+                            inputBoxText3.find('label').html('Project<b>*</b>');
                         }
                         nextBtnEvent();
                         
@@ -13363,6 +13250,17 @@ function requestItemsInputFirst(requestdata) {
                             requestdata.valid_budget_amount = unLimitedAmount;
                         }
                         
+                        if(requestdata.valid_budget_amount == 0) {
+                            
+                            console.log('예산 : 0원');
+                            setTimeout(function() {
+                                showSmallDialog('물품 청구할  예산이 없습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                            }, 500);
+                            
+                            closeLoadingWithMask();
+                            
+                            return;
+                        }
                         requestdata.currency_code = budgetInfo[0].WAERS;
                         
                         requestdata.step = 2;
@@ -14037,6 +13935,16 @@ function onlyNumber(obj) {
                 
                 if(meterialInfo.length == 0) {
                       console.log('품목 결과 : 0건');
+                      
+                      inputBtn.parents('.tab-content').find('.help-message').text('');          // 물품명 초기화. 
+                      inputBtn.parents('.tab-content').find('.amount-box').removeClass('show');
+                      setTimeout(function() {
+                        showSmallDialog('유효하지 않은 Material입니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                      }, 100);                      
+                      //return; 
+                }
+                else if(meterialInfo.length > 1) {
+                      console.log('품목 결과 : '+meterialInfo.length+'건');
                       
                       inputBtn.parents('.tab-content').find('.help-message').text('');          // 물품명 초기화. 
                       inputBtn.parents('.tab-content').find('.amount-box').removeClass('show');
@@ -20125,12 +20033,13 @@ function makeHsCodeCard(data) {
     if(checkChatHistory == false) {
         //강예진 선임 요청으로 주석처리
         //addHsCodePopupOpen(data);
+        addHsCodePopupOpen(data);
     }
     
     // 다시 물어보기 클릭시
     if(checkBtnClicked == true) {
-        addHsCodePopupOpen(data);
-        checkBtnClicked = false;
+        //addHsCodePopupOpen(data);
+        //checkBtnClicked = false;
     }
     
     var messageTextWrap = $('<div class="custom-message" style="margin-left: 0px;"></div>'); //
@@ -20293,6 +20202,7 @@ function addHsCodePopupOpen(data) {
     var addHsCodeContents = $('<div class="plugin-contents" id="hscode_contents" style="max-height: calc(90vh - 170px);"></div>');
     var addHsCodeForm = $('<form class="form-hsCode"></form>');
     
+    addHsCodeContents.focus();
     /* #########[ popup_content ]######### */
     /* ###[ Plant 코드 ]###  */
     var inputBoxText1 = $('<div class="input-box add-order"></div>');
@@ -20318,7 +20228,7 @@ function addHsCodePopupOpen(data) {
     
     var inputTextContent1 = $('<div class="input-form order-select searchIcon"></div>');
     var plantSelected = $('<div class="selected-order"></div>');
-    var inputBox1 = $('<input type="text" placeholder="Plant명 또는 코드 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
+    var inputBox1 = $('<input type="text" placeholder="Plant명 또는 코드 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" maxlength="30" autocomplete="off"/>');
     var plantListCont = $('<div class="order-list"></div>');
 
     var plantListTitle = $('<span>Plant 목록</span>');
@@ -20339,6 +20249,13 @@ function addHsCodePopupOpen(data) {
 
         var inval = inputBox1.val();
         console.log('key : '+inval);
+
+        inval = inval.trim();   
+        if(inval.length >= 30) {
+           showSmallDialog("최대 30자까지 입력 가능합니다.");
+           return;
+        }        
+        
         
         if(engNumMark_pattern.test(inval) == true) {
             //console.log('e.target ...'+e.key);
@@ -20507,7 +20424,7 @@ function addHsCodePopupOpen(data) {
     
     var inputTextContent2 = $('<div class="input-form order-select searchIcon"></div>');
     var partNoSelected = $('<div class="selected-order partno-select"></div>');
-    var inputBox2 = $('<input type="text" placeholder="Material 또는 Description 입력 후 \'Enter\'로 검색" max-length="50" id="plant-name" autocomplete="off"/>');
+    var inputBox2 = $('<input type="text" placeholder="Material 또는 Description 입력 후 \'Enter\'로 검색" max-length="40" id="plant-name" maxlength="40" autocomplete="off"/>');
     var partNoListCont = $('<div class="order-list"></div>');
 
     var partNoListTitle = $('<span>Material 목록</span>');
@@ -20539,13 +20456,19 @@ function addHsCodePopupOpen(data) {
         //     $(this).val(replaceVal);            
         // }
         
+        inval = inval.trim();   
+        if(inval.length >= 40) {
+           showSmallDialog("최대 40자까지 입력 가능합니다.");
+           return;
+        }  
+        
         if(e.keyCode == 13) {
             
             inval = inval.trim();
-            // if(inval.length < 2) {
-            //     showSmallDialog("검색어를 2글자 이상 입력해 주세요.");
-            //     return;
-            // }            
+            if(inval.length < 3) {
+                showSmallDialog("검색어를 3글자 이상 입력해 주세요.");
+                return;
+            }            
             
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             inputTextContent2.addClass('focus');
@@ -20680,7 +20603,7 @@ function addHsCodePopupOpen(data) {
     
     //var memberInput = $('<input type="text" placeholder="수출국을 영어로 입력해 주세요." id="attendees" class="search-input" />');
     var impCountryInputForm = $('<div class="input-form"></div>');
-    var impCountryInput = $('<input type="text" placeholder="수입국을 영어로 입력해 주세요." id="import_country"/>');
+    var impCountryInput = $('<input type="text" placeholder="국가명 또는 코드를 영어로 입력해 주세요." id="import_country"/>');
     var impCountryInputSpan = $(
         '<span class="input-val-del">'
             +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -20712,19 +20635,21 @@ function addHsCodePopupOpen(data) {
     });
     
     //impCountryInput.on('keyup', function(e) {
-    $(document).on('keyup','.country-form .input-form input', function(e) {    
-        countryInputVal = e.target.value;
-        let inputObj = e.target;
-        console.log('inputObj : '+$(inputObj).attr('id'));
+    // $(document).on('keyup','.country-form .input-form input', function(e) {    
+    //     countryInputVal = e.target.value;
+    //     let inputObj = e.target;
+    //     console.log('inputObj : '+$(inputObj).attr('id'));
         
-        if(countryInputVal.length > 0){
-            var check = /^[a-zA-Z\s]/g;
-            if(!check.test(countryInputVal)){
-                showSmallDialog("영어만 입력해주세요.");
-                $(inputObj).attr('id').focus();
-            }
-        }
-    });
+    //     if(countryInputVal.length > 0){
+    //         var check = /^[a-zA-Z\s]/g;
+    //         if(!check.test(countryInputVal)){
+                
+    //             if(e.keyCode == 13) return;
+    //             showSmallDialog("영어만 입력해주세요.");
+    //             $(inputObj).attr('id').focus();
+    //         }
+    //     }
+    // });
     
     //impCountryInput.on('blur', function(e) {
     $(document).on('blur','.country-form .input-form input', function(e) {        
@@ -20786,7 +20711,7 @@ function addHsCodePopupOpen(data) {
     
     //var memberInput = $('<input type="text" placeholder="수출국을 영어로 입력해 주세요." id="attendees" class="search-input" />');
     var expCountryInputForm = $('<div class="input-form"></div>');
-    var expCountryInput = $('<input type="text" placeholder="수출국을 영어로 입력해 주세요." id="export_country"/>');
+    var expCountryInput = $('<input type="text" placeholder="국가명 또는 코드를 영어로 입력해 주세요." id="export_country"/>');
     var expCountryInputSpan = $(
         '<span class="input-val-del">'
             +'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -20981,6 +20906,7 @@ function addHsCodePopupOpen(data) {
     $('.input-val-del').on('click', function() {
         if ($(this).hasClass('show')) {
             $(this).parents('.input-form').find('input').val('');
+            $(this).parents('.input-form').find('input').attr('readonly', false);
             $(this).removeClass('show');
             
             var inputKind = $(this).parents('.input-form').find('input').attr('id');
@@ -21332,7 +21258,7 @@ function addHsCodePopupOpen(data) {
       //var $autocompleteWrap;
       $(input).on('focus keyup', function(e) {
           var countrys = [];
-          var inputVal = $(input).val().toUpperCase();
+          var inputVal = $(input).val().trim().toUpperCase();
           var searchVal = "'" + inputVal + "'";
           var sessionId = $(input).closest(".form-hsCode").attr("data-sessionId");
          // 임직원 검색
@@ -21365,9 +21291,11 @@ function addHsCodePopupOpen(data) {
                 country.isoNum = item.isoNum;
                 countrys.push(country);
             }else{
-                var ctrNmStr = ctrNmEn.toUpperCase(); //ctrNmEn.substr(0,inpLength).toUpperCase();
+                var ctrNmStr = ctrNmEn.toUpperCase(); //ctrNmEn.substr(0,inpLength).toUpperCase(); 
+                var ctrCdStr = ctrCd;
     
-                if (ctrNmStr.indexOf(inputVal) != -1||ctrCd.indexOf(inputVal) != -1) {
+                if (ctrNmStr.indexOf(inputVal) > -1 || ctrCdStr == inputVal) {
+                    //console.log('11 : '+ctrCdStr.indexOf(inputVal)+', 22 : '+ctrNmStr.indexOf(inputVal)+', inputVal : '+inputVal+', ctrNmStr : '+ctrNmStr+', ctrCdStr : '+ctrCdStr);
                     country.label = ctrNmEn;
                     country.type = "person";
                     country.labelKo = "";
@@ -21391,7 +21319,9 @@ function addHsCodePopupOpen(data) {
             countrys.push(country);
          }
          
+         //console.log('countrys : '+countrys.length)
          keyword = countrys;
+         //console.log('keyword : '+keyword.length);
          
          $(input).closest(".country-form").find(".autocomplete-member").find('.ui-autocomplete').css('top', '49px !important');
          
@@ -21405,7 +21335,7 @@ function addHsCodePopupOpen(data) {
           source: keyword,
           minLength : 0,
           create: function() {
-            
+            console.log('keyword : '+keyword.length);
           },
           open: function(event, ui) {
               $('.country-form .ui-autocomplete').css('top', '49px !important');
@@ -21432,6 +21362,7 @@ function addHsCodePopupOpen(data) {
     
             $(this).val(ui.item.label);
             $(this).find('.input-val-del').addClass('show');
+            $(this).attr('readonly', true);
     
             htmlStr = '<div class="member-info">'
             + '<input type="hidden" value="'+ui.item.label+'" class="country-name"/>'
@@ -21457,19 +21388,29 @@ function addHsCodePopupOpen(data) {
           },
             response: function( event, ui ) {
                 var contents = ui.content;
-                if(contents.length == 0&&keyword.length > 0) {
+                
+                console.log('contents : ', contents.length);
+                //if(contents.length == 0 && keyword.length > 0) {
+                if(contents.length != keyword.length) {
+                contents.forEach(function(cont) {
+                        var cont_code = cont.code;
                     keyword.forEach(function(item){
-                        var content = {};
-                        content.label   = item.label; 
-                        content.type    = item.type; 
-                        content.labelKo = item.labelKo; 
-                        content.code    = item.code; 
-                        content.codeTrd = item.codeTrd; 
-                        content.isoNum  = item.isoNum; 
-                        contents.push(content);
-                    })
+                        //console.log('item : '+item.code);
+                        if(cont_code != item.code) {
+                            var content = {};
+                            content.label   = item.label; 
+                            content.type    = item.type; 
+                            content.labelKo = item.labelKo; 
+                            content.code    = item.code; 
+                            content.codeTrd = item.codeTrd; 
+                            content.isoNum  = item.isoNum; 
+                            contents.push(content);
+                        }
+                    });
+                });
                 }
     
+                console.log('contents : ', contents.length);
                 var dataSize = contents.length;
                 
                 var heightSize = "";
@@ -21510,6 +21451,7 @@ function addHsCodePopupOpen(data) {
     
                 var countryInfo = $(this).closest('.country-form').find('.member-info').find('input');
                 var contryName = $(this).closest('.country-form').find('.member-info').find('.country-name').val();
+                var counryCode = $(this).closest('.country-form').find('.member-info').find('.country-code').val();
                 
                 if(countryInfo.length == 0){
                     $(this).val('');
@@ -21517,7 +21459,7 @@ function addHsCodePopupOpen(data) {
                 }else{
                     if($(this).val()){
                         $(this).closest('.input-form').find('.input-val-del').addClass('show');
-                        $(this).val(contryName);
+                        $(this).val('['+counryCode+'] '+contryName);
                     }else{
                         $(this).val('');
                         $(this).closest('.country-form').find('.member-info').empty()
@@ -21548,6 +21490,7 @@ function addHsCodePopupOpen(data) {
               listItem = '<li></li>';
           }
     
+            //console.log('htmlStr : ', item);
           return $(listItem)
                   .data( "ui-autocomplete-item", item )
                   .append(htmlStr)
@@ -21616,7 +21559,7 @@ function addHsCodePopupOpen(data) {
               
         impSelectedMembers.append(htmlStr);
 
-        impCountryInput.val(selimportCountryName);
+        impCountryInput.val('['+selImportCountry+'] '+selimportCountryName);
         impCountryInput.closest('.input-form').find('.input-val-del').addClass('show');
 
     }
@@ -21635,7 +21578,7 @@ function addHsCodePopupOpen(data) {
               
         expSelectedMembers.append(htmlStr);
 
-        expCountryInput.val(selExportCountryName);
+        expCountryInput.val('['+selExportCountry+'] '+selExportCountryName);
         expCountryInput.closest('.input-form').find('.input-val-del').addClass('show');
 
     }
@@ -21861,7 +21804,7 @@ function hsCodeResult(data, index) {
     
     // quickReplies 템플릿
     var quickReplies = $('<div class="custom-quick-reply"></div>');
-    var systemBtnHsCodeRe = $('<span class="btn-custom-reply">HS Code 다시 물어보기</span>');
+    var systemBtnHsCodeRe = $('<span class="btn-custom-reply">HS Code 조회</span>');
     quickReplies.append(systemBtnHsCodeRe);
     //var systemBtnGPT = $('<span class="btn-custom-reply">GPT에게 물어보기</span>');
     //quickReplies.append(systemBtnGPT);
@@ -22426,6 +22369,14 @@ function setOrderdata(orderdata) {
 function getOrderdata() {
     return gOrderdata;
 }
+
+function desendPluginContent(contId) {
+	setTimeout(function() {
+        var e = document.getElementById(contId);
+        e.scrollTop = e.scrollHeight
+    }, 50)
+}
+
 
 function makeAnotherAccountOrderCard(data) {
     
@@ -24042,7 +23993,7 @@ function anotherAccountPopupOpen(orderdata) {
     }
 
     /* #########[ popup_content_wrap ]######### */
-    var pluginContents = $('<div class="plugin-contents" tabindex="0"></div>');
+    var pluginContents = $('<div class="plugin-contents" tabindex="0" id="another-contents"></div>');
     console.log('orderdata.step >>> '+orderdata.step);
     
     if(orderdata.step == 8) {
@@ -24050,7 +24001,7 @@ function anotherAccountPopupOpen(orderdata) {
     }
     else{
         var anotherForm = anotherAccountOrderFirst(orderdata);
-        //var anotherForm = anotherAccountOrderSeventh(orderdata);
+        //var anotherForm = anotherAccountOrderFifth(orderdata);
     }
     //var anotherForm = anotherAccountOrderFirst(orderdata);
     pluginContents.append(anotherForm);
@@ -24345,7 +24296,10 @@ function anotherAccountOrderSecond(orderdata) {
     var selReasonName = (orderdata.reasonName == null)? '':orderdata.reasonName;
     //var selOrderTypeGbn = (orderdata.orderTypeGbn == null)? '예산':orderdata.orderTypeGbn;
     var selOrderTypeList = (orderdata.orderTypeList == null)? '':orderdata.orderTypeList;
-    
+
+    var selDonationCode = (orderdata.donationCode == null)? '':orderdata.donationCode;
+    var selDonationName = (orderdata.donationName == null)? '':orderdata.donationName;
+
     
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
@@ -24429,15 +24383,15 @@ function anotherAccountOrderSecond(orderdata) {
     pluginForm.append(dropdownBox);
     
     //var inputBoxText = $('<div class="input-box"><label>상세 주문 목적<b>*</b></label></div>');
-    var inputTextContent = $(
+    var detailTextContent = $(
         '<div class="input-form">'
-            +'<input class="" type="text" placeholder="[Order Type] Reason Code" max-length="50" id="order_type_desc" value="" disabled/>'
+            +'<input class="" type="text" placeholder="[Order Type] Reason Code" max-length="50" id="order_type_desc" value=""/>'
         +'</div>'
     );
     //inputBoxText.append(inputTextContent);
-    pluginForm.append(inputTextContent);
+    pluginForm.append(detailTextContent);
     
-    var spareHtml = $('<p style="height:100px;"></p>');
+    var spareHtml = $('<p style="height:0px;"></p>');
     pluginForm.append(spareHtml);
 
     inputBoxRadio.find('input').on('click', function(e) {
@@ -24445,10 +24399,13 @@ function anotherAccountOrderSecond(orderdata) {
         
         dropdownMenuListWrap.empty();
         
-        var listH = (e.target.value == 'OTHERS_OUT_NO RETURN_OMD')? '200px':'100px';
+        var listH = (e.target.value == 'Others Out No Return')? '200px':'100px';
         
         $('.btn-dropdown').find('span').text('주문 목적을 선택해 주세요.');
         $('#order_type_desc').val('');
+
+        inputBoxText.css('display', 'none');
+        donationSelected.find('.data-wrap').find('.btn-delete').trigger('click');
 
         nextBtnEvent($(this));        
         
@@ -24469,6 +24426,205 @@ function anotherAccountOrderSecond(orderdata) {
         
     });
 
+    /* ###[ 기부처 ]### */
+    var inputBoxText = $('<div class="input-box add-order"><label>기부처<b>*</b></label></div>');
+    var inputTextContent = $('<div class="input-form order-select searchIcon"></div>');
+    var donationSelected = $('<div class="selected-order" style="width:0px;"></div>');
+    var inputBox = $('<input type="text" placeholder="키워드 입력 후 \'Enter\'로 검색" max-length="50" id="donation-input" autocomplete="off"/>');
+    
+    var donationListCont = $('<div class="order-list"></div>');
+
+    var donationListTitle = $('<span>기부처 목록</span>');
+    donationListCont.append(donationListTitle);
+
+    //inputBox.append('<input type="text" value="" id="donation-code"/>');
+    
+    inputTextContent.append(donationSelected);
+    inputTextContent.append(inputBox);
+    inputTextContent.append(donationListCont);
+    
+    var orderUl = $('<ul></ul>');
+
+    //inputBox.on('click', function() {
+    inputBox.on('keyup', function(e) {
+    //orderSelectBox.on('click', function() {
+        var inval = inputBox.val();
+        console.log('key : '+inval);
+        
+        if(event.keyCode == 13) {
+            
+            if(inval.length < 3) {
+                showSmallDialog("기부처 검색은 3글자 이상 입력해야 합니다.");
+                return;
+            }
+
+            donationSpareHtml.css('height', '100px');    
+            
+            desendPluginContent('another-contents');            // bottom sheet 스크롤 아래로 
+            LoadingWithMask();
+            
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            $('.order-select').addClass('focus');
+                
+            $('.order-list').addClass('show');
+            //donationList.addClass('show');
+            orderUl.empty();
+            
+            var requestParam = {
+                query: {
+                  "event": "donationCompanyInquiryEvent"
+                },
+                payload: {
+                  BUKRS:orderdata.BUKRS,     
+                  donatinName : inval
+                }
+              };
+
+          sendChatApi(requestParam, null, function(payload){
+            console.log('payload > ', payload);
+            var result = JSON.parse(payload.queryResult.messages[0].response);
+            console.log('result', result);
+            if(result == null) {
+                  var orderLi = $('<li class="no-res">조건에 맞는 기부처가 없습니다. 다시 검색해 보세요.</li>');
+                  orderUl.append(orderLi);
+                  donationListCont.append(orderUl);
+                  //return false;
+            }
+            donationCompanyList = result.resultList;
+            
+            if(donationCompanyList.length == 0) {
+              var orderLi = $('<li class="no-res">조건에 맞는 기부처가 없습니다.</li>');
+              orderUl.append(orderLi);
+              donationListCont.append(orderUl);
+            } else {
+              donationCompanyList.map(donationCompany => {
+                  
+                var orderLi = $(
+                    '<li>'
+                        +'<p>'+ donationCompany.PARTNER_NAME // + '()' 
+                        +'</p>'
+                        //+'<p class="small">'
+                        //+ '['+ orderType.orderType +'] '+ orderType.reasonCode
+                        //+'</p>'
+                    +'</li>' 
+                );
+                
+                // 예약 가능한 회의실 목록 리스트 클릭
+                orderLi.on('click', function() {
+                    
+                    var donationInfo = $(
+                            '<div class="data-wrap">'
+                                 +'<p>' + donationCompany.PARTNER_NAME 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ donationCompany.PARTNER +'" id="donation-code"/>'
+                              + '<input type="hidden" value="'+ donationCompany.PARTNER_NAME +'" id="donation-name"/>'
+                            +'</div>'
+                    );
+                    
+                    inputBox.empty();
+                    donationSelected.empty();
+                    donationSelected.css('width', '100%');        // 0717 추가 
+                    donationSelected.append(donationInfo);
+                    
+                    //orderInput.val(orderInfo.html());
+                    
+                    // [퍼블 수정 및 추가]
+                    var targetHeight = $('.selected-order').height();
+                    $('.order-select').removeClass('focus');
+                    console.log(targetHeight);
+            
+                    $('.order-list').removeClass('show');
+                    // $('.order-list').css('top', '82px');
+                    $('.order-list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+                    $('#donation-input').attr('placeholder', '');
+                    $('#donation-input').val('');
+                    scheduleorderWidth();
+                    
+                    //nextBtn.find('button').attr('disabled', false);
+
+                    donationSpareHtml.css('height', '0px');          
+                    
+                    nextBtnEvent($(this));
+
+                });
+
+                orderUl.append(orderLi);
+              });
+              donationListCont.append(orderUl);
+            }
+            
+            closeLoadingWithMask();
+          });
+        
+        //////        
+        }   // end if
+    });
+    
+    donationSelected.on('click', function() {
+        inputBox.trigger('click');
+    });
+    
+    inputBoxText.append(inputTextContent);
+
+    pluginForm.append(inputBoxText);
+    inputBoxText.css('display', 'none');
+    //if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') { 
+    //}
+    
+    var donationSpareHtml = $('<p style="height:0px;"></p>');
+    pluginForm.append(donationSpareHtml);
+    
+    // 지정된 장소 삭제 버튼 클릭
+    $(document).on('click', '.form-second .data-wrap .btn-delete', function(){
+        console.log('기부처...');
+        $(this).closest(".data-wrap").remove();
+        $('#donation-input').attr('placeholder', '키워드 입력 후 \'Enter\'로 검색');
+        // $('.place-list').css('top', '82px');
+        $('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
+        $('.selected-order').css('width', '0px');                   // 0717 추가
+        scheduleorderWidth();
+        nextBtnEvent();
+    });
+
+    // place-select 제외 클릭
+    $(document).on('click', function(e) {
+        if ($('.order-select').has(e.target).length === 0) {
+            $('.order-list').removeClass('show');
+            
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            $('.order-select').removeClass('focus');
+            
+            donationSpareHtml.css('height', '0px');     
+        }
+    });
+    
+    $(window).resize(function() {
+        scheduleorderWidth();
+    });
+    
+// 장소 입력 input width 변경
+    function scheduleorderWidth() {
+        let orderSelectWidth = inputTextContent.width();
+        let selectedorderWidth = donationSelected.width();
+        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        
+        console.log('scheduleorderWidth : '+selectedorderWidth);
+        $('#donation-input').css('width', scheduleorderWidth + "px");
+        if ($('#donation-input').width() === 0) {
+            $('#donation-input').attr('style', '');
+        };
+        
+        if(selectedorderWidth == 0) {
+            $('#donation-input').css('display', 'block');
+        }
+        else{
+            $('#donation-input').css('display', 'none');
+        }        
+    };
+
     /*  ###[ etc ]### */
     // 다음버튼
     var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step2" disabled>다음</button></div>')
@@ -24478,6 +24634,9 @@ function anotherAccountOrderSecond(orderdata) {
         var orderTypeVal = $('#order_type').val();
         var reasonCodeVal = $('#reason_code').val();
         var reasonNameVal = '';     //$('.reason-name').val();
+
+        var donation_code = $('#donation-code').val();
+        var donation_name = $('#donation-name').val();
 
         console.log('reasonCodeVal : '+reasonCodeVal);
         
@@ -24496,6 +24655,9 @@ function anotherAccountOrderSecond(orderdata) {
             orderdata.orderType = orderTypeVal;
             orderdata.reasonCode = reasonCodeVal;
             orderdata.reasonName = reasonNameVal;
+            
+            orderdata.donationCode = donation_code;
+            orderdata.donationName = donation_name;
             
             delete orderdata.action;    
     
@@ -24521,6 +24683,9 @@ function anotherAccountOrderSecond(orderdata) {
         delete orderdata.reasonName;
         delete orderdata.orderTypeList;
 
+        delete orderdata.donationCode;
+        delete orderdata.donationName;
+
         pluginForm.removeClass('show');
         pluginForm.remove();
         anotherAccountOrderFirst(orderdata);
@@ -24531,10 +24696,25 @@ function anotherAccountOrderSecond(orderdata) {
     function nextBtnEvent(target) {
 
         var selected = pluginForm.find('.btn-dropdown').text();
-         //console.log('length : '+selected);
+         console.log('length : '+selected);
          
          if(selected != '주문 목적을 선택해 주세요.') {
             nextBtn.find('button').attr('disabled', false);
+
+            if($('#reason_code').val() == 'DON' || $('#reason_code').val() == 'DON_2') {
+                var donationval = donationSelected.find('.data-wrap').text();
+                
+                if(donationval) {
+                    nextBtn.find('button').attr('disabled', false);
+                }
+                else{
+                    nextBtn.find('button').attr('disabled', true);
+                }
+            }
+            else{
+                nextBtn.find('button').attr('disabled', false);
+            }
+
          }
          else{
             nextBtn.find('button').attr('disabled', true);
@@ -24571,10 +24751,12 @@ function anotherAccountOrderSecond(orderdata) {
     function dropdownBtnEvent(target) {
         if ($(target).hasClass('active')) {
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+            spareHtml.css('height', '0px');
         }
         else {
             $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
             $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+            spareHtml.css('height', '100px');
         }
     }
     function dropdownMenuEvent(target) {
@@ -24591,8 +24773,17 @@ function anotherAccountOrderSecond(orderdata) {
         $(target).parents('.dropdown-box').find('#order_type').val(order_type);
         $(target).parents('.dropdown-box').find('#reason_code').val(reason_code);
         
-        $('#order_type_desc').val('['+order_type+'] '+reason_code);
+        detailTextContent.find('input').val('['+order_type+'] '+reason_code);
         dropmenu.stop().slideUp().removeClass('show');
+        
+        if(reason_code == 'DON' || reason_code == 'DON_2') {
+            inputBoxText.css('display', 'block');
+        }
+        else{
+            inputBoxText.css('display', 'none');
+            donationSelected.find('.data-wrap').find('.btn-delete').trigger('click');
+        }
+        spareHtml.css('height', '0px');
     }
     
     if (selReasonCode != '') {
@@ -24600,16 +24791,42 @@ function anotherAccountOrderSecond(orderdata) {
         console.log('selectedList > ', '['+selOrderType+'] '+selReasonCode);
         selectedList.trigger('click');
         
-        var listH = (selOrderType == 'OTHERS_OUT_NO RETURN_OMD')? '200px':'100px';
-        console.log('listH : '+listH);
-        dropdownMenuListWrap.css('height', listH);
-        inputTextContent.find('#order_type_desc').val('['+selOrderType+'] '+selReasonCode);       
+        //var listH = (selOrderType == 'Others Out No Return')? '200px':'100px';
+        //console.log('listH : '+listH);
+        //dropdownMenuListWrap.css('height', listH);
+        //inputTextContent.find('#order_type_desc').val('['+selOrderType+'] '+selReasonCode);       
+    }
+
+    if (selDonationCode != '') {
+
+        var donationInfo = $(
+            '<div class="data-wrap">'
+                 +'<p>' + selDonationName
+                 + '</p>'
+            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+            + '</button>'
+              + '<input type="hidden" value="'+ selDonationCode +'" id="donation-code"/>'
+              + '<input type="hidden" value="'+ selDonationName +'" id="donation-name"/>'
+            +'</div>'
+        );
+    
+        donationSelected.empty();
+        donationSelected.css('width', '100%');  
+        donationSelected.append(donationInfo);
+    
+        inputBox.attr('placeholder', '');  
+        inputBox.css('width', "266px");
+        inputBox.css('display', 'none');
+        //scheduleorderWidth();    
+        
     }
 
     dropdownBox.focus();
     $(document).off('keydown').on('keydown', function(e) {
         if (e.keyCode == 13) {
             console.log('step2 .');
+            if(e.target.id == 'donation-input')  return;
             $('#btn_step2').click();
         }
     });    
@@ -24637,7 +24854,7 @@ function anotherAccountOrderThird(orderdata) {
     pluginHeader.prepend(backBtn);
     
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-fourth" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-third" onsubmit="return false;"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 사용 예산이 광고판촉비(APMS)인가요? ]### */
@@ -24673,7 +24890,7 @@ function anotherAccountOrderThird(orderdata) {
     
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step4" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step3" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
         
@@ -24758,21 +24975,21 @@ function anotherAccountOrderThird(orderdata) {
                 
                     console.log('광고판촉비 조회 완료 : ', apmsList);
 
-                    if(apmsList.length > 1) {                // 광고판촉비 조회 단건
+                    if(apmsList.length > 0) {                // 광고판촉비 조회 단건
                         let apmsInfo = apmsList[0];
                         
-                        orderdata.apms_no = apmsInfo.apms_no;
-                        orderdata.au_code = apmsInfo.au_code;
-                        orderdata.au_name = apmsInfo.au_name;
-                        orderdata.department_code = apmsInfo.department_code;
-                        orderdata.department_name = apmsInfo.department_name;
-                        orderdata.account_code = apmsInfo.account_code;
-                        orderdata.account_name = apmsInfo.account_name;
-                        orderdata.activity_code = apmsInfo.activity_code;
-                        orderdata.activity_id = apmsInfo.activity_id;
-                        orderdata.activity_name = apmsInfo.activity_name;
-                        orderdata.activity_amount = apmsInfo.activity_amount;
-                        orderdata.activity_rate = apmsInfo.activity_rate;
+                        orderdata.apms_no = apmsInfo.ZZ1_APMS_REQ_NO_SDH;
+                        //orderdata.au_code = apmsInfo.au_code;
+                        //orderdata.au_name = apmsInfo.au_name;
+                        orderdata.department_code = apmsInfo.ZZ1_ZDEPT_SDH;
+                        orderdata.department_name = apmsInfo.ZZ1_ZDEPT_NAME;
+                        orderdata.account_code = apmsInfo.ZZ1_SAKNR_SDH;
+                        orderdata.account_name = apmsInfo.ZZ1_SAKNR_NAME;
+                        //orderdata.activity_code = apmsInfo.activity_code;
+                        //orderdata.activity_id = apmsInfo.activity_id;
+                        //orderdata.activity_name = apmsInfo.activity_name;
+                        orderdata.activity_amount = apmsInfo.ACTIVITY_AMOUNT;
+                        orderdata.activity_rate = apmsInfo.ACTIVITY_RATE;
                         
                         delete orderdata.action;    
                         
@@ -24830,15 +25047,15 @@ function anotherAccountOrderThird(orderdata) {
         delete orderdata.apmsNo;
 
         delete orderdata.apms_no;
-        delete orderdata.au_code;
-        delete orderdata.au_name;
+        //delete orderdata.au_code;
+        //delete orderdata.au_name;
         delete orderdata.department_code;
         delete orderdata.department_name;
         delete orderdata.account_code;
         delete orderdata.account_name;
-        delete orderdata.activity_code;
-        delete orderdata.activity_id;
-        delete orderdata.activity_name;
+        //delete orderdata.activity_code;
+        //delete orderdata.activity_id;
+        //delete orderdata.activity_name;
         delete orderdata.activity_amount;
         delete orderdata.activity_rate;
 
@@ -24880,10 +25097,11 @@ function anotherAccountOrderThird(orderdata) {
     //}    
     
     inputBoxText.focus();
+    
     $(document).off('keydown').on('keydown', function(e) {
         if (e.keyCode == 13) {
-            console.log('step4 .');
-            $('#btn_step4').click();
+            console.log('step3 .');
+            $('#btn_step3').click();
         }
     });    
     
@@ -24896,7 +25114,7 @@ function anotherAccountOrderThird(orderdata) {
 function anotherAccountOrderFourth(orderdata) {
     console.log('orderdata : ', orderdata);
     
-    var selOrderType = (orderdata.orderType == null)? '':orderdata.orderType;       // OTHERS_OUT_NO RETURN_OMD / OTHERS_OUT_FA_OMD
+    var selOrderType = (orderdata.orderType == null)? '':orderdata.orderType;       // Others Out No Return / Others Out FA
     var selApmsYN = (orderdata.apmsYN == null)? '':orderdata.apmsYN;
 
     var selApmsNo = (orderdata.apms_no == null)? '':orderdata.apms_no;              // EKHQ-MKT-20231127-0087
@@ -24916,6 +25134,7 @@ function anotherAccountOrderFourth(orderdata) {
     var selMajorCategory = (orderdata.major_category == null)? '':orderdata.major_category;
     var selMinorCategory = (orderdata.minor_category == null)? '':orderdata.minor_category;
     
+    var gblShow = false;
     console.log('orderType : '+selOrderType+', '+selPojectCode);
     
 /*    var selAuCode = (orderdata.au_code == null)? 'DMZ':orderdata.au_code;
@@ -24938,186 +25157,33 @@ function anotherAccountOrderFourth(orderdata) {
     $('.plugin-contents').css('overflow-y', 'auto');
     var pluginHeader = $('.plugin-header');
     var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
-    pluginHeader.find('h1').text('타계정 주문 입력 ('+ '5' + '/' + '8' +')');
+    pluginHeader.find('h1').text('타계정 주문 입력 ('+ '4' + '/' + '9' +')');
     pluginHeader.find('.backBtn').remove();
     pluginHeader.prepend(backBtn);
 
     /* #########[ popup_content_form_start ]######### */
-    var pluginForm = $('<form class="form-fifth" onsubmit="return false;"></form>');
+    var pluginForm = $('<form class="form-fourth" onsubmit="return false;"></form>');
 
     /* #########[ popup_content ]######### */
     /* ###[ 예산/비용의 계정 정보를 입력해 주세요. ]### */
     var inputBoxText = $('<div class="input-box top-note"><label>예산/비용의 계정 정보를 입력해 주세요.<b>*</b></label></div>');
     var titleNote = $('<small class="note" style="font-size:12px;">'
-                        +'※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</br></br>'
+                        //+'※ 사용 예산이 광고판촉비(APMS)일 경우, 계정 정보가 자동 입력됩니다.</br></br>'
                         +'※ 부서 예산(GBMS)일 경우, 예산 확보된 내역이 조회됩니다. </br>'
                         +'가용 예산은 부서 예산(GBMS) 조회를 통해 확인 가능합니다.'
                         +'</small>');
     inputBoxText.append(titleNote);
     pluginForm.append(inputBoxText);
 
-    /* ###[ Cost AU ] 샘플 ]### */
-    var inputBoxText1 = $('<div class="input-box add-order"><label>Cost AU<b>*</b></label></div>');
-    // <div class="input-form">에 addValue 클래스 추가 시, 스타일 변경됨(제거할 경우 원복)
-    var inputTextContent1 = $('<div class="input-form order-select searchIcon" id="input_content1"></div>');
-    var costAuSelected = $('<div class="selected-order" id="input_selected1"></div>');
-    var inputBox1 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="costau-name" autocomplete="off"/>');
-    
-    var costAuListCont = $('<div class="order-list"></div>');
-    
-    var costAuListTitle = $('<span>Cost AU 목록</span>');
-    costAuListCont.append(costAuListTitle);
-    //inputBox.append('<input type="text" value="" id="costau-code"/>');
-    
-    inputTextContent1.append(costAuSelected);
-    inputTextContent1.append(inputBox1);
-    inputTextContent1.append(costAuListCont);
-    
-    var orderUl1 = $('<ul></ul>');
-    
-    //inputBox1.on('click', function() {
-    inputBox1.on('keyup', function(e) {         
-    //orderSelectBox.on('click', function() {
-        // [퍼블 수정 및 추가] - order-select 스타일 변경
-        
-        var inval = inputBox1.val();
-        console.log('key : '+inval);
-        
-        if(e.keyCode == 13) {
-            
-            if(inval.length < 3) {
-                showSmallDialog("Cost AU 검색은 3글자 이상 입력해야 합니다.");
-                return;
-            }            
-        
-            LoadingWithMask();
-            
-            inputTextContent1.addClass('focus');
-                
-            costAuListCont.addClass('show');
-            //donationList.addClass('show');
-            orderUl1.empty();
-            
-            var requestParam = {
-                query: {
-                  "event": "costAUInquiryEvent"
-                },
-                payload: {
-                    keyword: inval
-                }
-              };
-    
-              sendChatApi(requestParam, null, function(payload){
-                //console.log('payload > ', payload);
-                var result = JSON.parse(payload.queryResult.messages[0].response);
-                console.log('result', result);
-                
-                if(result == null) {
-                  var orderLi1 = $('<li class="no-res">Cost AU 정보가 없습니다.</li>');
-                  orderUl1.append(orderLi1);
-                  costAuListCont.append(orderUl1);
-                }
-                
-                costAUList = result.resultList;
-                
-                if(costAUList.length == 0) {
-                  var orderLi1 = $('<li class="no-res">Cost AU 정보가 없습니다.</li>');
-                  orderUl1.append(orderLi1);
-                  costAuListCont.append(orderUl1);
-                } else {
-                  costAUList.map(costAU => {
-                      
-                    var orderLi1 = $(
-                        '<li>'
-                            +'<p>['+costAU.au_code+'] '+ costAU.au_name // + '()' 
-                            +'</p>'
-                            //+'<p class="small">'
-                            //+ '['+ orderType.orderType +'] '+ orderType.reasonCode
-                            //+'</p>'
-                        +'</li>'
-                    );
-                    
-                    // Cost AU 목록 리스트 클릭
-                    orderLi1.on('click', function() {
-                        
-                        var coastAUInfo = $(
-                            '<div class="data-wrap">'
-                                 +'<p>['+costAU.au_code+'] ' + costAU.au_name 
-                                 + '</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                              + '<input type="hidden" value="'+ costAU.au_code +'" id="au_code"/>'
-                              + '<input type="hidden" value="'+ costAU.au_name +'" id="au_name"/>'
-                            +'</div>'
-                        );
-                        
-                        //inputBox1.val('');
-                        //inputBox1.empty();
-                        //costAuSelected.empty();
-                        
-                        initBoxAction(inputBox1, costAuSelected);
-                        
-                        costAuSelected.css('width', '100%');
-                        costAuSelected.append(coastAUInfo);
-                        
-                        //orderInput.val(orderInfo.html());
-                        
-                        // [퍼블 수정 및 추가]
-                        var targetHeight = costAuSelected.height();
-                        inputTextContent1.removeClass('focus');
-                        console.log(targetHeight);
-                
-                        costAuListCont.removeClass('show');
-                        // $('.order-list').css('top', '82px');
-                        costAuListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-                        $('#costau-name').attr('placeholder', '');
-                        //scheduleorderWidth($('#costau-name'));
-                        
-                        scheduleorderWidth(inputTextContent1, costAuSelected, $('#costau-name'));
-                        
-                        selectBoxAction(inputBox2, inputTextContent2, 'enabled');
-                        //nextBtn.find('button').attr('disabled', false);
-                        
-                        initBoxAction(inputBox2, costDeptSelected, "코드 입력 후 'Enter'로 검색");
-                        initBoxAction(inputBox3, costAccountSelected, "코드 입력 후 \'Enter\'로 검색");
-                        //initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
-                        initBoxAction(inputBox5, activityCodeSelected, "코드 입력 후 \'Enter\'로 검색");
-
-                        nextBtnEvent($(this));
-    
-                    });
-                    
-                    orderUl1.append(orderLi1);
-                  });
-                  costAuListCont.append(orderUl1);
-                }
-                
-                closeLoadingWithMask();
-              });
-
-        //////        
-        }       // end if 
-    });
-    
-    
-    //////////
-    //var inputTextContent = $(
-    //    '<div class="input-form addValue">'
-    //        +'<input class="searchIcon" type="text" placeholder="Cost AU를 입력해 주세요." max-length="50" value="계정 정보 자동입력" disabled />'
-    //    +'</div>');
-    inputBoxText1.append(inputTextContent1);
-    pluginForm.append(inputBoxText1);
-    
     const placeHolderMap = new Map([
         ['costau-name', '코드 입력 후 \'Enter\'로 검색'], 
-        ['costdept-name', '코드 입력 후 \'Enter\'로 검색'], 
-        ['costaccount-name', '코드 입력 후 \'Enter\'로 검색'], 
-        ['project-name', '코드 입력 후 \'Enter\'로 검색'], 
-        ['activity-name', '코드 입력 후 \'Enter\'로 검색']
+        ['costdept-name', '부서명 또는 코드 입력 후 \'Enter\'로 검색'], 
+        ['costaccount-name', '계정명 또는 코드 입력 후 \'Enter\'로 검색'], 
+        ['project-name', '프로젝트명 또는 코드 입력 후 \'Enter\'로 검색'], 
+        ['asset-name', '코드 입력 후 \'Enter\'로 검색']
     ]);
     
-    $(document).on('click', '.form-fifth .data-wrap .btn-delete', function(){
+    $(document).on('click', '.form-fourth .data-wrap .btn-delete', function(){
         console.log('delete....');
         var content = $(this).parents(".order-select");
         var selected = $(this).parents(".order-select").find('.selected-order');
@@ -25127,7 +25193,7 @@ function anotherAccountOrderFourth(orderdata) {
         var inputId = input.attr('id');
         var plageHoderMsg = placeHolderMap.get(inputId);
         
-        //console.log(input.attr('id')+' / '+plageHoderMsg);
+        console.log(input.attr('id')+' / '+plageHoderMsg);
 
         input.attr('placeholder', plageHoderMsg);
         content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
@@ -25138,6 +25204,9 @@ function anotherAccountOrderFourth(orderdata) {
 
         nextBtnEvent();
 
+        if(input.attr('id') == 'asset-name') {
+            dropdownBoxAction(dropdownMainBtn, false, null);
+        }
         //btnValueCheck();
     });
 
@@ -25165,6 +25234,8 @@ function anotherAccountOrderFourth(orderdata) {
     
             // [퍼블 수정 및 추가] - order-select 스타일 변경
             $('.order-select').removeClass('focus');
+            
+            $('#empty_layer').css('display', 'none');
         }
     });
 
@@ -25199,7 +25270,7 @@ function anotherAccountOrderFourth(orderdata) {
     var inputBoxText2 = $('<div class="input-box add-order"><label>비용 처리 부서<b>*</b></label></div>');
     var inputTextContent2 = $('<div class="input-form order-select disable-searchIcon"></div>');
     var costDeptSelected = $('<div class="selected-order"></div>');
-    var inputBox2 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="costdept-name" autocomplete="off" disabled/>');
+    var inputBox2 = $('<input type="text" placeholder="부서명 또는 코드 입력 후 \'Enter\'로 검색" max-length="50" id="costdept-name" autocomplete="off" disabled/>');
     
     var costDeptListCont = $('<div class="order-list"></div>');
     
@@ -25217,16 +25288,16 @@ function anotherAccountOrderFourth(orderdata) {
     var orderUl2 = $('<ul></ul>');
     
     inputBox2.on('click', function() {
-        console.log('au_code : '+$("#au_code").val());
+        //console.log('au_code : '+$("#au_code").val());
 
-        if(isNull($("#au_code").val())) {
+        // if(isNull($("#au_code").val())) {
             
-            setTimeout(function() {
-                showSmallDialog('Cost AU를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-            }, 100);
+        //     setTimeout(function() {
+        //         showSmallDialog('Cost AU를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+        //     }, 100);
             
-            return;
-        }
+        //     return;
+        // }
     });
     
     inputBox2.on('keyup', function(e) {
@@ -25250,14 +25321,15 @@ function anotherAccountOrderFourth(orderdata) {
     
             var requestParam = {
                 query: {
-                  "event": "costDeptInquiryEvent"
+                  "event": "costDeptInquiryNERPEvent"
                 },
                 payload: {
-                    "auCode": $("#au_code").val()
-                    , "keyword": inval
+                    BUKRS: orderdata.BUKRS, 
+                    empNo: orderdata.empNo, 
+                    keyword: inval
                 }
               };
-    
+
               sendChatApi(requestParam, null, function(payload){
                 //console.log('payload > ', payload);
                 var result = JSON.parse(payload.queryResult.messages[0].response);
@@ -25283,7 +25355,7 @@ function anotherAccountOrderFourth(orderdata) {
                       
                     var orderLi2 = $(
                         '<li>'
-                            +'<p>['+costDept.department_code+']'+ costDept.department_name // + '()' 
+                            +'<p>['+costDept.ZZ1_ZDEPT_SDH+']'+ costDept.ZZ1_ZDEPT_NAME // + '()' 
                             +'</p>'
                         +'</li>'
                     );
@@ -25293,13 +25365,13 @@ function anotherAccountOrderFourth(orderdata) {
                         
                         var coastDeptInfo = $(
                             '<div class="data-wrap">'
-                                 +'<p>['+costDept.department_code+']' + costDept.department_name 
+                                 +'<p>['+costDept.ZZ1_ZDEPT_SDH+']' + costDept.ZZ1_ZDEPT_NAME 
                                  + '</p>'
                             + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
                                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
                             + '</button>'
-                              + '<input type="hidden" value="'+ costDept.department_code +'" id="costdept_code"/>'
-                              + '<input type="hidden" value="'+ costDept.department_name +'" id="costdept_name"/>'
+                              + '<input type="hidden" value="'+ costDept.ZZ1_ZDEPT_SDH +'" id="costdept_code"/>'
+                              + '<input type="hidden" value="'+ costDept.ZZ1_ZDEPT_NAME +'" id="costdept_name"/>'
                             +'</div>'
                         );
                         
@@ -25330,9 +25402,9 @@ function anotherAccountOrderFourth(orderdata) {
     
                         initBoxAction(inputBox3, costAccountSelected, "코드 입력 후 \'Enter\'로 검색");
                         //initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
-                        initBoxAction(inputBox5, activityCodeSelected, "코드 입력 후 \'Enter\'로 검색");
+                        initBoxAction(inputBox5, assetClassSelected, "코드 입력 후 \'Enter\'로 검색");
 
-                        nextBtnEvent($(this));
+                        nextBtnEvent();
     
                     });
                     
@@ -25361,7 +25433,7 @@ function anotherAccountOrderFourth(orderdata) {
     var inputBoxText3 = $('<div class="input-box add-order"><label>비용 처리 계정<b>*</b></label></div>');
     var inputTextContent3 = $('<div class="input-form order-select disable-searchIcon cost_accnt_input"></div>');
     var costAccountSelected = $('<div class="selected-order cost_accnt_selected"></div>');
-    var inputBox3 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="costaccount-name" autocomplete="off" disabled/>');
+    var inputBox3 = $('<input type="text" placeholder="계정명 또는 코드 입력 후 \'Enter\'로 검색" max-length="50" id="costaccount-name" autocomplete="off" disabled/>');
     
     var costAccountListCont = $('<div class="order-list cost_accnt_list"></div>');
     
@@ -25384,16 +25456,6 @@ function anotherAccountOrderFourth(orderdata) {
     var orderUl3 = $('<ul class="cost_accnt_ul"></ul>');
     
     inputBox3.on('click', function() {
-        console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val());
-            
-        if(isNull($("#au_code").val())) {
-            
-            setTimeout(function() {
-                showSmallDialog('Cost AU를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-            }, 100);
-            
-            return;
-        }
         if(isNull($("#costdept_code").val())) {
             
             setTimeout(function() {
@@ -25426,17 +25488,17 @@ function anotherAccountOrderFourth(orderdata) {
             orderUl3.empty();
 
         
-        var requestParam = {
-            query: {
-              "event": "costAccountInquiryEvent"
-            },
-            payload: {
-                "auCode": $("#au_code").val()
-                , "departmentCode": $("#costdept_code").val()
-                , "orderType": selOrderType
-                , "keyword": inval
-            }
-          };
+            var requestParam = {
+                query: {
+                  "event": "costAccountInquiryNERPEvent"
+                },
+                payload: {
+                    BUKRS: orderdata.BUKRS, 
+                    empNo: orderdata.empNo, 
+                    deptCode: $("#costdept_code").val(), 
+                    keyword: inval
+                }
+              };
 
           sendChatApi(requestParam, null, function(payload){
             console.log('payload > ', payload);
@@ -25471,7 +25533,7 @@ function anotherAccountOrderFourth(orderdata) {
                   
                 var orderLi3 = $(
                     '<li>'
-                        +'<p>['+costAccount.account_code+']'+ costAccount.account_name // + '()' 
+                        +'<p>['+costAccount.SAKNR+']'+ costAccount.SAKNR_NAME // + '()' 
                         +'</p>'
                     +'</li>'
                 );
@@ -25481,13 +25543,13 @@ function anotherAccountOrderFourth(orderdata) {
                     
                     var coastAccountInfo = $(
                             '<div class="data-wrap">'
-                                 +'<p>['+costAccount.account_code+']' + costAccount.account_name 
+                                 +'<p>['+costAccount.SAKNR+']' + costAccount.SAKNR_NAME 
                                  + '</p>'
                             + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
                                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
                             + '</button>'
-                              + '<input type="hidden" value="'+ costAccount.account_code +'" id="costaccount_code"/>'
-                              + '<input type="hidden" value="'+ costAccount.account_name +'" id="costaccount_name"/>'
+                              + '<input type="hidden" value="'+ costAccount.SAKNR +'" id="costaccount_code"/>'
+                              + '<input type="hidden" value="'+ costAccount.SAKNR_NAME +'" id="costaccount_name"/>'
                             +'</div>'
                     );
                     
@@ -25522,15 +25584,15 @@ function anotherAccountOrderFourth(orderdata) {
                     //inputBox5.val('');
                     
                     //initBoxAction(inputBox4, projectCodeSelected, "Project Code를 선택하세요. ");
-                    //initBoxAction(inputBox5, activityCodeSelected, "Activity Code를 선택하세요.");
+                    //initBoxAction(inputBox5, assetClassSelected, "Activity Code를 선택하세요.");
 
                     //projectCodeSelected.empty();
-                    //activityCodeSelected.empty();
+                    //assetClassSelected.empty();
                     
                     //inputBox4.attr('placeholder', 'Project Code를 선택하세요.');
                     //inputBox5.attr('placeholder', 'Activity Code를 선택하세요.');
 
-                    nextBtnEvent($(this));
+                    nextBtnEvent();
 
                 });
                 
@@ -25630,18 +25692,17 @@ function anotherAccountOrderFourth(orderdata) {
         projectCodeListCont.addClass('show');
         orderUl4.empty();
 
-        console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
+        //console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
     
         var requestParam = {
             query: {
-              "event": "projectCodeInquiryEvent"
+              "event": "projectInquiryNERPEvent"
             },
             payload: {
-                "auCode": $("#au_code").val()
-                , "departmentCode": $("#costdept_code").val()
-                , "accountCode": $("#costaccount_code").val()
-                , "orderType": selOrderType
-                , "keyword": inval
+                    BUKRS: orderdata.BUKRS, 
+                    empNo: orderdata.empNo, 
+                    deptCode: $("#costdept_code").val(), 
+                    keyword: inval
             }
           };
 
@@ -25718,7 +25779,7 @@ function anotherAccountOrderFourth(orderdata) {
                     
                     //nextBtn.find('button').attr('disabled', false);
 
-                    nextBtnEvent($(this));
+                    nextBtnEvent();
 
                 });
                 
@@ -25743,38 +25804,41 @@ function anotherAccountOrderFourth(orderdata) {
     
     //var inputTextContent = $('<div class="input-form"><input class="searchIcon" type="text" placeholder="Project Code를 입력해 주세요." max-length="50" disabled/></div>');
     inputBoxText4.append(inputTextContent4);
-    pluginForm.append(inputBoxText4);
+    
+    if(selApmsYN == 'NO')  {
+        pluginForm.append(inputBoxText4);
+    }
 
-    /* ###[ Activity Code ]### */
-    var inputBoxText5 = $('<div class="input-box add-order"><label>Activity Code<b>*</b></label></div>');
+    /* ###[ Asset Class ]### */
+    var inputBoxText5 = $('<div class="input-box add-order"><label>Asset Class<b>*</b></label></div>');
     var inputTextContent5 = $('<div class="input-form order-select disable-searchIcon activity_input"></div>');
-    var activityCodeSelected = $('<div class="selected-order activity_selected"></div>');
-    var inputBox5 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="activity-name" autocomplete="off" disabled/>');
+    var assetClassSelected = $('<div class="selected-order activity_selected"></div>');
+    var inputBox5 = $('<input type="text" placeholder="코드 입력 후 \'Enter\'로 검색" max-length="50" id="asset-name" autocomplete="off" disabled/>');
     
-    var activityCodeListCont = $('<div class="order-list"></div>');
+    var assetClassListCont = $('<div class="order-list"></div>');
     
-    var activityCodeListTitle = $('<span>Activity Code 목록</span>');
-    activityCodeListCont.append(activityCodeListTitle);
+    var assetClassListTitle = $('<span>Asset Class 목록</span>');
+    assetClassListCont.append(assetClassListTitle);
     //inputBox.append('<input type="text" value="" id="costau-code"/>');
     
     //inputBox2.attr('disabled', true);
     //selectBoxAction(inputBox2, inputTextContent2, 'disabled');
 
-    inputTextContent5.append(activityCodeSelected);
+    inputTextContent5.append(assetClassSelected);
     inputTextContent5.append(inputBox5);
-    inputTextContent5.append(activityCodeListCont);
+    inputTextContent5.append(assetClassListCont);
     
     var orderUl5 = $('<ul></ul>');
     
     inputBox5.on('click', function() {
-        if(isNull($("#costaccount_code").val())) {
+        // if(isNull($("#costaccount_code").val())) {
             
-            setTimeout(function() {
-                showSmallDialog('비용처리 계정를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
-            }, 100);
+        //     setTimeout(function() {
+        //         showSmallDialog('비용처리 계정를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+        //     }, 100);
             
-            return;
-        }
+        //     return;
+        // }
             
         
     });
@@ -25790,7 +25854,7 @@ function anotherAccountOrderFourth(orderdata) {
         if(e.keyCode == 13) {
             
             if(inval.length < 3) {
-                showSmallDialog("Activity Code 검색은 3글자 이상 입력해야 합니다.");
+                showSmallDialog("Asset Class 검색은 3글자 이상 입력해야 합니다.");
                 return;
             }            
 
@@ -25799,18 +25863,20 @@ function anotherAccountOrderFourth(orderdata) {
         inputTextContent5.addClass('focus');
             
         //$('.order-list').addClass('show');
-        activityCodeListCont.addClass('show');
+        assetClassListCont.addClass('show');
         orderUl5.empty();
         
-        console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
+        //console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
     
         var requestParam = {
             query: {
-              "event": "activityCodeInquiryEvent"
+              "event": "assetClassInquiryEvent"
             },
             payload: {
-                "accountCode": $("#costaccount_code").val()
-                , "keyword": inval
+                    BUKRS: orderdata.BUKRS, 
+                    empNo: orderdata.empNo, 
+                    // deptCode: $("#costdept_code").val(), 
+                    keyword: inval
             }
           };
 
@@ -25822,24 +25888,24 @@ function anotherAccountOrderFourth(orderdata) {
             if(result == null) {
               var orderLi5 = $('<li class="no-res">조회시 에러가 발생했습니다. 다시 조회하세요.</li>');
               orderUl5.append(orderLi5);
-              activityCodeListCont.append(orderUl5);
+              assetClassListCont.append(orderUl5);
               closeLoadingWithMask();
               
               return;
             }
             
-            activityCodeList = result.resultList;
+            assetClassList = result.resultList;
             
-            if(activityCodeList.length == 0) {
-              var orderLi5 = $('<li class="no-res">Activity Code 정보가 없습니다.</li>');
+            if(assetClassList.length == 0) {
+              var orderLi5 = $('<li class="no-res">Asset Class 정보가 없습니다.</li>');
               orderUl5.append(orderLi5);
-              activityCodeListCont.append(orderUl5);
+              assetClassListCont.append(orderUl5);
             } else {
-              activityCodeList.map(activityCode => {
+              assetClassList.map(assetClass => {
                   
                 var orderLi5 = $(
                     '<li>'
-                        +'<p>['+activityCode.activity_code+'] '+ activityCode.activity_name// + '()' 
+                        +'<p>['+assetClass.ANLKL+'] '+ assetClass.ANLKL_NAME// + '()' 
                         +'</p>'
                     +'</li>'
                 );
@@ -25847,44 +25913,49 @@ function anotherAccountOrderFourth(orderdata) {
                 // 예약 가능한 회의실 목록 리스트 클릭
                 orderLi5.on('click', function() {
                     
-                    var activityCodeInfo = $(
+                    var assetClassInfo = $(
                             '<div class="data-wrap">'
-                                 +'<p>['+activityCode.activity_code+']' + activityCode.activity_name 
+                                 +'<p>['+assetClass.ANLKL+']' + assetClass.ANLKL_NAME 
                                  + '</p>'
                             + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
                                 + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
                             + '</button>'
-                              + '<input type="hidden" value="'+ activityCode.activity_code +'" id="activity_code"/>'
-                              + '<input type="hidden" value="'+ activityCode.activity_name +'" id="activity_name"/>'
+                              + '<input type="hidden" value="'+ assetClass.ANLKL +'" id="asset_code"/>'
+                              + '<input type="hidden" value="'+ assetClass.ANLKL_NAME +'" id="asset_name"/>'
                             +'</div>'
                     );
                     
                     //inputBox5.empty();
                     //inputBox5.val('');
-                    //activityCodeSelected.empty();
+                    //assetClassSelected.empty();
                     
-                    initBoxAction(inputBox5, activityCodeSelected, "코드 입력 후 \'Enter\'로 검색");
+                    initBoxAction(inputBox5, assetClassSelected, "코드 입력 후 \'Enter\'로 검색");
                     
-                    activityCodeSelected.css('width', '100%');
-                    activityCodeSelected.append(activityCodeInfo);
+                    assetClassSelected.css('width', '100%');
+                    assetClassSelected.append(assetClassInfo);
                     
                     //orderInput.val(orderInfo.html());
                     
                     // [퍼블 수정 및 추가]
-                    var targetHeight = activityCodeSelected.height();
+                    var targetHeight = assetClassSelected.height();
                     inputTextContent5.removeClass('focus');
                     console.log(targetHeight);
             
-                    activityCodeListCont.removeClass('show');
+                    assetClassListCont.removeClass('show');
                     // $('.order-list').css('top', '82px');
-                    activityCodeListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-                    $('#activity-name').attr('placeholder', '');
+                    assetClassListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+                    $('#asset-name').attr('placeholder', '');
                     //scheduleorderWidth($('#costdept-name'));
-                    scheduleorderWidth(inputTextContent5, activityCodeSelected, $('#activity-name'));
+                    scheduleorderWidth(inputTextContent5, assetClassSelected, $('#asset-name'));
                     
                     //nextBtn.find('button').attr('disabled', false);
 
-                    nextBtnEvent($(this));
+                    dropdownBoxAction(dropdownMainBtn, false, null);
+                    
+                    //$('#empty_layer').css('display', 'none');
+                    showEmptyLayer('none');
+
+                    nextBtnEvent();
 
                 });
                 
@@ -25895,9 +25966,11 @@ function anotherAccountOrderFourth(orderdata) {
                 //    //}
                 //}
 
+                //$('#empty_layer').css('display', 'block');
+                showEmptyLayer('block');
                 orderUl5.append(orderLi5);
               });
-              activityCodeListCont.append(orderUl5);
+              assetClassListCont.append(orderUl5);
             }
             
             closeLoadingWithMask();
@@ -25916,21 +25989,33 @@ function anotherAccountOrderFourth(orderdata) {
     //    +'</div>');
     
     inputBoxText5.append(inputTextContent5);
-    pluginForm.append(inputBoxText5);
-
-    /* ###[ Activity Name ]### */
-    var inputBoxTextA = $('<div class="input-box"><label>Asset Name<b>*</b></label></div>');
-    var inputTextContentA = $('<div class="input-form"></div>');
-    var inputBoxA = $('<input type="text" placeholder="Asset Name을 입력해 주세요." max-length="50" id="Asset_name" class="inText" autocomplete="off"/>');
-    inputTextContentA.append(inputBoxA);
-    inputBoxTextA.append(inputTextContentA);
     
-    if(selOrderType == 'OTHERS_OUT_FA_OMD')  {
-        pluginForm.append(inputBoxTextA);
+    if(selOrderType == 'Others Out FA')  {
+        pluginForm.append(inputBoxText5);
+    }    
+
+    function showEmptyLayer(displayStyle) {
+        pluginForm.find('#empty_layer').css('display', displayStyle);
+        
+        setTimeout(function() {
+                var e = document.getElementById("another-contents");
+                e.scrollTop = e.scrollHeight;
+        }, 50);         
     }
+    // /* ###[ Activity Name ]### */
+    // var inputBoxTextA = $('<div class="input-box"><label>Asset Name<b>*</b></label></div>');
+    // var inputTextContentA = $('<div class="input-form"></div>');
+    // var inputBoxA = $('<input type="text" placeholder="Asset Name을 입력해 주세요." max-length="50" id="Asset_name" class="inText" autocomplete="off"/>');
+    // inputTextContentA.append(inputBoxA);
+    // inputBoxTextA.append(inputTextContentA);
+    
+    // if(selOrderType == 'OTHERS_OUT_FA_OMD')  {
+    //     pluginForm.append(inputBoxTextA);
+    // }
+    
     /* ###[ Major Category ]### */
-    var dropdownBox = $('<div class="dropdown-box dropdown-majorCategory"><label>Major Category<b>*</b></label></div>');
-    var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>옵션을 선택해 주세요.</span></button>');
+    var dropdownBox = $('<div class="dropdown-box dropdown-majorCategory" style="display:none;"><label>Local Asset Class<b>*</b></label></div>');
+    var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>Local Asset Class를 선택해 주세요.</span></button>');
     var dropdownArrow = $(
         '<i class="icons">'
             +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
@@ -25956,7 +26041,7 @@ function anotherAccountOrderFourth(orderdata) {
             selected = 'selected';
         }
 
-        majorListText += '<li class="dropdown-item"><a href="javascript:void(0)" class="'+selected+'">'+major.major_category+'</a></li>';
+        //majorListText += '<li class="dropdown-item"><a href="javascript:void(0)" class="'+selected+'">'+major.major_category+'</a></li>';
     });        
     let dropdownListItem = $(majorListText);
     //let dropdownListItem = $(
@@ -25966,192 +26051,47 @@ function anotherAccountOrderFourth(orderdata) {
     //    +'<li class="dropdown-item"><a href="javascript:void(0)">BUIDINGS</a></li>'
     //);
     dropdownMenuListWrap.append(dropdownListItem);
-    dropdownBox.append(dropdownMenuListWrap);
+    //dropdownBox.append(dropdownMenuListWrap);
     
-    var dropdownHidden = $('<input type="hidden" value="" id="major_category"/>');
-    dropdownBox.append(dropdownHidden);
+    var dropdownHidden = $('<input type="hidden" value="" id="local_asset_code"/>');
+    dropdownBox.append('<input type="hidden" value="" id="local_asset_code"/>');
+    dropdownBox.append('<input type="hidden" value="" id="local_asset_name"/>');
 
-    if(selOrderType == 'OTHERS_OUT_FA_OMD')  {
+    if(selOrderType == 'Others Out FA')  {
         pluginForm.append(dropdownBox);
     }
-    /* ###[ Minor Category ]### */
-    var inputBoxText7 = $('<div class="input-box add-order"><label>Minor Category<b>*</b></label></div>');
-    var inputTextContent7 = $('<div class="input-form order-select disable-searchIcon"></div>');
-    var minorCategorySelected = $('<div class="selected-order"></div>');
-    var inputBox7 = $('<input type="text" placeholder="Minor Category를 선택하세요." max-length="50" id="minor-category" readonly="true" autocomplete="off" disabled/>');
     
-    var minorCategoryListCont = $('<div class="order-list"></div>');
+    var emptylayer = $('<div id="empty_layer" style="height:200px;display:none;"></div>');
+    pluginForm.append(emptylayer);
     
-    var minorCategoryListTitle = $('<span>Minor Category 목록</span>');
-    minorCategoryListCont.append(minorCategoryListTitle);
-    //inputBox.append('<input type="text" value="" id="costau-code"/>');
-    
-    //inputBox2.attr('disabled', true);
-    //selectBoxAction(inputBox2, inputTextContent2, 'disabled');
-
-    inputTextContent7.append(minorCategorySelected);
-    inputTextContent7.append(inputBox7);
-    inputTextContent7.append(minorCategoryListCont);
-    
-    var orderUl7 = $('<ul></ul>');
-    
-    inputBox7.on('click', function() {
-    //orderSelectBox.on('click', function() {
-        // [퍼블 수정 및 추가] - order-select 스타일 변경
-        //$('.order-select').addClass('focus');
-        inputTextContent7.addClass('focus');
-            
-        //$('.order-list').addClass('show');
-        minorCategoryListCont.addClass('show');
-        orderUl7.empty();
-        
-        LoadingWithMask();
-        
-        console.log('major_category : '+$("#major_category").val() );
-        
-        var requestParam = {
-            query: {
-              "event": "minorCategoryInquiryEvent"
-            },
-            payload: {
-                "majorCategory": $("#major_category").val()
-            }
-          };
-
-          sendChatApi(requestParam, null, function(payload){
-            //console.log('payload > ', payload);
-            var result = JSON.parse(payload.queryResult.messages[0].response);
-            console.log('result', result);
-            minorCategoryList = result.resultList;
-            
-            if(minorCategoryList.length == 0) {
-              var orderLi7 = $('<li class="no-res">Minor Category 정보가 없습니다.</li>');
-              orderUl7.append(orderLi7);
-              minorCategoryListCont.append(orderUl7);
-            } else {
-              minorCategoryList.map(minorCategory => {
-                  
-                var orderLi7 = $(
-                    '<li>'
-                        +'<p>'+ minorCategory.minor_category // + '()' 
-                        +'</p>'
-                        //+'<p class="small">'
-                        //+ '['+ orderType.orderType +'] '+ orderType.reasonCode
-                        //+'</p>'
-                    +'</li>'
-                );
-                
-                // 예약 가능한 회의실 목록 리스트 클릭
-                orderLi7.on('click', function() {
-                    
-                    var minorCategoryInfo = $(
-                            '<div class="data-wrap">'
-                                 +'<p>'+minorCategory.minor_category 
-                                 + '</p>'
-                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-                            + '</button>'
-                            + '<input type="hidden" value="'+ minorCategory.minor_category +'" id="minor_category"/>'
-                            +'</div>'
-                    );
-                    
-                    inputBox7.empty();
-                    inputBox7.val('');
-                    minorCategorySelected.empty();
-                    minorCategorySelected.css('width', '100%');      
-                    minorCategorySelected.append(minorCategoryInfo);
-                    
-                    //orderInput.val(orderInfo.html());
-                    
-                    // [퍼블 수정 및 추가]
-                    var targetHeight = minorCategorySelected.height();
-                    inputTextContent7.removeClass('focus');
-                    console.log(targetHeight);
-            
-                    minorCategoryListCont.removeClass('show');
-                    // $('.order-list').css('top', '82px');
-                    minorCategoryListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
-                    $('#minor-category').attr('placeholder', '');
-                    //scheduleorderWidth($('#costdept-name'));
-                    scheduleorderWidth(inputTextContent7, minorCategorySelected, $('#minor-category'));
-                    
-                    //nextBtn.find('button').attr('disabled', false);
-
-                    nextBtnEvent($(this));
-
-                });
-                
-                orderUl7.append(orderLi7);
-              });
-              minorCategoryListCont.append(orderUl7);
-            }
-            
-            closeLoadingWithMask();
-            
-          });
-        
-        //////        
-    });
-    
-    //var inputTextContent = $('<div class="input-form"><input class="searchIcon" type="text" placeholder="Minor Category를 입력해 주세요." max-length="50" /></div>');
-    
-    inputBoxText7.append(inputTextContent7);
-    
-    if(selOrderType == 'OTHERS_OUT_FA_OMD')  {
-        pluginForm.append(inputBoxText7);
-    }
     /*  ###[ etc ]### */
     // 다음버튼
-    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step5" disabled>다음</button></div>');
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step4" disabled>다음</button></div>');
     pluginForm.append(nextBtn);
     pluginForm.children('.btn').find('button').on('click', function() {
         
-        if($('#au_code').val() == null || $('#au_code').val() == '') {
-            showSmallDialog("Cost Au를 검색해 주세요.");
-            //$('#costau-name').focus();
-            //inputBoxText1.focus();
-            textFocusStyle(inputTextContent1);
-            return;
-        }
         if($('#costdept_code').val() == null || $('#costdept_code').val() == '') {
             showSmallDialog("비용 처리 부서를 검색해 주세요.");
-            //$('#costdept-name').focus();
-            //inputBoxText2.focus();
             textFocusStyle(inputTextContent2);
             return;
         }
         if($('#costaccount_code').val() == null || $('#costaccount_code').val() == '') {
             showSmallDialog("비용 처리 계정을 검색해 주세요.");
-            //$('#costaccount-name').focus();
-            //inputBoxText3.focus();
             textFocusStyle(inputTextContent3);
             return;
         }
-        if($('#activity_code').val() == null || $('#activity_code').val() == '') {
-            showSmallDialog("Activity Code를 검색해 주세요.");
-            //$('#activity-name').focus();
-            //inputBoxText5.focus();
-            textFocusStyle(inputTextContent5);
-            return;
-        }
-        if(selOrderType == 'OTHERS_OUT_FA_OMD')  {
-            if($('#Asset_name').val() == '') {
-                showSmallDialog("Activity Name을 입력해 주세요.");
-                $('#Asset_name-name').focus();
+        if(selOrderType == 'Others Out FA')  {
+            if($('#asset_code').val() == null || $('#asset_code').val() == '') {
+                showSmallDialog("Asset Class를 입력해 주세요.");
+                //$('#Asset_name-name').focus();
                 return;
             }
-            if($('#major_category').val() == '') {
-                showSmallDialog("Major Category를 선택해 주세요.");
-                //dropdownBox.focus();
-                textFocusStyle(dropdownMainBtn);
-                return;
-            }
-            if($('#minor_category').val() == null || $('#minor_category').val() == '') {
-                showSmallDialog("Minor Category를 검색해 주세요.");
-                //$('#minor-category').focus();
-                //inputBoxText7.focus();
-                textFocusStyle(inputTextContent7);
-                return;
+            if(gblShow == true) {
+                if($('#local_asset_code').val() == '') {
+                    showSmallDialog("Local Asset Class를 선택해 주세요.");
+                    textFocusStyle(dropdownMainBtn);
+                    return;
+                }
             }
         }
         
@@ -26164,6 +26104,7 @@ function anotherAccountOrderFourth(orderdata) {
                   "event": "apmsModelInquiryEvent"
                 },
                 payload: {
+                    "BUKRS": orderdata.BUKRS,  
                     "apmsNo": selApmsNo
                 }
               };
@@ -26203,13 +26144,10 @@ function anotherAccountOrderFourth(orderdata) {
     });
     
     function setNextData() {
-        orderdata.step = 6; 
+        orderdata.step = 5; 
         
         delete orderdata.action;
         
-        //delete orderdata.apms_no;
-        orderdata.au_code = $('#au_code').val();
-        orderdata.au_name = $('#au_name').val();
         orderdata.department_code = $('#costdept_code').val();
         orderdata.department_name = $('#costdept_name').val();
         orderdata.account_code = $('#costaccount_code').val();
@@ -26218,48 +26156,50 @@ function anotherAccountOrderFourth(orderdata) {
         orderdata.project_code = ($('#project_code').val() == '' || $('#project_code').val() == null)? '0000000000000':$('#project_code').val();
         orderdata.project_name = ($('#project_name').val() == '' || $('#project_name').val() == null)? '공통프로젝트':$('#project_name').val();
         
-        orderdata.activity_code = $('#activity_code').val();
-        orderdata.activity_name = $('#activity_name').val();
+        orderdata.asset_code = $('#asset_code').val();
+        orderdata.asset_name = $('#asset_name').val();
+        orderdata.local_asset_code = $('#local_asset_code').val();
+        orderdata.local_asset_name = $('#local_asset_name').val();
 
-        orderdata.asset_name = $('#Asset_name').val();
-        orderdata.major_category = $('#major_category').val();
-        orderdata.minor_category = $('#minor_category').val();
-        
-        console.log('#major_category : '+$('#major_category').val()+', orderdata.major_category : '+orderdata.major_category);
-        
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderSixth(orderdata);
+        anotherAccountOrderFifth(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     }
     var inputVal = false;
-    function nextBtnEvent(target) {
-        var costval = costAuSelected.find('.data-wrap').text();
+    function nextBtnEvent(isshow) {
+
         var deptval = costDeptSelected.find('.data-wrap').text();
         var accountval = costAccountSelected.find('.data-wrap').text();
         var projectval = projectCodeSelected.find('.data-wrap').text();
-        var activityval = activityCodeSelected.find('.data-wrap').text();
-        var minorval = minorCategorySelected.find('.data-wrap').text();
-        var assetName = inputBoxA.val();    
-        var majorval = dropdownHidden.val();
-        
-        //console.log('costval : '+costval + ', deptval : '+deptval + ', accountval : '+accountval + ', projectval : '+projectval);
-        //console.log('activityval : '+activityval + ', assetName : '+assetName + ', majorval : '+majorval + ', minorval : '+minorval);
-        
-        //if (costval && deptval && accountval && projectval && activityval) {
-        if (costval && deptval && accountval && activityval) {
+        var assetval = assetClassSelected.find('.data-wrap').text();
+
+        if(isshow != null) {
+            gblShow = isshow;
+        }
+        if (deptval && accountval) {
 
             nextBtn.find('button').attr('disabled', false);
             
-            if(selOrderType == 'OTHERS_OUT_FA_OMD') {
-                if(assetName && minorval && dropdownMainBtn.hasClass('select')) {
-                    nextBtn.find('button').attr('disabled', false);
+            if(selOrderType == 'Others Out FA') {
+                
+                if(assetval) {
+                    //nextBtn.find('button').attr('disabled', true);
+                    if(isshow == false) {
+                        nextBtn.find('button').attr('disabled', false);
+                    }
+                    else {
+                        if(dropdownMainBtn.hasClass('select')) {
+                            nextBtn.find('button').attr('disabled', false);
+                        }
+                        else{
+                            nextBtn.find('button').attr('disabled', true);
+                        }
+                    }
                 }
-                else{
+                else {
                     nextBtn.find('button').attr('disabled', true);
                 }
-            }
-            else{
             }
         }
         else{
@@ -26271,17 +26211,16 @@ function anotherAccountOrderFourth(orderdata) {
     // input
     pluginForm.find('input').on('keyup', function(e) {
         hblInput = e.target.value;
-        nextBtnEvent($(this));
+        //nextBtnEvent($(this));
     });
     
     // back버튼
     pluginHeader.find('.backBtn').off('click').on('click', function() {
-        orderdata.step = 4; 
+        orderdata.step = 3; 
         orderdata.action = 'back';
         
         delete orderdata.apms_no;
-        delete orderdata.au_code;
-        delete orderdata.au_name;
+
         delete orderdata.department_code;
         delete orderdata.department_name;
         delete orderdata.account_code;
@@ -26290,36 +26229,37 @@ function anotherAccountOrderFourth(orderdata) {
         delete orderdata.project_code;
         delete orderdata.project_name;
         
-        delete orderdata.activity_code;
-        delete orderdata.activity_id;
-        delete orderdata.activity_name;
         delete orderdata.activity_amount;
         delete orderdata.activity_rate;
 
+        delete orderdata.asset_code;
         delete orderdata.asset_name;
-        delete orderdata.major_category;
-        delete orderdata.minor_category;
+        delete orderdata.local_asset_code;
+        delete orderdata.local_asset_name;
 
         pluginForm.removeClass('show');
         pluginForm.remove();
-        anotherAccountOrderFourth(orderdata);
+        anotherAccountOrderThird(orderdata);
         $('.plugin-contents').append(anotherAccountOrderForm);
     });
     
     // dropdown
-    dropdownMainBtn.on('click', function() {
+    //dropdownMainBtn.on('click', function() {
+    $(document).on('click','.form-fourth .btn-dropdown', function(e) {
         dropdownBtnEvent(this);
-        nextBtnEvent($(this));
     });
-    dropdownListItem.find('a').on('click', function() {
+    //dropdownListItem.find('a').on('click', function() {
+    $(document).on('click','.form-fourth .dropdown-menu .dropdown-item a', function(e) {
         dropdownMenuEvent(this);
-        nextBtnEvent($(this));
+        nextBtnEvent();
     });
     function dropdownBtnEvent(target) {
         if ($(target).hasClass('active')) {
+            showEmptyLayer('none');
             $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
         }
         else {
+            showEmptyLayer('block');
             $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
             $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
         }
@@ -26328,22 +26268,193 @@ function anotherAccountOrderFourth(orderdata) {
 
         const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
         const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
-        let targetText = $(target).text();
+        let targetText = $(target).html();
         
         console.log('targetText : '+targetText);
         //$('#major_category').val(targetText);
-        dropdownHidden.val(targetText);
+        //dropdownHidden.val(targetText);
         
-        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        let localAssetCode = $(target).find('.code').text();
+        let localAssetName = $(target).find('.small').text();
+        
+        
+         $('#local_asset_code').val(localAssetCode);
+         $('#local_asset_name').val(localAssetName);        
+        
+        dropBtn.removeClass('default active').addClass('select').find('span').html('['+localAssetCode+'] '+localAssetName);
         dropmenu.stop().slideUp().removeClass('show');
         
-        selectBoxAction(inputBox7, inputTextContent7, 'enabled');
+        //selectBoxAction(inputBox7, inputTextContent7, 'enabled');
         
         // minor category 초기화. 
-        inputBox7.val('');
-        minorCategorySelected.empty();
-
+        //inputBox7.val('');
+        //minorCategorySelected.empty();
+        showEmptyLayer('none');
     };
+    
+    function dropdownBoxAction($input, selectflag, $costSelected) {
+        var assetCode = assetClassSelected.find('#asset_code').val();
+        
+        console.log('dropdownBoxAction. '+assetCode);
+        if(assetCode) {
+            
+            $input.attr('disabled', false);
+            $input.css('background-color', '').css('cursor', 'pointer');
+            //$inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
+            
+            sendLocalAssetAPI(assetCode, selectflag);
+        }
+        else{
+            // 계정 정보 초기화. 
+            //$input.val('');
+            //$costSelected.empty();
+            //$input.css('display', 'block');
+        
+            resetLocalAsset($input);
+            $input.css('background-color', '#F5F5F5').css('cursor', 'default');
+            $input.attr('disabled', true);
+            //$inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
+            
+        }
+        
+    }
+    
+    function resetLocalAsset(btn) {
+        //var accountListListText = '';    
+        //let dropdownListItem = $(accountListListText);
+        
+        //dropdownMenuListWrap.css('bottom', 60+'px');
+        //dropdownMenuListWrap.empty();
+        dropdownMenuListWrap.css('top', 'auto');    // .css('filter','opacity(0%)');
+        dropdownMenuListWrap.remove();
+
+        $(btn).removeClass('active');
+        $(btn).find('span').text('Local Asset Class를 선택해 주세요.');
+
+        // 추가.
+        $(btn).removeClass('select').addClass('default');
+        $(btn).find('span').css('font-weight', '');
+        
+        $('#local_asset_code').val('');
+        $('#local_asset_name').val('');
+        
+        dropdownBox.css('display', 'none');
+    }    
+    
+    function sendLocalAssetAPI(assetval, selectflag) {
+
+        var localAsset_list = new Array();
+        
+        if(isNull(assetval)) {
+            
+            setTimeout(function() {
+                showSmallDialog('Asset Class를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+            }, 100);
+            
+            return;
+        }
+
+        LoadingWithMask(); 
+        
+        var requestParam = {
+            query: {
+              "event": "localAssetClassInquiryEvent"
+            },
+            payload: {
+                BUKRS: orderdata.BUKRS, 
+                assetClassCode: assetval
+            }
+          };
+
+          sendChatApi(requestParam, null, function(payload){
+                //console.log('payload > ', payload);
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                
+                if(result == null) {
+                    localAsset_list = null;
+                }
+                else if(result.restSuccessYn == 'N') {
+                    localAsset_list = null;
+                }
+                else{
+                    localAsset_list = result.resultList;
+                    
+                    console.log('localAsset_list.length : '+localAsset_list.length);
+                    
+                    var empthHeight = 200;
+                    if(localAsset_list.length == 0 || localAsset_list.length == 1 ){
+                        empthHeight = 50;
+                    }
+                    else if(localAsset_list.length == 2 || localAsset_list.length == 3) {
+                        empthHeight = localAsset_list.length*50;
+                    }
+                    else{
+                        empthHeight = 200;
+                    }
+                    
+                    //$('#empty_layer').css('height', empthHeight+'px');
+                    
+                    if(localAsset_list.length == 0) {
+                        localAsset_list = null;
+                        dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
+                        localAssetListText = '<li class="dropdown-item"><p class="code text">계정 정보가 없습니다.</p></li>'
+                                            //+ '<span class="redidence_type" style="display:none;">'+account.ZCLSCODE+'</span>'
+                                            
+                        let dropdownListItem = $(localAssetListText);
+                        
+                        dropdownMenuListWrap.append(dropdownListItem);
+                        dropdownBox.append(dropdownMenuListWrap);      
+                        
+                        nextBtnEvent(false);
+                        
+                    }
+                    else{
+                        dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
+                        //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
+                        var localAssetListText = '';    
+                        localAsset_list.forEach(function(localAsset, index) {
+                            var selected = '';
+                            
+                            if(localAsset.ZANLKL == '') {
+                                selected = 'selected';
+                            }
+                            //if(corporation.BUKRS == selCorpCode) {
+                            //    selected = 'selected';
+                            //}
+                            
+                            //var bukrsDesc = (corporation.BUKRS_DESC == '0')? '':corporation.BUKRS_DESC;                    
+                            localAssetListText += '<li class="dropdown-item">'
+                                                + '<a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><p class="code text">'+localAsset.ZANLKL+'</p><p class="small text">'+localAsset.ZANLKL_NAME+'</p></a>'
+                                                //+ '<span class="account_id" style="display:none;">'+account.SAKNR+'</span>'
+                                                + '</li>';
+                        });        
+                        let dropdownListItem = $(localAssetListText);
+                        
+                        dropdownMenuListWrap.append(dropdownListItem);
+                        dropdownBox.append(dropdownMenuListWrap);
+                        
+                        dropdownBox.css('display', 'block');
+                        
+                        if(selectflag == true) {
+                            setTimeout(function() {
+                                var selectedValue = dropdownMenuListWrap.find('li').find('.selected');
+                    
+                                console.log('selectedValue : ', selectedValue);
+                                selectedValue.trigger('click');
+                            }, 100);
+                        }
+                        
+                        nextBtnEvent(true);
+                    }
+                }
+                
+                closeLoadingWithMask();
+
+             });
+
+        return localAsset_list;
+    }
     
     var deleteStyle = "";
     var deleteBtn = '';
@@ -26352,6 +26463,7 @@ function anotherAccountOrderFourth(orderdata) {
         deleteStyle = "display:none;";
         //selectBoxAction(inputBox1, inputTextContent1, 'disabled');
         selectBoxAction(inputBox4, inputTextContent4, 'enabled');       // APMS 인 경우에 프로젝트코드 값이 없기 때문에 선택할 수 있도록...
+        selectBoxAction(inputBox5, inputTextContent5, 'enabled');
     }
     else{
         deleteStyle = "display:block;";
@@ -26361,43 +26473,13 @@ function anotherAccountOrderFourth(orderdata) {
                     + '</button>';
 
             //selectBoxAction(inputBox1, inputTextContent1, 'enabled');
-            //selectBoxAction(inputBox2, inputTextContent2, 'enabled');
+            selectBoxAction(inputBox2, inputTextContent2, 'enabled');
             //selectBoxAction(inputBox3, inputTextContent3, 'enabled');
             //selectBoxAction(inputBox4, inputTextContent4, 'enabled');
-            //selectBoxAction(inputBox5, inputTextContent5, 'enabled');
+            selectBoxAction(inputBox5, inputTextContent5, 'enabled');
 
     }
     
-    if (selAuCode != '') {
-
-        var hiddenInfo = $(
-            '<div class="data-wrap">'
-                 +'<p>['+selAuCode+']' + selAuName 
-                 + '</p>'
-                 + deleteBtn
-              + '<input type="hidden" value="'+ selAuCode +'" id="au_code"/>'
-              + '<input type="hidden" value="'+ selAuName +'" id="au_name"/>'
-            +'</div>'
-        );
-                    
-        costAuSelected.empty();
-        costAuSelected.append(hiddenInfo);
-
-        inputBox1.attr('placeholder', '');  
-        //inputBox1.css('width', '0px');
-        inputBox1.css('display', 'none');   
-        
-        if(selApmsYN == 'YES') {
-            selectBoxAction(inputBox1, inputTextContent1, 'disabled');
-        }
-        else{
-            selectBoxAction(inputBox1, inputTextContent1, 'enabled');
-        }
-        //scheduleorderWidth($('#input_content1'), $('#input_selected1'), $('#costau-name'));
-        
-        //nextBtnEvent(inputBox1);
-    }
-
     if (selDeptCode != '') {
 
         var hiddenInfo = $(
@@ -26495,85 +26577,12 @@ function anotherAccountOrderFourth(orderdata) {
         //nextBtnEvent(inputBox4);
     }
 
-    if (selActivityCode != '') {
-
-        var hiddenInfo = $(
-            '<div class="data-wrap">'
-                 +'<p>['+selActivityCode+']' + selActivityName 
-                 + '</p>'
-                 + deleteBtn
-                +'<input type="hidden" value="'+ selActivityCode +'" id="activity_code"/>'
-                +'<input type="hidden" value="'+ selActivityName +'" id="activity_name"/>'
-            +'</div>'
-        );
-                    
-        activityCodeSelected.empty();
-        activityCodeSelected.append(hiddenInfo);
-
-        inputBox5.attr('placeholder', '');  
-        //inputBox5.css('width', '0px');
-        inputBox5.css('display', 'none'); 
-        
-        if(selApmsYN == 'YES') {
-            selectBoxAction(inputBox5, inputTextContent5, 'disabled');
-        }
-        else{
-            selectBoxAction(inputBox5, inputTextContent5, 'enabled');
-        }
-        //scheduleorderWidth(inputTextContent5, activityCodeSelected, inputBox5);
-        
-        //nextBtnEvent(inputBox5);
-    }
-
-    inputBoxA.val(selAssetName);
-    
-    if(selMajorCategory != '') {
-        var selectedType = dropdownMenuListWrap.find('li').find('.selected');
-        
-        selectedType.trigger('click');
-    }
-
-    if (selMinorCategory != '') {
-
-        var hiddenInfo = $(
-            /*'<div class="place-info">'
-                + selMinorCategory //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
-                +'<button type="button" class="btn btn-delete">' 
-                    + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
-                        + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
-                    + '</svg>'
-                + '</button>'                  
-                +'<input type="hidden" value="'+ selMinorCategory +'" id="minor_category"/>'
-            +'</div>'*/
-            '<div class="data-wrap">'
-                 +'<p>'+selMinorCategory 
-                 + '</p>'
-            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
-                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
-            + '</button>'
-                +'<input type="hidden" value="'+ selMinorCategory +'" id="minor_category"/>'
-            +'</div>'
-        );
-                    
-        minorCategorySelected.empty();
-        minorCategorySelected.append(hiddenInfo);
-                    
-        inputBox7.attr('placeholder', '');  
-        //inputBox7.css('width', '0px');
-        inputBox7.css('display', 'none'); 
-
-        selectBoxAction(inputBox7, inputTextContent7, 'enabled');
-        //scheduleorderWidth(inputTextContent7, minorCategorySelected, inputBox7);
-        
-        //nextBtnEvent(inputBox7);
-    }
-
     inputBoxText.focus();
     $(document).off('keydown').on('keydown', function(e) {
         if (e.keyCode == 13) {
-            console.log('step5 .'+ e.target.type);
+            console.log('step4 .'+ e.target.type);
             if(e.target.type == 'text' && e.target.id != 'Asset_name')     return; 
-            $('#btn_step5').click();
+            $('#btn_step4').click();
         }
     });    
 
@@ -26582,6 +26591,1952 @@ function anotherAccountOrderFourth(orderdata) {
     /* #########[ popup_content_form_end ]######### */
     anotherAccountOrderForm = pluginForm;
     return pluginForm;
+}
+
+// 타계정 주문 입력 팝업 컨텐츠 5
+function anotherAccountOrderFifth(orderdata) {
+    console.log('orderdata : ', orderdata);
+    
+    var selApmsYN = (orderdata.apmsYN == null)? '':orderdata.apmsYN;
+    var apmsModelList = (orderdata.apmsModelList == null)? new Array():orderdata.apmsModelList;    
+    var reasonCode = (orderdata.apmsYN == null)? '':orderdata.reasonCode;
+    
+    console.log('length > ', apmsModelList);
+    
+    $('.plugin-contents').css('overflow-y', 'auto');
+    var pluginHeader = $('.plugin-header');
+    var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
+    pluginHeader.find('h1').text('타계정 주문 입력 ('+ '5' + '/' + '9' +')');
+    pluginHeader.find('.backBtn').remove();
+    pluginHeader.prepend(backBtn);
+    
+    /* #########[ popup_content_form_start ]######### */
+    var pluginForm = $('<form class="form-fifth" onsubmit="return false;"></form>');
+    
+    /* #########[ popup_content ]######### */
+     var inputBoxTopText = $('<div class="input-box top-note"><label>주문할 Material을 입력해 주세요.</label></div>');
+     //pluginForm.append(inputBoxTopText);
+     
+    /* ###[ 주문 모델 ]### */
+    var inputBoxText = $('<div class="input-box"><label>Material<b>*</b></label></div>');
+    var titleNote = $('<small class="note" style="font-size:12px;">※ 광고판촉비(APMS) 품의 번호 입력 시, 모델 및 수량이 자동 입력됩니다.</small>');
+    //inputBoxText.append(titleNote);
+    var stepperWrap = $('<ul class="stepper-wrap"></ul>');
+    
+    //var minorCategoryListCont = $('<div class="order-list"></div>');
+    var materialOptionWrap = '';
+    if(reasonCode == 'R&D') {
+        materialOptionWrap = '<div class="material-box">'
+                    +'  <div class="input-box add-order" style="width: 205px;">'
+                    +'      <label style="font-size: 12px; line-height: 15px;">Plant<b>*</b></label>'
+                    +'      <div class="input-form order-select searchIcon" style="height: 40px;">'
+                    +'          <div class="selected-order"></div>'
+                    +'          <input type="text" placeholder="코드 입력 후 \'Enter\'" max-length="50" id="plant-code" autocomplete="off" style="height: 30px; font-size: 12px;"/>'
+                    +'          <div class="order-list" style="top: 40px;"><span>Plant 목록</span></div>'
+                    +'      </div>'
+                    +'  </div>'
+                    +'  <div class="dropdown-box dropdown-storage" style="width: 205px;">'
+    	            +'      <label style="font-size: 12px; line-height: 15px;">Storage Location<b>*</b></label>'
+    	            +'      <button type="button" class="btn btn-dropdown default" id="btn-account" style="height: 40px;background-color:#F5F5F5;cursor:default;" disabled>'
+    		        +'          <span style="font-size: 12px;">선택해 주세요.</span>'
+    		        +'          <i class="icons"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    		        +'              <path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"></path>'
+    		        +'          </svg></i>'
+    	            +'      </button>'
+    	            //+'      <ul class="dropdown-menu" id="list-account"></ul>'
+    	            +'      <input type="hidden" id="storage_code" value="" />'
+    	            +'      <input type="hidden" id="storage_name" value="" />'
+                    +'  </div>'
+                    +'</div>';
+        
+    }
+
+    var stepperList = null;
+    if(selApmsYN == 'NO') {
+        
+        if(orderdata.action == 'back') {
+            var stepperListText = '';
+            for(var i=0; i<apmsModelList.length; i++) {
+                let apmsModel = apmsModelList[i];
+                
+                stepperListText += 
+                    '<li class="stepper-li">'
+                        +inputBoxText.html()
+                        +'<div class="steppe-box">'
+                            +'<div class="input-form">'
+                                +'<textarea class="searchIcon" placeholder="코드 입력 후 \'Enter\'로 검색" rows="1" style="height: auto;" disabled>'
+                                + '[' + apmsModel.model_code + '] ' + apmsModel.model_name
+                                +'</textarea>'
+                               // + '<input type="hidden" value="'+ apmsModel.model_code +'" id="model_code"/>'
+                            +'</div>'
+                            +'<div class="stepper">'
+                                +'<button class="minus" type="button">' + minusIcon + '</button>'
+                                +'<span class="count">'+apmsModel.model_number+'</span>'
+                                +'<button class="plus" type="button">' + plusIcon + '</button>'
+                            +'</div>'
+                        +'</div>'
+                        +'<div class="model-list"><span>Material</span></div>'                       // <ul><li><p>모델 이름.</p></li></ul>
+                        +materialOptionWrap
+                        +'<div class="stepper-del-Btn"><button type="button">' + trashIcon + '</button></div>'
+                    +'</li>';
+    
+            }
+            
+            stepperList = $(stepperListText);
+            
+        }
+        else{
+            stepperList = $(
+            '<li class="stepper-li">'
+                +inputBoxText.html()
+                +'<div class="steppe-box">'
+                    +'<div class="input-form">'
+                        +'<textarea class="searchIcon textStep" placeholder="코드 입력 후 \'Enter\'로 검색" rows="1" style="height: auto;" id="txtStep">'       // onKeyDown="if(event.keyCode == 13) return false;"
+                        //+'abcd'
+                        +'</textarea>'
+                        //+ '<input type="text" class="searchIcon textStep" placeholder="모델을 입력해 주세요." max-length="50" id="txtStep"/>'
+                    +'</div>'
+                    +'<div class="stepper">'
+                        +'<button class="minus" type="button" disabled>' + minusIcon + '</button>'
+                        +'<span class="count">1</span>'
+                        +'<button class="plus" type="button">' + plusIcon + '</button>'
+                    +'</div>'
+                +'</div>'
+                +'<div class="model-list"><span>Material</span></div>'                       // <ul><li><p>모델 이름.</p></li></ul>
+                +materialOptionWrap
+                +'<div class="stepper-del-Btn"><button type="button">' + trashIcon + '</button></div>'
+            +'</li>'
+            );
+            
+        }
+
+    }
+    else{
+        console.log('apmsModelList : '+apmsModelList.length);
+        var stepperListText = '';
+        for(var i=0; i<apmsModelList.length; i++) {
+            let apmsModel = apmsModelList[i];
+            
+            stepperListText += 
+                '<li class="stepper-li">'
+                    +inputBoxText.html()
+                    +'<div class="steppe-box">'
+                        +'<div class="input-form">'
+                            +'<textarea class="searchIcon" placeholder="코드 입력 후 \'Enter\'로 검색" rows="1" style="height: auto;" disabled>'
+                            + '[' + apmsModel.MATNR + '] ' + apmsModel.MAKTX
+                            +'</textarea>'
+                            //+ '<input type="hidden" value="'+ apmsModel.model_code +'" id="model_code"/>'
+                        +'</div>'
+                        +'<div class="stepper">'
+                            +'<button class="minus" type="button" disabled>' + minusIcon + '</button>'
+                            +'<span class="count">'+apmsModel.REQUEST_QTY+'</span>'                                                 // 나중에 i/f 로 수량이 오면 수량에 따라서 - 버튼 제어. 
+                            +'<button class="plus" type="button" disabled>' + plusIcon + '</button>'
+                        +'</div>'
+                    +'</div>'
+                    +materialOptionWrap                    
+                    +'<div class="stepper-del-Btn"><button type="button">' + trashIcon + '</button></div>'
+                +'</li>';
+
+        }
+        
+        stepperList = $(stepperListText);
+    }
+    stepperWrap.append(stepperList);
+    inputBoxTopText.append(stepperWrap);
+
+    /* ###[ 모델 추가 ]### */
+    if(selApmsYN == 'NO') {
+        var addModelBtn = $(
+            '<div class="btn btn-quick-reply btn-addModel">'
+                +'<button type="button" class="btn-quick-reply btn-basic">'+ plusIconRed + 'Material 추가</button>'
+            +'</div>'
+        );
+        inputBoxTopText.append(addModelBtn);
+    }
+    
+    pluginForm.append(inputBoxTopText);
+    
+    //stepperWrap.find('.steppe-box').find('.textStep').on('keyup', function(e) {
+    //    eventKeyUp($(this), e);
+    //});
+
+    var modleUl = $('<ul></ul>');
+    /////////////////////////////////////////
+    function eventKeyUp($this, event) {
+        var ival = $this.val();
+        var txtThis = $this;
+        console.log('textarea : '+ival);               
+        //console.log('textarea : '+ival.length);
+
+       if(event.code == 'Enter' || event.keyCode == 13) {
+
+                ival = ival.replace(/(?:\r\n|\r|\n)/g, ''); //ival.replace(/\n/g, "");
+                
+                console.log('textarea enter : '+ival);               
+                $this.val(ival);
+                
+                if(ival.length < 3) {
+                    showSmallDialog("모델 검색은 3글자 이상 입력해야 합니다.");
+                    return;
+                }            
+
+                //$this.parents('.steppe-box').find('.model-list').addClass('show');
+                $this.parents('li').find('.model-list').addClass('show');
+                modleUl.empty();
+                
+                LoadingWithMask();
+                
+                var requestParam = {
+                    query: {
+                      "event": "searchModelInquiryEvent"
+                    },
+                    payload: {
+                        "material_code": ival
+                    }
+                  };
+    
+                  sendChatApi(requestParam, null, function(payload){
+                    //console.log('payload > ', payload);
+                    var result = JSON.parse(payload.queryResult.messages[0].response);
+                    console.log('result', result);
+                    modelList = result.resultList;
+                    
+                    if(modelList.length == 0) {
+                        console.log('modelList.length : '+modelList.length);
+
+                        // txtThis.parents('li').find('.model-list').removeClass('show');                        
+                        // setTimeout(function() {
+                        //     showSmallDialog('검색결과가 없습니다.'); // [퍼블 수정 및 추가] - 텍스트 수정
+                        // }, 100);
+
+                        var modelLi = $(
+                            '<li>'
+                                +'<p>검색결과가 없습니다.</p>'
+                            +'</li>'
+                        );
+                        modleUl.append(modelLi);   
+                        txtThis.parents('li').find('.model-list').append(modleUl); 
+                        
+                        closeLoadingWithMask();
+                        return;
+                        
+                    } else {
+                        
+                      modelList.map(model => {
+                          
+                        var modelLi = $(
+                            '<li>'
+                                +'<p>['+ model.MATNR +'] '+ model.MAKTX // + '()' 
+                                +'</p>'
+                                //+'<p class="small">'
+                                //+ '['+ orderType.orderType +'] '+ orderType.reasonCode
+                                //+'</p>'
+                            +'</li>'
+                        );
+                        
+                        // 예약 가능한 회의실 목록 리스트 클릭
+                        modelLi.on('click', function() {
+                            
+                            txtThis.val('['+ model.MATNR +'] '+ model.MAKTX);
+                            //txtThis.attr('readonly', 'readonly');
+                            txtThis.attr('disabled', true);
+                            
+                            txtThis.parents('li').find('.model-list').removeClass('show');
+                            
+                            txtThis.parents('li').find('.model-list').html('<span>Material</span>');
+                        });
+                        
+        
+                        modleUl.append(modelLi);
+                      });
+                        
+                      txtThis.parents('li').find('.model-list').append(modleUl); 
+                      
+                      closeLoadingWithMask();
+                    }
+                 });
+                
+           }
+
+    }
+    
+    /////////////////////////////////////////
+    
+    /*  ###[ etc ]### */
+    // 다음버튼
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" id="btn_step5" disabled>다음</button></div>');
+    pluginForm.append(nextBtn);
+    pluginForm.children('.btn').find('button').on('click', function() {
+        
+        setTimeout(function() {
+            orderdata.step = 6; 
+            
+            //if(selApmsYN == 'NO') {
+                apmsModelList = new Array();                // 초기화. 
+                var orderModelList = $('.stepper-wrap').find('.stepper-li');
+                
+                if(orderModelList.length == 1 && $(orderModelList[0]).find('textarea').val() == '') {
+                    showSmallDialog("주문 모델을 1개 이상 입력해 주세요.");
+                    //$('#donation-input').focus();
+                    textFocusStyle($(orderModelList[0]).find('textarea'));
+                    return;
+                }
+
+                LoadingWithMask();
+                
+                console.log('length : '+ orderModelList.length);
+                for(var m=0; m<orderModelList.length; m++) {
+                    let orderModelText = orderModelList[m];
+                    
+                    let textVal = $(orderModelText).find('textarea').val();
+                    let plantVal = (reasonCode == 'R&D')? $(orderModelText).find('#plant_code').val():'';
+                    let storageVal = (reasonCode == 'R&D')? $(orderModelText).find('#storage_code').val():'';
+                    
+                    console.log('textVal : '+textVal);
+                    let textArr = new Array();
+                    if(textVal.indexOf('] ') > -1) {
+                        textArr = textVal.split('] ');
+                        
+                        var data = new Object();
+                        
+                        data.model_code = textArr[0].replace('[', '');
+                        data.model_name = textArr[1];
+                        let counter = $(orderModelText).find('.stepper').find('.count').text();
+                        
+                        data.model_number = counter;
+                        
+                        data.model_plant = plantVal;
+                        data.model_storage = storageVal;
+                        
+                        apmsModelList.push(data);
+                    }
+                }
+            //}        
+            console.log('apmsModelList : ', apmsModelList);
+            
+            orderdata.apmsModelList = apmsModelList;
+            
+            delete orderdata.action;    
+            
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+            anotherAccountOrderSixth(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+            
+            closeLoadingWithMask();
+            
+        }, 500);            
+    });
+    var textareaVal = false;
+    function nextBtnEvent(target) {
+        var textareaObjects = pluginForm.find('textarea');
+        for ( let i = 0; i <= (textareaObjects.length)-1; i++ ) {
+            var textareaObj = textareaObjects[i];
+            var plantval = $(textareaObj).parents('li').find('.material-box').find('#plant_code').val();
+            var storageval = $(textareaObj).parents('li').find('.material-box').find('#storage_code').val();
+            
+            console.log(plantval+' / '+storageval);
+            if ($(textareaObj).val()) {
+                textareaVal = true;
+                if (textareaVal) {
+                    if(reasonCode == 'R&D') {
+                        if(plantval && storageval) {
+                            //console.log('1111');
+                            nextBtn.find('button').attr('disabled', false);
+                        }
+                        else{
+                            //console.log('2222');
+                            nextBtn.find('button').attr('disabled', true);
+                        }
+                    }
+                    else{
+                        //console.log('0000');
+                        nextBtn.find('button').attr('disabled', false);
+                    }
+                }
+                else if (textareaVal == false) {
+                        //console.log('3333');
+                    nextBtn.find('button').attr('disabled', true);
+                }
+            } else {
+                        //console.log('4444');
+                nextBtn.find('button').attr('disabled', true);
+                textareaVal = false;
+                return;
+            };
+        };
+    };
+
+    // textarea
+    pluginForm.find('input').on('keyup', function(e) {
+        hblInput = e.target.value;
+        nextBtnEvent($(this));
+    });
+    
+    // model-list 제외 클릭
+    $(document).on('click', function(e) {
+        //console.log('click > ', e.target);
+        //console.log('click : '+$('.model-list').length);
+        if ($('.input-form').has(e.target).length === 0) {
+            $('.model-list').removeClass('show');
+            $('.model-list').html('<span>Material</span>');
+    
+            // [퍼블 수정 및 추가] - order-select 스타일 변경
+            $('.input-form').removeClass('focus');
+        }
+    });
+
+    // back버튼
+    pluginHeader.find('.backBtn').off('click').on('click', function() {
+        
+        orderdata.step = 4; 
+        orderdata.action = 'back';
+
+        //delete orderdata.action;
+        delete orderdata.apmsModelList;
+        
+        pluginForm.removeClass('show');
+        pluginForm.remove();
+        anotherAccountOrderFourth(orderdata);
+        $('.plugin-contents').append(anotherAccountOrderForm);
+    });
+    
+    var modelAddCnt = 1;
+    // btn-addModel 이벤트(리스트 추가)
+    pluginForm.on('click', '.btn-addModel > button', function() {
+        var steppeList = $(
+            '<li class="stepper-li">'
+                +inputBoxText.html()
+                +'<div class="steppe-box">'
+                    +'<div class="input-form">'
+                        +'<textarea class="searchIcon textStep" placeholder="코드 입력 후 \'Enter\'로 검색" rows="1" style="height: auto;"></textarea>'
+                    +'</div>'
+                    +'<div class="stepper">'
+                        +'<button class="minus" type="button" disabled>' + minusIcon + '</button>'
+                        +'<span class="count">1</span>'
+                        +'<button class="plus" type="button">' + plusIcon +'</button>'
+                    +'</div>'
+//                    +'<div class="model-list"><span>모델 목록</span></div>'                       // <ul><li><p>모델 이름.</p></li></ul>
+                +'</div>'
+                +'<div class="model-list"><span>Material</span></div>'                       // <ul><li><p>모델 이름.</p></li></ul>
+                +materialOptionWrap 
+                +'<div class="stepper-del-Btn"><button type="button">' + trashIcon + '</button></div>'
+            +'</li>'
+        );
+        $('.stepper-wrap').last().append(steppeList);
+        modelAddCnt = $('.stepper-wrap').find('li').length;
+        //console.log('length : '+$('.stepper-wrap').find('li').length);        
+        nextBtnEvent($(this));
+        //steppeList.find('.steppe-box').find('.textStep').on('keyup', function(e) {
+        //   eventKeyUp($(this), e);
+        //});
+    });
+
+
+    // stepper-del-Btn 이벤트
+    pluginForm.on('click', '.stepper-del-Btn > button', function() {
+        const target = $(this).parents('li');
+        let listCount = $(this).parents('.stepper-wrap').find('li').length;
+        if (listCount > 1) {
+            target.remove();
+        } else if (listCount <= 1) {
+            target.find('.count').text(1);
+            target.find('textarea').val('');
+            target.find('textarea').removeAttr('disabled');
+            target.find('button.minus').attr('disabled', true);
+        }
+        nextBtnEvent($(this));
+    });
+
+    // - 버튼 클릭
+    pluginForm.on('click', 'button.minus', function() {
+        const target = $(this).parents('.stepper').find('.count');
+        let count = target.text();
+        count = Number(count);
+        count--;
+        if (count <= 1) {
+            target.text(count);
+            $(this).parents('.stepper').find('button.minus').attr('disabled', true);
+        } else {
+            target.text(count);
+            $(this).parents('.stepper').find('button.minus').attr('disabled', false);
+        }
+    });
+
+    // + 버튼 클릭
+    //$(document).on('click', 'button.plus', function() {
+    pluginForm.on('click', 'button.plus', function() {
+        const target = $(this).parents('.stepper').find('.count');
+        let count = target.text();
+        count = Number(count);
+        count++
+        $(this).parents('.stepper').find('button.minus').attr('disabled', false);
+        if (count >= 100) {
+            console.log('100넘음');
+            target.text(count);
+        } else {
+            target.text(count);
+        }
+    });
+
+    function stepperCount() {
+        let stepperCount = $('.stepper').find('.count');
+        if (stepperCount.text() >= 1) {
+            $(this).parents('.stepper').find('button.minus').attr('disabled', false);
+        } else {
+            $(this).parents('.stepper').find('button.minus').attr('disabled', true);
+        }
+    }stepperCount();
+    
+    // 텍스트 에어리어 디폴트 높이 조정
+    function textAreaAutoSizeDefult() {
+        var target = $('.steppe-box').find('textarea');
+        target.css('height', 'auto');
+        target.css('height', $('.steppe-box').find('textarea').prop('scrollHeight') + 'px');
+    }
+    setTimeout(function() {
+        textAreaAutoSizeDefult();
+        nextBtnEvent($(this));
+    },1);
+    //pluginForm.on('input', '.steppe-box textarea', function(e) {
+    pluginForm.on('keyup', '.steppe-box textarea', function(e) {
+        textAreaAutoSizeDefult();
+        nextBtnEvent($(this));
+        
+        eventKeyUp($(this), e);
+    });
+    
+    $(document).off('click').on('click', '.form-fifth .data-wrap .btn-delete', function(){
+        console.log('delete....');
+        var content = $(this).parents(".order-select");
+        var selected = $(this).parents(".order-select").find('.selected-order');
+        var input = $(this).parents(".order-select").find('input[type=text]');
+        var label = $(this).parents(".input-box").find('label');
+        
+        var dropdownBtn = $(content).closest('.material-box').find('.btn-dropdown');
+        
+        var inputId = input.attr('id');
+        var plageHoderMsg = "코드 입력 후 \'Enter\'";     //placeHolderMap.get(inputId);
+        
+        console.log(input.attr('id')+' / '+plageHoderMsg);
+
+        input.attr('placeholder', plageHoderMsg);
+        content.find('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
+        $(this).closest(".data-wrap").remove();
+        selected.css('width', '0px');
+        
+        scheduleorderWidth(content, selected, input);
+        selected.css('width', '100%');
+
+        nextBtnEvent();
+
+        if(input.attr('id') == 'plant-code') {
+            dropdownBoxAction(dropdownBtn, false, selected);
+        }
+        //btnValueCheck();
+    });
+    
+    var orderUl = $('<ul></ul>');    
+    pluginForm.on('keyup', '.material-box input[type=text]', function(e) {
+        var inval = $(this).val();
+        console.log('key : '+inval);
+        
+        if(e.keyCode == 13) {
+            
+            if(inval.length < 3) {
+                showSmallDialog("Plant Code 3글자를 입력해 주세요.");
+                return;
+            }            
+            
+            LoadingWithMask();
+
+            var inputBox = $(this);
+            var inputTextContent = $(this).parent();
+            var queryListCont = $(inputTextContent).find('.order-list');
+            var querySelected = $(inputTextContent).find('.selected-order');
+            
+            var dropdownBtn = $(inputTextContent).closest('.material-box').find('.btn-dropdown');
+            
+            inputTextContent.addClass('focus');
+            
+        //$('.order-list').addClass('show');
+        queryListCont.addClass('show');
+        orderUl.empty();
+        
+        //console.log('au_code : '+$("#au_code").val() + ', costdept_code : '+$("#costdept_code").val() + ', costaccount_code : '+$("#costaccount_code").val());
+    
+        var requestParam = {
+            query: {
+              "event": "plantInquiryEvent"
+            },
+            payload: {
+                    BUKRS: orderdata.BUKRS, 
+                    empNo: orderdata.empNo, 
+                    // deptCode: $("#costdept_code").val(), 
+                    plantCode: inval
+            }
+          };
+
+          sendChatApi(requestParam, null, function(payload){
+            //console.log('payload > ', payload);
+            var result = JSON.parse(payload.queryResult.messages[0].response);
+            console.log('result', result);
+            
+            if(result == null) {
+              var orderLi = $('<li class="no-res">에러 발생. 다시 조회하세요.</li>');
+              orderUl.append(orderLi);
+              queryListCont.append(orderUl);
+              closeLoadingWithMask();
+              
+              return;
+            }
+            
+            plantList = result.resultList;
+            
+            if(plantList.length == 0) {
+              var orderLi = $('<li class="no-res">검색 결과가 없습니다.</li>');
+              orderUl.append(orderLi);
+              queryListCont.append(orderUl);
+            } else {
+              plantList.map(plant => {
+                  
+                var orderLi = $(
+                    '<li>'
+                        +'<p>['+plant.WERKS+'] '+ plant.NAME1// + '()' 
+                        +'</p>'
+                    +'</li>'
+                );
+                
+                // 예약 가능한 회의실 목록 리스트 클릭
+                orderLi.on('click', function() {
+                    
+                    var plantInfo = $(
+                            '<div class="data-wrap" style="padding: 9px 0;">'
+                                 +'<p style="font-size:12px;">['+plant.WERKS+']' + plant.NAME1 
+                                 + '</p>'
+                            + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+                                + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+                            + '</button>'
+                              + '<input type="hidden" value="'+ plant.WERKS +'" id="plant_code"/>'
+                              + '<input type="hidden" value="'+ plant.NAME1 +'" id="plant_name"/>'
+                            +'</div>'
+                    );
+                    
+                    //inputBox5.empty();
+                    //inputBox5.val('');
+                    //querySelected.empty();
+                    
+                    initBoxAction(inputBox, querySelected, "코드 입력 후 \'Enter\'");
+                    
+                    querySelected.css('width', '100%');
+                    querySelected.append(plantInfo);
+                    
+                    //orderInput.val(orderInfo.html());
+                    
+                    // [퍼블 수정 및 추가]
+                    var targetHeight = querySelected.height();
+                    inputTextContent.removeClass('focus');
+                    console.log(targetHeight);
+            
+                    queryListCont.removeClass('show');
+                    // $('.order-list').css('top', '82px');
+                    queryListCont.css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+                    $('#asset-name').attr('placeholder', '');
+                    //scheduleorderWidth($('#costdept-name'));
+                    scheduleorderWidth(inputTextContent, querySelected, inputBox);
+                    
+                    //nextBtn.find('button').attr('disabled', false);
+
+                    dropdownBoxAction(dropdownBtn, false, querySelected);
+                    
+                    //$('#empty_layer').css('display', 'none');
+                    
+                    //showEmptyLayer('none');
+
+                    nextBtnEvent();
+
+                });
+                
+                //showEmptyLayer('block');
+                orderUl.append(orderLi);
+              });
+              queryListCont.append(orderUl);
+            }
+            
+            closeLoadingWithMask();
+            
+          });
+          
+        }
+    });
+    
+    $(document).on('click','.form-fifth .material-box .btn-dropdown', function(e) {
+        dropdownBtnEvent(this);
+    });
+    //dropdownListItem.find('a').on('click', function() {
+    $(document).on('click','.form-fifth .material-box .dropdown-menu .dropdown-item a', function(e) {
+        dropdownMenuEvent(this);
+        nextBtnEvent();
+    });
+    function dropdownBtnEvent(target) {
+        if ($(target).hasClass('active')) {
+            //showEmptyLayer('none');
+            $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+        }
+        else {
+            //showEmptyLayer('block');
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+        }
+    };
+    function dropdownMenuEvent(target) {
+
+        const dropdown = $(target).parents('.dropdown-box');
+        const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).html();
+        
+        console.log('targetText : '+targetText);
+        //$('#major_category').val(targetText);
+        //dropdownHidden.val(targetText);
+        
+        let storageCode = $(target).parent().find('.storage-code').text();
+        let storageName = $(target).parent().find('.storage-name').text();
+
+         $(dropdown).find('#storage_code').val(storageCode);
+         $(dropdown).find('#storage_name').val(storageName);        
+        
+        dropBtn.removeClass('default active').addClass('select').find('span').html('['+storageCode+'] '+storageName);
+        dropmenu.stop().slideUp().removeClass('show');
+        
+        //selectBoxAction(inputBox7, inputTextContent7, 'enabled');
+        
+        // minor category 초기화. 
+        //inputBox7.val('');
+        //minorCategorySelected.empty();
+        
+        //showEmptyLayer('none');
+    };
+    
+    function scheduleorderWidth($inputTextContent, $costSelected, $inputId) {
+        let orderSelectWidth = $inputTextContent.width();
+        let selectedorderWidth = $costSelected.width();
+        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        $inputId.css('width', scheduleorderWidth + "px");
+        if ($inputId.width() === 0) {
+            $inputId.attr('style', '');
+        }
+        
+        if(selectedorderWidth == 0) {
+            $inputId.css('display', 'block');
+            
+            $inputId.css('font-size', '12px').css('height', '30px');
+        }
+        else{
+            $inputId.css('display', 'none');
+        }        
+    };
+    
+    // 입력/선택 box enabled/disabled 
+    function selectBoxAction($input, $inputContent, action) {
+        if(action == 'disabled') {
+            $input.attr('disabled', true);
+            $inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
+            
+            //$inputContent.addClass('addValue');
+        }
+        else{
+            $input.attr('disabled', false);
+            $inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
+            //$inputContent.removeClass('addValue');
+        }
+    }    
+    
+    function initBoxAction($input, $costSelected, hloderMsg) {
+        
+        $costSelected.empty();
+        $input.val('');
+        if(hloderMsg)        $input.attr('placeholder', hloderMsg);
+        $input.css('display', 'block');
+    }
+
+    function dropdownBoxAction($input, selectflag, $costSelected) {
+        var plantCode = $costSelected.find('#plant_code').val();
+        
+        console.log('dropdownBoxAction. '+plantCode);
+        if(plantCode) {
+            
+            $input.attr('disabled', false);
+            $input.css('background-color', '').css('cursor', 'pointer');
+            //$inputContent.removeClass('disable-searchIcon').addClass('searchIcon');
+            
+            sendStorageLocationAPI(plantCode, selectflag, $input);
+        }
+        else{
+            // 계정 정보 초기화. 
+            //$input.val('');
+            //$costSelected.empty();
+            //$input.css('display', 'block');
+        
+            resetStorageLocation($input);
+            $input.css('background-color', '#F5F5F5').css('cursor', 'default');
+            $input.attr('disabled', true);
+            //$inputContent.removeClass('searchIcon').addClass('disable-searchIcon');
+            
+            $costSelected.find('#plant_code').val('');
+            $costSelected.find('#plant_code').val('');
+
+        }
+        
+    }
+    
+    function resetStorageLocation(btn) {
+
+        var dropdownBox = $(btn).parent();
+        var dropdownMenuListWrap = $(dropdownBox).find('.dropdown-menu');
+        
+        dropdownMenuListWrap.css('top', 'auto');    // .css('filter','opacity(0%)');
+        dropdownMenuListWrap.remove();
+
+        $(btn).removeClass('active');
+        $(btn).find('span').text('선택해 주세요.');
+
+        // 추가.
+        $(btn).removeClass('select').addClass('default');
+        $(btn).find('span').css('font-weight', '');
+        
+    }    
+    
+    function sendStorageLocationAPI(plantval, selectflag, btn) {
+
+        var storage_list = new Array();
+        
+        if(isNull(plantval)) {
+            
+            setTimeout(function() {
+                showSmallDialog('Plant를 먼저 선택하세요. '); // [퍼블 수정 및 추가] - 텍스트 수정
+            }, 100);
+            
+            return;
+        }
+
+        LoadingWithMask(); 
+        
+        var dropdownBox = $(btn).parent(); 
+        
+        var requestParam = {
+            query: {
+              "event": "storageLocationInquiryEvent"
+            },
+            payload: {
+                BUKRS: orderdata.BUKRS, 
+                plantCode: plantval
+            }
+          };
+
+          sendChatApi(requestParam, null, function(payload){
+                //console.log('payload > ', payload);
+                var result = JSON.parse(payload.queryResult.messages[0].response);
+                console.log('result', result);
+                
+                if(result == null) {
+                    storage_list = null;
+                }
+                else if(result.restSuccessYn == 'N') {
+                    storage_list = null;
+                }
+                else{
+                    storage_list = result.resultList;
+                    
+                    console.log('storage_list.length : '+storage_list.length);
+                    
+                    var empthHeight = 200;
+                    if(storage_list.length == 0 || storage_list.length == 1 ){
+                        empthHeight = 50;
+                    }
+                    else if(storage_list.length == 2 || storage_list.length == 3) {
+                        empthHeight = storage_list.length*50;
+                    }
+                    else{
+                        empthHeight = 200;
+                    }
+                    
+                    //$('#empty_layer').css('height', empthHeight+'px');
+                    
+                    if(storage_list.length == 0) {
+                        storage_list = null;
+                        dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
+                        storageListText = '<li class="dropdown-item"><p class="code text">Storage 정보가 없습니다.</p></li>'
+                                            //+ '<span class="redidence_type" style="display:none;">'+account.ZCLSCODE+'</span>'
+                                            
+                        let dropdownListItem = $(storageListText);
+                        
+                        dropdownMenuListWrap.append(dropdownListItem);
+                        dropdownBox.append(dropdownMenuListWrap);      
+                        
+                        //nextBtnEvent(false);
+                        
+                    }
+                    else{
+                        dropdownMenuListWrap = $('<ul class="dropdown-menu" style="top:auto;"></ul>');
+                        //var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
+                        var storageListText = '';    
+                        storage_list.forEach(function(storage, index) {
+                            var selected = '';
+                            
+                            if(storage.LGORT == '') {
+                                selected = 'selected';
+                            }
+                            //if(corporation.BUKRS == selCorpCode) {
+                            //    selected = 'selected';
+                            //}
+                            
+                            //var bukrsDesc = (corporation.BUKRS_DESC == '0')? '':corporation.BUKRS_DESC;                    
+                            storageListText += '<li class="dropdown-item">'
+                                                + '<a href="javascript:void(0)" style="padding: 3px 8px;" class="'+selected+'"><p class="small code">['+storage.LGORT+'] '+storage.LGOBE+'</p></a>'
+                                                + '<span class="storage-code" style="display:none;">'+storage.LGORT+'</span>'
+                                                + '<span class="storage-name" style="display:none;">'+storage.LGOBE+'</span>'
+                                                + '</li>';
+                        });        
+                        let dropdownListItem = $(storageListText);
+                        
+                        dropdownMenuListWrap.append(dropdownListItem);
+                        dropdownBox.append(dropdownMenuListWrap);
+                        
+                        dropdownBox.css('display', 'block');
+                        
+                        if(selectflag == true) {
+                            setTimeout(function() {
+                                var selectedValue = dropdownMenuListWrap.find('li').find('.selected');
+                    
+                                console.log('selectedValue : ', selectedValue);
+                                selectedValue.trigger('click');
+                            }, 100);
+                        }
+                        
+                        //nextBtnEvent(true);
+                    }
+                }
+                
+                closeLoadingWithMask();
+
+             });
+
+        return storage_list;
+    }
+    
+    inputBoxText.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step5 .'+e.target.value);
+            if(e.target.value != null)  return;
+            $('#btn_step5').click();
+        }
+    });    
+    
+    /* #########[ popup_content_form_end ]######### */
+    anotherAccountOrderForm = pluginForm;
+    return pluginForm;
+}
+
+// 타계정 주문 입력 팝업 컨텐츠 6 (달력 미진행)
+function anotherAccountOrderSixth(orderdata) {
+    console.log('orderdata : ', orderdata);
+
+    var placeholderToday = moment().format('YYYY.MM.DD');
+
+    //orderdata.reasonCode = "DON";              // 임시
+    //var selReceiverName = (orderdata.receiverName == null)? '홍길동':orderdata.receiverName;
+    //var selZipno = (orderdata.zipno == null)? '99999':orderdata.zipno;
+    //var selAddress1 = (orderdata.address1 == null)? '서울시 강서구 마곡동':orderdata.address1;
+    //var selAddress2 = (orderdata.address2 == null)? 'LG사이언스파크':orderdata.address2;
+    //var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '024692154':orderdata.receiverPhoneNo;
+    //var selRedidenceType = (orderdata.redidenceType == null)? 'E2':orderdata.redidenceType;
+    
+    var selReceiverName = (orderdata.receiverName == null)? '':orderdata.receiverName;
+    var selZipno = (orderdata.zipno == null)? '':orderdata.zipno;
+    var selAddress1 = (orderdata.address1 == null)? '':orderdata.address1;
+    var selAddress2 = (orderdata.address2 == null)? '':orderdata.address2;
+    var selReceiverPhoneNo = (orderdata.receiverPhoneNo == null)? '':orderdata.receiverPhoneNo;
+    // var selRedidenceType = (orderdata.redidenceType == null)? '':orderdata.redidenceType;
+    // var selDonationCode = (orderdata.donationCode == null)? '':orderdata.donationCode;
+    // var selDonationName = (orderdata.donationName == null)? '':orderdata.donationName;
+    // var selDonationDate = (orderdata.donationDate == null)? placeholderToday:orderdata.donationDate;
+
+    $('.plugin-contents').css('overflow-y', 'auto');
+    var pluginHeader = $('.plugin-header');
+    var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
+    pluginHeader.find('h1').text('타계정 주문 입력 ('+ '6' + '/' + '9' +')');
+    pluginHeader.find('.backBtn').remove();
+    pluginHeader.prepend(backBtn);
+    
+    /* #########[ popup_content_form_start ]######### */
+    var pluginForm = $('<form class="form-sixth" onsubmit="return false;"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ 주의 사항 ]### */
+    var inputBoxText = $('<div class="input-box top-note"><label>배송지(수령지) 정보를 입력해 주세요.<b>*</b></label></div>');
+    pluginForm.append(inputBoxText);
+
+    /* ###[ 받는 사람 ]### */
+    var inputBoxText = $('<div class="input-box"><label>받는 사람<b>*</b></label></div>');
+    var inputTextContent = $('<div class="input-form"><input type="text" placeholder="내용을 입력해 주세요." max-length="50" id="receiver_name" value="'+selReceiverName+'" autocomplete="off"/></div>');
+    inputBoxText.append(inputTextContent);
+    pluginForm.append(inputBoxText);
+
+    /* ###[ 우편 번호 ]### */
+    var inputBoxText = $('<div class="input-box"><label>주소<b>*</b></label></div>');
+    var inputTextContent = $(
+        '<div class="input-form post-form">'
+            +'<input type="hidden" id="zipno" value="'+selZipno+'" />'
+    //        +'<input class="searchIcon" type="text" placeholder="도로명/ 건물명/ 번지" max-length="50" id="address1" value="'+selAddress1+'" readonly/>'
+    //        +'<input type="text" placeholder="상세 주소를 입력해 주세요." max-length="50" id="address2" value="'+selAddress2+'" />'
+        +'</div>'
+    );
+    
+    var address1Text = $('<input class="searchIcon" type="text" placeholder="도로명/ 건물명/ 번지" max-length="50" id="address1" value="'+selAddress1+'" readonly/>');
+    var address2Text = $('<input type="text" placeholder="상세 주소를 입력해 주세요." max-length="50" id="address2" value="'+selAddress2+'" autocomplete="off"/>');
+    
+    inputTextContent.append(address1Text);
+    inputTextContent.append(address2Text);
+    inputBoxText.append(inputTextContent);
+    pluginForm.append(inputBoxText);
+
+    address1Text.on('click', function() {
+        execDaumPostcode();
+        
+        //console.log(openYn);
+    });
+
+    /* ###[ 전화 번호 ]### */
+    var inputBoxText = $('<div class="input-box"><label>전화 번호<b>*</b></label></div>');
+    var inputTextContent = $('<div class="input-form"><input type="text" placeholder="전화 번호를 ‘-’ 없이 입력해 주세요." max-length="50" id="receiver_phone_no" value="'+selReceiverPhoneNo+'" autocomplete="off"/></div>');
+    inputBoxText.append(inputTextContent);
+    pluginForm.append(inputBoxText);
+
+    // /* ###[ 주거 형태 ]### */
+    // var dropdownBox = $('<div class="dropdown-box dropdown-housing"><label>주거 형태<b>*</b></label></div>');
+    // var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>옵션을 선택해 주세요.</span></button>');
+    // var dropdownArrow = $(
+    //     '<i class="icons">'
+    //         +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //             +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+    //         +'</svg>'
+    //     +'</i>'
+    // );
+    // dropdownBox.append(dropdownMainBtn);
+    // dropdownMainBtn.append(dropdownArrow);
+    
+    // var redidenceTypeList = [{"redidenceCode":"01", "redidenceName":"Apartment with elevator"}
+    //                         ,{"redidenceCode":"02", "redidenceName":"Apartment without elevator"}
+    //                         ,{"redidenceCode":"03", "redidenceName":"Single House"}
+    //                         ,{"redidenceCode":"04", "redidenceName":"Multiplex House"}
+    //                         ,{"redidenceCode":"E1", "redidenceName":"인터넷"}
+    //                         ,{"redidenceCode":"E2", "redidenceName":"인터넷, 유무선공유기"}
+    //                         ,{"redidenceCode":"E3", "redidenceName":"인터넷, 유무선공유기, 무선동글"}
+    //                         ,{"redidenceCode":"E4", "redidenceName":"인터넷, 무선동글"}
+    //                         ,{"redidenceCode":"E5", "redidenceName":"인터넷 설치 안됨"}
+    //                         ,{"redidenceCode":"E6", "redidenceName":"해당사항 없음_DEfault value"} ];
+    
+    // var dropdownMenuListWrap = $('<ul class="dropdown-menu top"></ul>');
+    // var redidenceTypeListText = '';    
+    // redidenceTypeList.forEach(function(redidenceType, index) {
+    //     var selected = '';
+    //     if(redidenceType.redidenceCode == selRedidenceType) {
+    //         selected = 'selected';
+    //     }
+
+    //     redidenceTypeListText += '<li class="dropdown-item"><a href="javascript:void(0)" class="'+selected+'">'+redidenceType.redidenceName+'</a><span class="redidence_type" style="display:none;">'+redidenceType.redidenceCode+'</span></li>';
+    // });        
+    // let dropdownListItem = $(redidenceTypeListText);
+    
+    // dropdownMenuListWrap.append(dropdownListItem);
+    // dropdownBox.append(dropdownMenuListWrap);
+    
+    // dropdownBox.append('<input type="hidden" value="" id="redidence_type"/>');
+    
+    // if(orderdata.reasonCode != 'R&D') { 
+    //     pluginForm.append(dropdownBox);
+    // }
+
+    // /* ###[ 기부처 ]### */
+    // var inputBoxText = $('<div class="input-box add-order"><label>기부처<b>*</b></label></div>');
+    // var inputTextContent = $('<div class="input-form order-select searchIcon"></div>');
+    // var donationSelected = $('<div class="selected-order" style="width:0px;"></div>');
+    // var inputBox = $('<input type="text" placeholder="키워드 입력 후 \'Enter\'로 검색" max-length="50" id="donation-input" autocomplete="off"/>');
+    
+    // var donationListCont = $('<div class="order-list"></div>');
+
+    // var donationListTitle = $('<span>기부처 목록</span>');
+    // donationListCont.append(donationListTitle);
+
+    // //inputBox.append('<input type="text" value="" id="donation-code"/>');
+    
+    // inputTextContent.append(donationSelected);
+    // inputTextContent.append(inputBox);
+    // inputTextContent.append(donationListCont);
+    
+    // var orderUl = $('<ul></ul>');
+
+    // //inputBox.on('click', function() {
+    // inputBox.on('keyup', function(e) {
+    // //orderSelectBox.on('click', function() {
+    //     var inval = inputBox.val();
+    //     console.log('key : '+inval);
+        
+    //     if(event.keyCode == 13) {
+            
+    //         if(inval.length < 3) {
+    //             showSmallDialog("기부처 검색은 3글자 이상 입력해야 합니다.");
+    //             return;
+    //         }
+            
+    //         LoadingWithMask();
+            
+    //         // [퍼블 수정 및 추가] - order-select 스타일 변경
+    //         $('.order-select').addClass('focus');
+                
+    //         $('.order-list').addClass('show');
+    //         //donationList.addClass('show');
+    //         orderUl.empty();
+            
+    //         var requestParam = {
+    //             query: {
+    //               "event": "donationCompanyInquiryEvent"
+    //             },
+    //             payload: {
+    //               donatinName : inval
+    //             }
+    //           };
+
+    //       sendChatApi(requestParam, null, function(payload){
+    //         console.log('payload > ', payload);
+    //         var result = JSON.parse(payload.queryResult.messages[0].response);
+    //         console.log('result', result);
+    //         if(result == null) {
+    //               var orderLi = $('<li class="no-res">조건에 맞는 기부처가 없습니다. 다시 검색해 보세요.</li>');
+    //               orderUl.append(orderLi);
+    //               donationListCont.append(orderUl);
+    //               //return false;
+    //         }
+    //         donationCompanyList = result.resultList;
+            
+    //         if(donationCompanyList.length == 0) {
+    //           var orderLi = $('<li class="no-res">조건에 맞는 기부처가 없습니다.</li>');
+    //           orderUl.append(orderLi);
+    //           donationListCont.append(orderUl);
+    //         } else {
+    //           donationCompanyList.map(donationCompany => {
+                  
+    //             var orderLi = $(
+    //                 '<li>'
+    //                     +'<p>'+ donationCompany.donation_company_name // + '()' 
+    //                     +'</p>'
+    //                     //+'<p class="small">'
+    //                     //+ '['+ orderType.orderType +'] '+ orderType.reasonCode
+    //                     //+'</p>'
+    //                 +'</li>' 
+    //             );
+                
+    //             // 예약 가능한 회의실 목록 리스트 클릭
+    //             orderLi.on('click', function() {
+                    
+    //                 var donationInfo = $(
+    //                     /*'<div class="place-info">'
+    //                         + donationCompany.donation_company_name //+ '&nbsp;&nbsp;'  + meetingRoom.categoryFullName
+    //                         + '<button type="button" class="btn btn-delete">' 
+    //                             + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //                                 + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+    //                             + '</svg>'
+    //                         + '</button>'
+    //                       + '<input type="hidden" value="'+ donationCompany.donation_company_code +'" id="donation-code"/>'
+    //                       + '<input type="hidden" value="'+ donationCompany.donation_company_name +'" id="donation-name"/>'
+    //                     +'</div>'*/
+    //                         '<div class="data-wrap">'
+    //                              +'<p>' + donationCompany.donation_company_name 
+    //                              + '</p>'
+    //                         + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+    //                             + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+    //                         + '</button>'
+    //                           + '<input type="hidden" value="'+ donationCompany.donation_company_code +'" id="donation-code"/>'
+    //                           + '<input type="hidden" value="'+ donationCompany.donation_company_name +'" id="donation-name"/>'
+    //                         +'</div>'
+    //                 );
+                    
+    //                 inputBox.empty();
+    //                 donationSelected.empty();
+    //                 donationSelected.css('width', '100%');        // 0717 추가 
+    //                 donationSelected.append(donationInfo);
+                    
+    //                 //orderInput.val(orderInfo.html());
+                    
+    //                 // [퍼블 수정 및 추가]
+    //                 var targetHeight = $('.selected-order').height();
+    //                 $('.order-select').removeClass('focus');
+    //                 console.log(targetHeight);
+            
+    //                 $('.order-list').removeClass('show');
+    //                 // $('.order-list').css('top', '82px');
+    //                 $('.order-list').css('top', Math.floor(targetHeight + 6) + 'px'); // [퍼블 수정 및 추가] - 높이 값 재배치
+    //                 $('#donation-input').attr('placeholder', '');
+    //                 $('#donation-input').val('');
+    //                 scheduleorderWidth();
+                    
+    //                 //nextBtn.find('button').attr('disabled', false);
+
+    //                 nextBtnEvent($(this));
+
+    //             });
+
+    //             orderUl.append(orderLi);
+    //           });
+    //           donationListCont.append(orderUl);
+    //         }
+            
+    //         closeLoadingWithMask();
+    //       });
+        
+    //     //////        
+    //     }   // end if
+    // });
+    
+    // donationSelected.on('click', function() {
+    //     inputBox.trigger('click');
+    // });
+    
+    // inputBoxText.append(inputTextContent);
+    // var isDonation = false;
+    // if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') { 
+    //     pluginForm.append(inputBoxText);
+    //     isDonation = true;
+    // }
+    
+    // // 지정된 장소 삭제 버튼 클릭
+    // $(document).on('click', '.form-third .data-wrap .btn-delete', function(){
+    //     console.log('기부처...');
+    //     $(this).closest(".data-wrap").remove();
+    //     $('#donation-input').attr('placeholder', '키워드 입력 후 \'Enter\'로 검색');
+    //     // $('.place-list').css('top', '82px');
+    //     $('.order-list').css('top', ''); // [퍼블 수정 및 추가] - 높이 값 제거
+    //     $('.selected-order').css('width', '0px');                   // 0717 추가
+    //     scheduleorderWidth();
+    //     nextBtnEvent();
+    // });
+
+    // // place-select 제외 클릭
+    // $(document).on('click', function(e) {
+    //     if ($('.order-select').has(e.target).length === 0) {
+    //         $('.order-list').removeClass('show');
+            
+    //         // [퍼블 수정 및 추가] - order-select 스타일 변경
+    //         $('.order-select').removeClass('focus');
+    //     }
+    // });
+    
+    $(window).resize(function() {
+        scheduleorderWidth();
+    });
+    
+// 장소 입력 input width 변경
+    function scheduleorderWidth() {
+        let orderSelectWidth = inputTextContent.width();
+        let selectedorderWidth = donationSelected.width();
+        let scheduleorderWidth = orderSelectWidth - selectedorderWidth;
+        
+        console.log('scheduleorderWidth : '+selectedorderWidth);
+        $('#donation-input').css('width', scheduleorderWidth + "px");
+        if ($('#donation-input').width() === 0) {
+            $('#donation-input').attr('style', '');
+        };
+        
+        if(selectedorderWidth == 0) {
+            $('#donation-input').css('display', 'block');
+        }
+        else{
+            $('#donation-input').css('display', 'none');
+        }        
+    };
+    
+    // /* ###[ 기부 일자 ]### */
+    // var inputTimeBox = $('<div class="input-box"><label>기부 일자<b>*</b></label></div>');
+    // var dateTimeWrap = $('<div class="schedule-wrap"></div>');
+    // var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
+    // var dateStartInput = $('<input type="text" class="input-schedule-date" placeholder="YYYY.MM.DD" onclick="datepicker.open(this)" autocomplete="off"/>');
+    // dateTimeStartBox.append(dateStartInput);
+    
+    // /*  #########[ datepicker ]#########  */
+    // var datepicker = $('<div class="datepicker-chem"></div>');
+    // dateTimeStartBox.append(datepicker);
+    
+    // dateTimeWrap.append(dateTimeStartBox);
+    // inputTimeBox.append(dateTimeWrap);
+    
+    // if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') { 
+    //     pluginForm.append(inputTimeBox);
+    //     dateStartInput.val(selDonationDate);
+    // }
+
+    /*  ###[ etc ]### */
+    // 다음버튼
+    var nextBtn = $('<div class="btn"><button type="button" class="btn btn-emphasis btn-big" disabled id="btn_step3">다음</button></div>');
+    pluginForm.append(nextBtn);
+    pluginForm.children('.btn').find('button').on('click', function() {
+        
+        var receiver_name = $('#receiver_name').val();
+        var zipno = $('#zipno').val();
+        var address1 = $('#address1').val();
+        var address2 = $('#address2').val();
+        var receiver_phone_no = $('#receiver_phone_no').val();
+        // var redidence_type = $('#redidence_type').val();
+        // var donation_data = dateStartInput.val();
+        
+        // var donation_code = $('#donation-code').val();
+        // var donation_name = $('#donation-name').val();
+
+        if(receiver_name == '') {
+            showSmallDialog("받는 사람을 입력하세요. ");
+            $('#receiver_name').focus();
+            return;
+        }
+        if(zipno == '') {
+            showSmallDialog("주소를 검색해 주세요.");
+            $('#address1').focus();
+            return;
+        }
+        if(address2 == '') {
+            showSmallDialog("상세 주소를 입력해 주세요.");
+            $('#address2').focus();
+            return;
+        }
+        if(receiver_phone_no == '') {
+            showSmallDialog("전화번호를 입력해 주세요.");
+            $('#receiver_phone_no').focus();
+            return;
+        }
+        // if(orderdata.reasonCode != 'R&D') { 
+        //     if(redidence_type == '') {
+        //         showSmallDialog("주거형태를 선택해 주세요.");
+        //         //dropdownBox.focus();
+        //         textFocusStyle(dropdownMainBtn);
+        //         return;
+        //     }
+        // }
+        // if(orderdata.reasonCode == 'DON' || orderdata.reasonCode == 'DON_2') {     
+        //     if(donation_code == null || donation_code == '') {
+        //         showSmallDialog("기부처를 검색해 주세요.");
+        //         //$('#donation-input').focus();
+        //         textFocusStyle(inputTextContent);
+        //         //inputBoxText.focus();
+        //         return;
+        //     }
+        //     if(donation_data == '') {
+        //         showSmallDialog("기부일자를 입력해 주세요.");
+        //         dateStartInput.focus();
+        //         return;
+        //     }
+        // }
+        
+        LoadingWithMask();
+
+        setTimeout(function() {
+            orderdata.step = 7;        
+            orderdata.receiverName = receiver_name;
+            orderdata.zipno = zipno;
+            orderdata.address1 = address1;
+            orderdata.address2 = address2;
+            orderdata.receiverPhoneNo = receiver_phone_no;
+            // orderdata.redidenceType = redidence_type;
+            // orderdata.donationDate = donation_data;
+            
+            // orderdata.donationCode = donation_code;
+            // orderdata.donationName = donation_name;
+            
+            delete orderdata.action;    
+            
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+            anotherAccountOrderSeventh(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+            
+            closeLoadingWithMask();
+        }, 500);
+    });
+    var inputVal = false;
+    function nextBtnEvent(target) {
+        var inputObj = pluginForm.find('input').not('#donation-input');
+
+        console.log('length : '+inputObj.length);
+        for ( let i = 0; i <= (inputObj.length)-1; i++ ) {
+            
+            //console.log('val : '+$(inputObj[i]).val());
+            if ($(inputObj[i]).val()) {
+                inputVal = true;
+                if (inputVal) {
+                    nextBtn.find('button').attr('disabled', false);
+                }
+
+            } else {
+                nextBtn.find('button').attr('disabled', true);
+                inputVal = false;
+                return;
+            };
+        };
+
+    };
+
+    // input
+    pluginForm.find('input').on('keyup', function(e) {
+        hblInput = e.target.value;
+        nextBtnEvent($(this));
+    });
+    
+    // back버튼
+    pluginHeader.find('.backBtn').off('click').on('click', function() {
+        
+        orderdata.step = 5; 
+        orderdata.action = 'back';
+        
+        delete orderdata.receiverName;
+        delete orderdata.zipno;
+        delete orderdata.address1;
+        delete orderdata.address2;
+        delete orderdata.receiverPhoneNo;
+        // delete orderdata.redidenceType;
+        // delete orderdata.donationDate;
+        
+        // delete orderdata.donationCode;
+        // delete orderdata.donationName;
+        
+        pluginForm.removeClass('show');
+        pluginForm.remove();
+        anotherAccountOrderFifth(orderdata);
+        $('.plugin-contents').append(anotherAccountOrderForm);
+    });
+
+    // dropdown
+    // dropdownMainBtn.on('click', function() {
+    //     dropdownBtnEvent(this);
+    //     nextBtnEvent($(this));
+    // });
+    // dropdownListItem.find('a').on('click', function() {
+    //     dropdownMenuEvent(this);
+    //     nextBtnEvent($(this));
+    // });
+    // function dropdownBtnEvent(target) {
+    //     if ($(target).hasClass('active')) {
+    //         $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+    //     }
+    //     else {
+    //         $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+    //         $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+    //     }
+    // }
+    // function dropdownMenuEvent(target) {
+    //     const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+    //     const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+    //     //const $(target).parents('.dropdown-box').find('#redidence_type');
+    //     let targetText = $(target).text();
+    //     let redidence_type = $(target).parents('.dropdown-item').find('.redidence_type').text();
+    //     console.log(''+targetText+' : '+redidence_type);
+    //     dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+    //     $(target).parents('.dropdown-box').find('#redidence_type').val(redidence_type);
+    //     dropmenu.stop().slideUp().removeClass('show');
+    // }
+
+    // if(selRedidenceType != '') {
+    //     var selectedRedidenceType = dropdownMenuListWrap.find('li').find('.selected');
+        
+    //     selectedRedidenceType.trigger('click');
+    // }
+    
+    // if (selDonationCode != '') {
+
+    //     var donationInfo = $(
+    //         /*'<div class="place-info">'
+    //             + selDonationName
+    //             + '<button type="button" class="btn btn-delete">' 
+    //                 + '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    //                     + '<path d="M2.46233 2.03709C2.34517 1.91993 2.15522 1.91993 2.03806 2.03709C1.92091 2.15424 1.92091 2.34419 2.03806 2.46135L5.57598 5.99927L2.03816 9.53709C1.921 9.65424 1.921 9.84419 2.03816 9.96135C2.15532 10.0785 2.34527 10.0785 2.46242 9.96135L6.00024 6.42353L9.53806 9.96135C9.65522 10.0785 9.84517 10.0785 9.96233 9.96135C10.0795 9.84419 10.0795 9.65424 9.96233 9.53709L6.42451 5.99927L9.96243 2.46135C10.0796 2.34419 10.0796 2.15424 9.96243 2.03709C9.84527 1.91993 9.65532 1.91993 9.53816 2.03709L6.00024 5.575L2.46233 2.03709Z" fill="#6B6B6B"/>'
+    //                 + '</svg>'
+    //             + '</button>'
+    //               + '<input type="hidden" value="'+ selDonationCode +'" id="donation-code"/>'
+    //               + '<input type="hidden" value="'+ selDonationName +'" id="donation-name"/>'
+    //         +'</div>' */ 
+    //         '<div class="data-wrap">'
+    //              +'<p>' + selDonationName
+    //              + '</p>'
+    //         + '<button type="button" class="btn btn-delete" style="padding: 0px;">' 
+    //             + '<img class="img-circle" src="'+imgPurBaseUrl+'/images/Close.png" style="width:20px;height:20px;" />'
+    //         + '</button>'
+    //           + '<input type="hidden" value="'+ selDonationCode +'" id="donation-code"/>'
+    //           + '<input type="hidden" value="'+ selDonationName +'" id="donation-name"/>'
+    //         +'</div>'
+    //     );
+    
+    //     donationSelected.empty();
+    //     donationSelected.css('width', '100%');  
+    //     donationSelected.append(donationInfo);
+    
+    //     inputBox.attr('placeholder', '');  
+    //     inputBox.css('width', "266px");
+    //     inputBox.css('display', 'none');
+    //     //scheduleorderWidth();    
+        
+    // }
+
+    inputBoxText.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step3 .');
+            if(e.target.id == 'donation-input')     return;
+            $('#btn_step3').click();
+        }
+    });    
+
+    nextBtnEvent();
+    /* #########[ popup_content_form_end ]######### */
+    anotherAccountOrderForm = pluginForm;
+    return pluginForm;
+}
+
+// 타계정 주문 입력 팝업 컨텐츠 7
+function anotherAccountOrderSeventh(orderdata) {
+    console.log('orderdata : ', orderdata);    
+    
+    var today = new Date();
+    var tomorrow = new Date(today.setDate(today.getDate()+1));
+    
+    //var placeholderToday = moment(today).format('YYYY.MM.DD');
+    var placeholderTomorrow = moment(tomorrow).format('YYYY.MM.DD');
+    
+    var selDeliveryType = (orderdata.delivery_type == null)? 'TL':orderdata.delivery_type;
+    var selInstallType = (orderdata.install_type == null)? '':orderdata.install_type;
+    var selArrivalDate = (orderdata.arrival_date == null)? placeholderTomorrow:orderdata.arrival_date;
+    
+    var selApiDate = (orderdata.api_date == null)? '':orderdata.api_date;
+
+    var selPostalCode = (orderdata.zipno == null)? '':orderdata.zipno;
+    
+    var apmsModelList = orderdata.apmsModelList;
+    
+     //테스트용 
+    // var apmsModelList = [
+    //     {
+    //         "model_code": "A",
+    //         "model_name": "Clothes Stacked Washer Dryer",
+    //         "model_number": "2"
+    //     },
+    //     {
+    //         "model_code": "B",
+    //         "model_name": "Clothes Stacked Washer Dryer_Washer",
+    //         "model_number": "3"
+    //     }
+    // ];                     // 
+    
+    /*
+    var apmsModelList = [
+			{
+				"model_code": "W10EGN.AKOR",
+				"model_name": "Clothes Stacked Washer Dryer",
+				"model_number": 1
+			},
+			{
+				"model_code": "FL25EJUE.AKOR",
+				"model_name": "Clothes Stacked Washer Dryer_Washer",
+				"model_number": 1
+			},
+			{
+				"model_code": "RL21GJUG.AKOR",
+				"model_name": "Clothes Stacked Washer Dryer_Dryer",
+				"model_number": 1
+			}
+		];
+    */    
+    
+    var apmsModelStr = '';
+    var apmsModelNum = '';
+    for(var i=0; i<apmsModelList.length; i++) {
+        let apmsModel = apmsModelList[i];
+        
+        if(i > 0){
+          apmsModelStr += ",";
+          apmsModelNum += ",";
+        } 
+        apmsModelStr += apmsModel.model_code;
+        apmsModelNum += apmsModel.model_number;
+    }
+    
+    //let apmsModelListStr = JSON.stringify(apmsModelList);
+    
+    console.log('apmsModelStr : '+apmsModelStr);
+    
+    $('.plugin-contents').css('overflow-y', 'auto');
+    var pluginHeader = $('.plugin-header');
+    var backBtn = $('<button type="button" class="backBtn">' + popBackBtn + '</button>');
+    pluginHeader.find('h1').text('타계정 주문 입력 ('+ '7' + '/' + '8' +')');
+    pluginHeader.find('.backBtn').remove();
+    pluginHeader.prepend(backBtn);
+
+    /* #########[ popup_content_form_start ]######### */
+    var pluginForm = $('<form class="form-seventh" onsubmit="return false;"></form>');
+    
+    /* #########[ popup_content ]######### */
+    /* ###[ 배송 유형 ]### */
+    var inputBoxRadio = $('<div class="input-box"><label>배송 유형<b>*</b></label>');
+    var titleNote = $('<small class="note" style="font-size:12px;">※ 택배는 청소기 액세서리, 프라엘 등 소물만 가능합니다.</small>');
+    var radioContentList = ['배송 및 설치','택배'];
+    var radioDeliverTypeCode = ['TL', 'LTL'];
+    var radioWrap = $('<div class="radio-wrap"></div>');
+    radioContentList.forEach(function(radioContentList, index) {
+        radioWrap.append($(
+            '<label class="input-radio">'
+                +radioContentList
+                +'<input type="radio" name="delivery_type" value="' + radioDeliverTypeCode[index] + '" />'
+                +'<span class="radiomark"></span>'
+            +'</label>'
+        ));
+        if (radioDeliverTypeCode[index] == selDeliveryType) {
+            radioWrap.find('input').attr('checked', true);
+        }
+    });
+    
+    inputBoxRadio.append(titleNote);
+    inputBoxRadio.append(radioWrap);
+    pluginForm.append(inputBoxRadio);
+    
+    inputBoxRadio.append('<input type="hidden" value="'+apmsModelStr+'" id="model_codes"/>');
+    inputBoxRadio.append('<input type="hidden" value="'+apmsModelNum+'" id="model_qtys"/>');
+    inputBoxRadio.append('<input type="hidden" value="'+selPostalCode+'" id="postal_code"/>');
+
+    /* ###[ 설치 유형 ]### */
+    var dropdownBox = $('<div class="dropdown-box dropdown-install"><label>설치 유형<b>*</b></label></div>');
+    var dropdownMainBtn = $('<button type="button" class="btn btn-dropdown default"><span>옵션을 선택해 주세요.</span></button>');
+    var dropdownArrow = $(
+        '<i class="icons">'
+            +'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">'
+                +'<path fill-rule="evenodd" clip-rule="evenodd" d="M8.39823 5.61757C8.1709 5.4155 7.82833 5.4155 7.601 5.61757L2.26536 10.3604C2.10025 10.5071 1.84742 10.4923 1.70065 10.3271C1.55388 10.162 1.56875 9.9092 1.73387 9.76243L7.0695 5.01964C7.59995 4.54814 8.39928 4.54814 8.92972 5.01964L14.2654 9.76243C14.4305 9.9092 14.4453 10.162 14.2986 10.3271C14.1518 10.4923 13.899 10.5071 13.7339 10.3604L8.39823 5.61757Z" fill="#2C2C2C"/>'
+            +'</svg>'
+        +'</i>'
+    );
+    pluginForm.append(dropdownBox);
+    dropdownBox.append(dropdownMainBtn);
+    dropdownMainBtn.append(dropdownArrow);
+    
+    var installTypeList = [{"code":"X3", "name":"매장진열(벽걸이형)"}
+                    , {"code":"X", "name":"매장진열"}
+                    , {"code":"A", "name":"일반설치"}
+                    , {"code":"C", "name":"단순배달"}
+                    , {"code":"E", "name":"벽걸이형"} ];
+    
+    var dropdownMenuListWrap = $('<ul class="dropdown-menu"></ul>');
+    var installTypeListText = '';    
+    installTypeList.forEach(function(installType, index) {
+        var selected = '';
+        if(installType.code == selInstallType) {
+            selected = 'selected';
+        }
+
+        installTypeListText += '<li class="dropdown-item"><a href="javascript:void(0)" class="'+selected+'">['+installType.code+'] '+installType.name+'</a><span class="install_type" style="display:none;">'+installType.code+'</span></li>' 
+    });        
+    let dropdownListItem = $(installTypeListText);
+    
+    //let dropdownListItem = $(
+    //    '<li class="dropdown-item"><a href="javascript:void(0)">[X3] 매장진열(벽걸이형)</a></li>'
+    //    +'<li class="dropdown-item"><a href="javascript:void(0)">[X] 매장진열</a></li>'
+    //    +'<li class="dropdown-item"><a href="javascript:void(0)">[A] 일반설치</a></li>'
+    //    +'<li class="dropdown-item"><a href="javascript:void(0)">[C] 단순배달</a></li>'
+    //    +'<li class="dropdown-item"><a href="javascript:void(0)">[E] 벽걸이형</a></li>'
+    //);
+    dropdownMenuListWrap.append(dropdownListItem);
+    dropdownBox.append(dropdownMenuListWrap);
+
+    var hiddenInstallType = $('<input type="hidden" value="" id="install_type"/>');
+    dropdownBox.append(hiddenInstallType);	
+
+    /* ###[ 도착 날짜 ]### */
+    var inputTimeBox = $('<div class="input-box"><label>도착 날짜<b>*</b></label></div>');
+    var dateTimeWrap = $('<div class="schedule-wrap"></div>');
+    var dateTimeStartBox = $('<div class="schedule-input-wrap schedule-date-wrap"></div>');
+    //var dateTodayInput = $('<input type="hidden" class="input-schedule-date startdate" placeholder="'+placeholderToday+'" />');
+    var dateStartInput = $('<input type="text" class="input-schedule-date startdate arrival-date" placeholder="'+placeholderTomorrow+'" autocomplete="off"/>');
+    //var dateStartInput = $('<input type="text" class="input-schedule-date startdate arrival-date" placeholder="'+placeholderToday+'" id="due_date" onclick="datepicker.open(this)" value="'+placeholderToday+'" autocomplete="off"/>');
+    
+    //dateTimeStartBox.append(dateTodayInput);
+    dateTimeStartBox.append(dateStartInput);
+
+    //dateTodayInput.val(placeholderToday);
+    dateStartInput.on('click', function() {
+        //console.log('click....');
+        
+        var delivery_type = $('[name="delivery_type"]:checked').val();
+        
+        if('TL' == delivery_type) {
+            if(hiddenInstallType.val() == '') {
+                showSmallDialog('설치 유형을 먼저 선택해 주세요. '); 
+                dropdownMainBtn.focus();
+                return;
+            }
+        }
+        
+        //window.datepicker.fulldate('20240831');
+        window.datepicker.open(this, null, function() { checkRequestDate(); }, placeholderTomorrow);
+    });
+
+    /*  #########[ datepicker ]#########  */
+    var datepicker = $('<div class="datepicker-chem"></div>');
+    dateTimeStartBox.append(datepicker);
+    
+    dateTimeWrap.append(dateTimeStartBox);
+    inputTimeBox.append(dateTimeWrap);
+    
+    var hiddenInput = $('<input type="hidden" value="'+selApiDate+'" id="hidden_date"/>');
+    inputTimeBox.append(hiddenInput);
+    
+    //hiddenInput.val(selApiDate);
+    
+    var titleNote = $('<small class="note e-msg" style="font-size:12px;display:none;">※ 선택한 날짜는 설치가 불가합니다. 선택한 날짜와 가장 가까운 날짜를 알려드립니다.</small>');
+    inputTimeBox.append(titleNote);
+
+    /* ###[ 가까운 날짜 ]### */
+    var addDateBtn = $(
+        '<div class="btn btn-quick-reply" style="display:none;">'
+            +'<button type="button" class="btn-quick-reply btn-basic">' + '2024.06.25' + '</button>'
+        +'</div>'
+    );
+    inputTimeBox.append(addDateBtn);
+    addDateBtn.find('button').on('click', function() {
+        var btnText = $(this).text();
+        dateStartInput.val(btnText);
+        nextBtnEvent($(this));
+        
+        $('.btn-quick-reply').css('display', 'none');
+        $('.e-msg').css('display', 'none');
+                    
+        $('.arrival-date').css('border-color', '');
+        
+    });
+    pluginForm.append(inputTimeBox);
+    
+    dateStartInput.val(selArrivalDate);
+    
+    /*  ###[ etc ]### */
+    // 다음버튼
+    var nextBtn = $('<div class="btn btn-next"><button type="button" class="btn btn-emphasis btn-big" id="btn_step7" disabled>다음</button></div>');
+    pluginForm.append(nextBtn);
+    
+    pluginForm.children('.btn').find('button').on('click', function() {
+        
+        let api_date = $('#hidden_date').val();//$('.btn-quick-reply').find('button').text();
+        
+        if(dateStartInput.val() == '') {
+            showSmallDialog('도착 날짜를 선택하세요. '); 
+            //dateStartInput.focus();
+            textFocusStyle(dateStartInput);
+            return;
+        }
+        
+        if(dateStartInput.val() != api_date) {
+            showSmallDialog('가능한 도착날짜가 반영되지 않았습니다.'); 
+            textFocusStyle(dateStartInput);
+            return;
+        }
+        
+        LoadingWithMask();
+        
+        setTimeout(function() {
+            orderdata.step = 8; 
+            
+            orderdata.delivery_type = $('[name="delivery_type"]:checked').val();   
+            orderdata.install_type = $('#install_type').val();
+            orderdata.arrival_date = dateStartInput.val();
+            orderdata.api_date = api_date;
+            
+            delete orderdata.action;    
+    
+            pluginForm.removeClass('show');
+            pluginForm.remove();
+            anotherAccountOrderEighth(orderdata);
+            $('.plugin-contents').append(anotherAccountOrderForm);
+            
+            closeLoadingWithMask();
+        }, 500);
+        
+    });
+    function nextBtnEvent(target) {
+        console.log('dateStartInput.val() : '+pluginForm.find('.btn-dropdown').hasClass('select'));
+        var input_date = dateStartInput.val();
+        if (radioWrap.find('input[type="radio"]:checked').val() == 'TL') {
+            //if (dateStartInput.val() && pluginForm.find('.btn-dropdown').hasClass('select')) {
+            if (pluginForm.find('.btn-dropdown').hasClass('select') == true) {
+                nextBtn.find('button').attr('disabled', false);
+            }
+            //else if (dateStartInput.val() == false || pluginForm.find('.btn-dropdown').hasClass('select') == false) {
+            else if (pluginForm.find('.btn-dropdown').hasClass('select') == false) {
+                nextBtn.find('button').attr('disabled', true);
+            }
+        } else if (radioWrap.find('input[type="radio"]:checked').val() == 'LTL') {
+            //if (dateStartInput.val()) {
+                nextBtn.find('button').attr('disabled', false);
+            //}
+            //else {
+            //    nextBtn.find('button').attr('disabled', true);
+            //}
+        }
+        let api_date = hiddenInput.val();   //$('#hidden_date').val(); //$('.btn-quick-reply').find('button').text();
+        console.log('api_date : '+api_date);
+        
+        if(dateStartInput.val() != '') {
+            if(dateStartInput.val() != api_date) {
+                nextBtn.find('button').attr('disabled', true);
+            }
+            else{
+                nextBtn.find('button').attr('disabled', false);
+            }
+        }
+        else{
+            nextBtn.find('button').attr('disabled', true);
+        }
+    };
+
+    // input
+    pluginForm.find('input').on('keyup', function(e) {
+        hblInput = e.target.value;
+        nextBtnEvent($(this));
+    });
+    
+    // back버튼
+    pluginHeader.find('.backBtn').off('click').on('click', function() {
+        
+        orderdata.step = 6;
+        orderdata.action = 'back';
+        
+        delete orderdata.delivery_type;
+        delete orderdata.install_type;
+        delete orderdata.arrival_date;
+        
+        pluginForm.removeClass('show');
+        pluginForm.remove();
+        anotherAccountOrderSixth(orderdata);
+        $('.plugin-contents').append(anotherAccountOrderForm);
+    });
+
+    // dropdown
+    dropdownMainBtn.on('click', function() {
+        dropdownBtnEvent(this);
+        //nextBtnEvent($(this));
+    });
+    dropdownListItem.find('a').on('click', function() {
+        dropdownMenuEvent(this);
+        nextBtnEvent($(this));
+    });
+    function dropdownBtnEvent(target) {
+        if ($(target).hasClass('active')) {
+            $(target).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp().removeClass('show');
+        }
+        else {
+            $('.btn-dropdown').not($(this)).removeClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideUp();
+            $(target).addClass('active').parents('.dropdown-box').find('.dropdown-menu').stop().slideDown().css('display','flex');
+        }
+    };
+    function dropdownMenuEvent(target) {
+        const dropmenu = $(target).parents('.dropdown-box').find('.dropdown-menu');
+        const dropBtn = $(target).parents('.dropdown-box').find('.btn-dropdown');
+        let targetText = $(target).text();
+        
+        let install_type = $(target).parents('.dropdown-item').find('.install_type').text();        
+        //$('#install_type').val(install_type);
+        hiddenInstallType.val(install_type);
+        
+        dropBtn.removeClass('default active').addClass('select').find('span').text(targetText);
+        dropmenu.stop().slideUp().removeClass('show');
+    };
+    
+    // 라디오 버튼 이벤트
+    inputBoxRadio.find('input').on('click', function(e) {
+        if (e.target.value == 'TL') {
+            dropdownBox.stop().slideDown();
+        } else if (e.target.value == 'LTL') {
+            dropdownBox.stop().slideUp();
+        }
+        nextBtnEvent($(this));
+    });
+
+    // 배송유형이 택배인 경우 설치 유형 숨기기. 
+    if(selDeliveryType == 'LTL') {
+        dropdownBox.stop().slideUp();
+    }
+    //inputBoxRadio.find('input').trigger('click');
+    
+    // 설치 유형 세팅. 
+    if(selInstallType != '') {
+        var selectedType = dropdownMenuListWrap.find('li').find('.selected');
+        
+        selectedType.trigger('click');
+    }
+
+    //console.log('action : '+orderdata.action);
+    //if(orderdata.action == 'back') {
+    //    console.log('action : '+orderdata.action);
+    //    dateStartInput.css('border-color', '#F94B50');
+    //    titleNote.text('※  도착 날짜를 다시 조회해 주세요.');
+    //    titleNote.css('display', 'block');
+    //}    
+
+    inputTimeBox.focus();
+    $(document).off('keydown').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            console.log('step7 .');
+            $('#btn_step7').click();
+        }
+    });    
+
+    nextBtnEvent();
+    /* #########[ popup_content_form_end ]######### */
+    anotherAccountOrderForm = pluginForm;
+    return pluginForm;
+}
+
+function execDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            // 팝업을 통한 검색 결과 항목 클릭 시 실행
+            var addr = ''; // 주소_결과값이 없을 경우 공백 
+            var extraAddr = ''; // 참고항목
+    	
+            //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+            if (data.userSelectedType === 'R') { // 도로명 주소를 선택
+                addr = data.roadAddress;
+            } else { // 지번 주소를 선택
+                addr = data.jibunAddress;
+            }
+            
+            console.log('data : ', data);
+    
+            if(data.userSelectedType === 'R'){
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraAddr += data.bname;
+                }
+                if(data.buildingName !== '' && data.apartment === 'Y'){
+                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                if(extraAddr !== ''){
+                    extraAddr = ' (' + extraAddr + ')';
+                }
+            } else {
+                //document.getElementById("UserAdd1").value = '';
+                extraAddr = ''; 
+            }
+    	
+            // 선택된 우편번호와 주소 정보를 input 박스에 넣는다.
+            $('#zipno').val(data.zonecode);
+            $('#address1').val(addr+''+extraAddr);
+            $('#address2').focus();
+            
+            console.log(data.zonecode+', addr : '+addr + ', extraAddr : '+extraAddr);
+        }
+    }).open({
+        popupKey: 'lgenie24' //팝업창 Key값 설정 (영문+숫자 추천)
+    });
 }
 
 /* #################### [ 타계정 주문 End ] #################### */
